@@ -1,0 +1,11 @@
+
+<h2>Open Games</h2>
+<%= render :partial => 'game_table', :locals => {:games => @open_games} %>
+
+<h2>Active Games</h2>
+<%= render :partial => 'game_table', :locals => {:games => @active_games} %>
+
+<h2>Old Games</h2>
+<%= render :partial => 'game_table', :locals => {:games => @old_games} %>
+
+<%= link_to "New Game", new_game_path %>

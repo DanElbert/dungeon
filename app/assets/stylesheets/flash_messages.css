@@ -1,0 +1,21 @@
+.flash {
+    width: 30em;
+    padding: 5px;
+    margin-bottom: 2em;
+    margin-left: 2em;
+}
+
+.error {
+    background-color: #fff6ff;
+    border: 3px solid #fda8a8;
+}
+
+.warning {
+    background-color: #ffffdd;
+    border: 3px solid #ffdd00;
+}
+
+.notice {
+    background-color: #D8F6CE;
+    border: 3px solid #3ADF00;
+}

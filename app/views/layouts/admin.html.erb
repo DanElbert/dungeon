@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dungeon</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<ul>
+  <li>
+    <%= link_to "Users", admin_users_path %>
+  </li>
+  <li>
+    <%= link_to "Games", admin_games_path %>
+  </li>
+</ul>
+
+<%= render :partial => 'layouts/flash_message' %>
+
+<%= yield %>
+
+</body>
+</html>

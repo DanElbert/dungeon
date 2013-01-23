@@ -1,0 +1,21 @@
+<% content_for :header do %>
+  <%= javascript_include_tag "games" %>
+<% end %>
+
+<div style="float: left;">
+  <label for="zoom_level">Zoom:</label>
+  <input type="text" id="zoom_level" style="font-weight: bold; width: 50px;" />
+  <div id="zoom_slider" style="height: 200px;"></div>
+</div>
+<div style="float: left;">
+  <div id="game_board_viewport">
+    <div id="game_board_container">
+      <canvas id="game_board" height="800" width="1200"></canvas>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>'
+
+</script>

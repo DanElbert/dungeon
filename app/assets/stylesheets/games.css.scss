@@ -1,0 +1,17 @@
+// Place all the styles related to the Games controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+#game_board_viewport {
+  width: 750px;
+  height: 500px;
+  position: relative;
+  overflow: auto;
+}
+
+#game_board_container {
+  position: relative;
+}
+
+#game_board {
+}

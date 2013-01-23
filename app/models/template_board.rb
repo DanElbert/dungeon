@@ -1,0 +1,3 @@
+class TemplateBoard < Board
+
+end

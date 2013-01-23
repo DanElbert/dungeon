@@ -1,0 +1,12 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+roland:
+  email: roland@tet.com
+  password_digest: $2a$10$6JxhKi2T8q.yWgmI6pf3NOlhepI0VRhW/6MxLI7dNsp4ZdM4RWuki #qwerty
+  name: Roland Deschain
+  is_admin: true
+
+eddie:
+  email: eddie@tet.com
+  password_digest: $2a$10$.OES.WDG.J279jemQ6929O5eJbM56SBPHCBzW2tN7PfceTyXhFoZm #qwerty2
+  name: Eddie Dean

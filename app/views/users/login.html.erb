@@ -1,0 +1,14 @@
+
+<%= form_tag(login_path, :method => :post) do %>
+  Email
+  <%= text_field_tag :email %>
+
+  Password
+  <%= password_field_tag :password %>
+
+  <%= submit_tag("Login") %>
+<% end %>
+
+<br />
+
+<%= link_to "Create an Account", create_user_path %>

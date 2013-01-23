@@ -1,0 +1,21 @@
+<h1>Listing games</h1>
+
+<table>
+  <tr>
+    <th>Status</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @games.each do |game| %>
+  <tr>
+    <td><%= game.status %></td>
+    <td><%= link_to 'Show', [:admin, game] %></td>
+    <td><%= link_to 'Edit', edit_admin_game_path(game) %></td>
+    <td><%= link_to 'Destroy', [:admin, game], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+

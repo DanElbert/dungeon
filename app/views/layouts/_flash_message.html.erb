@@ -1,0 +1,18 @@
+<div id="flashContainer"></div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    <%=
+      calls = []
+      flash.each do |key, value|
+        if value.respond_to? 'each'
+          value.each { |sub_value| calls << "flashMessage('#{key}', '#{sub_value}');" }
+        else
+          calls << "flashMessage('#{key}', '#{value}');"
+        end
+      end
+
+      raw(calls.join('\n'))
+    %>
+  });
+</script>
