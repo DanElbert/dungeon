@@ -4,6 +4,7 @@ function Board(canvas) {
     this.canvas = canvas;
     this.context = this.canvas.getContext('2d');
     this.drawing = new Drawing(this.context);
+    this.event_manager = new BoardEvents(this);
 
     this.board_data = null;
     this.rows = 0;
@@ -16,31 +17,38 @@ function Board(canvas) {
 
     this.hovered_cell = null;
 
-    this.dragging = false;
+    this.drag_mouse_start = null;
+    this.drag_viewport_start = null;
 
+    var evtStream = "";
 
     // Used in events
     var self = this;
 
-    $(this.canvas).mousemove(function(eventObject) {
-        var $this = $(this);
-        var offset = $this.offset();
-        var x = eventObject.pageX - offset.left;
-        var y = eventObject.pageY - offset.top;
-
-        var tileX = Math.floor((x + (self.viewPortCoord[0] * self.zoom)) / (self.drawing.cellWidth * self.zoom));
-        var tileY = Math.floor((y + (self.viewPortCoord[1] * self.zoom)) / (self.drawing.cellHeight * self.zoom));
-
-        self.cellHover(tileX, tileY);
+    $(this.event_manager).on('mousemove', function(evt, mapEvt) {
+        self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
     });
 
-    $(this.canvas).mousedown(function(eventObject) {
-        this.dragging = true;
+    $(this.event_manager).on('dragstart', function(evt, mapEvt) {
+        self.drag_mouse_start = mapEvt.mousePoint;
+        self.drag_viewport_start = self.viewPortCoord;
+    });
+
+    $(this.event_manager).on('drag', function(evt, mapEvt) {
+        var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / self.zoom);
+        var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / self.zoom);
+
+        self.viewPortCoord = [self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY];
+
+        // Ensure viewport is bound to within the map
+        self.setZoom(self.zoom);
     });
 
     this.setZoom = function(val) {
         this.zoom = val;
         this.viewPortSize = [this.canvas.width * val, this.canvas.height * val];
+        this.width = this.drawing.gridWidth(this.columns) * val;
+        this.height = this.drawing.gridHeight(this.rows) * val;
         var newVpx = Math.min(this.width - this.viewPortSize[0], this.viewPortCoord[0]);
         var newVpy = Math.min(this.height - this.viewPortSize[1], this.viewPortCoord[1]);
         this.viewPortCoord = [Math.max(0, newVpx), Math.max(0, newVpy)];
@@ -85,11 +93,11 @@ function Board(canvas) {
         this.width = drawing.gridWidth(this.columns) * this.zoom;
         this.height = drawing.gridHeight(this.rows) * this.zoom;
 
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         context.save();
         context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
         context.scale(this.zoom, this.zoom);
-
-        drawing.clear(this.columns, this.rows);
 
         this.renderBoardBackground();
 
@@ -101,34 +109,7 @@ function Board(canvas) {
     };
 
     this.cellHover = function(x, y) {
-        if (this.hovered_cell && this.hovered_cell[0] == x && this.hovered_cell[1] == y)
-            return;
-
         this.hovered_cell = [x, y];
-
-//        this.context.save();
-//        this.context.scale(this.zoom, this.zoom);
-//
-//        this.drawing.colorCell(x, y, "rgba(0, 204, 0, 0.75)");
-//
-//        if (this.hovered_cell) {
-//            this.drawing.drawCellsFromCanvas(this.hovered_cell[0], this.hovered_cell[1], 1, 1, this.boardCanvas);
-//        }
-//
-//        this.hovered_cell = [x, y];
-//
-//        this.context.restore();
-    };
-
-    this.boardPieceAt = function(x, y) {
-        var data = this.board_data;
-        for (var i = 0; x < data.board_pieces.length; i++) {
-            var p = data.board_pieces[i];
-            if (p.left <= x && p.right >= x && p.top <= y && p.bottom >= y) {
-                return p;
-            }
-        }
-        return null;
     };
 
     this.prepareImages = function(imgs, callback) {
@@ -155,6 +136,101 @@ function Board(canvas) {
     };
 };
 
+// Wraps canvas events and generates map-friendly events.
+// Raises the following events:
+// dragStart
+// drag
+// dragStop
+// mouseMove
+// click
+// Each event has a custom event object with the following properties (as appropriate):
+// dragStart, dragStartCell, previousDrag, mapPoint, mapPointCell, mousePoint
 function BoardEvents(board) {
+  this.board = board;
 
+  var jqThis = $(this);
+  var jqCanvas = $(board.canvas);
+
+  this.isLeftMouseDown = false;
+  this.isDragging = false;
+  this.dragStart = null;
+  this.previousDrag = null;
+
+  var self = this;
+
+  this.getCanvasCoordinates = function(mouseX, mouseY) {
+    // x, y coords of mouse click relative to canvas
+    var offset = $(this.board.canvas).offset();
+    var x = mouseX - offset.left;
+    var y = mouseY - offset.top;
+
+    return [x, y];
+  };
+
+  this.getMapCoordinates = function(mouseX, mouseY) {
+    var canvasPoint = this.getCanvasCoordinates(mouseX, mouseY);
+    var x = canvasPoint[0];
+    var y = canvasPoint[1];
+
+    // scale to current zoom
+    x = x / this.board.zoom;
+    y = y / this.board.zoom;
+
+    // Translate to current viewport
+    x = x + this.board.viewPortCoord[0];
+    y = y + this.board.viewPortCoord[1];
+
+    return [x, y];
+  };
+
+  this.getCell = function(mapX, mapY) {
+    var x = Math.floor(mapX / (this.board.drawing.cellWidth));
+    var y = Math.floor(mapY / (this.board.drawing.cellHeight));
+
+    return [x, y];
+  };
+
+  jqCanvas.on('mousedown.BoardEvents', function(evt) {
+    if (evt.which == 1) { // left button
+      self.isLeftMouseDown = true;
+      self.dragStart = self.getMapCoordinates(evt.pageX, evt.pageY);
+    }
+    evt.stopPropagation();
+  });
+
+  jqCanvas.on('mouseup.BoardEvents', function(evt) {
+    if (evt.which == 1) { // left button
+      self.isLeftMouseDown = false;
+      self.dragStart = null;
+      self.previousDrag = null;
+      self.isDragging = false;
+    }
+    evt.stopPropagation();
+  });
+
+  jqCanvas.on('mousemove.BoardEvents', function(evt) {
+    var mapPoint = self.getMapCoordinates(evt.pageX, evt.pageY);
+    var cell = self.getCell(mapPoint[0], mapPoint[1]);
+    var mouse = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+
+    if (self.isLeftMouseDown && !self.isDragging) {
+      self.isDragging = true;
+      jqThis.trigger('dragstart', {dragStart: self.dragStart, dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]), mousePoint: mouse});
+    }
+
+    if (self.isDragging) {
+      jqThis.trigger('drag', {
+        dragStart: self.dragStart,
+        dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
+        previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
+        mousePoint: mouse,
+        mapPoint: mapPoint,
+        mapPointCell: cell});
+
+      self.previousDrag = mapPoint;
+    }
+
+    jqThis.trigger('mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: mouse});
+    evt.stopPropagation();
+  });
 }

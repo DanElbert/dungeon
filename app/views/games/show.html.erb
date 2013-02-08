@@ -2,7 +2,7 @@
   <%= javascript_include_tag "games" %>
 <% end %>
 
-<input type="text" id="debug" style="width: 300px;" />
+<textarea id="debug" cols="80" rows="20"></textarea>
 
 <div style="float: left;">
   <label for="zoom_level">Zoom:</label>
@@ -10,10 +10,8 @@
   <div id="zoom_slider" style="height: 200px;"></div>
 </div>
 <div style="float: left;">
-  <div id="game_board_viewport">
-    <div id="game_board_container">
-      <canvas id="game_board" height="800" width="1200"></canvas>
-    </div>
+  <div id="game_board_container">
+    <canvas id="game_board" height="800" width="1200"></canvas>
   </div>
 </div>
 
