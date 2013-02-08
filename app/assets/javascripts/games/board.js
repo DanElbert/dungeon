@@ -10,9 +10,14 @@ function Board(canvas) {
     this.columns = 0;
     this.height = 0;
     this.width = 0;
+    this.viewPortCoord = [0, 0];
+    this.viewPortSize = [canvas.width, canvas.height];
     this.zoom = 1;
 
     this.hovered_cell = null;
+
+    this.dragging = false;
+
 
     // Used in events
     var self = this;
@@ -23,11 +28,23 @@ function Board(canvas) {
         var x = eventObject.pageX - offset.left;
         var y = eventObject.pageY - offset.top;
 
-        var tileX = Math.floor(x / (self.drawing.cellWidth * self.zoom));
-        var tileY = Math.floor(y / (self.drawing.cellHeight * self.zoom));
+        var tileX = Math.floor((x + (self.viewPortCoord[0] * self.zoom)) / (self.drawing.cellWidth * self.zoom));
+        var tileY = Math.floor((y + (self.viewPortCoord[1] * self.zoom)) / (self.drawing.cellHeight * self.zoom));
 
         self.cellHover(tileX, tileY);
     });
+
+    $(this.canvas).mousedown(function(eventObject) {
+        this.dragging = true;
+    });
+
+    this.setZoom = function(val) {
+        this.zoom = val;
+        this.viewPortSize = [this.canvas.width * val, this.canvas.height * val];
+        var newVpx = Math.min(this.width - this.viewPortSize[0], this.viewPortCoord[0]);
+        var newVpy = Math.min(this.height - this.viewPortSize[1], this.viewPortCoord[1]);
+        this.viewPortCoord = [Math.max(0, newVpx), Math.max(0, newVpy)];
+    };
 
     this.refresh = function(data) {
 
@@ -68,10 +85,8 @@ function Board(canvas) {
         this.width = drawing.gridWidth(this.columns) * this.zoom;
         this.height = drawing.gridHeight(this.rows) * this.zoom;
 
-        this.canvas.width = this.width + 1;
-        this.canvas.height = this.height + 1;
-
         context.save();
+        context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
         context.scale(this.zoom, this.zoom);
 
         drawing.clear(this.columns, this.rows);

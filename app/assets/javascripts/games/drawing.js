@@ -27,6 +27,10 @@ function Drawing(context) {
         var imgWidth = imageObj.width;
         var imgHeight = imageObj.height;
 
+        if (imgWidth == 0 || imgHeight == 0) {
+            return;
+        }
+
         var boxWidth = width * this.cellWidth;
         var boxHeight = height * this.cellHeight;
 
