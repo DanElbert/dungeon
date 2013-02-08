@@ -27,6 +27,29 @@ class Board < ActiveRecord::Base
     grid
   end
 
+  def board_extents
+    max_bottom = 0
+    max_right = 0
+
+    board_pieces.each do |p|
+      max_bottom = p.bottom if p.bottom > max_bottom
+      max_right = p.right if p.right > max_right
+    end
+    [max_right, max_bottom]
+  end
+
+  def board_images
+    board_pieces.map { |p| p.image }.uniq
+  end
+
+  def as_json(options={})
+    opts = {:root => false,
+            :except => [:game_id, :created_at, :updated_at],
+            :include => [:board_pieces => {:except => [:board_id, :created_at, :updated_at], :methods => [:width, :height]}],
+            :methods => [:board_extents, :board_images]}.merge(options)
+    super(opts)
+  end
+
   private
 
   def empty_board_grid
@@ -40,17 +63,6 @@ class Board < ActiveRecord::Base
       grid << row
     end
     grid
-  end
-
-  def board_extents
-    max_bottom = 0
-    max_right = 0
-
-    board_pieces.each do |p|
-      max_bottom = p.bottom if p.bottom > max_bottom
-      max_right = p.right if p.right > max_right
-    end
-    [max_right, max_bottom]
   end
 
 end

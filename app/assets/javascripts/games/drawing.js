@@ -1,19 +1,51 @@
 function Drawing(context) {
     this.context = context;
-    this.cellHeight = 50;
-    this.cellWidth = 50;
+    this.cellHeight = 100;
+    this.cellWidth = 100;
 
-    this.
-
-    this.drawGridLine = function(x1, y1, x2, y2) {
-
-        this.context.beginPath();
-        this.context.moveTo(x1, y1);
-        this.context.lineTo(x2, y2);
-        this.context.lineWidth = 1;
-        this.context.strokeStyle = 'black';
-        this.context.stroke();
+    this.clear = function(columns, rows) {
+        this.context.clearRect(0, 0, columns * this.cellWidth, rows * this.cellHeight);
     };
+
+    this.clearCell = function(column, row) {
+      this.context.clearRect(this.cellWidth * column, this.cellHeight * row, this.cellWidth, this.cellHeight);
+    };
+
+    this.drawCellsFromCanvas = function(x, y, width, height, otherCanvas) {
+      this.context.drawImage(otherCanvas,
+        x * this.cellWidth,
+        y * this.cellHeight,
+        width * this.cellWidth,
+        height * this.cellHeight,
+        x * this.cellWidth,
+        y * this.cellHeight,
+        width * this.cellWidth,
+        height * this.cellHeight);
+    };
+
+    this.drawTile = function(x, y, width, height, imageObj) {
+        var imgWidth = imageObj.width;
+        var imgHeight = imageObj.height;
+
+        var boxWidth = width * this.cellWidth;
+        var boxHeight = height * this.cellHeight;
+
+        var imgColumns = Math.ceil(boxWidth / imgWidth);
+        var imgRows = Math.ceil(boxHeight / imgHeight);
+
+        for (var column = 0; column < imgColumns; column++) {
+            for (var row = 0; row < imgRows; row++) {
+                var rightClip = Math.min(imgWidth, boxWidth - (column * imgWidth));
+                var bottomClip = Math.min(imgHeight, boxHeight - (row * imgHeight));
+
+                var xPos = (x * this.cellWidth) + (column * imgWidth);
+                var yPos = (y * this.cellHeight) + (row * imgHeight);
+
+                this.context.drawImage(imageObj, 0, 0, rightClip, bottomClip, xPos, yPos, rightClip, bottomClip);
+            }
+        }
+
+    }
 
     this.drawGrid = function(rows, columns) {
 
@@ -22,7 +54,7 @@ function Drawing(context) {
 
         this.context.beginPath();
         this.context.lineWidth = 1;
-        this.context.strokeStyle = 'black';
+        this.context.strokeStyle = 'white';
 
         // Draw horizontal grid lines
         for (var x = 0; x <= rows; x++) {
@@ -63,6 +95,13 @@ function Drawing(context) {
         this.context.fillStyle = color;
         this.context.fill();
     };
+
+    this.colorBackground = function(columns, rows, color) {
+        this.context.beginPath();
+        this.context.rect(0, 0, columns * this.cellWidth, rows * this.cellHeight);
+        this.context.fillStyle = color;
+        this.context.fill();
+    }
 
     this.gridWidth = function(columns) {
         return columns * this.cellWidth;

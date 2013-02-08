@@ -9,7 +9,7 @@ class GamesController < ApplicationController
   def get_game_board
     game = Game.includes(:game_board => :board_pieces).find(params[:id])
     @board = game.game_board
-    render :json => @board.build_item_array
+    render :json => @board
   end
 
   def new

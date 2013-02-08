@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130112161101) do
+ActiveRecord::Schema.define(:version => 20130123034628) do
 
   create_table "board_pieces", :force => true do |t|
     t.string   "type"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20130112161101) do
     t.integer  "right"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "image"
   end
 
   create_table "boards", :force => true do |t|

@@ -17,7 +17,7 @@ class BoardTest < ActiveSupport::TestCase
 
     assert_equal 10, board.count
     assert_equal 10, board[0].count
-    assert_equal [], board[0][0]
+    assert_equal "board", board[0][0]
 
   end
 
@@ -29,7 +29,7 @@ class BoardTest < ActiveSupport::TestCase
 
     assert_equal 5, board.count
     assert_equal 10, board[0].count
-    assert_equal [], board[0][0]
+    assert_equal "board", board[0][0]
   end
 
   test "build_item_array with two rectangles" do
@@ -41,6 +41,13 @@ class BoardTest < ActiveSupport::TestCase
 
     assert_equal 10, board.count
     assert_equal 10, board[0].count
-    assert_equal [], board[0][0]
+    assert_equal "board", board[0][0]
+  end
+
+  test "Basic json serialization" do
+    b = TemplateBoard.create()
+    b.add_piece(0, 0, 4, 9)
+    b.add_piece(5, 0, 9, 2)
+    b.to_json
   end
 end

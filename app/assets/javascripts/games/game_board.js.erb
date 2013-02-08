@@ -8,8 +8,6 @@ $(document).ready(function() {
 
     game_board = new Board($("#game_board")[0]);
 
-    refreshBoard();
-
     $("#zoom_level").change(function() {
         setSize($(this).val());
     });
@@ -28,17 +26,36 @@ $(document).ready(function() {
         }
     });
     $( "#zoom_level" ).val( $( "#zoom_slider" ).slider( "value" ) );
+
+    refreshBoard(draw_game);
 });
+
+window.requestAnimFrame = (function(callback) {
+  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+          function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+
+function draw_game() {
+  game_board.update();
+
+  window.requestAnimFrame(function() {
+    draw_game();
+  });
+};
 
 function setSize(zoom) {
     game_board.zoom = parseFloat(zoom);
-    game_board.draw(board_data);
 }
 
-function refreshBoard() {
+function refreshBoard(callback) {
     $.getJSON(BOARD_DATA_URL, function(data) {
         board_data = data;
-        game_board.zoom = parseFloat($("#zoom_level").val());
-        game_board.draw(data);
+        setSize($("#zoom_level").val());
+        game_board.refresh(data);
+        if (callback) {
+          callback();
+        }
     });
 }
