@@ -17,6 +17,7 @@ function Board(canvas) {
     this.hovered_cell = null;
 
     this.dragging = false;
+    this.dragOrigin = null;
 
 
     // Used in events
@@ -32,6 +33,10 @@ function Board(canvas) {
         var tileY = Math.floor((y + (self.viewPortCoord[1] * self.zoom)) / (self.drawing.cellHeight * self.zoom));
 
         self.cellHover(tileX, tileY);
+
+        if (this.dragging) {
+            
+        }
     });
 
     $(this.canvas).mousedown(function(eventObject) {
