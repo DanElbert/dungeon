@@ -3,12 +3,13 @@ class Board < ActiveRecord::Base
   belongs_to :game
   has_many :board_pieces, :dependent => :destroy
 
-  def add_piece(left, top, right, bottom)
+  def add_piece(left, top, right, bottom, image)
     p = BoardPiece.new
     p.top = top
     p.left = left
     p.bottom = bottom
     p.right = right
+    p.image = image
     board_pieces << p
     p
   end

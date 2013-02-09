@@ -4,7 +4,7 @@ class Game < ActiveRecord::Base
 
   attr_accessible :status, :name
 
-  has_one :game_board
+  has_one :game_board, :dependent => :destroy
 
   validates :game_board, :presence => true
 
