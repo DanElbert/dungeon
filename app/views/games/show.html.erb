@@ -2,8 +2,6 @@
   <%= javascript_include_tag "games" %>
 <% end %>
 
-<textarea id="debug" cols="80" rows="20"></textarea>
-
 <div style="float: left;">
   <label for="zoom_level">Zoom:</label>
   <input type="text" id="zoom_level" style="font-weight: bold; width: 50px;" />
@@ -11,9 +9,16 @@
 </div>
 <div style="float: left;">
   <div id="game_board_container">
+    <button id="tool_pointer">Pointer</button>
+    <button id="tool_pen">Pen</button>
+    <input id="tool_color" />
+    <input type="text" id="tool_width" />
+    <br />
     <canvas id="game_board" height="800" width="1200"></canvas>
   </div>
 </div>
+
+<textarea id="debug" cols="30" rows="20"></textarea>
 
 <script type="text/javascript">
   BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>'

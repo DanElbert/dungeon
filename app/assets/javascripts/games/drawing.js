@@ -23,6 +23,19 @@ function Drawing(context) {
         height * this.cellHeight);
     };
 
+    this.drawLines = function(startCoordList, endCoordList, width, color) {
+      this.context.beginPath();
+      this.context.lineWidth = width;
+      this.context.strokeStyle = color;
+
+      for (var x = 0; x < startCoordList.length; x++) {
+        this.context.moveTo(startCoordList[x][0], startCoordList[x][1]);
+        this.context.lineTo(endCoordList[x][0], endCoordList[x][1]);
+      }
+
+      this.context.stroke();
+    };
+
     this.drawTile = function(x, y, width, height, imageObj) {
         var imgWidth = imageObj.width;
         var imgHeight = imageObj.height;
@@ -51,14 +64,14 @@ function Drawing(context) {
 
     }
 
-    this.drawGrid = function(rows, columns) {
+    this.drawGrid = function(rows, columns, color) {
 
         var width = this.gridWidth(columns);
         var height = this.gridHeight(rows);
 
         this.context.beginPath();
         this.context.lineWidth = 1;
-        this.context.strokeStyle = 'white';
+        this.context.strokeStyle = color;
 
         // Draw horizontal grid lines
         for (var x = 0; x <= rows; x++) {

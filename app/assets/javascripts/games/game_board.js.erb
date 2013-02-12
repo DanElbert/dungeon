@@ -1,38 +1,62 @@
-
 var BOARD_DATA_URL = 'OVERRIDE THIS IN VIEW';
 
 var game_board = null;
 var board_data = null;
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-    game_board = new Board($("#game_board")[0]);
+  game_board = new Board($("#game_board")[0]);
 
-    $("#zoom_level").change(function() {
-        setSize($(this).val());
+  $("#zoom_level").change(function () {
+    setSize($(this).val());
+  });
+
+  $("#tool_color").ColorPicker({
+    onSubmit:function (hsb, hex, rgb, el, parent) {
+      $(el).val(hex);
+      $(el).ColorPickerHide();
+    },
+    onBeforeShow:function () {
+      $(this).ColorPickerSetColor(this.value);
+    }
+  }).on('keyup', function () {
+      $(this).ColorPickerSetColor(this.value);
     });
 
-    //$('#game_board_viewport').dragscrollable({dragSelector:'#game_board'});
+  $("#tool_width").val(3);
 
-    $( "#zoom_slider" ).slider({
-        orientation: "vertical",
-        range: "min",
-        min: 0.1,
-        max: 2.0,
-        step: 0.1,
-        value: 1,
-        slide: function(event, ui) {
-            $("#zoom_level").val(ui.value).change();
-        }
-    });
-    $( "#zoom_level" ).val( $( "#zoom_slider" ).slider( "value" ) );
+  $("#zoom_slider").slider({
+    orientation:"vertical",
+    range:"min",
+    min:0.1,
+    max:2.0,
+    step:0.1,
+    value:1,
+    slide:function (event, ui) {
+      $("#zoom_level").val(ui.value).change();
+    }
+  });
+  $("#zoom_level").val($("#zoom_slider").slider("value"));
 
-    refreshBoard(draw_game);
+  $("#tool_pointer").click(function () {
+    game_board.setTool(new Pointer(game_board));
+  });
+
+  $("#tool_pen").click(function () {
+    game_board.setTool(new Pen(game_board, $("#tool_width").val(), $("#tool_color").val()));
+  });
+
+  $("#tool_color").change(function () {
+    game_board.setTool(new Pen(game_board, $("#tool_width").val(), $("#tool_color").val()));
+  });
+
+  refreshBoard();
+  draw_game();
 });
 
-window.requestAnimFrame = (function(callback) {
+window.requestAnimFrame = (function (callback) {
   return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-          function(callback) {
+          function (callback) {
             window.setTimeout(callback, 1000 / 60);
           };
 })();
@@ -40,22 +64,20 @@ window.requestAnimFrame = (function(callback) {
 function draw_game() {
   game_board.update();
 
-  window.requestAnimFrame(function() {
+  window.requestAnimFrame(function () {
     draw_game();
   });
 };
 
 function setSize(zoom) {
-    game_board.zoom = parseFloat(zoom);
+  game_board.zoom = parseFloat(zoom);
 }
 
-function refreshBoard(callback) {
-    $.getJSON(BOARD_DATA_URL, function(data) {
-        board_data = data;
-        setSize($("#zoom_level").val());
-        game_board.refresh(data);
-        if (callback) {
-          callback();
-        }
-    });
+function refreshBoard() {
+  $.getJSON(BOARD_DATA_URL, function (data) {
+    board_data = data;
+    setSize($("#zoom_level").val());
+    game_board.refresh(data);
+    setTimeout(refreshBoard, 2000);
+  });
 }
