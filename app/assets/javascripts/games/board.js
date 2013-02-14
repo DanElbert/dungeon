@@ -7,6 +7,11 @@ function Board(canvas) {
   this.event_manager = new BoardEvents(this);
   this.current_tool = null;
   this.drawing_queue = [];
+  this.drawn_list = [];
+
+  this.drawingCanvas = document.createElement("canvas");
+  this.drawingContext = this.drawingCanvas.getContext('2d');
+  this.drawingDrawing = new Drawing(this.drawingContext);
 
   this.board_data = null;
   this.rows = 0;
@@ -16,6 +21,8 @@ function Board(canvas) {
   this.viewPortCoord = [0, 0];
   this.viewPortSize = [canvas.width, canvas.height];
   this.zoom = 1;
+  this.drawing_version = null;
+  this.drawing_image = null;
 
   this.hovered_cell = null;
 
@@ -53,6 +60,31 @@ function Board(canvas) {
     this.board_data = data;
     this.drawing.cellHeight = data.cell_size;
     this.drawing.cellWidth = data.cell_size;
+
+    if (data.drawing_version != this.drawing_version) {
+      this.drawing_image = document.createElement("img");
+      var self = this;
+      this.drawing_image.drawing_version = data.drawing_version;
+      $(this.drawing_image).load(function() {
+        self.drawing_version = this.drawing_version;
+        self.drawingCanvas.width = self.canvas.width;
+        self.drawingCanvas.height = self.canvas.height;
+        self.drawingContext.drawImage(this, 0, 0);
+        self.renderDrawActions(self.drawn_list, self.drawingDrawing);
+      });
+      this.drawing_image.src = BOARD_DRAWING_URL + "/" + data.drawing_version;
+    } else if (this.drawn_list.length > 0) {
+      var image_data = this.drawingCanvas.toDataURL();
+      var post_data = {drawing_version: this.drawing_version, drawing_data: image_data};
+
+      $.post(BOARD_DRAWING_URL, post_data, function(data, status, xhr) {
+        if (data.success) {
+          self.drawn_list = [];
+          self.drawing_version = data.version;
+        }
+      });
+    }
+
     var self = this;
 
     // Ensure a current tool:
@@ -80,10 +112,20 @@ function Board(canvas) {
   };
 
   this.renderDrawing = function() {
+    this.renderDrawActions(this.drawing_queue, this.drawingDrawing);
     for (var x = 0; x < this.drawing_queue.length; x++) {
-      var action = this.drawing_queue[x];
+      this.drawn_list.push(this.drawing_queue[x]);
+    }
+    this.drawing_queue = [];
+
+    this.context.drawImage(this.drawingCanvas, 0, 0);
+  };
+
+  this.renderDrawActions = function(actions, drawing) {
+    for (var x = 0; x < actions.length; x++) {
+      var action = actions[x];
       var y = x + 1;
-      while (y < this.drawing_queue.length && this.isActionSimilar(action, this.drawing_queue[y])) {
+      while (y < actions.length && this.isActionSimilar(action, actions[y])) {
         y++;
       }
 
@@ -92,11 +134,11 @@ function Board(canvas) {
           var starts = [];
           var ends = [];
           for (var i = x; i < y; i++) {
-            var a = this.drawing_queue[i];
+            var a = actions[i];
             starts.push(a.start);
             ends.push(a.end);
           }
-          this.drawing.drawLines(starts, ends, action.width, action.color);
+          drawing.drawLines(starts, ends, action.width, action.color);
           break;
       }
 

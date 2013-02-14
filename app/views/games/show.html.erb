@@ -21,6 +21,7 @@
 <textarea id="debug" cols="30" rows="20"></textarea>
 
 <script type="text/javascript">
-  BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>'
+  BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>';
+  BOARD_DRAWING_URL = '<%= drawing_game_path(:id => @game.id) %>'
 
 </script>

@@ -24,6 +24,25 @@ class GamesController < ApplicationController
     send_data data, :filename => 'drawing.png', :type => 'image/png', :disposition => 'inline'
   end
 
+  def update_drawing
+    game = Game.includes(:game_board => :board_drawing).find(params[:id])
+
+    puts params[:drawing_version]
+
+    if game.game_board.drawing_version == params[:drawing_version].to_i
+      data = params[:drawing_data]
+      data = data["data:image/png;base64,".length..-1]
+      data = Base64.decode64(data)
+      game.game_board.board_drawing.set_data(data)
+      game.game_board.board_drawing.board_drawing_data.save
+      game.game_board.board_drawing.save
+      render :json => {:success => true, :version => game.game_board.drawing_version}
+    else
+      render :json => {:success => false}
+    end
+
+  end
+
   def new
     @game = Game.new
   end

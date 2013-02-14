@@ -11,7 +11,8 @@ Dungeon::Application.routes.draw do
     end
   end
 
-  match '/games/:id/drawing(/:version)' => 'games#drawing', :via => :get, :as => :drawing_game_path
+  match '/games/:id/drawing(/:version)' => 'games#drawing', :via => :get, :as => :drawing_game
+  match '/games/:id/drawing' => 'games#update_drawing', :via => :post, :as => :update_drawing_game
 
   match '/lobby' => 'lobby#index', :via => :get, :as => :lobby
 

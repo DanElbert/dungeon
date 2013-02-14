@@ -15,8 +15,9 @@ class BoardDrawing < ActiveRecord::Base
       self.board_drawing_data = BoardDrawingData.new
     end
 
-    self.board_drawing_data = data
-    self.version += 1
+    self.board_drawing_data.data = data
+    self.version += 1 if self.version
+    self.version = 1 unless self.version
   end
 
 end
