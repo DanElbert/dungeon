@@ -12,6 +12,18 @@ class GamesController < ApplicationController
     render :json => @board
   end
 
+  def drawing
+    game = Game.includes(:game_board => {:board_drawing => :board_drawing_data}).find(params[:id])
+
+    unless game.game_board.board_drawing
+      game.game_board.create_default_drawing
+    end
+
+    data = game.game_board.board_drawing.board_drawing_data.data
+
+    send_data data, :filename => 'drawing.png', :type => 'image/png', :disposition => 'inline'
+  end
+
   def new
     @game = Game.new
   end

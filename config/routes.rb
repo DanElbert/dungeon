@@ -11,6 +11,8 @@ Dungeon::Application.routes.draw do
     end
   end
 
+  match '/games/:id/drawing(/:version)' => 'games#drawing', :via => :get, :as => :drawing_game_path
+
   match '/lobby' => 'lobby#index', :via => :get, :as => :lobby
 
   match '/login' => 'users#login', :via => :get, :as => :login
@@ -20,5 +22,5 @@ Dungeon::Application.routes.draw do
   match 'user/edit' => 'users#edit', :via => :get, :as => :edit_user
   match 'user/edit' => 'users#update', :via => :post
 
-  root :to => 'users#login'
+  root :to => 'lobby#index'
 end

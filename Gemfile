@@ -25,6 +25,8 @@ gem 'jquery-ui-rails'
 gem 'bcrypt-ruby', '~> 3.0.0'
 gem 'capistrano'
 
+gem 'chunky_png'
+
 group :test do
   gem 'minitest-reporters'
   # To use debugger

@@ -51,6 +51,8 @@ function Board(canvas) {
     }
 
     this.board_data = data;
+    this.drawing.cellHeight = data.cell_size;
+    this.drawing.cellWidth = data.cell_size;
     var self = this;
 
     // Ensure a current tool:
@@ -100,8 +102,6 @@ function Board(canvas) {
 
       x = y - 1;
     }
-
-    //$("#debug").text(this.drawing_queue.length);
   };
 
   this.isActionSimilar = function(a1, a2) {

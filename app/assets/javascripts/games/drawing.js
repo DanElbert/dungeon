@@ -1,7 +1,7 @@
 function Drawing(context) {
     this.context = context;
-    this.cellHeight = 100;
-    this.cellWidth = 100;
+    this.cellHeight = 50;
+    this.cellWidth = 50;
 
     this.clear = function(columns, rows) {
         this.context.clearRect(0, 0, columns * this.cellWidth, rows * this.cellHeight);

@@ -10,6 +10,7 @@ class ActiveSupport::TestCase
   #
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
   # -- they do not yet inherit this setting
+  #set_fixture_class :board_drawing_data => BoardDrawingData
   fixtures :all
 
   def set_current_user(user)

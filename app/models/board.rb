@@ -2,6 +2,7 @@ class Board < ActiveRecord::Base
   attr_accessible :name
   belongs_to :game
   has_many :board_pieces, :dependent => :destroy
+  has_one :board_drawing, :dependent => :destroy
 
   def add_piece(left, top, right, bottom, image)
     p = BoardPiece.new
@@ -39,15 +40,31 @@ class Board < ActiveRecord::Base
     [max_right, max_bottom]
   end
 
+  def board_size
+    board_extents.map { |c| (c + 1) * cell_size }
+  end
+
   def board_images
     board_pieces.map { |p| p.image }.uniq
+  end
+
+  def cell_size
+    50
+  end
+
+  def drawing_version
+    if self.board_drawing
+      self.board_drawing.version
+    else
+      0
+    end
   end
 
   def as_json(options={})
     opts = {:root => false,
             :except => [:game_id, :created_at, :updated_at],
             :include => [:board_pieces => {:except => [:board_id, :created_at, :updated_at], :methods => [:width, :height]}],
-            :methods => [:board_extents, :board_images]}.merge(options)
+            :methods => [:board_extents, :board_images, :cell_size, :drawing_version]}.merge(options)
     super(opts)
   end
 
