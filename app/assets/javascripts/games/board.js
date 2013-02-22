@@ -36,8 +36,6 @@ function Board(canvas) {
   this.setZoom = function(val) {
     this.zoom = val;
     this.viewPortSize = [this.canvas.width * val, this.canvas.height * val];
-    this.width = this.drawing.gridWidth(this.columns) * val;
-    this.height = this.drawing.gridHeight(this.rows) * val;
     var newVpx = Math.min(this.width - this.viewPortSize[0], this.viewPortCoord[0]);
     var newVpy = Math.min(this.height - this.viewPortSize[1], this.viewPortCoord[1]);
     this.viewPortCoord = [Math.max(0, newVpx), Math.max(0, newVpy)];
@@ -168,8 +166,8 @@ function Board(canvas) {
     this.rows = data.board_extents[1] + 1;
     this.columns = data.board_extents[0] + 1;
 
-    this.width = drawing.gridWidth(this.columns) * this.zoom;
-    this.height = drawing.gridHeight(this.rows) * this.zoom;
+    this.width = drawing.gridWidth(this.columns);
+    this.height = drawing.gridHeight(this.rows);
 
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -298,8 +296,13 @@ function BoardEvents(board) {
     jqThis.trigger('mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
   };
 
-  this.cursorUpHandler = function(canvasCoords) {
-    var mapPoint = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+  this.cursorUpHandler = function() {
+
+    if (!self.isDragging) {
+      return;
+    }
+
+    var mapPoint = self.previousDrag;
     var cell = self.getCell(mapPoint[0], mapPoint[1]);
 
     self.isLeftMouseDown = false;
@@ -309,7 +312,6 @@ function BoardEvents(board) {
       dragStart: self.dragStart,
       dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
       previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
-      mousePoint: canvasCoords,
       mapPoint: mapPoint,
       mapPointCell: cell});
 
@@ -340,29 +342,27 @@ function BoardEvents(board) {
   });
 
   jqCanvas.on('touchstart.BoardEvents', function(evt) {
-    if (evt.targetTouches.length == 1) {
-      var touch = evt.targetTouches[0];
+    var nEvt = evt.originalEvent;
+    if (nEvt.targetTouches.length == 1) {
+      var touch = nEvt.targetTouches[0];
       var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
       self.cursorDownHandler(canvasCoords);
     }
-    evt.stopPropagation();
+    //evt.stopPropagation();
   });
 
   jqCanvas.on('touchend.BoardEvents', function(evt) {
-    if (evt.targetTouches.length == 1) {
-      var touch = evt.targetTouches[0];
-      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
-      self.cursorUpHandler(canvasCoords);
-    }
-    evt.stopPropagation();
+    self.cursorUpHandler();
+    //evt.stopPropagation();
   });
 
   jqCanvas.on('touchmove.BoardEvents', function(evt) {
-    if (evt.targetTouches.length == 1) {
-      var touch = evt.targetTouches[0];
+    var nEvt = evt.originalEvent;
+    if (nEvt.targetTouches.length == 1) {
+      var touch = nEvt.targetTouches[0];
       var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
       self.cursorMoveHandler(canvasCoords);
     }
-    evt.stopPropagation();
+    //evt.stopPropagation();
   });
 }

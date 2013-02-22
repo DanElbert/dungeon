@@ -4,19 +4,17 @@ var BOARD_DRAWING_URL = 'OVERRIDE THIS IN VIEW';
 var game_board = null;
 var board_data = null;
 
+// Disable mobile device scrolling
+function stopScrolling( touchEvent ) { touchEvent.preventDefault(); }
+document.addEventListener( 'touchmove' , stopScrolling , false );
+
 $(document).ready(function () {
 
-  // Disable mobile device scrolling
-  $(document.body).on("touchmove", function(event) {
-    event.preventDefault();
-    return false;
-  });
+  setCanvasSize();
 
-  // Set game board size
-  var portWidth = $(window).width();
-  var portHeight = $(window).height();
-  $("#game_board")[0].height = (portHeight - $("#game_header").height() - 20);
-  $("#game_board")[0].width = (portWidth - $("#game_gutter").width() - 20);
+  $(window).resize(function() {
+    setCanvasSize();
+  });
 
   game_board = new Board($("#game_board")[0]);
 
@@ -73,6 +71,14 @@ window.requestAnimFrame = (function (callback) {
             window.setTimeout(callback, 1000 / 60);
           };
 })();
+
+function setCanvasSize() {
+  // Set game board size
+  var portWidth = $(window).width();
+  var portHeight = $(window).height();
+  $("#game_board")[0].height = (portHeight - $("#game_header").height() - 20);
+  $("#game_board")[0].width = (portWidth - $("#game_gutter").width() - 20);
+}
 
 function draw_game() {
   game_board.update();

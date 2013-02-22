@@ -4,6 +4,8 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+
+    render :layout => "game_board"
   end
 
   def get_game_board
