@@ -3,8 +3,17 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 #game_board_container {
-  position: relative;
+  float: left;
 }
 
 #game_board {
+}
+
+#game_header {
+  height: 75px;
+}
+
+#game_gutter {
+  float: left;
+  width: 100px;
 }

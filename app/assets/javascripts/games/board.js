@@ -67,8 +67,8 @@ function Board(canvas) {
       this.drawing_image.drawing_version = data.drawing_version;
       $(this.drawing_image).load(function() {
         self.drawing_version = this.drawing_version;
-        self.drawingCanvas.width = self.canvas.width;
-        self.drawingCanvas.height = self.canvas.height;
+        self.drawingCanvas.width = self.drawing.gridWidth(self.columns);
+        self.drawingCanvas.height = self.drawing.gridHeight(self.rows);
         self.drawingContext.drawImage(this, 0, 0);
         self.renderDrawActions(self.drawn_list, self.drawingDrawing);
       });
@@ -99,7 +99,7 @@ function Board(canvas) {
     var data = this.board_data;
     var drawing = this.drawing;
 
-    drawing.colorBackground(this.columns, this.rows, "black");
+    drawing.colorBackground(this.columns, this.rows, "rgba(50, 50, 50, 1)");
 
     for (var x = 0; x < data.board_pieces.length; x++) {
       var p = data.board_pieces[x];
@@ -247,10 +247,9 @@ function BoardEvents(board) {
     return [x, y];
   };
 
-  this.getMapCoordinates = function(mouseX, mouseY) {
-    var canvasPoint = this.getCanvasCoordinates(mouseX, mouseY);
-    var x = canvasPoint[0];
-    var y = canvasPoint[1];
+  this.getMapCoordinates = function(canvasX, canvasY) {
+    var x = canvasX;
+    var y = canvasY;
 
     // scale to current zoom
     x = x / this.board.zoom;
@@ -270,45 +269,18 @@ function BoardEvents(board) {
     return [x, y];
   };
 
-  jqCanvas.on('mousedown.BoardEvents', function(evt) {
-    if (evt.which == 1) { // left button
-      self.isLeftMouseDown = true;
-      self.dragStart = self.getMapCoordinates(evt.pageX, evt.pageY);
-    }
-    evt.stopPropagation();
-  });
+  this.cursorDownHandler = function(canvasCoords) {
+    self.isLeftMouseDown = true;
+    self.dragStart = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+  };
 
-  jqCanvas.on('mouseup.BoardEvents', function(evt) {
-    if (evt.which == 1) { // left button
-      var mapPoint = self.getMapCoordinates(evt.pageX, evt.pageY);
-      var cell = self.getCell(mapPoint[0], mapPoint[1]);
-      var mouse = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-
-      self.isLeftMouseDown = false;
-      self.isDragging = false;
-
-      jqThis.trigger('dragstop', {
-        dragStart: self.dragStart,
-        dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
-        previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
-        mousePoint: mouse,
-        mapPoint: mapPoint,
-        mapPointCell: cell});
-
-      self.dragStart = null;
-      self.previousDrag = null;
-    }
-    evt.stopPropagation();
-  });
-
-  jqCanvas.on('mousemove.BoardEvents', function(evt) {
-    var mapPoint = self.getMapCoordinates(evt.pageX, evt.pageY);
+  this.cursorMoveHandler = function(canvasCoords) {
+    var mapPoint = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     var cell = self.getCell(mapPoint[0], mapPoint[1]);
-    var mouse = self.getCanvasCoordinates(evt.pageX, evt.pageY);
 
     if (self.isLeftMouseDown && !self.isDragging) {
       self.isDragging = true;
-      jqThis.trigger('dragstart', {dragStart: self.dragStart, dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]), mousePoint: mouse});
+      jqThis.trigger('dragstart', {dragStart: self.dragStart, dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]), mousePoint: canvasCoords});
     }
 
     if (self.isDragging) {
@@ -316,14 +288,81 @@ function BoardEvents(board) {
         dragStart: self.dragStart,
         dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
         previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
-        mousePoint: mouse,
+        mousePoint: canvasCoords,
         mapPoint: mapPoint,
         mapPointCell: cell});
 
       self.previousDrag = mapPoint;
     }
 
-    jqThis.trigger('mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: mouse});
+    jqThis.trigger('mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
+  };
+
+  this.cursorUpHandler = function(canvasCoords) {
+    var mapPoint = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+    var cell = self.getCell(mapPoint[0], mapPoint[1]);
+
+    self.isLeftMouseDown = false;
+    self.isDragging = false;
+
+    jqThis.trigger('dragstop', {
+      dragStart: self.dragStart,
+      dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
+      previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
+      mousePoint: canvasCoords,
+      mapPoint: mapPoint,
+      mapPointCell: cell});
+
+    self.dragStart = null;
+    self.previousDrag = null;
+  };
+
+  jqCanvas.on('mousedown.BoardEvents', function(evt) {
+    if (evt.which == 1) { // left button
+      var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+      self.cursorDownHandler(canvasCoords);
+    }
+    evt.stopPropagation();
+  });
+
+  jqCanvas.on('mouseup.BoardEvents', function(evt) {
+    if (evt.which == 1) { // left button
+      var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+      self.cursorUpHandler(canvasCoords);
+    }
+    evt.stopPropagation();
+  });
+
+  jqCanvas.on('mousemove.BoardEvents', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+    self.cursorMoveHandler(canvasCoords);
+    evt.stopPropagation();
+  });
+
+  jqCanvas.on('touchstart.BoardEvents', function(evt) {
+    if (evt.targetTouches.length == 1) {
+      var touch = evt.targetTouches[0];
+      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
+      self.cursorDownHandler(canvasCoords);
+    }
+    evt.stopPropagation();
+  });
+
+  jqCanvas.on('touchend.BoardEvents', function(evt) {
+    if (evt.targetTouches.length == 1) {
+      var touch = evt.targetTouches[0];
+      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
+      self.cursorUpHandler(canvasCoords);
+    }
+    evt.stopPropagation();
+  });
+
+  jqCanvas.on('touchmove.BoardEvents', function(evt) {
+    if (evt.targetTouches.length == 1) {
+      var touch = evt.targetTouches[0];
+      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
+      self.cursorMoveHandler(canvasCoords);
+    }
     evt.stopPropagation();
   });
 }

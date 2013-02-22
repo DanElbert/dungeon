@@ -6,6 +6,18 @@ var board_data = null;
 
 $(document).ready(function () {
 
+  // Disable mobile device scrolling
+  $(document.body).on("touchmove", function(event) {
+    event.preventDefault();
+    return false;
+  });
+
+  // Set game board size
+  var portWidth = $(window).width();
+  var portHeight = $(window).height();
+  $("#game_board")[0].height = (portHeight - $("#game_header").height() - 20);
+  $("#game_board")[0].width = (portWidth - $("#game_gutter").width() - 20);
+
   game_board = new Board($("#game_board")[0]);
 
   $("#zoom_level").change(function () {
