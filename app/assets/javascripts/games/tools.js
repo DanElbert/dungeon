@@ -47,7 +47,7 @@ function Pen(board, width, color) {
 
     $(this.board.event_manager).on('drag.Pen', function(evt, mapEvt) {
       if (self.previous_point) {
-        var drawAction = {type: "line", start: self.previous_point, end: mapEvt.mapPoint, width: self.width, color: "#" + self.color};
+        var drawAction = {type: "line", start: self.previous_point, end: mapEvt.mapPoint, width: self.width, color: self.color};
         self.board.drawing_queue.push(drawAction);
       }
       self.previous_point = mapEvt.mapPoint;

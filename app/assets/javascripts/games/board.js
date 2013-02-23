@@ -35,7 +35,7 @@ function Board(canvas) {
 
   this.setZoom = function(val) {
     this.zoom = val;
-    this.viewPortSize = [this.canvas.width * val, this.canvas.height * val];
+    this.viewPortSize = [this.canvas.width / val, this.canvas.height / val];
     var newVpx = Math.min(this.width - this.viewPortSize[0], this.viewPortCoord[0]);
     var newVpy = Math.min(this.height - this.viewPortSize[1], this.viewPortCoord[1]);
     this.viewPortCoord = [Math.max(0, newVpx), Math.max(0, newVpy)];

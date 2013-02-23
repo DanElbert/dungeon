@@ -22,17 +22,7 @@ $(document).ready(function () {
     setSize($(this).val());
   });
 
-  $("#tool_color").ColorPicker({
-    onSubmit:function (hsb, hex, rgb, el, parent) {
-      $(el).val(hex);
-      $(el).ColorPickerHide();
-    },
-    onBeforeShow:function () {
-      $(this).ColorPickerSetColor(this.value);
-    }
-  }).on('keyup', function () {
-      $(this).ColorPickerSetColor(this.value);
-    });
+  setupColorPicker("#tool_color_button", "#tool_color_menu");
 
   $("#tool_width").val(3);
 
@@ -54,11 +44,7 @@ $(document).ready(function () {
   });
 
   $("#tool_pen").click(function () {
-    game_board.setTool(new Pen(game_board, $("#tool_width").val(), $("#tool_color").val()));
-  });
-
-  $("#tool_color").change(function () {
-    game_board.setTool(new Pen(game_board, $("#tool_width").val(), $("#tool_color").val()));
+    selectPenTool();
   });
 
   refreshBoard();
@@ -89,7 +75,7 @@ function draw_game() {
 };
 
 function setSize(zoom) {
-  game_board.zoom = parseFloat(zoom);
+  game_board.setZoom(parseFloat(zoom));
 }
 
 function refreshBoard() {
@@ -98,5 +84,44 @@ function refreshBoard() {
     setSize($("#zoom_level").val());
     game_board.refresh(data);
     setTimeout(refreshBoard, 2000);
+  });
+}
+
+function selectPenTool() {
+  console.log($("#tool_color").val());
+  game_board.setTool(new Pen(game_board, $("#tool_width").val(), $("#tool_color").val()));
+}
+
+function setupColorPicker(buttonId, menuId) {
+  var colors = {Red: "#FF0000", Yellow: "#FFFF00", Green: "#01DF01", Blue: "#0000FF", Black: "#000000"};
+
+  var jqMenu = $(menuId);
+  jqMenu.empty();
+
+  _.each(colors, function(value, key) {
+    $("<button></button>")
+            //.height(20)
+            //.width(20)
+            .css("background-color", value)
+            .text(key)
+            .click(function() {
+              $("#tool_color").val(value);
+              selectPenTool();
+              jqMenu.dialog("close");
+            })
+            .appendTo(jqMenu);
+  });
+
+
+  jqMenu.dialog({
+    autoOpen: false,
+    modal: true,
+    position: {my: "center top", at: "center bottom", of: buttonId},
+    resizable: false,
+    title: "Choose Color"
+  });
+
+  $(buttonId).click(function() {
+    jqMenu.dialog("open");
   });
 }

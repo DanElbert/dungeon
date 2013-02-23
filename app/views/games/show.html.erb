@@ -5,7 +5,11 @@
 <div id="game_header">
   <button id="tool_pointer">Pointer</button>
   <button id="tool_pen">Pen</button>
-  <input id="tool_color" />
+  <button id="tool_color_button">Color</button>
+  <input type="hidden" id="tool_color" />
+  <div id="tool_color_menu">
+
+  </div>
   <input type="text" id="tool_width" />
 </div>
 
@@ -19,13 +23,7 @@
   <canvas id="game_board" ></canvas>
 </div>
 
-
-<div style="float: left;">
-
-</div>
-<div style="float: left;">
-
-</div>
+<br style="clear: both;"/>
 
 <script type="text/javascript">
   BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>';
