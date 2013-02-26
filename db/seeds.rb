@@ -28,3 +28,9 @@ template3.add_piece(93, 10, 96, 89, "board/basic_2x2.png")
 template3.add_piece(10, 3, 89, 6, "board/basic_2x2.png")
 template3.add_piece(10, 93, 89, 96, "board/basic_2x2.png")
 template3.save!
+
+template4 = TemplateBoard.new({:name => "Small Descent"})
+template4.add_piece(0, 0, 9, 9, "board/stone_tiles.jpg")
+template4.add_piece(10, 4, 13, 5, "board/stone_tiles.jpg")
+template4.add_piece(14, 0, 23, 9, "board/stone_tiles.jpg")
+template4.save!

@@ -46,16 +46,24 @@ function Pen(board, width, color) {
     });
 
     $(this.board.event_manager).on('drag.Pen', function(evt, mapEvt) {
-      if (self.previous_point) {
+      if (self.previous_point && self.getDistance(self.previous_point, mapEvt.mapPoint) >= self.width) {
         var drawAction = {type: "line", start: self.previous_point, end: mapEvt.mapPoint, width: self.width, color: self.color};
         self.board.drawing_queue.push(drawAction);
+        self.previous_point = mapEvt.mapPoint;
+      } else if (!self.previous_point) {
+        self.previous_point = mapEvt.mapPoint;
       }
-      self.previous_point = mapEvt.mapPoint;
     });
 
     $(this.board.event_manager).on('dragstop.Pen', function(evt, mapEvt) {
 
     });
+  };
+
+  this.getDistance = function(p1, p2) {
+    var x_side = Math.pow((p1[0] - p2[0]), 2);
+    var y_side = Math.pow((p1[1] - p2[1]), 2);
+    return Math.sqrt(x_side + y_side);
   };
 
   this.disable = function() {

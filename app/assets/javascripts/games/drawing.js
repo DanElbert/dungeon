@@ -27,6 +27,7 @@ function Drawing(context) {
       this.context.beginPath();
       this.context.lineWidth = width;
       this.context.strokeStyle = color;
+      this.context.lineCap = 'round';
 
       for (var x = 0; x < startCoordList.length; x++) {
         this.context.moveTo(startCoordList[x][0], startCoordList[x][1]);
