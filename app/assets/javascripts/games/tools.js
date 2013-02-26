@@ -1,6 +1,21 @@
 
-function Pointer(board) {
+function Tool(board) {
   this.board = board;
+}
+_.extend(Tool.prototype, {
+  enable: function() {},
+  disable: function() {},
+  draw: function() {},
+  getDistance: function(p1, p2) {
+    var x_side = Math.pow((p1[0] - p2[0]), 2);
+    var y_side = Math.pow((p1[1] - p2[1]), 2);
+    return Math.sqrt(x_side + y_side);
+  }
+});
+
+
+function Pointer(board) {
+  Tool.call(this, board);
 
   this.drag_mouse_start = null;
   this.drag_viewport_start = null;
@@ -28,17 +43,32 @@ function Pointer(board) {
   this.disable = function() {
     $(this.board.event_manager).off(".Pointer");
   };
-
 }
 
+Pointer.prototype = new Tool();
+
 function Pen(board, width, color) {
-  this.board = board;
+  Tool.call(this, board);
   this.width = width;
   this.color = color;
+
+  this.lineBuffer = [];
 
   this.previous_point = null;
 
   var self = this;
+
+  this.saveAction = function() {
+    if (self.lineBuffer.length > 0) {
+      var action = {actionType: "penAction", color: self.color, width: self.width, lines: self.lineBuffer};
+      self.board.pending_action_queue.push(action);
+      self.lineBuffer = [];
+    }
+  };
+
+  this.draw = function() {
+    this.board.drawing.drawLines(this.color, this.width, this.lineBuffer);
+  };
 
   this.enable = function() {
     $(this.board.event_manager).on('dragstart.Pen', function(evt, mapEvt) {
@@ -47,8 +77,7 @@ function Pen(board, width, color) {
 
     $(this.board.event_manager).on('drag.Pen', function(evt, mapEvt) {
       if (self.previous_point && self.getDistance(self.previous_point, mapEvt.mapPoint) >= self.width) {
-        var drawAction = {type: "line", start: self.previous_point, end: mapEvt.mapPoint, width: self.width, color: self.color};
-        self.board.drawing_queue.push(drawAction);
+        self.lineBuffer.push({start: self.previous_point, end: mapEvt.mapPoint});
         self.previous_point = mapEvt.mapPoint;
       } else if (!self.previous_point) {
         self.previous_point = mapEvt.mapPoint;
@@ -56,17 +85,14 @@ function Pen(board, width, color) {
     });
 
     $(this.board.event_manager).on('dragstop.Pen', function(evt, mapEvt) {
-
+      self.saveAction();
     });
   };
 
-  this.getDistance = function(p1, p2) {
-    var x_side = Math.pow((p1[0] - p2[0]), 2);
-    var y_side = Math.pow((p1[1] - p2[1]), 2);
-    return Math.sqrt(x_side + y_side);
-  };
-
   this.disable = function() {
+    self.saveAction();
     $(this.board.event_manager).off(".Pen");
   };
 }
+
+Pen.prototype = new Tool();
