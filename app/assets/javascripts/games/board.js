@@ -9,6 +9,7 @@ function Board(canvas) {
 
   this.pending_action_queue = [];
   this.drawing_actions = [];
+  this.undo_stack = [];
 
   this.drawingCanvas = document.createElement("canvas");
   this.drawingContext = this.drawingCanvas.getContext('2d');
@@ -48,9 +49,22 @@ function Board(canvas) {
     this.current_tool.enable();
   };
 
-  this.addAction = function(action) {
+  this.addAction = function(action, undoAction) {
+    action = attachActionMethods(action);
+    this.pending_action_queue.push(action);
 
+    if (undoAction) {
+      undoAction = attachActionMethods(undoAction);
+      this.undo_stack.push(undoAction);
+    }
   }
+
+  this.undo = function() {
+    if (this.undo_stack.length > 0) {
+      var action = this.undo_stack.pop();
+      this.addAction(action);
+    }
+  };
 
   this.refresh = function(data) {
 
@@ -128,6 +142,8 @@ function Board(canvas) {
       action = attachActionMethods(action);
       action.apply(this);
     }, this);
+
+    this.pending_action_queue = [];
   };
 
   this.update = function() {

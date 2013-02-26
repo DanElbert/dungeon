@@ -22,6 +22,10 @@ $(document).ready(function () {
     setSize($(this).val());
   });
 
+  $("#undo_button").click(function() {
+    game_board.undo();
+  });
+
   setupColorPicker("#tool_color_button", "#tool_color_menu");
 
   $("#tool_width").val(3);
