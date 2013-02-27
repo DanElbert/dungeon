@@ -1,5 +1,5 @@
 module GameServer
-  class GameActionHandler
+  class AddActionHandler
     def process_message(message)
 
     end
