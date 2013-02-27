@@ -22,6 +22,10 @@ $(document).ready(function () {
     setSize($(this).val());
   });
 
+  $("#undo_button").click(function() {
+    game_board.undo();
+  });
+
   setupColorPicker("#tool_color_button", "#tool_color_menu");
 
   $("#tool_width").val(3);
@@ -48,7 +52,6 @@ $(document).ready(function () {
   });
 
   refreshBoard();
-  draw_game();
 });
 
 window.requestAnimFrame = (function (callback) {
@@ -83,12 +86,11 @@ function refreshBoard() {
     board_data = data;
     setSize($("#zoom_level").val());
     game_board.refresh(data);
-    setTimeout(refreshBoard, 2000);
+    draw_game();
   });
 }
 
 function selectPenTool() {
-  console.log($("#tool_color").val());
   game_board.setTool(new Pen(game_board, $("#tool_width").val(), $("#tool_color").val()));
 }
 
@@ -112,6 +114,7 @@ function setupColorPicker(buttonId, menuId) {
             .appendTo(jqMenu);
   });
 
+  $("#tool_color").val(colors.Black);
 
   jqMenu.dialog({
     autoOpen: false,
