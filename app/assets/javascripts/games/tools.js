@@ -61,7 +61,7 @@ function Pen(board, width, color) {
   this.saveAction = function() {
     if (self.lineBuffer.length > 0) {
       var action = {actionType: "penAction", color: self.color, width: self.width, lines: self.lineBuffer, uid: generateActionId()};
-      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       self.board.addAction(action, undoAction);
       self.lineBuffer = [];
     }

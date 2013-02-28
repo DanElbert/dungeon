@@ -1,5 +1,6 @@
 <% content_for :header do %>
   <%= javascript_include_tag "games" %>
+  <%= javascript_include_tag "#{GAME_SERVER_URL}/client.js" %>
 <% end %>
 
 <div id="game_header">
@@ -28,6 +29,7 @@
 
 <script type="text/javascript">
   BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>';
-  BOARD_DRAWING_URL = '<%= drawing_game_path(:id => @game.id) %>'
+  GAME_SERVER_URL = '<%= GAME_SERVER_URL %>';
+  GAME_ID = <%= @game.id %>;
 
 </script>

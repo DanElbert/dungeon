@@ -29,6 +29,20 @@ function Board(canvas) {
   // Used in events
   var self = this;
 
+  this.sentMessageIds = [];
+  this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
+  this.gameServerClient.addExtension(
+      {
+        outgoing: function(message, callback) {
+          message['ext'] = message['ext'] || {};
+          message['ext']['game_id'] = GAME_ID;
+          callback(message);
+        }
+      });
+  this.addActionSubscription = this.gameServerClient.subscribe('/game/add_action', function(message) {
+    self.handleAddActionMessage(message);
+  });
+
   $(this.event_manager).on('mousemove', function(evt, mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
   });
@@ -49,9 +63,25 @@ function Board(canvas) {
     this.current_tool.enable();
   };
 
+  this.handleAddActionMessage = function(message) {
+    var index = _.indexOf(this.sentMessageIds, message.uid)
+    if (index >= 0) {
+      this.sentMessageIds.splice(index, 1);
+    } else {
+      this.addAction(message);
+    }
+  };
+
+  this.sendActionMessage = function(action) {
+    this.sentMessageIds.push(action.uid);
+    this.gameServerClient.publish('/game/add_action', action);
+  };
+
   this.addAction = function(action, undoAction) {
     action = attachActionMethods(action);
     this.pending_action_queue.push(action);
+
+    this.sendActionMessage(action);
 
     if (undoAction) {
       undoAction = attachActionMethods(undoAction);
