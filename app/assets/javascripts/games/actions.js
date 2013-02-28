@@ -47,7 +47,7 @@ var actionMethods = {
     },
 
     validateData: function() {
-      this.ensureFields(["actionId"]);
+      this.ensureFields(["actionId", "uid"]);
     }
   }
 };

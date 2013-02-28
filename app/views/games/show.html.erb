@@ -28,10 +28,8 @@
 <br style="clear: both;"/>
 
 <script type="text/javascript">
-  var BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>';
-  var BOARD_DRAWING_URL = '<%= drawing_game_path(:id => @game.id) %>';
-
-  var GAME_SERVER_URL = '<%= GAME_SERVER_URL %>';
-
+  BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>';
+  GAME_SERVER_URL = '<%= GAME_SERVER_URL %>';
+  GAME_ID = <%= @game.id %>;
 
 </script>

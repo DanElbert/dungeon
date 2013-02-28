@@ -3,7 +3,7 @@ Dungeon::Application.configure do
   RELATIVE_ROOT = "/"
 
   GAME_SERVER_PORT = 9292
-  GAME_SERVER_URL = "http://localhost:#{GAME_SERVER_PORT}/games"
+  GAME_SERVER_URL = "http://conan.thenever:#{GAME_SERVER_PORT}/games"
 
   # Settings specified here will take precedence over those in config/application.rb
 
