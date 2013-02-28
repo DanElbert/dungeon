@@ -211,12 +211,6 @@ function Board(canvas) {
 };
 
 // Wraps canvas events and generates map-friendly events.
-// Raises the following events:
-// dragStart
-// drag
-// dragStop
-// mouseMove
-// click
 // Each event has a custom event object with the following properties (as appropriate):
 // dragStart, dragStartCell, previousDrag, mapPoint, mapPointCell, mousePoint
 function BoardEvents(board) {
