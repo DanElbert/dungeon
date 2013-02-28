@@ -17,9 +17,9 @@ module GameServer
     def incoming(message, callback)
       if message['channel'] == '/meta/subscribe'
         if get_handler(message['subscription'])
-          puts "New subscription to #{message['subscription']}"
+          #puts "New subscription to #{message['subscription']}"
         else
-          puts "No handler for #{message['subscription']}"
+          #puts "No handler for #{message['subscription']}"
           message['error'] = "Invalid Subscription"
         end
       else
