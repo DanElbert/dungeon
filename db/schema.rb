@@ -11,20 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130214012355) do
+ActiveRecord::Schema.define(:version => 20130301012157) do
 
-  create_table "board_drawing_data", :force => true do |t|
-    t.integer  "board_drawing_id"
-    t.binary   "data"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
-  end
-
-  create_table "board_drawings", :force => true do |t|
-    t.integer  "board_id"
-    t.integer  "version"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+  create_table "board_drawing_actions", :force => true do |t|
+    t.string   "action_type"
+    t.string   "uid"
+    t.text     "properties"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "board_pieces", :force => true do |t|
