@@ -2,7 +2,7 @@ class Board < ActiveRecord::Base
   attr_accessible :name
   belongs_to :game
   has_many :board_pieces, :dependent => :destroy
-  has_one :board_drawing, :dependent => :destroy
+  has_many :board_drawing_actions, :dependent => :destroy
 
   def add_piece(left, top, right, bottom, image)
     p = BoardPiece.new

@@ -11,7 +11,7 @@ class BoardTest < ActiveSupport::TestCase
 
   test "build_item_array with single square" do
     b = TemplateBoard.create()
-    b.add_piece(0, 0, 9, 9)
+    b.add_piece(0, 0, 9, 9, "img.png")
 
     board = b.build_item_array
 
@@ -23,7 +23,7 @@ class BoardTest < ActiveSupport::TestCase
 
   test "build_item_array with single rectangle" do
     b = TemplateBoard.create()
-    b.add_piece(0, 0, 4, 9)
+    b.add_piece(0, 0, 4, 9, "img.png")
 
     board = b.build_item_array
 
@@ -34,8 +34,8 @@ class BoardTest < ActiveSupport::TestCase
 
   test "build_item_array with two rectangles" do
     b = TemplateBoard.create()
-    b.add_piece(0, 0, 4, 9)
-    b.add_piece(5, 0, 9, 2)
+    b.add_piece(0, 0, 4, 9, "img.png")
+    b.add_piece(5, 0, 9, 2, "img.png")
 
     board = b.build_item_array
 
@@ -46,8 +46,8 @@ class BoardTest < ActiveSupport::TestCase
 
   test "Basic json serialization" do
     b = TemplateBoard.create()
-    b.add_piece(0, 0, 4, 9)
-    b.add_piece(5, 0, 9, 2)
+    b.add_piece(0, 0, 4, 9, "img.png")
+    b.add_piece(5, 0, 9, 2, "img.png")
     b.to_json
   end
 end
