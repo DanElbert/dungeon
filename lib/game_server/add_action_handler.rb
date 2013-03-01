@@ -1,6 +1,5 @@
 module GameServer
   class AddActionHandler
-
     DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction)
 
     def process_message(message)

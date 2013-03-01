@@ -1,5 +1,6 @@
 class BoardDrawingAction < ActiveRecord::Base
 
+  belongs_to :board
   serialize :properties
 
   after_initialize :init
@@ -9,17 +10,21 @@ class BoardDrawingAction < ActiveRecord::Base
     action.uid = message['uid']
     action.action_type = message['actionType']
     action.properties = message.select do |k, _|
-      !['uid', 'actionType', 'ext'].include?(k)
+      !['uid', 'actionType', 'ext'].include?(k.to_s)
     end
 
     action
   end
 
-  def self.as_json(options={})
+  def actionType
+    self.action_type
+  end
+
+  def as_json(options={})
     opts = {
         :root => false,
-        :only => [:uid, :action_type],
-        :methods => self.properties.keys
+        :only => [:uid],
+        :methods => [self.properties.keys, :actionType].flatten
     }
 
     super(opts)
@@ -34,7 +39,7 @@ class BoardDrawingAction < ActiveRecord::Base
 
   def method_missing(sym, *args, &block)
     if @enable_properties_methods && self.properties.key?(sym.to_s)
-      self.properties[sym.to_s]
+      return self.properties[sym.to_s]
     end
 
     super
