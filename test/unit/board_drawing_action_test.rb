@@ -16,14 +16,38 @@ class BoardDrawingActionTest < ActiveSupport::TestCase
   end
 
   test "crud" do
-    message = {:actionType => "penAction", :uid => "a1b2", :color => "#00FF00", :width => 3, :lines => [
-        {:start => [0,0], :end => [5,5]},
-        {:start => [5,5], :end => [7,10]}]}
+    message = {'actionType' => "penAction", 'uid' => "a1b2", 'color' => "#00FF00", 'width' => 3, 'lines' => [
+        {'start' => [0,0], 'end' => [5,5]},
+        {'start' => [5,5], 'end' => [7,10]}]}
 
     action = BoardDrawingAction.from_message(message)
     action.save!
     action = BoardDrawingAction.find(action.id)
     assert_equal "#00FF00", action.properties[:color]
+  end
+
+  test "method_missing" do
+    message = {'actionType' => "penAction", 'uid' => "a1b2", 'color' => "#00FF00", 'width' => 3, 'lines' => [
+        {'start' => [0,0], 'end' => [5,5]},
+        {'start' => [5,5], 'end' => [7,10]}]}
+
+    action = BoardDrawingAction.from_message(message)
+
+    assert_equal "#00FF00", action.color
+    assert_kind_of Array, action.lines
+  end
+
+  test "as_json" do
+    message = {'actionType' => "penAction", 'uid' => "a1b2", 'color' => "#00FF00", 'width' => 3, 'lines' => [
+        {'start' => [0,0], 'end' => [5,5]},
+        {'start' => [5,5], 'end' => [7,10]}]}
+
+    action = BoardDrawingAction.from_message(message)
+
+    json = action.as_json
+
+    assert json['color']
+
   end
 
 end
