@@ -24,6 +24,7 @@ var actionMethods = {
     }
   },
 
+  // References a drawing action to remove
   removeDrawingAction: {
     apply: function(board) {
       var index = null;

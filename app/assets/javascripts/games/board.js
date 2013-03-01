@@ -68,7 +68,7 @@ function Board(canvas) {
     if (index >= 0) {
       this.sentMessageIds.splice(index, 1);
     } else {
-      this.addAction(message);
+      this.addAction(message, null, false);
     }
   };
 
@@ -77,11 +77,13 @@ function Board(canvas) {
     this.gameServerClient.publish('/game/add_action', action);
   };
 
-  this.addAction = function(action, undoAction) {
+  this.addAction = function(action, undoAction, broadcastAction) {
     action = attachActionMethods(action);
     this.pending_action_queue.push(action);
 
-    this.sendActionMessage(action);
+    if (broadcastAction) {
+      this.sendActionMessage(action);
+    }
 
     if (undoAction) {
       undoAction = attachActionMethods(undoAction);
@@ -92,7 +94,7 @@ function Board(canvas) {
   this.undo = function() {
     if (this.undo_stack.length > 0) {
       var action = this.undo_stack.pop();
-      this.addAction(action);
+      this.addAction(action, null, true);
     }
   };
 
@@ -241,12 +243,6 @@ function Board(canvas) {
 };
 
 // Wraps canvas events and generates map-friendly events.
-// Raises the following events:
-// dragStart
-// drag
-// dragStop
-// mouseMove
-// click
 // Each event has a custom event object with the following properties (as appropriate):
 // dragStart, dragStartCell, previousDrag, mapPoint, mapPointCell, mousePoint
 function BoardEvents(board) {
