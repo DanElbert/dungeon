@@ -16,8 +16,4 @@ class BoardTest < ActiveSupport::TestCase
     b.to_json
   end
 
-  test "board drawing action serialization" do
-    b = TemplateBoard.create()
-
-  end
 end
