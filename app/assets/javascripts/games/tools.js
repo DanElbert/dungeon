@@ -152,3 +152,41 @@ Eraser.prototype = _.extend(new DrawTool(), {
     }
   }
 });
+
+function Measure(board) {
+  Tool.call(this, board);
+  this.startCell = null;
+  this.currentCell = null;
+}
+Measure.prototype = _.extend(new Tool(), {
+  enable: function () {
+    var board = this.board;
+    var self = this;
+    $(board.event_manager).on('dragstart.Measure', function (evt, mapEvt) {
+      self.startCell = mapEvt.mapPointCell;
+    });
+
+    $(board.event_manager).on('drag.Measure', function (evt, mapEvt) {
+      self.currentCell = mapEvt.mapPointCell;
+    });
+
+    $(board.event_manager).on('dragstop.Measure', function (evt, mapEvt) {
+      self.startCell = null;
+      self.currentCell = null;
+    });
+  },
+
+  disable: function () {
+    $(this.board.event_manager).off(".Measure");
+  },
+
+  draw: function() {
+    if (this.startCell && this.currentCell) {
+      if (this.startCell[0] == this.currentCell[0] && this.startCell[1] == this.currentCell[1]) {
+        return;
+      }
+
+      this.board.drawing.drawPath(this.startCell, this.currentCell);
+    }
+  }
+});

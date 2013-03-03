@@ -7,6 +7,23 @@ function Drawing(context) {
     this.context.clearRect(0, 0, columns * this.cellWidth, rows * this.cellHeight);
   };
 
+  this.drawPath = function(start, end) {
+    this.context.beginPath();
+    this.context.lineWidth = 5;
+    this.context.strokeStyle = "#000000";
+    this.context.lineCap = 'round';
+
+    var startX = (start[0] * this.cellWidth) + (this.cellWidth / 2);
+    var startY = (start[1] * this.cellHeight) + (this.cellHeight / 2);
+    var endX = (end[0] * this.cellWidth) + (this.cellWidth / 2);
+    var endY = (end[1] * this.cellHeight) + (this.cellHeight / 2);
+
+    this.context.moveTo(startX, startY);
+    this.context.lineTo(endX, endY);
+
+    this.context.stroke();
+  };
+
   this.drawLines = function (color, width, lines) {
     this.context.beginPath();
     this.context.lineWidth = width;

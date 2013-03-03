@@ -31,6 +31,10 @@ $(document).ready(function () {
     game_board.undo();
   });
 
+  $("#tool_measure").click(function() {
+    game_board.setTool(new Measure(game_board));
+  });
+
   setupColorPicker("#tool_color_button", "#tool_color_menu");
 
   $("#tool_width").val(3);
