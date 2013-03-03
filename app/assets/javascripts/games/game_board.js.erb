@@ -23,6 +23,10 @@ $(document).ready(function () {
     setSize($(this).val());
   });
 
+  $("#tool_eraser").click(function() {
+    game_board.setTool(new Eraser(game_board, 30));
+  });
+
   $("#undo_button").click(function() {
     game_board.undo();
   });

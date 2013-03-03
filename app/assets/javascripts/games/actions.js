@@ -24,6 +24,17 @@ var actionMethods = {
     }
   },
 
+  // An erase action consists of a width and a collection of lines
+  eraseAction: {
+    apply: function(board) {
+      board.drawing_actions.push(this);
+      board.drawingDrawing.eraseLines(this.width, this.lines);
+    },
+
+    validateData: function() {
+      this.ensureFields(["width", "lines", "uid"]);
+    }
+  },
   // References a drawing action to remove
   removeDrawingAction: {
     apply: function(board) {

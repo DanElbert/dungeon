@@ -300,7 +300,7 @@ function BoardEvents(board) {
 
     if (self.isLeftMouseDown && !self.isDragging) {
       self.isDragging = true;
-      jqThis.trigger('dragstart', {dragStart: self.dragStart, dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]), mousePoint: canvasCoords});
+      jqThis.trigger('dragstart', {mapPoint: self.dragStart, mapPointCell: self.getCell(self.dragStart[0], self.dragStart[1]), mousePoint: canvasCoords});
     }
 
     if (self.isDragging) {
@@ -320,25 +320,32 @@ function BoardEvents(board) {
 
   this.cursorUpHandler = function() {
 
-    if (!self.isDragging) {
-      return;
+    if (self.isDragging) {
+      var mapPoint = self.previousDrag;
+      var cell = self.getCell(mapPoint[0], mapPoint[1]);
+
+      jqThis.trigger('dragstop', {
+        dragStart: self.dragStart,
+        dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
+        previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
+        mapPoint: mapPoint,
+        mapPointCell: cell
+      });
+
+    } else {
+      var mapPoint = self.dragStart;
+      var cell = self.getCell(mapPoint[0], mapPoint[1]);
+
+      jqThis.trigger('click', {
+        mapPoint: mapPoint,
+        mapPointCell: cell
+      });
     }
-
-    var mapPoint = self.previousDrag;
-    var cell = self.getCell(mapPoint[0], mapPoint[1]);
-
-    self.isLeftMouseDown = false;
-    self.isDragging = false;
-
-    jqThis.trigger('dragstop', {
-      dragStart: self.dragStart,
-      dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
-      previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
-      mapPoint: mapPoint,
-      mapPointCell: cell});
 
     self.dragStart = null;
     self.previousDrag = null;
+    self.isDragging = false;
+    self.isLeftMouseDown = false;
   };
 
   jqCanvas.on('mousedown.BoardEvents', function(evt) {

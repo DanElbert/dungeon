@@ -7,9 +7,7 @@ _.extend(Tool.prototype, {
   disable: function() {},
   draw: function() {},
   getDistance: function(p1, p2) {
-    var x_side = Math.pow((p1[0] - p2[0]), 2);
-    var y_side = Math.pow((p1[1] - p2[1]), 2);
-    return Math.sqrt(x_side + y_side);
+    return this.board.drawing.getDistance(p1, p2);
   }
 });
 
@@ -47,53 +45,110 @@ function Pointer(board) {
 
 Pointer.prototype = new Tool();
 
-function Pen(board, width, color) {
+function DrawTool(board) {
   Tool.call(this, board);
-  this.width = width;
-  this.color = color;
 
   this.lineBuffer = [];
-
   this.previous_point = null;
-
-  var self = this;
-
-  this.saveAction = function() {
-    if (self.lineBuffer.length > 0) {
-      var action = {actionType: "penAction", color: self.color, width: self.width, lines: self.lineBuffer, uid: generateActionId()};
-      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
-      self.board.addAction(action, undoAction, true);
-      self.lineBuffer = [];
+  this.cursor = null;
+}
+DrawTool.prototype = _.extend(new Tool(), {
+  eventNamespace: function() { return "Drawing"; },
+  minimumLineDistance: function() { return 0; },
+  saveAction: function() { },
+  handleMouseMove: function(location) {
+    if (this.previous_point == null) {
+      this.previous_point = location;
     }
-  };
 
-  this.draw = function() {
-    this.board.drawing.drawLines(this.color, this.width, this.lineBuffer);
-  };
+    var distance = this.getDistance(this.previous_point, location);
 
-  this.enable = function() {
-    $(this.board.event_manager).on('dragstart.Pen', function(evt, mapEvt) {
-      self.previous_point = mapEvt.mapPoint;
+    if (distance >= this.minimumLineDistance()) {
+      this.lineBuffer.push({start: this.previous_point, end: location});
+      this.previous_point = location;
+    }
+  },
+  enable: function() {
+    var self = this;
+    $(this.board.event_manager).on('dragstart.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.previous_point = null;
+      self.handleMouseMove(mapEvt.mapPoint);
     });
 
-    $(this.board.event_manager).on('drag.Pen', function(evt, mapEvt) {
-      if (self.previous_point && self.getDistance(self.previous_point, mapEvt.mapPoint) >= self.width) {
-        self.lineBuffer.push({start: self.previous_point, end: mapEvt.mapPoint});
-        self.previous_point = mapEvt.mapPoint;
-      } else if (!self.previous_point) {
-        self.previous_point = mapEvt.mapPoint;
-      }
+    $(this.board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.cursor = mapEvt.mapPoint;
     });
 
-    $(this.board.event_manager).on('dragstop.Pen', function(evt, mapEvt) {
+    $(this.board.event_manager).on('drag.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.handleMouseMove(mapEvt.mapPoint);
+    });
+
+    $(this.board.event_manager).on('dragstop.' + this.eventNamespace(), function(evt, mapEvt) {
       self.saveAction();
+      self.lineBuffer = [];
     });
-  };
+  },
 
-  this.disable = function() {
-    self.saveAction();
-    $(this.board.event_manager).off(".Pen");
-  };
+  disable: function() {
+    this.saveAction();
+    this.lineBuffer = [];
+    $(this.board.event_manager).off("." + this.eventNamespace());
+  }
+});
+
+function Pen(board, width, color) {
+  DrawTool.call(this, board);
+  this.width = width;
+  this.color = color;
 }
 
-Pen.prototype = new Tool();
+Pen.prototype = _.extend(new DrawTool(), {
+  minimumLineDistance: function() { return this.width; },
+  eventNamespace: function() { return "Pen"; },
+  draw: function() {
+    this.board.drawing.drawLines(this.color, this.width, this.lineBuffer);
+  },
+  saveAction: function() {
+    if (this.lineBuffer.length > 0) {
+      var action = {actionType: "penAction", color: this.color, width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});
+
+function Eraser(board, width) {
+  DrawTool.call(this, board);
+  this.width = width;
+}
+
+Eraser.prototype = _.extend(new DrawTool(), {
+  minimumLineDistance: function() { return 0; },
+  eventNamespace: function() { return "Eraser"; },
+  enable: function() {
+    DrawTool.prototype.enable.apply(this);
+    var self = this;
+    $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.previous_point = null;
+      self.handleMouseMove(mapEvt.mapPoint);
+      self.saveAction();
+      self.lineBuffer = [];
+    });
+  },
+  draw: function() {
+    if (this.lineBuffer.length > 0) {
+      this.board.drawing.eraseLines(this.width, this.lineBuffer);
+    }
+
+    if (this.cursor) {
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 1, "#FFFFFF")
+    }
+  },
+  saveAction: function() {
+    if (this.lineBuffer.length > 0) {
+      var action = {actionType: "eraseAction", width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});

@@ -23,6 +23,42 @@ function Drawing(context) {
     this.context.stroke();
   };
 
+  this.eraseLines = function(width, lines) {
+
+    var originalCompositeOperation = this.context.globalCompositeOperation;
+    this.context.globalCompositeOperation = 'destination-out';
+
+    this.context.beginPath();
+    this.context.lineWidth = width;
+    this.context.strokeStyle = 'rgba(0, 0, 0, 1.0)';
+    this.context.lineCap = 'round';
+
+    for (var x = 0; x < lines.length; x++) {
+      var start = lines[x].start;
+      var end = lines[x].end;
+      var distance = this.getDistance(start, end);
+
+      // for 0 length lines, draw a 1 pixel line (since the intention is probably a dot)
+      if (distance == 0) {
+        start = [start[0] + 1, start[1] + 1];
+      }
+      this.context.moveTo(start[0], start[1]);
+      this.context.lineTo(end[0], end[1]);
+    }
+
+    this.context.stroke();
+
+    this.context.globalCompositeOperation = originalCompositeOperation;
+  };
+
+  this.drawCircle = function(x, y, radius, width, color) {
+    context.beginPath();
+    context.arc(x, y, radius, 0, 2 * Math.PI, false);
+    context.lineWidth = width;
+    context.strokeStyle = color;
+    context.stroke();
+  };
+
   this.drawTile = function (x, y, width, height, imageObj) {
     var imgWidth = imageObj.width;
     var imgHeight = imageObj.height;
@@ -105,13 +141,19 @@ function Drawing(context) {
     this.context.rect(0, 0, columns * this.cellWidth, rows * this.cellHeight);
     this.context.fillStyle = color;
     this.context.fill();
-  }
+  };
 
   this.gridWidth = function (columns) {
     return columns * this.cellWidth;
-  }
+  };
 
   this.gridHeight = function (rows) {
     return rows * this.cellHeight;
-  }
+  };
+
+  this.getDistance = function(p1, p2) {
+    var x_side = Math.pow((p1[0] - p2[0]), 2);
+    var y_side = Math.pow((p1[1] - p2[1]), 2);
+    return Math.sqrt(x_side + y_side);
+  };
 }
