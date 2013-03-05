@@ -283,10 +283,7 @@ function BoardEvents(board) {
   };
 
   this.getCell = function(mapX, mapY) {
-    var x = Math.floor(mapX / (this.board.drawing.cellWidth));
-    var y = Math.floor(mapY / (this.board.drawing.cellHeight));
-
-    return [x, y];
+    return this.board.drawing.getCell(mapX, mapY);
   };
 
   this.cursorDownHandler = function(canvasCoords) {

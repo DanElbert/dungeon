@@ -8,20 +8,25 @@ function Drawing(context) {
   };
 
   this.drawPath = function(start, end) {
+    var startPoint = this.getCellMidpoint(start);
+    var endPoint = this.getCellMidpoint(end);
+
     this.context.beginPath();
     this.context.lineWidth = 5;
     this.context.strokeStyle = "#000000";
     this.context.lineCap = 'round';
 
-    var startX = (start[0] * this.cellWidth) + (this.cellWidth / 2);
-    var startY = (start[1] * this.cellHeight) + (this.cellHeight / 2);
-    var endX = (end[0] * this.cellWidth) + (this.cellWidth / 2);
-    var endY = (end[1] * this.cellHeight) + (this.cellHeight / 2);
-
-    this.context.moveTo(startX, startY);
-    this.context.lineTo(endX, endY);
+    this.context.moveTo(startPoint[0], startPoint[1]);
+    this.context.lineTo(endPoint[0], endPoint[1]);
 
     this.context.stroke();
+
+    var cellPath = this.getMovementPath(start, end);
+
+    _.each(cellPath, function(c) {
+      this.colorCell(c[0], c[1], 'rgba(75, 75, 75, 0.8)');
+    }, this);
+
   };
 
   this.drawLines = function (color, width, lines) {
@@ -160,6 +165,57 @@ function Drawing(context) {
     this.context.fill();
   };
 
+  this.getMovementPath = function(startCell, endCell) {
+    var startPoint = this.getCellMidpoint(startCell);
+    var endPoint = this.getCellMidpoint(endCell);
+    var startX = startPoint[0];
+    var startY = startPoint[1];
+    var endX = endPoint[0];
+    var endY = endPoint[1];
+
+    var flipped = false;
+
+    if (Math.abs(startY - endY) > Math.abs(startX - endX)) {
+      flipped = true;
+      var tmp = startX;
+      startX = startY;
+      startY = tmp;
+
+      tmp = endX;
+      endX = endY;
+      endY = tmp;
+    }
+
+    // line function: y = mx + b, where m is the slope, and b is the y-intercept
+    var m = (startX - endX) == 0 ? 0 : (startY - endY) / (startX - endX);
+    var b = startY - (m * startX);
+
+    var lineFunction = function(x) {
+      return (m * x) + b;
+    };
+
+    var cellPath = [];
+    var dirX = startX <= endX ? 1 : -1;
+
+    for (var x = startX; dirX == 1 ? x <= endX : x >= endX; x += (this.cellWidth * dirX)) {
+      var y = lineFunction(x);
+      var cell = this.getCell(x, y);
+      cellPath.push(cell);
+    }
+
+    if (flipped) {
+      cellPath = _.map(cellPath, function(c) { return [c[1], c[0]]; })
+    }
+
+    return cellPath;
+  };
+
+  this.getCellMidpoint = function(cell) {
+    var x = (cell[0] * this.cellWidth) + (this.cellWidth / 2);
+    var y = (cell[1] * this.cellHeight) + (this.cellHeight / 2);
+    return [x, y];
+  };
+
   this.gridWidth = function (columns) {
     return columns * this.cellWidth;
   };
@@ -172,5 +228,12 @@ function Drawing(context) {
     var x_side = Math.pow((p1[0] - p2[0]), 2);
     var y_side = Math.pow((p1[1] - p2[1]), 2);
     return Math.sqrt(x_side + y_side);
+  };
+
+  this.getCell = function(x, y) {
+    var x = Math.floor(x / (this.cellWidth));
+    var y = Math.floor(y / (this.cellHeight));
+
+    return [x, y];
   };
 }
