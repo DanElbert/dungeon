@@ -363,8 +363,7 @@ function BoardEvents(board) {
 
   jqCanvas.on('mouseup.BoardEvents', function(evt) {
     if (evt.which == 1) { // left button
-      var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-      self.cursorUpHandler(canvasCoords);
+      self.cursorUpHandler();
     }
     evt.preventDefault();
   });
@@ -376,8 +375,7 @@ function BoardEvents(board) {
   });
 
   jqCanvas.on('mouseout.BoardEvents', function(evt) {
-    var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-    self.cursorUpHandler(canvasCoords);
+    self.cursorUpHandler();
   });
 
   jqCanvas.on('touchstart.BoardEvents', function(evt) {
