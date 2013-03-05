@@ -350,7 +350,7 @@ function BoardEvents(board) {
       var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
       self.cursorDownHandler(canvasCoords);
     }
-    evt.stopPropagation();
+    evt.preventDefault();
   });
 
   jqCanvas.on('mouseup.BoardEvents', function(evt) {
@@ -358,13 +358,13 @@ function BoardEvents(board) {
       var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
       self.cursorUpHandler(canvasCoords);
     }
-    evt.stopPropagation();
+    evt.preventDefault();
   });
 
   jqCanvas.on('mousemove.BoardEvents', function(evt) {
     var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
     self.cursorMoveHandler(canvasCoords);
-    evt.stopPropagation();
+    evt.preventDefault();
   });
 
   jqCanvas.on('touchstart.BoardEvents', function(evt) {

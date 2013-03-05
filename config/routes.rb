@@ -1,5 +1,7 @@
 Dungeon::Application.routes.draw do
 
+  match '/admin' => 'admin/users#index'
+
   namespace "admin" do
     resources :users
     resources :games, :except => [:new, :create]

@@ -7,6 +7,7 @@ class Game < ActiveRecord::Base
   has_one :game_board, :dependent => :destroy
 
   validates :game_board, :presence => true
+  validates :name, :presence => true
 
 
 end
