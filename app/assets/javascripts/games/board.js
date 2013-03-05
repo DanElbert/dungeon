@@ -163,6 +163,12 @@ function Board(canvas) {
     this.context.drawImage(this.drawingCanvas, 0, 0);
   };
 
+  this.renderCursor = function() {
+    if (this.hovered_cell) {
+      this.drawing.colorCell(this.hovered_cell[0], this.hovered_cell[1], "rgba(0, 204, 0, 0.25)");
+    }
+  };
+
   this.renderTool = function() {
     if (this.current_tool) {
       this.current_tool.draw();
@@ -205,11 +211,8 @@ function Board(canvas) {
     this.renderBoardBackground();
     this.renderDrawing();
     this.renderBoardGrid();
+    this.renderCursor();
     this.renderTool();
-
-    if (this.hovered_cell) {
-      this.drawing.colorCell(this.hovered_cell[0], this.hovered_cell[1], "rgba(0, 204, 0, 0.25)");
-    }
 
     context.restore();
   };
@@ -317,6 +320,11 @@ function BoardEvents(board) {
 
   this.cursorUpHandler = function() {
 
+    // Ignore any mouse up events that didn't start with a mousedown on the canvas
+    if (!self.isLeftMouseDown) {
+      return;
+    }
+
     if (self.isDragging) {
       var mapPoint = self.previousDrag;
       var cell = self.getCell(mapPoint[0], mapPoint[1]);
@@ -365,6 +373,11 @@ function BoardEvents(board) {
     var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
     self.cursorMoveHandler(canvasCoords);
     evt.preventDefault();
+  });
+
+  jqCanvas.on('mouseout.BoardEvents', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+    self.cursorUpHandler(canvasCoords);
   });
 
   jqCanvas.on('touchstart.BoardEvents', function(evt) {

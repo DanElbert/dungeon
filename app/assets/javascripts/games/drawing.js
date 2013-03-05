@@ -11,6 +11,12 @@ function Drawing(context) {
     var startPoint = this.getCellMidpoint(start);
     var endPoint = this.getCellMidpoint(end);
 
+    var cellPath = this.getMovementPath(start, end);
+
+    _.each(cellPath, function(c) {
+      this.colorCell(c[0], c[1], 'rgba(75, 75, 75, 0.8)');
+    }, this);
+
     this.context.beginPath();
     this.context.lineWidth = 5;
     this.context.strokeStyle = "#000000";
@@ -21,12 +27,25 @@ function Drawing(context) {
 
     this.context.stroke();
 
-    var cellPath = this.getMovementPath(start, end);
+    // TODO: Extract this somewhere more useful
+    // Count Movement spaces
+    var prev = null;
+    var diagonalMoves = 0;
+    for (var x = 0; x < cellPath.length; x++) {
+      var cur = cellPath[x];
+      if (prev && prev[0] != cur[0] && prev[1] != cur[1])
+        diagonalMoves++;
+      prev = cur;
+    }
 
-    _.each(cellPath, function(c) {
-      this.colorCell(c[0], c[1], 'rgba(75, 75, 75, 0.8)');
-    }, this);
+    var totalMovement = (cellPath.length - 1 + Math.floor(diagonalMoves / 2)) * 5;
 
+    this.context.textBaseline = 'center';
+    this.context.textAlign = 'center';
+    this.context.font = 'bold 25px sans-serif';
+    this.context.fillStyle = 'black';
+    this.context.fillText(totalMovement, endPoint[0], endPoint[1]);
+    this.context.fillText(totalMovement, startPoint[0], startPoint[1]);
   };
 
   this.drawLines = function (color, width, lines) {
