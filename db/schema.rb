@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130301040509) do
+ActiveRecord::Schema.define(:version => 20130305233304) do
 
   create_table "board_drawing_actions", :force => true do |t|
     t.string   "action_type"
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20130301040509) do
     t.datetime "updated_at",      :null => false
     t.string   "password_digest"
     t.boolean  "is_admin"
+    t.string   "auth_token"
   end
 
 end

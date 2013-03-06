@@ -9,6 +9,9 @@
 dan = User.new({:email => "dan.elbert@gmail.com", :name => "Dan", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true}, :as => :admin)
 dan.save!
 
+marcus = User.new({:email => "marcus.maday@gmail.com", :name => "Marcus", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true}, :as => :admin)
+marcus.save!
+
 template1 = TemplateBoard.new({:name => "30x30 Gray"})
 template1.add_piece(0, 0, 29, 29, "board/basic_2x2.png")
 template1.save!

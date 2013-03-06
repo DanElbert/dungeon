@@ -1,19 +1,16 @@
 module GameServer
-  class AddActionHandler
+  class AddActionHandler < Handler
 
     DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction eraseAction)
+    CHANNEL_REGEX = /^\/game\/(\d+)\/add_action$/
 
-    def process_message(message)
-      game_id = nil
+    def should_handle_message(channel)
+      !channel.nil? && !!(CHANNEL_REGEX =~ channel)
+    end
 
-      if message['ext'] && message['ext']['game_id']
-        game_id = message['ext']['game_id']
-      end
-
-      unless game_id
-        message['error'] = "Missing Game Id"
-        return
-      end
+    def handle(message)
+      # Assume that should_handle_message has already been called and this will always work
+      game_id = CHANNEL_REGEX.match(message['channel'])[1].to_i
 
       game = Game.includes(:game_board).find(game_id)
 

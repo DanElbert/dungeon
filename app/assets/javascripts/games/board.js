@@ -35,11 +35,12 @@ function Board(canvas) {
       {
         outgoing: function(message, callback) {
           message['ext'] = message['ext'] || {};
-          message['ext']['game_id'] = GAME_ID;
+          message['ext']['user_id'] = USER_ID;
+          message['ext']['auth_token'] = USER_AUTH_TOKEN;
           callback(message);
         }
       });
-  this.addActionSubscription = this.gameServerClient.subscribe('/game/add_action', function(message) {
+  this.addActionSubscription = this.gameServerClient.subscribe('/game/' + GAME_ID + '/add_action', function(message) {
     self.handleAddActionMessage(message);
   });
 
@@ -74,7 +75,7 @@ function Board(canvas) {
 
   this.sendActionMessage = function(action) {
     this.sentMessageIds.push(action.uid);
-    this.gameServerClient.publish('/game/add_action', action);
+    this.gameServerClient.publish('/game/' + GAME_ID + '/add_action', action);
   };
 
   this.addAction = function(action, undoAction, broadcastAction) {
