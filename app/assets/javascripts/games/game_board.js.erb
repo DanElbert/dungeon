@@ -15,31 +15,72 @@ $(document).ready(function () {
 
   setCanvasSize();
 
+  game_board = new Board($("#game_board")[0]);
+
+  $("#tool_menu").toolMenu({
+    values: ["Pointer", "Pen", "Eraser", "Measure"],
+    initialValue: "Pointer",
+    contentCallback: function(value) {
+      return $("<div></div>").text(value);
+    },
+    selectedCallback: function(value) {
+      switch (value) {
+        case "Pointer":
+          game_board.setTool(new Pointer(game_board));
+          break;
+        case "Pen":
+          selectPenTool();
+          break;
+        case "Eraser":
+          game_board.setTool(new Eraser(game_board, 30));
+          break;
+        case "Measure":
+          game_board.setTool(new Measure(game_board));
+          break;
+        default:
+          alert("No such tool");
+      }
+    }
+  });
+
+  $("#tool_color").toolMenu({
+    values: [{name: "Red", color: "#FF0000"}, {name: "Yellow", color: "#FFFF00"}, {name: "Green", color: "#01DF01"}, {name: "Blue", color: "#0000FF"}, {name: "Black", color: "#000000"}],
+    initialValue: {name: "Green", color: "#01DF01"},
+    contentCallback: function(value) {
+      return $("<div></div>").css("background-color", value.color).css('width', '100%').css('height', '100%');
+    },
+    selectedCallback: function(value) {
+      $("#tool_menu").toolMenu("triggerSelection");
+    }
+  });
+
+  $("#tool_line_width").toolMenu({
+    values: [1, 3, 5, 7, 10, 15],
+    initialValue: 3,
+    contentCallback: function(value) {
+      var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
+      var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + value / 2 + "px"});
+      var line = $("<div></div>").css({clear: "both", height: value + "px", position: "relative", backgroundColor: "black"});
+      wrapper.append(floater);
+      wrapper.append(line);
+      return wrapper;
+    },
+    selectedCallback: function(value) {
+      $("#tool_menu").toolMenu("triggerSelection");
+    }
+  });
+
   $(window).resize(function() {
     setCanvasSize();
   });
-
-  game_board = new Board($("#game_board")[0]);
 
   $("#zoom_level").change(function () {
     setSize($(this).val());
   });
 
-  $("#tool_eraser").click(function() {
-    game_board.setTool(new Eraser(game_board, 30));
-  });
-
   $("#undo_button").click(function() {
     game_board.undo();
   });
-
-  $("#tool_measure").click(function() {
-    game_board.setTool(new Measure(game_board));
-  });
-
-  setupColorPicker("#tool_color_button", "#tool_color_menu");
-
-  $("#tool_width").val(3);
 
   $("#zoom_slider").slider({
     orientation:"horizontal",
@@ -55,14 +96,6 @@ $(document).ready(function () {
   });
   $("#zoom_level").val($("#zoom_slider").slider("value"));
 
-  $("#tool_pointer").click(function () {
-    game_board.setTool(new Pointer(game_board));
-  });
-
-  $("#tool_pen").click(function () {
-    selectPenTool();
-  });
-
   refreshBoard();
 });
 
@@ -77,8 +110,8 @@ function setCanvasSize() {
   // Set game board size
   var portWidth = $(window).width();
   var portHeight = $(window).height();
-  $("#game_board")[0].height = (portHeight - $("#game_header").height() - 20);
-  $("#game_board")[0].width = (portWidth - $("#game_gutter").width() - 20);
+  $("#game_board")[0].height = ((portHeight - $("#game_header").outerHeight()) - 20);
+  $("#game_board")[0].width = ((portWidth - $("#game_gutter").outerWidth()) - 20);
 }
 
 function draw_game() {
@@ -103,41 +136,7 @@ function refreshBoard() {
 }
 
 function selectPenTool() {
-  game_board.setTool(new Pen(game_board, $("#tool_width").val(), $("#tool_color").val()));
-}
-
-function setupColorPicker(buttonId, menuId) {
-  var colors = {Red: "#FF0000", Yellow: "#FFFF00", Green: "#01DF01", Blue: "#0000FF", Black: "#000000"};
-
-  var jqMenu = $(menuId);
-  jqMenu.empty();
-
-  _.each(colors, function(value, key) {
-    $("<button></button>")
-            .height(35)
-            .width(35)
-            .css("background-color", value)
-            //.text(key)
-            .click(function() {
-              $("#tool_color").val(value);
-              $("#tool_color_button").css("background-color", value);
-              selectPenTool();
-              jqMenu.dialog("close");
-            })
-            .appendTo(jqMenu);
-  });
-
-  jqMenu.dialog({
-    autoOpen: false,
-    modal: true,
-    position: {my: "center top", at: "center bottom", of: buttonId},
-    resizable: false,
-    title: "Choose Color"
-  });
-
-  jqMenu.children().first().click();
-
-  $(buttonId).click(function() {
-    jqMenu.dialog("open");
-  });
+  var color = $("#tool_color").toolMenu("value").color;
+  var width = $("#tool_line_width").toolMenu("value");
+  game_board.setTool(new Pen(game_board, width, color));
 }

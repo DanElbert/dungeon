@@ -8,6 +8,8 @@
 
 #game_board_container {
   float: left;
+  position: relative;
+  z-index: 100;
 }
 
 #game_board {
@@ -16,6 +18,7 @@
 #game_header {
   height: 50px;
   padding: 10px;
+  overflow: hidden;
 }
 
 #game_gutter {
@@ -28,24 +31,57 @@
   margin-top: 7px;
 }
 
-button.tool {
-  width: 65px;
-  height: 65px;
+.menuItemList {
+  background-color: #f9f9ff;
+  position: absolute;
+  width: auto;
+  border-radius:6px;
+  border:1px solid #404040;
+  top: -1px;
+  left: -1px;
+  z-index: 101;
+}
 
+.toolMenu {
+  position: relative;
+  width: 500%;
+  padding: 1px;
+}
+
+%toolButtonStyle {
+  padding: 5px;
   margin: 8px;
-  padding:6px 10px;
 
-  background-color:#ededed;
-  color:#777777;
+  background-color: #ededed;
+  color: #777777;
 
   font: 15px arial bold;
-  text-decoration:none;
-  text-shadow:1px 1px 0px #ffffff;
+  text-decoration: none;
+  text-shadow: 1px 1px 0px #ffffff;
 
-  box-shadow:inset 0px 1px 0px 0px #ffffff;
-  border-radius:6px;
-  border:1px solid #dcdcdc;
-  display:inline-block;
+  box-shadow: inset 0px 1px 0px 0px #ffffff;
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
+}
+
+.menuButton {
+  @extend %toolButtonStyle;
+  width: 55px;
+  height: 55px;
+}
+
+.menuItemButton {
+  @extend %toolButtonStyle;
+  width: 55px;
+  height: 55px;
+  display: block;
+  float: left;
+}
+
+button.tool {
+  @extend %toolButtonStyle;
+  width: 65px;
+  height: 65px;
 }
 
 button.tool:hover {
