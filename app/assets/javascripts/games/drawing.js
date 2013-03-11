@@ -50,7 +50,7 @@ function Drawing(context) {
 
   this.drawLines = function (color, width, lines) {
     this.context.beginPath();
-    this.context.lineWidth = width;
+    this.context.lineWidth = width || 3;
     this.context.strokeStyle = color;
     this.context.lineCap = 'round';
 

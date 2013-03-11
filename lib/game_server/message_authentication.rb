@@ -13,7 +13,7 @@ module GameServer
       remove_auth_attributes(message)
 
       unless is_valid
-        message.error = 'Authentication Failed'
+        message['error'] = 'Authentication Failed'
       end
 
       is_valid

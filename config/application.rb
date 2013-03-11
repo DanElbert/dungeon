@@ -17,8 +17,8 @@ module Dungeon
     # -- all .rb files in that directory are automatically loaded.
 
     # Add Faye to the middleware stack
-    Faye::WebSocket.load_adapter('thin')
-    config.middleware.insert_before 'Rack::Lock', 'GameServerMiddleware', mount: '/game_server', timeout: 35
+    # Note that by referencing the Static middleware, serve_static_assets needs to be left on
+    config.middleware.insert_after 'ActionDispatch::Static', 'GameServerMiddleware', mount: '/game_server', timeout: 35
 
 
     # Custom directories with classes and modules you want to be autoloadable.

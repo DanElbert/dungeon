@@ -2,6 +2,10 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+#game_container {
+  background: image-url('pf-gradient-bk.png') #f9f9ff repeat-x;
+}
+
 #game_board_container {
   float: left;
 }
@@ -10,7 +14,8 @@
 }
 
 #game_header {
-  height: 75px;
+  height: 50px;
+  padding: 10px;
 }
 
 #game_gutter {
@@ -18,5 +23,40 @@
   width: 100px;
 }
 
-#tool_color_menu {
+#zoom_slider {
+  width: 200px;
+  margin-top: 7px;
+}
+
+button.tool {
+  width: 65px;
+  height: 65px;
+
+  margin: 8px;
+  padding:6px 10px;
+
+  background-color:#ededed;
+  color:#777777;
+
+  font: 15px arial bold;
+  text-decoration:none;
+  text-shadow:1px 1px 0px #ffffff;
+
+  box-shadow:inset 0px 1px 0px 0px #ffffff;
+  border-radius:6px;
+  border:1px solid #dcdcdc;
+  display:inline-block;
+}
+
+button.tool:hover {
+
+}
+
+button.tool:active {
+  position:relative;
+  top:1px;
+}
+
+button.tool.enabled {
+
 }

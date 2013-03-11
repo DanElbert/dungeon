@@ -3,32 +3,36 @@
   <%= javascript_include_tag "/game_server/client.js" %>
 <% end %>
 
-<div id="game_header">
-  <button id="tool_pointer">Pointer</button>
-  <button id="tool_eraser">Eraser</button>
-  <button id="tool_pen">Pen</button>
-  <button id="tool_color_button">Color</button>
-  <input type="hidden" id="tool_color" />
-  <div id="tool_color_menu">
+<div id="game_container">
+  <div id="game_header">
+    <label for="zoom_level">Zoom:</label>
+    <input type="text" id="zoom_level" style="font-weight: bold; width: 50px;" />
+    <div id="zoom_slider"></div>
 
   </div>
-  <input type="text" id="tool_width" />
-  <button id="undo_button">Undo</button>
-  <button id="tool_measure">Measure</button>
+
+  <div id="game_gutter">
+
+    <button id="tool_pointer" class="tool">Pointer</button>
+    <button id="tool_eraser" class="tool">Eraser</button>
+    <button id="tool_pen" class="tool">Pen</button>
+    <button id="tool_color_button" class="tool"></button>
+    <input type="hidden" id="tool_color" />
+    <div id="tool_color_menu">
+
+    </div>
+    <input type="text" id="tool_width" />
+    <button id="undo_button" class="tool">Undo</button>
+    <button id="tool_measure" class="tool">Measure</button>
+
+  </div>
+
+  <div id="game_board_container">
+    <canvas id="game_board" ></canvas>
+  </div>
+
+  <br style="clear: both;"/>
 </div>
-
-<div id="game_gutter">
-  <label for="zoom_level">Zoom:</label><br />
-  <input type="text" id="zoom_level" style="font-weight: bold; width: 50px;" />
-  <div id="zoom_slider" style="height: 200px;"></div>
-</div>
-
-<div id="game_board_container">
-  <canvas id="game_board" ></canvas>
-</div>
-
-<br style="clear: both;"/>
-
 <script type="text/javascript">
   BOARD_DATA_URL = '<%= get_game_board_game_path(@game) %>';
   GAME_SERVER_URL = '/game_server';
