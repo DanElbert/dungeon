@@ -19,3 +19,6 @@
 
 # Ignore rubymine project files
 /.idea/*
+
+# Ignore fucking DS_Store files
+.DS_Store
