@@ -43,9 +43,28 @@ $(document).ready(function () {
     }
   });
 
+  var crayolaColors8 = [
+    {name: "Black", color: "#000000"},
+    {name: "Blue", color: "#1F75FE"},
+    {name: "Brown", color: "#B4674D"},
+    {name: "Green", color: "#1CAC78"},
+    {name: "Orange", color: "#FF7538"},
+    {name: "Red", color: "#EE204D"},
+    {name: "Purple", color: "#926EAE"},
+    {name: "Yellow", color: "#FCE883"}
+  ];
+
+//  var dansRandomColors = [
+//    {name: "Red", color: "#FF0000"},
+//    {name: "Yellow", color: "#FFFF00"},
+//    {name: "Green", color: "#01DF01"},
+//    {name: "Blue", color: "#0000FF"},
+//    {name: "Black", color: "#000000"}
+//  ];
+
   $("#tool_color").toolMenu({
-    values: [{name: "Red", color: "#FF0000"}, {name: "Yellow", color: "#FFFF00"}, {name: "Green", color: "#01DF01"}, {name: "Blue", color: "#0000FF"}, {name: "Black", color: "#000000"}],
-    initialValue: {name: "Green", color: "#01DF01"},
+    values: crayolaColors8,
+    initialValue: crayolaColors8[0],
     contentCallback: function(value) {
       return $("<div></div>").css("background-color", value.color).css('width', '100%').css('height', '100%');
     },
