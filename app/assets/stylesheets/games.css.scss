@@ -16,7 +16,7 @@
 }
 
 #game_header {
-  height: 50px;
+  height: 35px;
   padding: 10px;
   overflow: hidden;
 }
@@ -53,15 +53,22 @@
   margin: 8px;
 
   background-color: #ededed;
-  color: #777777;
+  color: #555555;
 
-  font: 15px arial bold;
+  font: bold 13px arial;
   text-decoration: none;
   text-shadow: 1px 1px 0px #ffffff;
+  text-align: center;
+  vertical-align: middle;
 
   box-shadow: inset 0px 1px 0px 0px #ffffff;
   border-radius: 6px;
   border: 1px solid #dcdcdc;
+}
+
+%toolButtonStyle:hover {
+  position:relative;
+  top:1px;
 }
 
 .menuButton {
@@ -74,25 +81,15 @@
   @extend %toolButtonStyle;
   width: 55px;
   height: 55px;
-  display: block;
   float: left;
 }
 
-button.tool {
+.menuItemButton.selected {
+  border: 1px solid black;
+}
+
+.tool {
   @extend %toolButtonStyle;
-  width: 65px;
-  height: 65px;
-}
-
-button.tool:hover {
-
-}
-
-button.tool:active {
-  position:relative;
-  top:1px;
-}
-
-button.tool.enabled {
-
+  width: 55px;
+  height: 55px;
 }

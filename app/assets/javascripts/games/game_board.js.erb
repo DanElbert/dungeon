@@ -21,7 +21,7 @@ $(document).ready(function () {
     values: ["Pointer", "Pen", "Eraser", "Measure"],
     initialValue: "Pointer",
     contentCallback: function(value) {
-      return $("<div></div>").text(value);
+      return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
     },
     selectedCallback: function(value) {
       switch (value) {

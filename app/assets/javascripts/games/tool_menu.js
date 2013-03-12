@@ -23,11 +23,12 @@
         var data = $this.data(pluginName);
 
         // unbind first to ensure there's only ever 1 handler bound
-        $this.unbind('.' + pluginName);
+        $this.off('.' + pluginName);
 
         if (!data) {
           data = {};
           data.options = options;
+          data.valueItems = [];
           $this.data(pluginName, data);
         }
 
@@ -37,11 +38,13 @@
             .appendTo($this);
 
         _.each(options.values, function(value) {
-          $("<div></div>")
+          var item = $("<div></div>")
               .addClass("menuItemButton")
               .append(data.options.contentCallback(value))
               .on('click.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemClick)
               .appendTo(itemList);
+
+          data.valueItems.push(item);
         });
 
         $("<span></span>").css("clear", "both").appendTo(itemList);
@@ -123,6 +126,14 @@
     setValue: function(menu, value) {
       var data = menu.data(pluginName);
       data.value = value;
+
+      _.each(data.options.values, function(v, index) {
+        data.valueItems[index].removeClass(data.options.selectedClass);
+        if (_.isEqual(value, v)) {
+          data.valueItems[index].addClass(data.options.selectedClass);
+        }
+      });
+
       data.menuButton.empty();
       data.menuButton.append(data.options.contentCallback(value));
       data.options.selectedCallback(value);
