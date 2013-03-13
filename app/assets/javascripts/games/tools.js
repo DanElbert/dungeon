@@ -8,6 +8,12 @@ _.extend(Tool.prototype, {
   draw: function() {},
   getDistance: function(p1, p2) {
     return this.board.drawing.getDistance(p1, p2);
+  },
+  setCursor: function(s) {
+    $(this.board.canvas).css('cursor', s);
+  },
+  clearCursor: function() {
+    $(this.board.canvas).css('cursor', 'auto');
   }
 });
 
@@ -127,6 +133,7 @@ Eraser.prototype = _.extend(new DrawTool(), {
   eventNamespace: function() { return "Eraser"; },
   enable: function() {
     DrawTool.prototype.enable.apply(this);
+    this.setCursor('none');
     var self = this;
     $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(evt, mapEvt) {
       self.previous_point = null;
@@ -135,13 +142,21 @@ Eraser.prototype = _.extend(new DrawTool(), {
       self.lineBuffer = [];
     });
   },
+  disable: function() {
+    DrawTool.prototype.disable.apply(this);
+    this.clearCursor();
+  },
   draw: function() {
+
+    var cursorColor = "#FFFFFF";
+
     if (this.lineBuffer.length > 0) {
       this.board.drawing.eraseLines(this.width, this.lineBuffer);
+      cursorColor = "#000000";
     }
 
     if (this.cursor) {
-      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 1, "#FFFFFF")
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, cursorColor)
     }
   },
   saveAction: function() {
@@ -187,6 +202,54 @@ Measure.prototype = _.extend(new Tool(), {
       }
 
       this.board.drawing.drawPath(this.startCell, this.currentCell);
+    }
+  }
+});
+
+function RadiusTemplate(board) {
+  Tool.call(this, board);
+  this.startCell = null;
+  this.currentCell = null;
+}
+RadiusTemplate.prototype = _.extend(new Tool(), {
+  enable: function () {
+    var board = this.board;
+    var self = this;
+    $(board.event_manager).on('dragstart.RadiusTemplate', function (evt, mapEvt) {
+      self.startCell = mapEvt.mapPointCell;
+    });
+
+    $(board.event_manager).on('drag.RadiusTemplate', function (evt, mapEvt) {
+      self.currentCell = mapEvt.mapPointCell;
+    });
+
+    $(board.event_manager).on('dragstop.RadiusTemplate', function (evt, mapEvt) {
+      self.startCell = null;
+      self.currentCell = null;
+    });
+  },
+
+  disable: function () {
+    $(this.board.event_manager).off(".RadiusTemplate");
+  },
+
+  draw: function() {
+    if (this.startCell && this.currentCell) {
+      if (this.startCell[0] == this.currentCell[0] && this.startCell[1] == this.currentCell[1]) {
+        return;
+      }
+
+      var start = this.board.drawing.getCellMidpoint(this.startCell);
+      var end = this.board.drawing.getCellMidpoint(this.currentCell);
+      var radius = this.board.drawing.getDistance(start, end);
+
+      var template = this.board.drawing.createCirclePolygon(start[0], start[1], radius);
+      var lines = [];
+      for (var x = 0; x < template.length - 1; x++) {
+        lines.push({start: template[x], end: template[x + 1]});
+      }
+      this.board.drawing.drawLines("black", 2, lines);
+      this.board.drawing.fillPolygon(template);
     }
   }
 });

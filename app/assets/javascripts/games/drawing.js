@@ -48,6 +48,28 @@ function Drawing(context) {
     this.context.fillText(totalMovement, startPoint[0], startPoint[1]);
   };
 
+  this.fillPolygon = function(polygon) {
+    var cellBounds = this.getBoundingCellBox(polygon);
+    var cellMin = cellBounds[0];
+    var cellMax = cellBounds[1];
+
+    var cellsToFill = [];
+
+    for (var x = cellMin[0]; x <= cellMax[0]; x++) {
+      for (var y = cellMin[1]; y <= cellMax[1]; y++) {
+        var cellMidpoint = this.getCellMidpoint([x, y]);
+
+        if (this.isPointInPolygon(cellMidpoint, polygon)) {
+          cellsToFill.push([x,y]);
+        }
+      }
+    }
+
+    _.each(cellsToFill, function(c) {
+      this.colorCell(c[0], c[1], 'rgba(75, 75, 75, 0.8)');
+    }, this);
+  };
+
   this.drawLines = function (color, width, lines) {
     this.context.beginPath();
     this.context.lineWidth = width || 3;
@@ -242,6 +264,84 @@ function Drawing(context) {
   this.gridHeight = function (rows) {
     return rows * this.cellHeight;
   };
+
+  // Given a polygon in map coords, return the
+  // bounding box of grid cells
+  this.getBoundingCellBox = function(polygon) {
+    var left = 9999;
+    var top = 9999;
+    var right = 0;
+    var bottom = 0;
+
+    for (var i = 0; i < polygon.length; i++) {
+      var v = polygon[i];
+      if (v[0] < left) left = v[0];
+      if (v[0] > right) right = v[0];
+      if (v[1] < top) top = v[1];
+      if (v[1] > bottom) bottom = v[1];
+    }
+
+    var min = [Math.floor(left / this.cellWidth), Math.floor(top / this.cellHeight)];
+    var max = [Math.floor(right / this.cellWidth), Math.floor(bottom / this.cellHeight)];
+
+    return [min, max];
+  };
+
+  this.createCirclePolygon = function(x, y, radius) {
+    var points = [];
+    for (var t = 0.0; t <= Math.PI * 2; t += (Math.PI / 10)) {
+      var px = x + radius * Math.cos(t);
+      var py = y + radius * Math.sin(t);
+      points.push([px, py]);
+    }
+
+    //points.push(points[points.length - 1]);
+
+    return points;
+  };
+
+  // Returns true if the point is within the given polygon.
+  // point must be a 2-element array with (x,y) coords,
+  // and polygonArray must be a counter-clockwise ordered list
+  // of n vertices with polygonArray[0] == polygonArray[n]
+  this.isPointInPolygon = function(point, polygonArray) {
+    // Uses the winding number method.
+    // See http://geomalgorithms.com/a03-_inclusion.html, http://en.wikipedia.org/wiki/Winding_number
+
+    var winding = 0;
+
+    for (var x = 0; x < polygonArray.length - 1; x++) {
+      var v1 = polygonArray[x];
+      var v2 = polygonArray[x + 1];
+
+      if (v1[1] <= point[1]) {
+        if (v2[1] > point[1]) {
+          if (this.isLeft(v1, v2, point) > 0) {
+            winding++;
+          }
+        }
+      } else {
+        if (v2[1] <= point[1]) {
+          if (this.isLeft(v1, v2, point) < 0) {
+            winding--;
+          }
+        }
+      }
+    }
+
+    return winding != 0;
+  };
+
+  // test if a point is Left|On|Right of an infinite 2D line.
+  // given three points p0, p1, and p2
+  // Return: >0 for p2 left of the line through p0 to p1
+  //  =0 for p2 on the line
+  //  <0 for p2 right of the line
+  //
+  // Implementation taken from here: http://geomalgorithms.com/a01-_area.html
+  this.isLeft = function(p0, p1, p2) {
+    return ( (p1[0] - p0[0]) * (p2[1] - p0[1]) - (p2[0] - p0[0]) * (p1[1] - p0[1]) );
+  }
 
   this.getDistance = function(p1, p2) {
     var x_side = Math.pow((p1[0] - p2[0]), 2);

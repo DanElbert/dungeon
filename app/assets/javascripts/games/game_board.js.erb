@@ -18,7 +18,7 @@ $(document).ready(function () {
   game_board = new Board($("#game_board")[0]);
 
   $("#tool_menu").toolMenu({
-    values: ["Pointer", "Pen", "Eraser", "Measure"],
+    values: ["Pointer", "Pen", "Eraser", "Measure", "Radius"],
     initialValue: "Pointer",
     contentCallback: function(value) {
       return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
@@ -36,6 +36,9 @@ $(document).ready(function () {
           break;
         case "Measure":
           game_board.setTool(new Measure(game_board));
+          break;
+        case "Radius":
+          game_board.setTool(new RadiusTemplate(game_board));
           break;
         default:
           alert("No such tool");
