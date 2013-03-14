@@ -27,18 +27,7 @@ function Drawing(context) {
 
     this.context.stroke();
 
-    // TODO: Extract this somewhere more useful
-    // Count Movement spaces
-    var prev = null;
-    var diagonalMoves = 0;
-    for (var x = 0; x < cellPath.length; x++) {
-      var cur = cellPath[x];
-      if (prev && prev[0] != cur[0] && prev[1] != cur[1])
-        diagonalMoves++;
-      prev = cur;
-    }
-
-    var totalMovement = (cellPath.length - 1 + Math.floor(diagonalMoves / 2)) * 5;
+    var totalMovement = this.calculateDistanceFromPath(cellPath);
 
     this.context.textBaseline = 'center';
     this.context.textAlign = 'center';
@@ -48,18 +37,57 @@ function Drawing(context) {
     this.context.fillText(totalMovement, startPoint[0], startPoint[1]);
   };
 
+  // Given two cells, calculates the PF distance in feet
+  this.calculateDistance = function(cell1, cell2) {
+    var path = this.getMovementPath(cell1, cell2);
+    return this.calculateDistanceFromPath(path);
+  };
+
+  // Given a path, calculates the PF distance traveled.
+  // Assumes each cell is adjacent to the previous
+  this.calculateDistanceFromPath = function(path) {
+    var prev = null;
+    var diagonalMoves = 0;
+    for (var x = 0; x < path.length; x++) {
+      var cur = path[x];
+      if (prev && prev[0] != cur[0] && prev[1] != cur[1])
+        diagonalMoves++;
+      prev = cur;
+    }
+
+    return (path.length - 1 + Math.floor(diagonalMoves / 2)) * 5;
+  };
+
+  // Shades any cells that are _entirely_ within the given polygon
   this.fillPolygon = function(polygon) {
     var cellBounds = this.getBoundingCellBox(polygon);
     var cellMin = cellBounds[0];
     var cellMax = cellBounds[1];
 
     var cellsToFill = [];
+    var dx = this.cellWidth / 2;
+    var dy = this.cellHeight / 2;
 
     for (var x = cellMin[0]; x <= cellMax[0]; x++) {
       for (var y = cellMin[1]; y <= cellMax[1]; y++) {
         var cellMidpoint = this.getCellMidpoint([x, y]);
 
-        if (this.isPointInPolygon(cellMidpoint, polygon)) {
+        var corners = [
+          [cellMidpoint[0] - dx, cellMidpoint[1] - dy],
+          [cellMidpoint[0] + dx, cellMidpoint[1] - dy],
+          [cellMidpoint[0] + dx, cellMidpoint[1] + dy],
+          [cellMidpoint[0] - dx, cellMidpoint[1] + dy]
+        ];
+
+        var insideVertexCount = 0;
+
+        for (var i = 0; i < corners.length; i++) {
+          if (this.isPointInPolygon(corners[i], polygon)) {
+            insideVertexCount++;
+          }
+        }
+
+        if (insideVertexCount == 4) {
           cellsToFill.push([x,y]);
         }
       }
@@ -72,7 +100,7 @@ function Drawing(context) {
 
   this.drawLines = function (color, width, lines) {
     this.context.beginPath();
-    this.context.lineWidth = width || 3;
+    this.context.lineWidth = width;
     this.context.strokeStyle = color;
     this.context.lineCap = 'round';
 
@@ -206,46 +234,43 @@ function Drawing(context) {
     this.context.fill();
   };
 
+  // Gets a movement path from start to end using Bresenham's Line Algorithm
+  // See http://members.chello.at/~easyfilter/bresenham.html
   this.getMovementPath = function(startCell, endCell) {
-    var startPoint = this.getCellMidpoint(startCell);
-    var endPoint = this.getCellMidpoint(endCell);
-    var startX = startPoint[0];
-    var startY = startPoint[1];
-    var endX = endPoint[0];
-    var endY = endPoint[1];
+    var x1 = startCell[0];
+    var y1 = startCell[1];
+    var x2 = endCell[0];
+    var y2 = endCell[1];
 
-    var flipped = false;
+    var dx = Math.abs(x2 - x1);
+    var sx = x1 < x2 ? 1 : -1;
 
-    if (Math.abs(startY - endY) > Math.abs(startX - endX)) {
-      flipped = true;
-      var tmp = startX;
-      startX = startY;
-      startY = tmp;
+    var dy = -1 * Math.abs(y2 - y1);
+    var sy = y1 < y2 ? 1 : -1;
 
-      tmp = endX;
-      endX = endY;
-      endY = tmp;
-    }
-
-    // line function: y = mx + b, where m is the slope, and b is the y-intercept
-    var m = (startX - endX) == 0 ? 0 : (startY - endY) / (startX - endX);
-    var b = startY - (m * startX);
-
-    var lineFunction = function(x) {
-      return (m * x) + b;
-    };
+    var err = dx + dy;
+    var e2 = 0;
 
     var cellPath = [];
-    var dirX = startX <= endX ? 1 : -1;
 
-    for (var x = startX; dirX == 1 ? x <= endX : x >= endX; x += (this.cellWidth * dirX)) {
-      var y = lineFunction(x);
-      var cell = this.getCell(x, y);
-      cellPath.push(cell);
-    }
+    while (true) {
+      cellPath.push([x1, y1]);
 
-    if (flipped) {
-      cellPath = _.map(cellPath, function(c) { return [c[1], c[0]]; })
+      if (x1 == x2 && y1 == y2) {
+        break;
+      }
+
+      e2 = err * 2;
+
+      if (e2 >= dy) {
+        err += dy;
+        x1 += sx;
+      }
+
+      if (e2 <= dx) {
+        err += dx;
+        y1 += sy;
+      }
     }
 
     return cellPath;
@@ -289,7 +314,7 @@ function Drawing(context) {
 
   this.createCirclePolygon = function(x, y, radius) {
     var points = [];
-    for (var t = 0.0; t <= Math.PI * 2; t += (Math.PI / 10)) {
+    for (var t = 0.0; t <= Math.PI * 2; t += (Math.PI / 20)) {
       var px = x + radius * Math.cos(t);
       var py = y + radius * Math.sin(t);
       points.push([px, py]);
@@ -341,7 +366,23 @@ function Drawing(context) {
   // Implementation taken from here: http://geomalgorithms.com/a01-_area.html
   this.isLeft = function(p0, p1, p2) {
     return ( (p1[0] - p0[0]) * (p2[1] - p0[1]) - (p2[0] - p0[0]) * (p1[1] - p0[1]) );
-  }
+  };
+
+  this.getNearestCellIntersection = function(mapPoint) {
+    var x = this.roundToNearest(mapPoint[0], this.cellWidth);
+    var y = this.roundToNearest(mapPoint[1], this.cellHeight);
+    return [x, y];
+  };
+
+  this.roundToNearest = function(value, multiple) {
+    var mid = Math.floor(multiple / 2);
+    var over = value % multiple;
+    if (over >= mid) {
+      return value + (multiple - over);
+    } else {
+      return value - over;
+    }
+  };
 
   this.getDistance = function(p1, p2) {
     var x_side = Math.pow((p1[0] - p2[0]), 2);

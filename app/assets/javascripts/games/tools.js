@@ -20,6 +20,7 @@ _.extend(Tool.prototype, {
 
 function Pointer(board) {
   Tool.call(this, board);
+  this.super = Tool.prototype;
 
   this.drag_mouse_start = null;
   this.drag_viewport_start = null;
@@ -53,6 +54,7 @@ Pointer.prototype = new Tool();
 
 function DrawTool(board) {
   Tool.call(this, board);
+  this.super = Tool.prototype;
 
   this.lineBuffer = [];
   this.previous_point = null;
@@ -104,6 +106,7 @@ DrawTool.prototype = _.extend(new Tool(), {
 
 function Pen(board, width, color) {
   DrawTool.call(this, board);
+  this.super = DrawTool.prototype;
   this.width = width;
   this.color = color;
 }
@@ -125,6 +128,7 @@ Pen.prototype = _.extend(new DrawTool(), {
 
 function Eraser(board, width) {
   DrawTool.call(this, board);
+  this.super = DrawTool.prototype;
   this.width = width;
 }
 
@@ -132,7 +136,7 @@ Eraser.prototype = _.extend(new DrawTool(), {
   minimumLineDistance: function() { return 0; },
   eventNamespace: function() { return "Eraser"; },
   enable: function() {
-    DrawTool.prototype.enable.apply(this);
+    this.super.enable.apply(this);
     this.setCursor('none');
     var self = this;
     $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(evt, mapEvt) {
@@ -143,7 +147,7 @@ Eraser.prototype = _.extend(new DrawTool(), {
     });
   },
   disable: function() {
-    DrawTool.prototype.disable.apply(this);
+    this.super.disable.apply(this);
     this.clearCursor();
   },
   draw: function() {
@@ -170,6 +174,7 @@ Eraser.prototype = _.extend(new DrawTool(), {
 
 function Measure(board) {
   Tool.call(this, board);
+  this.super = Tool.prototype;
   this.startCell = null;
   this.currentCell = null;
 }
@@ -208,24 +213,33 @@ Measure.prototype = _.extend(new Tool(), {
 
 function RadiusTemplate(board) {
   Tool.call(this, board);
-  this.startCell = null;
-  this.currentCell = null;
+  this.super = Tool.prototype;
+  this.dragging = false;
+  this.center = null;
+  this.radiusPoint = null;
 }
 RadiusTemplate.prototype = _.extend(new Tool(), {
   enable: function () {
     var board = this.board;
     var self = this;
+
+    $(board.event_manager).on('mousemove.RadiusTemplate', function(evt, mapEvt) {
+      if (!self.dragging) {
+        self.center = self.board.drawing.getNearestCellIntersection(mapEvt.mapPoint);
+      }
+    });
+
     $(board.event_manager).on('dragstart.RadiusTemplate', function (evt, mapEvt) {
-      self.startCell = mapEvt.mapPointCell;
+      self.dragging = true;
     });
 
     $(board.event_manager).on('drag.RadiusTemplate', function (evt, mapEvt) {
-      self.currentCell = mapEvt.mapPointCell;
+      self.radiusPoint = self.board.drawing.getNearestCellIntersection(mapEvt.mapPoint);
     });
 
     $(board.event_manager).on('dragstop.RadiusTemplate', function (evt, mapEvt) {
-      self.startCell = null;
-      self.currentCell = null;
+      self.radiusPoint = null;
+      self.dragging = false;
     });
   },
 
@@ -233,17 +247,34 @@ RadiusTemplate.prototype = _.extend(new Tool(), {
     $(this.board.event_manager).off(".RadiusTemplate");
   },
 
+  drawCross: function(point) {
+    var crossSize = 10;
+    var lines = [
+      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
+      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
+    ];
+    this.board.drawing.drawLines("black", 3, lines);
+  },
+
   draw: function() {
-    if (this.startCell && this.currentCell) {
-      if (this.startCell[0] == this.currentCell[0] && this.startCell[1] == this.currentCell[1]) {
-        return;
-      }
 
-      var start = this.board.drawing.getCellMidpoint(this.startCell);
-      var end = this.board.drawing.getCellMidpoint(this.currentCell);
-      var radius = this.board.drawing.getDistance(start, end);
+    if (this.center) {
+      this.drawCross(this.center);
+    }
 
-      var template = this.board.drawing.createCirclePolygon(start[0], start[1], radius);
+    if (this.radiusPoint) {
+      this.drawCross(this.radiusPoint);
+    }
+
+    if (this.center && this.radiusPoint) {
+
+      var pfCenter = [this.center[0] / this.board.drawing.cellWidth, this.center[1] / this.board.drawing.cellHeight];
+      var pfEnd = [this.radiusPoint[0] / this.board.drawing.cellWidth, this.radiusPoint[1] / this.board.drawing.cellHeight];
+
+      var pfDistance = this.board.drawing.calculateDistance(pfCenter, pfEnd);
+      var radius = ((pfDistance / 5) * this.board.drawing.cellWidth) + 1;
+
+      var template = this.board.drawing.createCirclePolygon(this.center[0], this.center[1], radius);
       var lines = [];
       for (var x = 0; x < template.length - 1; x++) {
         lines.push({start: template[x], end: template[x + 1]});
