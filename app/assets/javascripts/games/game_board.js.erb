@@ -35,10 +35,10 @@ $(document).ready(function () {
           game_board.setTool(new Eraser(game_board, 30));
           break;
         case "Measure":
-          game_board.setTool(new Measure(game_board));
+          game_board.setTool(new Measure(game_board, $("#tool_color").toolMenu("value").color));
           break;
         case "Radius":
-          game_board.setTool(new RadiusTemplate(game_board));
+          game_board.setTool(new RadiusTemplate(game_board, $("#tool_color").toolMenu("value").color));
           break;
         default:
           alert("No such tool");

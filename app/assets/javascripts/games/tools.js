@@ -172,9 +172,10 @@ Eraser.prototype = _.extend(new DrawTool(), {
   }
 });
 
-function Measure(board) {
+function Measure(board, color) {
   Tool.call(this, board);
   this.super = Tool.prototype;
+  this.color = color;
   this.startCell = null;
   this.currentCell = null;
 }
@@ -191,6 +192,7 @@ Measure.prototype = _.extend(new Tool(), {
     });
 
     $(board.event_manager).on('dragstop.Measure', function (evt, mapEvt) {
+      self.saveAction();
       self.startCell = null;
       self.currentCell = null;
     });
@@ -206,14 +208,23 @@ Measure.prototype = _.extend(new Tool(), {
         return;
       }
 
-      this.board.drawing.drawPath(this.startCell, this.currentCell);
+      this.board.drawing.drawMovement(this.startCell, this.currentCell);
+    }
+  },
+
+  saveAction: function() {
+    if (this.startCell && this.currentCell) {
+      var action = {actionType: "movementTemplateAction", start: this.startCell, end: this.currentCell, color: this.color, uid: generateActionId()};
+      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
     }
   }
 });
 
-function RadiusTemplate(board) {
+function RadiusTemplate(board, color) {
   Tool.call(this, board);
   this.super = Tool.prototype;
+  this.color = color;
   this.dragging = false;
   this.center = null;
   this.radiusPoint = null;
@@ -222,10 +233,11 @@ RadiusTemplate.prototype = _.extend(new Tool(), {
   enable: function () {
     var board = this.board;
     var self = this;
+    var cellSize = this.board.drawing.cellSize;
 
     $(board.event_manager).on('mousemove.RadiusTemplate', function(evt, mapEvt) {
       if (!self.dragging) {
-        self.center = self.board.drawing.getNearestCellIntersection(mapEvt.mapPoint);
+        self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       }
     });
 
@@ -234,12 +246,14 @@ RadiusTemplate.prototype = _.extend(new Tool(), {
     });
 
     $(board.event_manager).on('drag.RadiusTemplate', function (evt, mapEvt) {
-      self.radiusPoint = self.board.drawing.getNearestCellIntersection(mapEvt.mapPoint);
+      self.radiusPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
     });
 
     $(board.event_manager).on('dragstop.RadiusTemplate', function (evt, mapEvt) {
+      self.saveAction();
       self.radiusPoint = null;
       self.dragging = false;
+      self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
     });
   },
 
@@ -267,20 +281,23 @@ RadiusTemplate.prototype = _.extend(new Tool(), {
     }
 
     if (this.center && this.radiusPoint) {
+      var centerCell = [this.center[0] / this.board.drawing.cellSize, this.center[1] / this.board.drawing.cellSize];
+      var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
+      var distance = Geometry.getCellDistance(centerCell, endCell);
 
-      var pfCenter = [this.center[0] / this.board.drawing.cellWidth, this.center[1] / this.board.drawing.cellHeight];
-      var pfEnd = [this.radiusPoint[0] / this.board.drawing.cellWidth, this.radiusPoint[1] / this.board.drawing.cellHeight];
+      this.board.drawing.drawRadiusTemplate(centerCell, distance, this.color);
+    }
+  },
 
-      var pfDistance = this.board.drawing.calculateDistance(pfCenter, pfEnd);
-      var radius = ((pfDistance / 5) * this.board.drawing.cellWidth) + 1;
+  saveAction: function() {
+    if (this.center && this.radiusPoint) {
+      var centerCell = [this.center[0] / this.board.drawing.cellSize, this.center[1] / this.board.drawing.cellSize];
+      var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
+      var distance = Geometry.getCellDistance(centerCell, endCell);
 
-      var template = this.board.drawing.createCirclePolygon(this.center[0], this.center[1], radius);
-      var lines = [];
-      for (var x = 0; x < template.length - 1; x++) {
-        lines.push({start: template[x], end: template[x + 1]});
-      }
-      this.board.drawing.drawLines("black", 2, lines);
-      this.board.drawing.fillPolygon(template);
+      var action = {actionType: "radiusTemplateAction", intersection: centerCell, radius: distance, color: this.color, uid: generateActionId()};
+      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
     }
   }
 });

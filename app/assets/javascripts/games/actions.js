@@ -61,6 +61,73 @@ var actionMethods = {
     validateData: function() {
       this.ensureFields(["actionId", "uid"]);
     }
+  },
+
+  removeTemplateAction: {
+    apply: function(board) {
+      var index = null;
+
+      for (var x = board.template_actions.length - 1; x >= 0; x--) {
+        if (board.template_actions[x].uid == this.actionId) {
+          index = x;
+          break;
+        }
+      }
+
+      if (index != null) {
+        if (index == 0) {
+          board.template_actions.shift();
+        } else {
+          board.template_actions.splice(index, 1);
+        }
+      }
+    },
+
+    validateData: function() {
+      this.ensureFields(["actionId", "uid"]);
+    }
+  },
+
+  movementTemplateAction: {
+    apply: function(board) {
+      board.template_actions.push(this);
+      board.drawing.drawMovement(this.start, this.end, this.color);
+    },
+
+    validateData: function() {
+      this.ensureFields(["start", "end", "color", "uid"]);
+    }
+  },
+
+  radiusTemplateAction: {
+    apply: function(board) {
+      board.template_actions.push(this);
+      board.drawing.drawRadiusTemplate(this.intersection, this.radius, this.color);
+    },
+
+    validateData: function() {
+      this.ensureFields(["intersection", "radius", "color", "uid"]);
+    }
+  },
+
+  lineTemplateAction: {
+    apply: function(board) {
+
+    },
+
+    validateData: function() {
+
+    }
+  },
+
+  coneTemplateAction: {
+    apply: function(board) {
+
+    },
+
+    validateData: function() {
+
+    }
   }
 };
 

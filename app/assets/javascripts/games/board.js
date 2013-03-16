@@ -9,6 +9,7 @@ function Board(canvas) {
 
   this.pending_action_queue = [];
   this.drawing_actions = [];
+  this.template_actions = [];
   this.undo_stack = [];
 
   this.drawingCanvas = document.createElement("canvas");
@@ -90,7 +91,7 @@ function Board(canvas) {
       undoAction = attachActionMethods(undoAction);
       this.undo_stack.push(undoAction);
     }
-  }
+  };
 
   this.undo = function() {
     if (this.undo_stack.length > 0) {
@@ -106,10 +107,8 @@ function Board(canvas) {
     }
 
     this.board_data = data;
-    this.drawing.cellHeight = data.cell_size;
-    this.drawing.cellWidth = data.cell_size;
-    this.drawingDrawing.cellHeight = data.cell_size;
-    this.drawingDrawing.cellWidth = data.cell_size;
+    this.drawing.cellSize = data.cell_size;
+    this.drawingDrawing.cellSize = data.cell_size;
     this.rows = data.board_extents[1] + 1;
     this.columns = data.board_extents[0] + 1;
     this.width = this.drawing.gridWidth(this.columns);
@@ -170,6 +169,14 @@ function Board(canvas) {
     }
   };
 
+  this.renderTemplates = function() {
+    var actions = this.template_actions;
+    this.template_actions = [];
+    _.each(actions, function(action) {
+      action.apply(this);
+    }, this);
+  };
+
   this.renderTool = function() {
     if (this.current_tool) {
       this.current_tool.draw();
@@ -211,6 +218,7 @@ function Board(canvas) {
 
     this.renderBoardBackground();
     this.renderDrawing();
+    this.renderTemplates();
     this.renderBoardGrid();
     this.renderCursor();
     this.renderTool();
@@ -287,7 +295,7 @@ function BoardEvents(board) {
   };
 
   this.getCell = function(mapX, mapY) {
-    return this.board.drawing.getCell(mapX, mapY);
+    return Geometry.getCell([mapX, mapY], this.board.drawing.cellSize);
   };
 
   this.cursorDownHandler = function(canvasCoords) {
