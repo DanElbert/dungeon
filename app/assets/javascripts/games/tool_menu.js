@@ -41,6 +41,7 @@
           var item = $("<div></div>")
               .addClass("menuItemButton")
               .append(data.options.contentCallback(value))
+              .on('touchstart.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemTouch)
               .on('click.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemClick)
               .appendTo(itemList);
 
@@ -52,6 +53,7 @@
         var menuButton = $("<div></div>")
             .addClass("menuButton")
             .appendTo($this)
+            .on('touchstart.' + pluginName, {menu: $this}, privateMethods.handleMenuTouch)
             .on('click.' + pluginName, {menu: $this}, privateMethods.handleMenuClick);
 
         data.itemList = itemList;
@@ -115,12 +117,46 @@
       }
     },
 
+    handleMenuTouch: function(evt) {
+      var moved = false;
+
+      var simulateClick = function() {
+        if (!moved) {
+          privateMethods.handleMenuClick(evt)
+        }
+      };
+
+      var menu = evt.data.menu;
+
+      menu.one('touchend', simulateClick);
+      menu.one('touchmove', function() { moved = true; });
+
+      evt.preventDefault();
+    },
+
     handleItemClick: function(evt) {
       var menu = evt.data.menu;
       var selectedKey = evt.data.value;
 
       privateMethods.setValue(menu, selectedKey);
       methods.closeMenu.apply(menu);
+    },
+
+    handleItemTouch: function(evt) {
+      var moved = false;
+
+      var simulateClick = function() {
+        if (!moved) {
+          privateMethods.handleItemClick(evt)
+        }
+      };
+
+      var menu = evt.data.menu;
+
+      menu.one('touchend', simulateClick);
+      menu.one('touchmove', function() { moved = true; });
+
+      evt.preventDefault();
     },
 
     setValue: function(menu, value) {

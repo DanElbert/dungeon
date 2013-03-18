@@ -49,12 +49,33 @@ function Board(canvas) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
   });
 
+  this.setCanvasSize = function(width, height) {
+
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.drawingCanvas.width = width;
+    this.drawingCanvas.height = height;
+
+    this.setZoom(this.zoom);
+  };
+
   this.setZoom = function(val) {
     this.zoom = val;
     this.viewPortSize = [this.canvas.width / val, this.canvas.height / val];
     var newVpx = Math.min(this.width - this.viewPortSize[0], this.viewPortCoord[0]);
     var newVpy = Math.min(this.height - this.viewPortSize[1], this.viewPortCoord[1]);
     this.viewPortCoord = [Math.max(0, newVpx), Math.max(0, newVpy)];
+
+    this.context.restore();
+    this.drawingContext.restore();
+    this.context.save();
+    this.drawingContext.save();
+    this.context.scale(this.zoom, this.zoom);
+    this.drawingContext.scale(this.zoom, this.zoom);
+    this.context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
+    this.drawingContext.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
+
+    this.regenerateDrawing();
   };
 
   this.setTool = function(tool) {
@@ -132,8 +153,7 @@ function Board(canvas) {
   };
 
   this.regenerateDrawing = function() {
-    this.drawingCanvas.height = this.height;
-    this.drawingCanvas.width = this.width;
+    this.drawingContext.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
 
     // Drawing actions typically add themselves to the drawing_actions list, so clear it first
     var actions = this.drawing_actions;
@@ -161,7 +181,14 @@ function Board(canvas) {
   };
 
   this.renderDrawing = function() {
+    // The drawing layer is rendered with the same transforms as the viewport
+    // So remove all currently set transforms with the identity matrix before
+    // copying the drawing layer over
+
+    this.context.save();
+    this.context.setTransform(1, 0, 0, 1, 0, 0);
     this.context.drawImage(this.drawingCanvas, 0, 0);
+    this.context.restore();
   };
 
   this.renderCursor = function() {
@@ -211,11 +238,7 @@ function Board(canvas) {
 
     this.executeActions();
 
-    context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    context.save();
-    context.scale(this.zoom, this.zoom);
-    context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
+    context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
 
     this.renderBoardBackground();
     this.renderDrawing();
@@ -223,8 +246,6 @@ function Board(canvas) {
     this.renderBoardGrid();
     this.renderCursor();
     this.renderTool();
-
-    context.restore();
   };
 
   this.cellHover = function(x, y) {

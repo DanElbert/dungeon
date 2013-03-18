@@ -15,7 +15,6 @@ var actionMethods = {
   // A pen action consists of a color, a width, and a collection of lines that are to be drawn on the drawing layer
   penAction: {
     apply: function(board) {
-      waterbug.log("applying the pen action");
       board.drawing_actions.push(this);
       board.drawingDrawing.drawLines(this.color, this.width, this.lines);
     },

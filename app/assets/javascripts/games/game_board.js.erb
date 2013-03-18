@@ -13,8 +13,6 @@ document.addEventListener( 'touchmove' , stopScrolling , false );
 
 $(document).ready(function () {
 
-  setCanvasSize();
-
   game_board = new Board($("#game_board")[0]);
 
   $("#tool_menu").toolMenu({
@@ -118,6 +116,7 @@ $(document).ready(function () {
   });
   $("#zoom_level").val($("#zoom_slider").slider("value"));
 
+  setCanvasSize();
   refreshBoard();
 });
 
@@ -132,8 +131,9 @@ function setCanvasSize() {
   // Set game board size
   var portWidth = $(window).width();
   var portHeight = $(window).height();
-  $("#game_board")[0].height = ((portHeight - $("#game_header").outerHeight()) - 20);
-  $("#game_board")[0].width = ((portWidth - $("#game_gutter").outerWidth()) - 20);
+  game_board.setCanvasSize(
+          ((portWidth - $("#game_gutter").outerWidth()) - 20),
+          ((portHeight - $("#game_header").outerHeight()) - 20));
 }
 
 function draw_game() {
