@@ -94,21 +94,112 @@ var Geometry = {
     return cellPath;
   },
 
+  // Given a list of cells, return a list of lines that will
+  // draw a border
+  getBorder: function(cells, cellSize) {
+    var lines = [];
+
+    var cellExists = function(cell) {
+      if (_.find(cells, function(c) { return c[0] == cell[0] && c[1] == cell[1]; })) {
+        return true;
+      }
+      return false;
+    };
+
+    for (var x = 0; x < cells.length; x++) {
+      var c = cells[x];
+      var topLeft = [cellSize * c[0], cellSize * c[1]];
+
+      // top
+      if (!cellExists([c[0], c[1] - 1])) {
+        lines.push({
+          start: topLeft,
+          end: [topLeft[0] + cellSize, topLeft[1]]
+        });
+      }
+
+      // right
+      if (!cellExists([c[0] + 1, c[1]])) {
+        lines.push({
+          start: [topLeft[0] + cellSize, topLeft[1]],
+          end: [topLeft[0] + cellSize, topLeft[1] + cellSize]
+        });
+      }
+
+      // bottom
+      if (!cellExists([c[0], c[1] + 1])) {
+        lines.push({
+          start: [topLeft[0], topLeft[1] + cellSize],
+          end: [topLeft[0] + cellSize, topLeft[1] + cellSize]
+        });
+      }
+
+      // left
+      if (!cellExists([c[0] - 1, c[1]])) {
+        lines.push({
+          start: topLeft,
+          end: [topLeft[0], topLeft[1] + cellSize]
+        });
+      }
+    }
+
+    return lines;
+  },
+
   // Returns an array of cells in the Pathfinder Radius template
   // given a center point (in cell coordinates) and
   // a radius (in cells)
   getCellsInRadius: function(center, radius) {
-    var o1 = Geometry.getOctant1(center, radius);
-    var o2 = Geometry.getOctant2(center, radius);
 
-    var template = o1.concat(o2);
-    template = template.concat(Geometry.mirrorX(template, center[1]));
-    template = template.concat(Geometry.mirrorY(template, center[0]));
+    var template = [];
+
+    for (var o = 1; o <= 8; o++) {
+      template = template.concat(Geometry.getOctant(center, radius, o));
+    }
+
+    // Octants can overlap; remove any duplicate cells
     template = _.uniq(template, false, function(p) { return p[0] + "|" + p[1]; });
 
     return template;
   },
 
+  // Returns the cells from octant n, where n is
+  // 1: ESE
+  // 2: SSE
+  // 3: SSW
+  // 4: WSW
+  // 5: WNW
+  // 6: NNW
+  // 7: NNE
+  // 8: ENE
+  getOctant: function(center, radius, n) {
+    switch(n) {
+      case 1:
+        return Geometry.getOctant1(center, radius);
+      case 2:
+        return Geometry.getOctant2(center, radius);
+      case 3:
+        return Geometry.mirrorY(Geometry.getOctant2(center, radius), center[0]);
+      case 4:
+        return Geometry.mirrorY(Geometry.getOctant1(center, radius), center[0]);
+      case 5:
+        return Geometry.mirrorX(
+            Geometry.mirrorY(Geometry.getOctant1(center, radius), center[0]),
+            center[1]);
+      case 6:
+        return Geometry.mirrorX(
+            Geometry.mirrorY(Geometry.getOctant2(center, radius), center[0]),
+            center[1]);
+      case 7:
+        return Geometry.mirrorX(Geometry.getOctant2(center, radius), center[1]);
+      case 8:
+        return Geometry.mirrorX(Geometry.getOctant1(center, radius), center[1]);
+      default:
+        throw "Invalid octant (" + n + ")";
+    }
+  },
+
+  // Returns the cells in the ESE octant
   getOctant1: function(center, radius) {
     var cells = [];
 
@@ -125,6 +216,7 @@ var Geometry = {
     return cells;
   },
 
+  // Returns the cells in the SSE octant
   getOctant2: function(center, radius) {
     var cells = [];
 

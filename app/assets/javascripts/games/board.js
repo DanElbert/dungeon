@@ -76,7 +76,8 @@ function Board(canvas) {
 
   this.sendActionMessage = function(action) {
     this.sentMessageIds.push(action.uid);
-    this.gameServerClient.publish('/game/' + GAME_ID + '/add_action', action);
+    // Publish action, omitting any privateData
+    this.gameServerClient.publish('/game/' + GAME_ID + '/add_action', _.omit(action, 'privateData'));
   };
 
   this.addAction = function(action, undoAction, broadcastAction) {

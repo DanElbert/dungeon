@@ -16,38 +16,61 @@ function Drawing(context) {
       this.colorCell(c[0], c[1], 'rgba(75, 75, 75, 0.8)');
     }, this);
 
-    this.context.beginPath();
+    var totalMovement = Geometry.getCellDistance(start, end) * 5;
+
+    this.drawMeasureLine(startPoint, endPoint, totalMovement);
+  };
+
+  this.drawMeasureLine = function(start, end, label) {
     this.context.lineWidth = 5;
     this.context.strokeStyle = "#000000";
     this.context.lineCap = 'round';
 
-    this.context.moveTo(startPoint[0], startPoint[1]);
-    this.context.lineTo(endPoint[0], endPoint[1]);
+    this.context.textBaseline = 'middle';
+    this.context.textAlign = 'center';
+    this.context.font = 'bold 20px sans-serif';
+
+    this.context.beginPath();
+    this.context.moveTo(start[0], start[1]);
+    this.context.lineTo(end[0], end[1]);
 
     this.context.stroke();
 
-    var totalMovement = Geometry.getCellDistance(start, end);
+    var midPoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
+    var fontWidth = this.context.measureText(label).width;
+    fontWidth = Math.max(fontWidth, 20);
+    var fontHeight = 20;
 
-    this.context.textBaseline = 'center';
-    this.context.textAlign = 'center';
-    this.context.font = 'bold 25px sans-serif';
+    // draw ovalish box
+    this.context.beginPath();
+    this.context.moveTo(midPoint[0] - (fontWidth / 2), midPoint[1] - (fontHeight / 2));
+    this.context.lineTo(midPoint[0] + (fontWidth / 2), midPoint[1] - (fontHeight / 2));
+    this.context.arc(midPoint[0] + (fontWidth / 2), midPoint[1], fontHeight / 2, 1.5 * Math.PI, Math.PI / 2, false);
+    this.context.lineTo(midPoint[0] - (fontWidth / 2), midPoint[1] + (fontHeight / 2));
+    this.context.arc(midPoint[0] - (fontWidth / 2), midPoint[1], fontHeight / 2, Math.PI / 2, 1.5 * Math.PI, false);
+    this.context.closePath();
+
+    this.context.fillStyle = 'white';
+    this.context.strokeStyle = 'black';
+    this.context.lineWidth = 2;
+    this.context.stroke();
+    this.context.fill();
+
     this.context.fillStyle = 'black';
-    this.context.fillText(totalMovement, endPoint[0], endPoint[1]);
-    this.context.fillText(totalMovement, startPoint[0], startPoint[1]);
+
+    this.context.fillText(label, midPoint[0], midPoint[1]);
   };
 
-  this.drawRadiusTemplate = function(intersection, radius, color) {
-
-
-    var template = Geometry.getCellsInRadius(intersection, radius);
-
+  this.drawTemplate = function(cells, border, color) {
     this.context.globalAlpha = 0.5;
 
-    _.each(template, function(c) {
+    _.each(cells, function(c) {
       this.colorCell(c[0], c[1], color);
     }, this);
 
     this.context.globalAlpha = 1;
+
+    this.drawLines("black", 3, border);
   };
 
   this.drawLines = function (color, width, lines) {
@@ -95,11 +118,31 @@ function Drawing(context) {
   };
 
   this.drawCircle = function(x, y, radius, width, color) {
-    context.beginPath();
-    context.arc(x, y, radius, 0, 2 * Math.PI, false);
-    context.lineWidth = width;
-    context.strokeStyle = color;
-    context.stroke();
+    this.context.beginPath();
+    this.context.arc(x, y, radius, 0, 2 * Math.PI, false);
+    this.context.lineWidth = width;
+    this.context.strokeStyle = color;
+    this.context.stroke();
+  };
+
+  // Low level drawing function; places an ellipse in the context path
+  // but does not stroke or fill
+  this.drawEllipse = function(x, y, w, h) {
+    var kappa = .5522848,
+        ox = (w / 2) * kappa, // control point offset horizontal
+        oy = (h / 2) * kappa, // control point offset vertical
+        xe = x + w,           // x-end
+        ye = y + h,           // y-end
+        xm = x + w / 2,       // x-middle
+        ym = y + h / 2;       // y-middle
+
+    this.context.beginPath();
+    this.context.moveTo(x, ym);
+    this.context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    this.context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    this.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    this.context.closePath();
   };
 
   this.drawTile = function (x, y, width, height, imageObj) {

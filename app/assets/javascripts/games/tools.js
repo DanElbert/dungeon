@@ -7,7 +7,7 @@ _.extend(Tool.prototype, {
   disable: function() {},
   draw: function() {},
   getDistance: function(p1, p2) {
-    return this.board.drawing.getDistance(p1, p2);
+    return Geometry.getDistance(p1, p2);
   },
   setCursor: function(s) {
     $(this.board.canvas).css('cursor', s);
@@ -285,7 +285,12 @@ RadiusTemplate.prototype = _.extend(new Tool(), {
       var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
       var distance = Geometry.getCellDistance(centerCell, endCell);
 
-      this.board.drawing.drawRadiusTemplate(centerCell, distance, this.color);
+      var template = Geometry.getCellsInRadius(centerCell, distance);
+      var border = Geometry.getBorder(template, this.board.drawing.cellSize);
+
+      this.board.drawing.drawTemplate(template, border, this.color);
+
+      this.board.drawing.drawMeasureLine(this.center, this.radiusPoint, distance * 5);
     }
   },
 

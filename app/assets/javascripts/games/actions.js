@@ -15,6 +15,7 @@ var actionMethods = {
   // A pen action consists of a color, a width, and a collection of lines that are to be drawn on the drawing layer
   penAction: {
     apply: function(board) {
+      waterbug.log("applying the pen action");
       board.drawing_actions.push(this);
       board.drawingDrawing.drawLines(this.color, this.width, this.lines);
     },
@@ -102,7 +103,12 @@ var actionMethods = {
   radiusTemplateAction: {
     apply: function(board) {
       board.template_actions.push(this);
-      board.drawing.drawRadiusTemplate(this.intersection, this.radius, this.color);
+
+      if (!this.privateData.cells) {
+        this.privateData.cells = Geometry.getCellsInRadius(this.intersection, this.radius);
+        this.privateData.border = Geometry.getBorder(this.privateData.cells, board.drawing.cellSize);
+      }
+      board.drawing.drawTemplate(this.privateData.cells, this.privateData.border, this.color);
     },
 
     validateData: function() {
@@ -150,6 +156,9 @@ function attachActionMethods(action) {
 
   // Apply any defaults not overridden by action methods
   _.defaults(action, actionMethods.default);
+
+  // Attach a new privateData object
+  action.privateData = {};
 
   // Validate action data
   action.validateData();
