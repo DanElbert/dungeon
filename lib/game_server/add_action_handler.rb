@@ -2,6 +2,7 @@ module GameServer
   class AddActionHandler < Handler
 
     DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction eraseAction)
+    TEMPLATE_ACTION_TYPES = %w(removeTemplateAction movementTemplateAction radiusTemplateAction lineTemplateAction coneTemplateAction)
     CHANNEL_REGEX = /^\/game\/(\d+)\/add_action$/
 
     def should_handle_message(channel)
@@ -21,6 +22,12 @@ module GameServer
 
       if DRAWING_ACTION_TYPES.include? message['data']['actionType']
         action = BoardDrawingAction.from_message(message['data'])
+        action.board = game.game_board
+        action.save!
+      end
+
+      if TEMPLATE_ACTION_TYPES.include? message['data']['actionType']
+        action = BoardTemplateAction.from_message(message['data'])
         action.board = game.game_board
         action.save!
       end

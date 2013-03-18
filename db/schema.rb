@@ -11,15 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305233304) do
+ActiveRecord::Schema.define(:version => 20130318221245) do
 
-  create_table "board_drawing_actions", :force => true do |t|
+  create_table "board_actions", :force => true do |t|
     t.string   "action_type"
     t.string   "uid"
     t.text     "properties"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.integer  "board_id"
+    t.string   "type"
   end
 
   create_table "board_pieces", :force => true do |t|

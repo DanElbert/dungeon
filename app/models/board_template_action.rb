@@ -1,7 +1,7 @@
-class BoardDrawingAction < BoardAction
+class BoardTemplateAction < BoardAction
 
   def self.from_message(message)
-    action = BoardDrawingAction.new
+    action = BoardTemplateAction.new
     BoardAction.from_message(action, message)
   end
 

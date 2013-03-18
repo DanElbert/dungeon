@@ -136,13 +136,13 @@ function Board(canvas) {
     this.width = this.drawing.gridWidth(this.columns);
     this.height = this.drawing.gridHeight(this.rows);
 
-    // Generate drawing actions and add them to the list
-    _.each(data.drawing_actions, function(drawingAction) {
-      drawingAction = attachActionMethods(drawingAction);
-      this.drawing_actions.push(drawingAction);
+    _.each(data.drawing_actions, function(action) {
+      this.addAction(action, null, false);
     }, this);
 
-    this.regenerateDrawing();
+    _.each(data.template_actions, function(action) {
+      this.addAction(action, null, false);
+    }, this);
 
     // Ensure a current tool:
     if (!this.current_tool) {
