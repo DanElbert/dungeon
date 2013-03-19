@@ -3,6 +3,7 @@ module GameServer
 
     DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction eraseAction)
     TEMPLATE_ACTION_TYPES = %w(removeTemplateAction movementTemplateAction radiusTemplateAction lineTemplateAction coneTemplateAction)
+    COMPOSITE_ACTION_TYPE = 'compositeAction'
     CHANNEL_REGEX = /^\/game\/(\d+)\/add_action$/
 
     def should_handle_message(channel)
@@ -20,16 +21,29 @@ module GameServer
         return
       end
 
-      if DRAWING_ACTION_TYPES.include? message['data']['actionType']
-        action = BoardDrawingAction.from_message(message['data'])
+      process_action(message['data'], game)
+    end
+
+    def process_action(action_data, game)
+
+      puts "processing #{action_data['actionType']}"
+
+      if DRAWING_ACTION_TYPES.include? action_data['actionType']
+        action = BoardDrawingAction.from_message(action_data)
         action.board = game.game_board
         action.save!
       end
 
-      if TEMPLATE_ACTION_TYPES.include? message['data']['actionType']
-        action = BoardTemplateAction.from_message(message['data'])
+      if TEMPLATE_ACTION_TYPES.include? action_data['actionType']
+        action = BoardTemplateAction.from_message(action_data)
         action.board = game.game_board
         action.save!
+      end
+
+      if COMPOSITE_ACTION_TYPE == action_data['actionType']
+        action_data['actionList'].each do |sub_action|
+          process_action(sub_action, game)
+        end
       end
 
     end
