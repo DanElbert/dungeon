@@ -24,33 +24,115 @@ function Pointer(board) {
 
   this.drag_mouse_start = null;
   this.drag_viewport_start = null;
+  this.selected_template = null;
+  this.dragging_template = false;
+  this.template_start_cell = null;
+  this.template_current_cell = null;
+}
 
-  var self = this;
+Pointer.prototype = _.extend(new Tool(), {
+  enable: function() {
 
-  this.enable = function() {
+    var self = this;
     var board = this.board;
+
+    $(board.event_manager).on('click.Pointer', function(evt, mapEvt) {
+
+      self.selected_template = null;
+
+      for (var x = board.template_actions.length - 1; x >= 0; x--) {
+        var action = board.template_actions[x];
+        if (action.isTemplate && action.containsCell(board, mapEvt.mapPointCell)) {
+          self.selected_template = action;
+          break;
+        }
+      }
+    });
+
     $(board.event_manager).on('dragstart.Pointer', function(evt, mapEvt) {
-      self.drag_mouse_start = mapEvt.mousePoint;
-      self.drag_viewport_start = board.viewPortCoord;
+      if (self.selected_template && self.selected_template.containsCell(self.board, mapEvt.mapPointCell)) {
+        self.dragging_template = true;
+        self.template_start_cell = mapEvt.mapPointCell;
+      } else {
+        self.drag_mouse_start = mapEvt.mousePoint;
+        self.drag_viewport_start = board.viewPortCoord;
+      }
+
     });
 
     $(board.event_manager).on('drag.Pointer', function(evt, mapEvt) {
-      var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.zoom);
-      var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.zoom);
 
-      board.viewPortCoord = [self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY];
+      if (self.dragging_template) {
+        self.template_current_cell = mapEvt.mapPointCell;
+      } else {
+        var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.zoom);
+        var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.zoom);
 
-      // Ensure viewport is bound to within the map
-      board.setZoom(board.zoom);
+        board.viewPortCoord = [self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY];
+
+        // Ensure viewport is bound to within the map
+        board.setZoom(board.zoom);
+      }
     });
-  };
 
-  this.disable = function() {
+    $(board.event_manager).on('dragstop.Pointer', function(evt, mapEvt) {
+
+      self.saveAction();
+
+      self.dragging_template = false;
+      self.template_start_cell = null;
+      self.template_current_cell = null;
+    });
+  },
+
+  disable: function() {
     $(this.board.event_manager).off(".Pointer");
-  };
-}
+  },
 
-Pointer.prototype = new Tool();
+  draw: function() {
+
+    var border = null;
+
+    if (this.dragging_template) {
+      var dx = this.template_current_cell[0] - this.template_start_cell[0];
+      var dy = this.template_current_cell[1] - this.template_start_cell[1];
+      var cellSize = this.board.drawing.cellSize;
+
+      border = _.map(this.selected_template.getBorder(this.board), function(line) {
+        return {
+          start: [line.start[0] + dx * cellSize, line.start[1] + dy * cellSize],
+          end: [line.end[0] + dx * cellSize, line.end[1] + dy * cellSize]
+        }
+      });
+    } else if (this.selected_template) {
+      border = this.selected_template.getBorder(this.board);
+    }
+
+    if (border) {
+      this.board.drawing.drawLines("white", 6, border);
+    }
+  },
+
+  saveAction: function() {
+    if (this.dragging_template) {
+      var dx = this.template_current_cell[0] - this.template_start_cell[0];
+      var dy = this.template_current_cell[1] - this.template_start_cell[1];
+
+      var removeAction = {actionType: "removeTemplateAction", actionId: this.selected_template.uid, uid: generateActionId()};
+      var addAction = this.selected_template.cloneAndTranslate(dx, dy);
+
+      var restoreAction = this.selected_template.clone();
+      var undoAction = {actionType: "removeTemplateAction", actionId: addAction.uid, uid: generateActionId()};
+
+      this.board.addAction(
+          {actionType: "compositeAction", actionList: [removeAction, addAction]},
+          {actionType: "compositeAction", actionList: [undoAction, restoreAction]},
+          true);
+
+      this.selected_template = null;
+    }
+  }
+});
 
 function DrawTool(board) {
   Tool.call(this, board);
@@ -208,7 +290,11 @@ Measure.prototype = _.extend(new Tool(), {
         return;
       }
 
-      this.board.drawing.drawMovement(this.startCell, this.currentCell);
+      var template = Geometry.getMovementPath(this.startCell, this.currentCell);
+      var border = Geometry.getBorder(template, this.board.drawing.cellSize);
+
+      this.board.drawing.drawTemplate(template, border, this.color);
+      this.board.drawing.drawMovementLine(this.startCell, this.currentCell);
     }
   },
 

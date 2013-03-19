@@ -3,12 +3,30 @@ var actionMethods = {
   default: {
     apply: function (board) {},
     validateData: function() {},
+    extend: function() { return null; },
     ensureFields: function(fieldList) {
       _.each(fieldList, function(field) {
         if (!_.has(this, field)) {
           throw new Error("Action of type " + this.actionType + " missing required field " + field);
         }
       }, this);
+    },
+    clone: function() {
+      var clone = _.omit(this, _.functions(this).concat(["uid"]));
+      clone.uid = generateActionId();
+      return clone;
+    }
+  },
+
+  compositeAction: {
+    apply: function(board) {
+      _.each(this.actionList, function(a) {
+        a.apply(board);
+      }, this);
+    },
+
+    validateData: function() {
+      this.ensureFields(["actionList"]);
     }
   },
 
@@ -88,10 +106,61 @@ var actionMethods = {
     }
   },
 
-  movementTemplateAction: {
+  templateAction: {
+    isTemplate: true,
+    calculateCells: function() { return []; },
+    drawExtras: function(board) { },
+    internalTranslateData: function(action, dx, dy){},
+    cloneAndTranslate: function(dx, dy) {
+      var clone = this.clone();
+      this.internalTranslateData(clone, dx, dy);
+      return clone;
+    },
     apply: function(board) {
       board.template_actions.push(this);
-      board.drawing.drawMovement(this.start, this.end, this.color);
+      this.ensureCells(board);
+      board.drawing.drawTemplate(this.privateData.cells, this.privateData.border, this.color);
+      this.drawExtras(board);
+    },
+    validateData: function() {
+      throw "This shouldn't happen; templateAction isn't a real action";
+    },
+    ensureCells: function(board) {
+      if (!this.privateData.cells) {
+        this.privateData.cells = this.calculateCells();
+        this.privateData.border = Geometry.getBorder(this.privateData.cells, board.drawing.cellSize);
+      }
+    },
+    containsCell: function(board, cell) {
+      this.ensureCells(board);
+      return _.find(this.privateData.cells, function(c) { return c[0] == cell[0] && c[1] == cell[1]; });
+    },
+    getCells: function(board) {
+      this.ensureCells(board);
+      return this.privateData.cells;
+    },
+    getBorder: function(board) {
+      this.ensureCells(board);
+      return this.privateData.border;
+    },
+    clone: function() {
+      var clone =  _.omit(this, _.functions(this).concat(["uid", "privateData", "isTemplate"]));
+      clone.uid = generateActionId();
+      return clone;
+    }
+  },
+
+  movementTemplateAction: {
+    extend: function() { return "templateAction"; },
+    internalTranslateData: function(action, dx, dy){
+      action.start = [this.start[0] + dx, this.start[1] + dy];
+      action.end = [this.end[0] + dx, this.end[1] + dy];
+    },
+    calculateCells: function() {
+      return Geometry.getMovementPath(this.start, this.end);
+    },
+    drawExtras: function(board) {
+      board.drawing.drawMovementLine(this.start, this.end);
     },
 
     validateData: function() {
@@ -100,14 +169,12 @@ var actionMethods = {
   },
 
   radiusTemplateAction: {
-    apply: function(board) {
-      board.template_actions.push(this);
-
-      if (!this.privateData.cells) {
-        this.privateData.cells = Geometry.getCellsInRadius(this.intersection, this.radius);
-        this.privateData.border = Geometry.getBorder(this.privateData.cells, board.drawing.cellSize);
-      }
-      board.drawing.drawTemplate(this.privateData.cells, this.privateData.border, this.color);
+    extend: function() { return "templateAction"; },
+    internalTranslateData: function(action, dx, dy){
+      action.intersection = [this.intersection[0] + dx, this.intersection[1] + dy];
+    },
+    calculateCells: function() {
+      return Geometry.getCellsInRadius(this.intersection, this.radius);
     },
 
     validateData: function() {
@@ -116,22 +183,26 @@ var actionMethods = {
   },
 
   lineTemplateAction: {
-    apply: function(board) {
+    extend: function() { return "templateAction"; },
+    internalTranslateData: function(action, dx, dy){},
+    calculateCells: function() {
 
     },
 
     validateData: function() {
-
+      this.ensureFields(["start", "end", "color", "uid"]);
     }
   },
 
   coneTemplateAction: {
-    apply: function(board) {
+    extend: function() { return "templateAction"; },
+    internalTranslateData: function(action, dx, dy){},
+    calculateCells: function() {
 
     },
 
     validateData: function() {
-
+      this.ensureFields(["intersection", "radius", "direction", "color", "uid"]);
     }
   }
 };
@@ -153,6 +224,11 @@ function attachActionMethods(action) {
   // Apply action specific methods
   _.extend(action, actionMethods[action.actionType]);
 
+  // Apply any extend methods
+  if (action.extend) {
+    _.defaults(action, actionMethods[action.extend()]);
+  }
+
   // Apply any defaults not overridden by action methods
   _.defaults(action, actionMethods.default);
 
@@ -161,6 +237,11 @@ function attachActionMethods(action) {
 
   // Validate action data
   action.validateData();
+
+  // Extra Special Magic Case
+  if (action.actionType == "compositeAction") {
+    _.each(action.actionList, function(a) { attachActionMethods(a);});
+  }
 
   return action;
 }

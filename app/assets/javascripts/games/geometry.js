@@ -96,6 +96,7 @@ var Geometry = {
 
   // Given a list of cells, return a list of lines that will
   // draw a border
+  // Note that this method is stupid and slow (O(n^2) stupid); try to cache this
   getBorder: function(cells, cellSize) {
     var lines = [];
 

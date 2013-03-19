@@ -177,7 +177,7 @@ function Board(canvas) {
   };
 
   this.renderBoardGrid = function() {
-    this.drawing.drawGrid(this.rows, this.columns, "rgba(255, 255, 255, 0.5)");
+    this.drawing.drawGrid(this.rows, this.columns, "rgba(0, 0, 0, 1.0)");
   };
 
   this.renderDrawing = function() {
@@ -321,11 +321,13 @@ function BoardEvents(board) {
   };
 
   this.cursorDownHandler = function(canvasCoords) {
+    //console.log("down");
     self.isLeftMouseDown = true;
     self.dragStart = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
   };
 
   this.cursorMoveHandler = function(canvasCoords) {
+    //console.log("move");
     var mapPoint = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     var cell = self.getCell(mapPoint[0], mapPoint[1]);
 
@@ -350,7 +352,7 @@ function BoardEvents(board) {
   };
 
   this.cursorUpHandler = function() {
-
+    //console.log("up");
     // Ignore any mouse up events that didn't start with a mousedown on the canvas
     if (!self.isLeftMouseDown) {
       return;

@@ -6,15 +6,9 @@ function Drawing(context) {
     this.context.clearRect(0, 0, columns * this.cellSize, rows * this.cellSize);
   };
 
-  this.drawMovement = function(start, end, color) {
+  this.drawMovementLine = function(start, end) {
     var startPoint = Geometry.getCellMidpoint(start, this.cellSize);
     var endPoint = Geometry.getCellMidpoint(end, this.cellSize);
-
-    var cellPath = Geometry.getMovementPath(start, end);
-
-    _.each(cellPath, function(c) {
-      this.colorCell(c[0], c[1], 'rgba(75, 75, 75, 0.8)');
-    }, this);
 
     var totalMovement = Geometry.getCellDistance(start, end) * 5;
 
@@ -62,7 +56,7 @@ function Drawing(context) {
   };
 
   this.drawTemplate = function(cells, border, color) {
-    this.context.globalAlpha = 0.5;
+    this.context.globalAlpha = 0.3;
 
     _.each(cells, function(c) {
       this.colorCell(c[0], c[1], color);
