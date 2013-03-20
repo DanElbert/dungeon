@@ -194,7 +194,7 @@ function Pen(board, width, color) {
 }
 
 Pen.prototype = _.extend(new DrawTool(), {
-  minimumLineDistance: function() { return this.width; },
+  minimumLineDistance: function() { return this.width / 2; },
   eventNamespace: function() { return "Pen"; },
   draw: function() {
     this.board.drawing.drawLines(this.color, this.width, this.lineBuffer);
