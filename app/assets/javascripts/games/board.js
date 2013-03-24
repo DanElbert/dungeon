@@ -289,6 +289,9 @@ function BoardEvents(board) {
   this.isDragging = false;
   this.dragStart = null;
   this.previousDrag = null;
+  this.shiftKey = false;
+  this.altKey = false;
+  this.ctrlKey = false;
 
   var self = this;
 
@@ -385,6 +388,60 @@ function BoardEvents(board) {
     self.isDragging = false;
     self.isLeftMouseDown = false;
   };
+
+  this.keyDownHandler = function(key) {
+    jqThis.trigger('keydown', {
+      key: key,
+      isShift: self.shiftKey,
+      isAlt: self.altKey,
+      isCtrl: self.ctrlKey
+    });
+  };
+
+  this.keyUpHandler = function(key) {
+    jqThis.trigger('keyup', {
+      key: key,
+      isShift: self.shiftKey,
+      isAlt: self.altKey,
+      isCtrl: self.ctrlKey
+    });
+  };
+
+  $(document).on('keydown.BoardEvents', function(evt) {
+    // Process all keystrokes, but only those not obviously intended for something else
+    var tag = evt.target.tagName.toLowerCase();
+    if (tag == "input" || tag == "textarea") {
+      return;
+    }
+
+    if (evt.which == 16) {
+      self.shiftKey = true;
+    } else if (evt.which == 17) {
+      self.ctrlKey = true;
+    } else if (evt.which == 18) {
+      self.altKey = true;
+    }
+
+    self.keyDownHandler(evt.which);
+  });
+
+  $(document).on('keyup.BoardEvents', function(evt) {
+    // Process all keystrokes, but only those not obviously intended for something else
+    var tag = evt.target.tagName.toLowerCase();
+    if (tag == "input" || tag == "textarea") {
+      return;
+    }
+
+    if (evt.which == 16) {
+      self.shiftKey = false;
+    } else if (evt.which == 17) {
+      self.ctrlKey = false;
+    } else if (evt.which == 18) {
+      self.altKey = false;
+    }
+
+    self.keyUpHandler(evt.which);
+  });
 
   jqCanvas.on('mousedown.BoardEvents', function(evt) {
     if (evt.which == 1) { // left button

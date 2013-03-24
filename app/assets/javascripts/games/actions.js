@@ -12,8 +12,7 @@ var actionMethods = {
       }, this);
     },
     clone: function() {
-      var clone = _.omit(this, _.functions(this).concat(["uid"]));
-      clone.uid = generateActionId();
+      var clone = _.omit(this, _.functions(this));
       return clone;
     }
   },
@@ -168,8 +167,7 @@ var actionMethods = {
       return this.privateData.border;
     },
     clone: function() {
-      var clone =  _.omit(this, _.functions(this).concat(["uid", "privateData", "isTemplate"]));
-      clone.uid = generateActionId();
+      var clone =  _.omit(this, _.functions(this).concat(["privateData", "isTemplate"]));
       return clone;
     }
   },
