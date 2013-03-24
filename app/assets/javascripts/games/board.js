@@ -241,9 +241,9 @@ function Board(canvas) {
     context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
 
     this.renderBoardBackground();
-    this.renderDrawing();
     this.renderTemplates();
     this.renderBoardGrid();
+    this.renderDrawing();
     this.renderCursor();
     this.renderTool();
   };

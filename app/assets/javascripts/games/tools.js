@@ -134,6 +134,134 @@ Pointer.prototype = _.extend(new Tool(), {
   }
 });
 
+function SquarePen(board, width, color) {
+  Tool.call(this, board);
+  this.super = Tool.prototype;
+
+  this.width = width;
+  this.color = color;
+
+  this.drag_start = null;
+  this.drag_current = null;
+}
+
+SquarePen.prototype = _.extend(new Tool(), {
+  enable: function() {
+
+    var self = this;
+    var board = this.board;
+
+    $(board.event_manager).on('dragstart.SquarePen', function(evt, mapEvt) {
+      self.drag_start = mapEvt.mapPoint;
+    });
+
+    $(board.event_manager).on('drag.SquarePen', function(evt, mapEvt) {
+      self.drag_current = mapEvt.mapPoint;
+    });
+
+    $(board.event_manager).on('dragstop.SquarePen', function(evt, mapEvt) {
+      self.saveAction();
+
+      self.drag_start = null;
+      self.drag_current = null;
+    });
+  },
+
+  disable: function() {
+    this.saveAction();
+    $(this.board.event_manager).off('.SquarePen');
+  },
+
+  draw: function() {
+    if (this.drag_start && this.drag_current) {
+      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
+      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
+
+      this.board.drawing.drawSquare(topLeft, bottomRight, this.color, this.width);
+
+      var xDist = Math.round((Math.abs(topLeft[0] - bottomRight[0]) / this.board.drawing.cellSize) * 5);
+      var yDist = Math.round((Math.abs(topLeft[1] - bottomRight[1]) / this.board.drawing.cellSize) * 5);
+
+      this.board.drawing.drawMeasureLine([topLeft[0], topLeft[1] - 30], [bottomRight[0], topLeft[1] - 30], xDist);
+      this.board.drawing.drawMeasureLine([bottomRight[0] + 30, topLeft[1]], [bottomRight[0] + 30, bottomRight[1]], yDist);
+    }
+  },
+
+  saveAction: function() {
+    if (this.drag_start && this.drag_current) {
+      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
+      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
+
+      var action = {actionType: "squarePenAction", color: this.color, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});
+
+function CirclePen(board, width, color) {
+  Tool.call(this, board);
+  this.super = Tool.prototype;
+
+  this.width = width;
+  this.color = color;
+
+  this.drag_start = null;
+  this.drag_current = null;
+}
+
+CirclePen.prototype = _.extend(new Tool(), {
+  enable: function() {
+
+    var self = this;
+    var board = this.board;
+
+    $(board.event_manager).on('dragstart.CirclePen', function(evt, mapEvt) {
+      self.drag_start = mapEvt.mapPoint;
+    });
+
+    $(board.event_manager).on('drag.CirclePen', function(evt, mapEvt) {
+      self.drag_current = mapEvt.mapPoint;
+    });
+
+    $(board.event_manager).on('dragstop.CirclePen', function(evt, mapEvt) {
+      self.saveAction();
+
+      self.drag_start = null;
+      self.drag_current = null;
+    });
+  },
+
+  disable: function() {
+    this.saveAction();
+    $(this.board.event_manager).off('.CirclePen');
+  },
+
+  draw: function() {
+    if (this.drag_start && this.drag_current) {
+      var center = this.drag_start;
+      var radius = Geometry.getDistance(this.drag_start, this.drag_current);
+
+      this.board.drawing.drawCircle(center[0], center[1], radius, this.width, this.color);
+
+      var pathfinderDistance = Math.round((radius / this.board.drawing.cellSize) * 5);
+
+      this.board.drawing.drawMeasureLine(this.drag_start, this.drag_current, pathfinderDistance);
+    }
+  },
+
+  saveAction: function() {
+    if (this.drag_start && this.drag_current) {
+      var center = this.drag_start;
+      var radius = Geometry.getDistance(this.drag_start, this.drag_current);
+
+      var action = {actionType: "circlePenAction", color: this.color, width: this.width, center: center, radius: radius, uid: generateActionId()};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});
+
 function DrawTool(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
@@ -307,7 +435,7 @@ Measure.prototype = _.extend(new Tool(), {
   }
 });
 
-function RadiusTemplate(board, color) {
+function RadialTemplate(board, color) {
   Tool.call(this, board);
   this.super = Tool.prototype;
   this.color = color;
@@ -315,45 +443,35 @@ function RadiusTemplate(board, color) {
   this.center = null;
   this.radiusPoint = null;
 }
-RadiusTemplate.prototype = _.extend(new Tool(), {
+RadialTemplate.prototype = _.extend(new Tool(), {
+  saveAction: function() {},
+  toolName: function() { return "Radial"; },
+  getCells: function(centerCell, endCell, distance) { return []; },
   enable: function () {
     var board = this.board;
     var self = this;
     var cellSize = this.board.drawing.cellSize;
 
-    $(board.event_manager).on('mousemove.RadiusTemplate', function(evt, mapEvt) {
+    $(board.event_manager).on('mousemove.' + this.toolName(), function(evt, mapEvt) {
       if (!self.dragging) {
         self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       }
     });
 
-    $(board.event_manager).on('dragstart.RadiusTemplate', function (evt, mapEvt) {
+    $(board.event_manager).on('dragstart.' + this.toolName(), function (evt, mapEvt) {
       self.dragging = true;
     });
 
-    $(board.event_manager).on('drag.RadiusTemplate', function (evt, mapEvt) {
+    $(board.event_manager).on('drag.' + this.toolName(), function (evt, mapEvt) {
       self.radiusPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
     });
 
-    $(board.event_manager).on('dragstop.RadiusTemplate', function (evt, mapEvt) {
+    $(board.event_manager).on('dragstop.' + this.toolName(), function (evt, mapEvt) {
       self.saveAction();
       self.radiusPoint = null;
       self.dragging = false;
       self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
     });
-  },
-
-  disable: function () {
-    $(this.board.event_manager).off(".RadiusTemplate");
-  },
-
-  drawCross: function(point) {
-    var crossSize = 10;
-    var lines = [
-      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
-      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
-    ];
-    this.board.drawing.drawLines("black", 3, lines);
   },
 
   draw: function() {
@@ -371,13 +489,38 @@ RadiusTemplate.prototype = _.extend(new Tool(), {
       var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
       var distance = Geometry.getCellDistance(centerCell, endCell);
 
-      var template = Geometry.getCellsInRadius(centerCell, distance);
+      var template = this.getCells(centerCell, endCell, distance);
       var border = Geometry.getBorder(template, this.board.drawing.cellSize);
 
       this.board.drawing.drawTemplate(template, border, this.color);
 
       this.board.drawing.drawMeasureLine(this.center, this.radiusPoint, distance * 5);
     }
+  },
+
+  disable: function () {
+    $(this.board.event_manager).off('.' + this.toolName());
+  },
+
+  drawCross: function(point) {
+    var crossSize = 10;
+    var lines = [
+      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
+      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
+    ];
+    this.board.drawing.drawLines("black", 3, lines);
+  }
+});
+
+function RadiusTemplate(board, color) {
+  RadialTemplate.call(this, board, color);
+  this.super = RadialTemplate.prototype;
+}
+RadiusTemplate.prototype = _.extend(new RadialTemplate(), {
+  toolName: function() { return "Radius"; },
+
+  getCells: function(centerCell, endCell, distance) {
+    return Geometry.getCellsInRadius(centerCell, distance);
   },
 
   saveAction: function() {
@@ -387,6 +530,35 @@ RadiusTemplate.prototype = _.extend(new Tool(), {
       var distance = Geometry.getCellDistance(centerCell, endCell);
 
       var action = {actionType: "radiusTemplateAction", intersection: centerCell, radius: distance, color: this.color, uid: generateActionId()};
+      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});
+
+function ConeTemplate(board, color) {
+  RadialTemplate.call(this, board, color);
+  this.super = RadialTemplate.prototype;
+}
+ConeTemplate.prototype = _.extend(new RadialTemplate(), {
+  toolName: function() { return "Cone"; },
+
+  getCells: function(centerCell, endCell, distance) {
+    var cursorAngle = Math.atan2(this.radiusPoint[0] - this.center[0], -1 * (this.radiusPoint[1] - this.center[1])) * (180 / Math.PI);
+    cursorAngle = (cursorAngle + 360 - 90) % 360;
+
+    return Geometry.getCellsInCone(centerCell, distance, cursorAngle);
+  },
+
+  saveAction: function() {
+    if (this.center && this.radiusPoint) {
+      var centerCell = [this.center[0] / this.board.drawing.cellSize, this.center[1] / this.board.drawing.cellSize];
+      var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
+      var distance = Geometry.getCellDistance(centerCell, endCell);
+      var cursorAngle = Math.atan2(this.radiusPoint[0] - this.center[0], -1 * (this.radiusPoint[1] - this.center[1])) * (180 / Math.PI);
+      cursorAngle = (cursorAngle + 360 - 90) % 360;
+
+      var action = {actionType: "coneTemplateAction", intersection: centerCell, radius: distance, angle: cursorAngle, color: this.color, uid: generateActionId()};
       var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

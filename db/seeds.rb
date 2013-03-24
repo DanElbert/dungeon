@@ -39,5 +39,5 @@ template4.add_piece(14, 0, 23, 9, "board/stone_tiles.jpg")
 template4.save!
 
 template5 = TemplateBoard.new({:name => "50x50 Grassy"})
-template5.add_piece(0, 0, 49, 49, "board/grass.jpg")
+template5.add_piece(0, 0, 49, 49, "board/dark_grass.jpg")
 template5.save!

@@ -1,7 +1,7 @@
 module GameServer
   class AddActionHandler < Handler
 
-    DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction eraseAction)
+    DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction eraseAction squarePenAction circlePenAction)
     TEMPLATE_ACTION_TYPES = %w(removeTemplateAction movementTemplateAction radiusTemplateAction lineTemplateAction coneTemplateAction)
     COMPOSITE_ACTION_TYPE = 'compositeAction'
     CHANNEL_REGEX = /^\/game\/(\d+)\/add_action$/

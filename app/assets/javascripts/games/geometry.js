@@ -164,6 +164,52 @@ var Geometry = {
     return template;
   },
 
+  getCellsInCone: function(center, radius, angle) {
+    angle = Geometry.roundToNearest(angle, 45);
+
+    var octants = [];
+
+    switch(angle) {
+      case 360:
+      case 0:
+        octants = [8,1];
+        break;
+      case 45:
+        octants = [1,2];
+        break;
+      case 90:
+        octants = [2,3];
+        break;
+      case 135:
+        octants = [3,4];
+        break;
+      case 180:
+        octants = [4,5];
+        break;
+      case 225:
+        octants = [5,6];
+        break;
+      case 270:
+        octants = [6,7];
+        break;
+      case 315:
+        octants = [7,8];
+        break;
+    }
+
+    var template = [];
+
+    for (var x = 0; x < octants.length; x++) {
+      var o = octants[x];
+      template = template.concat(Geometry.getOctant(center, radius, o));
+    }
+
+    // Octants can overlap; remove any duplicate cells
+    template = _.uniq(template, false, function(p) { return p[0] + "|" + p[1]; });
+
+    return template;
+  },
+
   // Returns the cells from octant n, where n is
   // 1: ESE
   // 2: SSE

@@ -16,7 +16,7 @@ $(document).ready(function () {
   game_board = new Board($("#game_board")[0]);
 
   $("#tool_menu").toolMenu({
-    values: ["Pointer", "Pen", "Eraser", "Measure", "Radius"],
+    values: ["Pointer", "Pen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line"],
     initialValue: "Pointer",
     contentCallback: function(value) {
       return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
@@ -29,6 +29,12 @@ $(document).ready(function () {
         case "Pen":
           selectPenTool();
           break;
+        case "Square":
+          game_board.setTool(new SquarePen(game_board, $("#tool_line_width").toolMenu("value"), $("#tool_color").toolMenu("value").color));
+          break;
+        case "Circle":
+          game_board.setTool(new CirclePen(game_board, $("#tool_line_width").toolMenu("value"), $("#tool_color").toolMenu("value").color));
+          break;
         case "Eraser":
           game_board.setTool(new Eraser(game_board, 30));
           break;
@@ -38,8 +44,15 @@ $(document).ready(function () {
         case "Radius":
           game_board.setTool(new RadiusTemplate(game_board, $("#tool_color").toolMenu("value").color));
           break;
+        case "Cone":
+          game_board.setTool(new ConeTemplate(game_board, $("#tool_color").toolMenu("value").color));
+          break;
+        case "Line":
+          game_board.setTool(new Pointer(game_board));
+          //game_board.setTool(new LineTemplate(game_board, $("#tool_color").toolMenu("value").color));
+          break;
         default:
-          alert("No such tool");
+          throw "No such tool";
       }
     }
   });
@@ -120,7 +133,7 @@ $(document).ready(function () {
   refreshBoard();
 });
 
-window.requestAnimFrame = (function (callback) {
+window.requestAnimFrame = (function () {
   return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
           function (callback) {
             window.setTimeout(callback, 1000 / 60);

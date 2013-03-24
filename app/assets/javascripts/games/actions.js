@@ -42,6 +42,30 @@ var actionMethods = {
     }
   },
 
+  // Draws a square.  Requires topLeft, bottomRight, color, and width
+  squarePenAction: {
+    apply: function(board) {
+      board.drawing_actions.push(this);
+      board.drawingDrawing.drawSquare(this.topLeft, this.bottomRight, this.color, this.width);
+    },
+
+    validateData: function() {
+      this.ensureFields(["color", "width", "topLeft", "bottomRight", "uid"]);
+    }
+  },
+
+  // Draws a circle.  Requires center, radius, color, and width
+  circlePenAction: {
+    apply: function(board) {
+      board.drawing_actions.push(this);
+      board.drawingDrawing.drawCircle(this.center[0], this.center[1], this.radius, this.width, this.color);
+    },
+
+    validateData: function() {
+      this.ensureFields(["color", "width", "center", "radius", "uid"]);
+    }
+  },
+
   // An erase action consists of a width and a collection of lines
   eraseAction: {
     apply: function(board) {
@@ -196,13 +220,15 @@ var actionMethods = {
 
   coneTemplateAction: {
     extend: function() { return "templateAction"; },
-    internalTranslateData: function(action, dx, dy){},
+    internalTranslateData: function(action, dx, dy){
+      action.intersection = [this.intersection[0] + dx, this.intersection[1] + dy];
+    },
     calculateCells: function() {
-
+      return Geometry.getCellsInCone(this.intersection, this.radius, this.angle);
     },
 
     validateData: function() {
-      this.ensureFields(["intersection", "radius", "direction", "color", "uid"]);
+      this.ensureFields(["intersection", "radius", "angle", "color", "uid"]);
     }
   }
 };

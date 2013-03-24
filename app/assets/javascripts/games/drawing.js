@@ -83,6 +83,21 @@ function Drawing(context) {
     this.context.stroke();
   };
 
+  this.drawSquare = function(topLeft, bottomRight, color, width) {
+    this.context.lineWidth = width;
+    this.context.strokeStyle = color;
+    this.context.lineCap = 'round';
+
+    this.context.beginPath();
+    this.context.moveTo(topLeft[0], topLeft[1]);
+    this.context.lineTo(bottomRight[0], topLeft[1]);
+    this.context.lineTo(bottomRight[0], bottomRight[1]);
+    this.context.lineTo(topLeft[0], bottomRight[1]);
+    this.context.lineTo(topLeft[0], topLeft[1]);
+
+    this.context.stroke();
+  };
+
   this.eraseLines = function(width, lines) {
 
     var originalCompositeOperation = this.context.globalCompositeOperation;
