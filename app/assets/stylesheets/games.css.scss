@@ -93,3 +93,91 @@
   width: 55px;
   height: 55px;
 }
+
+$initiative_width: 400px;
+$toggle_width: 75px;
+
+#initiative_panel {
+  z-index: 200;
+  overflow: hidden;
+  border: 2px solid black;
+  background-color: white;
+  position: absolute;
+  top: 20px;
+  right: 0px;
+}
+
+#initiative_panel.closed {
+  height: 30px;
+  width: $toggle_width;
+}
+
+#initiative_panel.open {
+  right: 0px;
+  width: $initiative_width;
+  height: 500px;
+}
+
+#initiative_toggle {
+  width: $toggle_width;
+  height: 100%;
+  float: left;
+}
+
+#initiative_controls {
+  width: 300px;
+  float: left;
+}
+
+#initiative_list {
+  padding: 4px;
+}
+
+#initiative_list .initiativeItem {
+  list-style-type: none;
+  position: relative;
+  height: 25px;
+  margin: 2px;
+}
+
+.initiativeItem.removing span {
+  color: red;
+  text-decoration: line-through;
+}
+
+.initiativeItem span {
+  padding: 3px;
+  position: absolute;
+}
+
+.initiativeItem .name {
+  font-weight: bold;
+}
+
+.initiativeItem .value {
+  right: 0px;
+}
+
+#newInitForm input {
+  width: 100%;
+}
+
+#newInitForm {
+  width: 100%;
+}
+
+#newInitForm td {
+  padding: 4px;
+}
+
+#newInitForm #name_col {
+  width: 50%;
+}
+
+#newInitForm #val_col {
+  width: 30%;
+}
+
+#newInitForm #button_col {
+  width: 20%;
+}

@@ -4,6 +4,30 @@
 <% end %>
 
 <div id="game_container">
+
+  <div id="initiative_panel" class="closed">
+    <div id="initiative_toggle">
+      Open
+    </div>
+
+    <div id="initiative_controls" style="display: none;">
+      <table id="newInitForm">
+        <tr>
+          <td id="name_col">Name</td>
+          <td id="val_col">Initiative</td>
+          <td id="button_col"></td>
+        </tr>
+        <tr>
+          <td><input type="text" id="initiative_name_input" /></td>
+          <td><input type="text" id="initiative_value_input" /></td>
+          <td><input type="button" id="initiative_add_button" value="Add" /></td>
+        </tr>
+      </table>
+
+      <ul id="initiative_list"></ul>
+    </div>
+  </div>
+
   <div id="game_header">
     <div style="float: left;">
       <label for="zoom_level">Zoom:</label>
