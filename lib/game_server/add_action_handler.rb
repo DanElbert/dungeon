@@ -26,8 +26,6 @@ module GameServer
 
     def process_action(action_data, game)
 
-      puts "processing #{action_data['actionType']}"
-
       if DRAWING_ACTION_TYPES.include? action_data['actionType']
         action = BoardDrawingAction.from_message(action_data)
         action.board = game.game_board
