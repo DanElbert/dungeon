@@ -228,6 +228,15 @@ var actionMethods = {
     validateData: function() {
       this.ensureFields(["intersection", "radius", "angle", "color", "uid"]);
     }
+  },
+
+  updateInitiativeAction: {
+    apply: function (board) {
+      board.initiative.update(this.initiative);
+    },
+    validateData: function() {
+      this.ensureFields(["uid", "initiative"]);
+    }
   }
 };
 

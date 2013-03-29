@@ -1,5 +1,7 @@
-function Board(canvas) {
+function Board(canvas, initiativeApi) {
   this.images = {};
+
+  this.initiative = initiativeApi;
 
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
@@ -47,6 +49,10 @@ function Board(canvas) {
 
   $(this.event_manager).on('mousemove', function(evt, mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
+  });
+
+  $(this.initiative).on('changed', function(e, evt) {
+    self.addAction({actionType: "updateInitiativeAction", initiative: evt.initiative, uid: generateActionId()}, null, true);
   });
 
   this.setCanvasSize = function(width, height) {

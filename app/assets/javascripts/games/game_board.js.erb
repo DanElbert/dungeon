@@ -13,7 +13,7 @@ document.addEventListener( 'touchmove' , stopScrolling , false );
 
 $(document).ready(function () {
 
-  game_board = new Board($("#game_board")[0]);
+  game_board = new Board($("#game_board")[0], InitializeInitiativeApi());
 
   $("#tool_menu").toolMenu({
     values: ["Pointer", "Pen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line"],
