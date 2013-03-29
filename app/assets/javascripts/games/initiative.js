@@ -47,6 +47,19 @@ function InitializeInitiativeApi() {
     });
   }
 
+  $("#resort_initiative").click(function() {
+    var init = api.serialize();
+    init = _.sortBy(init, function(i) {
+      return i.value * -1;
+    });
+
+    triggerChange(init);
+  });
+
+  $("#clear_initiative").click(function() {
+    triggerChange([]);
+  });
+
   toggle.click(function() {
     if (isOpen) {
       isOpen = false;
