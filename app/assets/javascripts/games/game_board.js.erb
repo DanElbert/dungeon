@@ -5,7 +5,7 @@ var USER_ID = 'OVERRIDE THIS IN VIEW';
 var USER_AUTH_TOKEN = 'OVERRIDE THIS IN VIEW';
 
 var game_board = null;
-var board_data = null;
+var game_data = null;
 
 // Disable mobile device scrolling
 function stopScrolling( touchEvent ) { touchEvent.preventDefault(); }
@@ -163,7 +163,7 @@ function setSize(zoom) {
 
 function refreshBoard() {
   $.getJSON(BOARD_DATA_URL, function (data) {
-    board_data = data;
+    game_data = data;
     setSize($("#zoom_level").val());
     game_board.refresh(data);
     draw_game();

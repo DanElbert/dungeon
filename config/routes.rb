@@ -9,7 +9,7 @@ Dungeon::Application.routes.draw do
 
   resources :games, :only => [:new, :create, :show] do
     member do
-      get 'get_game_board'
+      get 'get_game_data'
     end
   end
 

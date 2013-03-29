@@ -4,6 +4,7 @@ module GameServer
     DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction eraseAction squarePenAction circlePenAction)
     TEMPLATE_ACTION_TYPES = %w(removeTemplateAction movementTemplateAction radiusTemplateAction lineTemplateAction coneTemplateAction)
     COMPOSITE_ACTION_TYPE = 'compositeAction'
+    INITIATIVE_ACTION = 'updateInitiativeAction'
     CHANNEL_REGEX = /^\/game\/(\d+)\/add_action$/
 
     def should_handle_message(channel)
@@ -42,6 +43,16 @@ module GameServer
         action_data['actionList'].each do |sub_action|
           process_action(sub_action, game)
         end
+      end
+
+      if INITIATIVE_ACTION == action_data['actionType']
+
+        game.initiatives.destroy_all
+
+        action_data['initiative'].each_with_index do |init, i|
+          game.initiatives << Initiative.from_message(init, i)
+        end
+
       end
 
     end

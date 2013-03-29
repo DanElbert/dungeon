@@ -134,19 +134,20 @@ function Board(canvas, initiativeApi) {
       return;
     }
 
-    this.board_data = data;
-    this.drawing.cellSize = data.cell_size;
-    this.drawingDrawing.cellSize = data.cell_size;
-    this.rows = data.board_extents[1] + 1;
-    this.columns = data.board_extents[0] + 1;
+    this.initiative.update(data.initiative);
+    this.board_data = data.board;
+    this.drawing.cellSize = data.board.cell_size;
+    this.drawingDrawing.cellSize = data.board.cell_size;
+    this.rows = data.board.board_extents[1] + 1;
+    this.columns = data.board.board_extents[0] + 1;
     this.width = this.drawing.gridWidth(this.columns);
     this.height = this.drawing.gridHeight(this.rows);
 
-    _.each(data.drawing_actions, function(action) {
+    _.each(data.board.drawing_actions, function(action) {
       this.addAction(action, null, false);
     }, this);
 
-    _.each(data.template_actions, function(action) {
+    _.each(data.board.template_actions, function(action) {
       this.addAction(action, null, false);
     }, this);
 
@@ -155,7 +156,7 @@ function Board(canvas, initiativeApi) {
       this.setTool(new Pointer(this));
     }
 
-    this.prepareImages(data.board_images);
+    this.prepareImages(data.board.board_images);
   };
 
   this.regenerateDrawing = function() {

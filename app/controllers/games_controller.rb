@@ -8,10 +8,9 @@ class GamesController < ApplicationController
     render :layout => "game_board"
   end
 
-  def get_game_board
-    game = Game.includes(:game_board => [:board_pieces, :board_drawing_actions]).find(params[:id])
-    @board = game.game_board
-    render :json => @board
+  def get_game_data
+    @game = Game.includes(:initiatives, {:game_board => [:board_pieces, :board_drawing_actions]}).find(params[:id])
+    render :json => @game
   end
 
   def new
