@@ -21,6 +21,8 @@ role :web, "azathoth"                          # Your HTTP server, Apache/etc
 role :app, "azathoth"                          # This may be the same as your `Web` server
 role :db,  "azathoth", :primary => true # This is where Rails migrations will run
 
+set :use_sudo, false
+
 require "rvm/capistrano"
 require "bundler/capistrano"
 
@@ -38,14 +40,14 @@ namespace :deploy do
 
   desc "Stop the Thin processes"
   task :stop do
-    run <<-CMD
+    sudo <<-CMD
       /etc/init.d/thin stop
     CMD
   end
 
   desc "Restart the Thin processes"
   task :restart do
-    run <<-CMD
+    sudo <<-CMD
       /etc/init.d/thin restart
     CMD
   end
