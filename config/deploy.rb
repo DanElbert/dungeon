@@ -10,7 +10,12 @@ set :rvm_type, :system
 
 # Source code
 set :scm, :git
-# use host github-dungeon to use a special key on azathoth
+
+# use host github-dungeon to use a special deploy key on azathoth
+# Note that for cap to work, you'll have to alias this somehow on the local machine as well
+# the following 2 lines in ~/.ssh/config will work:
+# Host github-dungeon
+#   HostName github.com
 set :repository, "git@github-dungeon:DanElbert/dungeon.git"
 set :branch, "master"
 
