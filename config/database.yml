@@ -19,7 +19,10 @@ test:
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
+  adapter: mysql2
+  host: azathoth.thenever.
+  username: dungeon_user
+  password: Ww3SBp9v2hcEs2wd
+  database: dungeon
   pool: 5
   timeout: 5000
