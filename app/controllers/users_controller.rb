@@ -25,7 +25,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
 
-        set_current_user(user)
+        set_current_user(@user)
 
         format.html { redirect_to lobby_path, notice: 'User was successfully created.' }
         format.json { render json: @user, status: :created, location: @user }
