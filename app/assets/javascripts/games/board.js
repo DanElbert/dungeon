@@ -29,6 +29,8 @@ function Board(canvas, initiativeApi) {
 
   this.hovered_cell = null;
 
+  this.globalShortcutTool = new GlobalShortCuts(this);
+
   // Used in events
   var self = this;
 
@@ -155,6 +157,9 @@ function Board(canvas, initiativeApi) {
     if (!this.current_tool) {
       this.setTool(new Pointer(this));
     }
+
+    this.globalShortcutTool.disable();
+    this.globalShortcutTool.enable();
 
     this.prepareImages(data.board.board_images);
   };
@@ -292,10 +297,22 @@ function BoardEvents(board) {
   var jqThis = $(this);
   var jqCanvas = $(board.canvas);
 
-  this.isLeftMouseDown = false;
-  this.isDragging = false;
-  this.dragStart = null;
-  this.previousDrag = null;
+  this.leftMouseState = {
+    down: false,
+    dragging: false,
+    dragStart: null,
+    previousDrag: null,
+    eventPrefix: ''
+  };
+
+  this.rightMouseState = {
+    down: false,
+    dragging: false,
+    dragStart: null,
+    previousDrag: null,
+    eventPrefix: 'right'
+  };
+
   this.shiftKey = false;
   this.altKey = false;
   this.ctrlKey = false;
@@ -330,70 +347,69 @@ function BoardEvents(board) {
     return Geometry.getCell([mapX, mapY], this.board.drawing.cellSize);
   };
 
-  this.cursorDownHandler = function(canvasCoords) {
-    //console.log("down");
-    self.isLeftMouseDown = true;
-    self.dragStart = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+  this.cursorDownHandler = function(canvasCoords, mouseState) {
+    mouseState.down = true;
+    mouseState.dragStart = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
   };
 
-  this.cursorMoveHandler = function(canvasCoords) {
-    //console.log("move");
+  this.cursorMoveHandler = function(canvasCoords, mouseState) {
     var mapPoint = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     var cell = self.getCell(mapPoint[0], mapPoint[1]);
 
-    if (self.isLeftMouseDown && !self.isDragging) {
-      self.isDragging = true;
-      jqThis.trigger('dragstart', {mapPoint: self.dragStart, mapPointCell: self.getCell(self.dragStart[0], self.dragStart[1]), mousePoint: canvasCoords});
+    if(mouseState.down && !mouseState.dragging) {
+      mouseState.dragging = true;
+      jqThis.trigger(mouseState.eventPrefix + 'dragstart', {mapPoint: mouseState.dragStart, mapPointCell: self.getCell(mouseState.dragStart[0], mouseState.dragStart[1]), mousePoint: canvasCoords});
     }
 
-    if (self.isDragging) {
-      jqThis.trigger('drag', {
-        dragStart: self.dragStart,
-        dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
-        previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
+    if (mouseState.dragging) {
+      jqThis.trigger(mouseState.eventPrefix + 'drag', {
+        dragStart: mouseState.dragStart,
+        dragStartCell: self.getCell(mouseState.dragStart[0], mouseState.dragStart[1]),
+        previousDrag: mouseState.previousDrag ? mouseState.previousDrag : mouseState.dragStart,
         mousePoint: canvasCoords,
         mapPoint: mapPoint,
         mapPointCell: cell});
 
-      self.previousDrag = mapPoint;
+      mouseState.previousDrag = mapPoint;
     }
 
-    jqThis.trigger('mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
+    jqThis.trigger(mouseState.eventPrefix + 'mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
   };
 
-  this.cursorUpHandler = function() {
-    //console.log("up");
+  this.cursorUpHandler = function(mouseState) {
     // Ignore any mouse up events that didn't start with a mousedown on the canvas
-    if (!self.isLeftMouseDown) {
+    if (!mouseState.down) {
       return;
     }
 
-    if (self.isDragging) {
-      var mapPoint = self.previousDrag;
-      var cell = self.getCell(mapPoint[0], mapPoint[1]);
+    var mapPoint, cell;
 
-      jqThis.trigger('dragstop', {
-        dragStart: self.dragStart,
-        dragStartCell: self.getCell(self.dragStart[0], self.dragStart[1]),
-        previousDrag: self.previousDrag ? self.previousDrag : self.dragStart,
+    if (mouseState.dragging) {
+      mapPoint = mouseState.previousDrag;
+      cell = self.getCell(mapPoint[0], mapPoint[1]);
+
+      jqThis.trigger(mouseState.eventPrefix + 'dragstop', {
+        dragStart: mouseState.dragStart,
+        dragStartCell: self.getCell(mouseState.dragStart[0], mouseState.dragStart[1]),
+        previousDrag: mouseState.previousDrag ? mouseState.previousDrag : mouseState.dragStart,
         mapPoint: mapPoint,
         mapPointCell: cell
       });
 
     } else {
-      var mapPoint = self.dragStart;
-      var cell = self.getCell(mapPoint[0], mapPoint[1]);
+      mapPoint = mouseState.dragStart;
+      cell = self.getCell(mapPoint[0], mapPoint[1]);
 
-      jqThis.trigger('click', {
+      jqThis.trigger(mouseState.eventPrefix + 'click', {
         mapPoint: mapPoint,
         mapPointCell: cell
       });
     }
 
-    self.dragStart = null;
-    self.previousDrag = null;
-    self.isDragging = false;
-    self.isLeftMouseDown = false;
+    mouseState.dragStart = null;
+    mouseState.previousDrag = null;
+    mouseState.dragging = false;
+    mouseState.down = false;
   };
 
   this.keyDownHandler = function(key) {
@@ -451,42 +467,58 @@ function BoardEvents(board) {
   });
 
   jqCanvas.on('mousedown.BoardEvents', function(evt) {
+    var canvasCoords;
     if (evt.which == 1) { // left button
-      var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-      self.cursorDownHandler(canvasCoords);
+      canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+      self.cursorDownHandler(canvasCoords, self.leftMouseState);
+    } else if (evt.which == 3) { // right button
+      canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+      self.cursorDownHandler(canvasCoords, self.rightMouseState);
     }
+    evt.preventDefault();
+  });
+
+  // Disable browser context menu
+  jqCanvas.on('contextmenu.BoardEvents', function(evt) {
     evt.preventDefault();
   });
 
   jqCanvas.on('mouseup.BoardEvents', function(evt) {
     if (evt.which == 1) { // left button
-      self.cursorUpHandler();
+      self.cursorUpHandler(self.leftMouseState);
+    } else if (evt.which == 3) { // right button
+      self.cursorUpHandler(self.rightMouseState);
     }
     evt.preventDefault();
   });
 
   jqCanvas.on('mousemove.BoardEvents', function(evt) {
     var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-    self.cursorMoveHandler(canvasCoords);
+    self.cursorMoveHandler(canvasCoords, self.leftMouseState);
+    self.cursorMoveHandler(canvasCoords, self.rightMouseState);
     evt.preventDefault();
   });
 
   jqCanvas.on('mouseout.BoardEvents', function(evt) {
-    self.cursorUpHandler();
+    self.cursorUpHandler(self.leftMouseState);
+    self.cursorUpHandler(self.rightMouseState);
   });
 
   jqCanvas.on('touchstart.BoardEvents', function(evt) {
     var nEvt = evt.originalEvent;
+    var touch, canvasCoords;
     if (nEvt.targetTouches.length == 1) {
-      var touch = nEvt.targetTouches[0];
-      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
-      self.cursorDownHandler(canvasCoords);
+      touch = nEvt.targetTouches[0];
+      canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
+      self.cursorDownHandler(canvasCoords, self.leftMouseState);
+    } else if (nEvt.targetTouches.length == 2) {
+
     }
     //evt.stopPropagation();
   });
 
   jqCanvas.on('touchend.BoardEvents', function(evt) {
-    self.cursorUpHandler();
+    self.cursorUpHandler(self.leftMouseState);
     //evt.stopPropagation();
   });
 
@@ -495,7 +527,7 @@ function BoardEvents(board) {
     if (nEvt.targetTouches.length == 1) {
       var touch = nEvt.targetTouches[0];
       var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
-      self.cursorMoveHandler(canvasCoords);
+      self.cursorMoveHandler(canvasCoords, self.leftMouseState);
     }
     //evt.stopPropagation();
   });

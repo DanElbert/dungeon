@@ -6,9 +6,6 @@ _.extend(Tool.prototype, {
   enable: function() {},
   disable: function() {},
   draw: function() {},
-  getDistance: function(p1, p2) {
-    return Geometry.getDistance(p1, p2);
-  },
   setCursor: function(s) {
     $(this.board.canvas).css('cursor', s);
   },
@@ -17,13 +14,68 @@ _.extend(Tool.prototype, {
   }
 });
 
+function ViewPortDragging(parentTool, board, dragEventName) {
+  this.parentTool = parentTool;
+  this.board = board;
+  this.dragEventName = dragEventName;
+
+  this.drag_mouse_start = null;
+  this.drag_viewport_start = null;
+}
+_.extend(ViewPortDragging.prototype, {
+  eventName: function(suffix) {
+    return this.dragEventName + suffix + '.ViewPortDragging' + this.dragEventName;
+  },
+  enable: function() {
+    var self = this;
+    var board = this.board;
+    $(board.event_manager).on(this.eventName('start'), function(evt, mapEvt) {
+      self.drag_mouse_start = mapEvt.mousePoint;
+      self.drag_viewport_start = board.viewPortCoord;
+    });
+
+    $(board.event_manager).on(this.eventName(''), function(evt, mapEvt) {
+      var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.zoom);
+      var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.zoom);
+
+      board.viewPortCoord = [self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY];
+
+      // Ensure viewport is bound to within the map
+      board.setZoom(board.zoom);
+    });
+  },
+  disable: function() {
+    $(this.board.event_manager).off('.ViewPortDragging' + this.dragEventName);
+  }
+});
+
+function GlobalShortCuts(board) {
+  Tool.call(this, board);
+  this.super = Tool.prototype;
+  this.viewPortDragging = new ViewPortDragging(this, board, 'rightdrag');
+}
+
+GlobalShortCuts.prototype = _.extend(new Tool(), {
+  enable: function() {
+    var self = this;
+
+    this.viewPortDragging.enable();
+
+    $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
+
+    });
+  },
+  disable: function() {
+    this.viewPortDragging.disable();
+    $(this.board.event_manager).off(".GlobalShortCuts");
+  }
+});
 
 function Pointer(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
 
-  this.drag_mouse_start = null;
-  this.drag_viewport_start = null;
+  this.viewPortDragging = new ViewPortDragging(this, board, 'drag');
   this.selected_template = null;
   this.dragging_template = false;
   this.template_start_cell = null;
@@ -35,6 +87,8 @@ Pointer.prototype = _.extend(new Tool(), {
 
     var self = this;
     var board = this.board;
+
+    this.viewPortDragging.enable();
 
     $(board.event_manager).on('click.Pointer', function(evt, mapEvt) {
 
@@ -53,9 +107,6 @@ Pointer.prototype = _.extend(new Tool(), {
       if (self.selected_template && self.selected_template.containsCell(self.board, mapEvt.mapPointCell)) {
         self.dragging_template = true;
         self.template_start_cell = mapEvt.mapPointCell;
-      } else {
-        self.drag_mouse_start = mapEvt.mousePoint;
-        self.drag_viewport_start = board.viewPortCoord;
       }
 
     });
@@ -64,14 +115,6 @@ Pointer.prototype = _.extend(new Tool(), {
 
       if (self.dragging_template) {
         self.template_current_cell = mapEvt.mapPointCell;
-      } else {
-        var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.zoom);
-        var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.zoom);
-
-        board.viewPortCoord = [self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY];
-
-        // Ensure viewport is bound to within the map
-        board.setZoom(board.zoom);
       }
     });
 
@@ -95,6 +138,7 @@ Pointer.prototype = _.extend(new Tool(), {
   },
 
   disable: function() {
+    this.viewPortDragging.disable();
     $(this.board.event_manager).off(".Pointer");
   },
 
@@ -288,7 +332,7 @@ DrawTool.prototype = _.extend(new Tool(), {
       this.previous_point = location;
     }
 
-    var distance = this.getDistance(this.previous_point, location);
+    var distance = Geometry.getDistance(this.previous_point, location);
 
     if (distance >= this.minimumLineDistance()) {
       this.lineBuffer.push({start: this.previous_point, end: location});

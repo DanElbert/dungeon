@@ -22,7 +22,7 @@ function Drawing(context) {
 
     this.context.textBaseline = 'middle';
     this.context.textAlign = 'center';
-    this.context.font = 'bold 20px sans-serif';
+    this.context.font = 'bold 25px sans-serif';
 
     this.context.beginPath();
     this.context.moveTo(start[0], start[1]);
@@ -33,7 +33,7 @@ function Drawing(context) {
     var midPoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
     var fontWidth = this.context.measureText(label).width;
     fontWidth = Math.max(fontWidth, 20);
-    var fontHeight = 20;
+    var fontHeight = 28;
 
     // draw ovalish box
     this.context.beginPath();
@@ -52,7 +52,7 @@ function Drawing(context) {
 
     this.context.fillStyle = 'black';
 
-    this.context.fillText(label, midPoint[0], midPoint[1]);
+    this.context.fillText(label, midPoint[0], midPoint[1] + 2);
   };
 
   this.drawTemplate = function(cells, border, color) {
