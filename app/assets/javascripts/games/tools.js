@@ -18,6 +18,7 @@ function ViewPortDragging(parentTool, board, dragEventName) {
   this.parentTool = parentTool;
   this.board = board;
   this.dragEventName = dragEventName;
+  this.enabled = false;
 
   this.drag_mouse_start = null;
   this.drag_viewport_start = null;
@@ -29,6 +30,7 @@ _.extend(ViewPortDragging.prototype, {
   enable: function() {
     var self = this;
     var board = this.board;
+    this.enabled = true;
     $(board.event_manager).on(this.eventName('start'), function(evt, mapEvt) {
       self.drag_mouse_start = mapEvt.mousePoint;
       self.drag_viewport_start = board.viewPortCoord;
@@ -45,6 +47,7 @@ _.extend(ViewPortDragging.prototype, {
     });
   },
   disable: function() {
+    this.enabled = false;
     $(this.board.event_manager).off('.ViewPortDragging' + this.dragEventName);
   }
 });
@@ -59,10 +62,18 @@ GlobalShortCuts.prototype = _.extend(new Tool(), {
   enable: function() {
     var self = this;
 
+    var scrollZoomFactor = -0.001;
+    var zoomMin = 0.3;
+    var zoomMax = 2.5;
+
     this.viewPortDragging.enable();
 
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
-
+      var currentZoom = self.board.zoom;
+      var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
+      newZoom = Math.min(zoomMax, newZoom);
+      newZoom = Math.max(zoomMin, newZoom);
+      self.board.setZoom(newZoom);
     });
   },
   disable: function() {
@@ -107,8 +118,8 @@ Pointer.prototype = _.extend(new Tool(), {
       if (self.selected_template && self.selected_template.containsCell(self.board, mapEvt.mapPointCell)) {
         self.dragging_template = true;
         self.template_start_cell = mapEvt.mapPointCell;
+        self.viewPortDragging.disable();
       }
-
     });
 
     $(board.event_manager).on('drag.Pointer', function(evt, mapEvt) {
@@ -121,6 +132,10 @@ Pointer.prototype = _.extend(new Tool(), {
     $(board.event_manager).on('dragstop.Pointer', function(evt, mapEvt) {
 
       self.saveAction();
+
+      if (!self.viewPortDragging.enabled) {
+        self.viewPortDragging.enable();
+      }
 
       self.dragging_template = false;
       self.template_start_cell = null;
@@ -194,22 +209,45 @@ function SquarePen(board, width, color) {
   this.width = width;
   this.color = color;
 
+  this.shiftDown = false;
+  this.ctrlDown = false;
+
   this.drag_start = null;
   this.drag_current = null;
 }
 
 SquarePen.prototype = _.extend(new Tool(), {
+  getPoint: function(mapPoint) {
+    if (this.shiftDown) {
+      return Geometry.getNearestCellIntersection(mapPoint, this.board.drawing.cellSize);
+    } else if (this.ctrlDown) {
+      return Geometry.getNearestCellCenter(mapPoint, this.board.drawing.cellSize);
+    } else {
+      return mapPoint;
+    }
+  },
+
   enable: function() {
 
     var self = this;
     var board = this.board;
 
+    $(board.event_manager).on('keydown.SquarePen', function(evt, mapEvt) {
+      self.shiftDown = mapEvt.isShift;
+      self.ctrlDown = mapEvt.isCtrl;
+    });
+
+    $(board.event_manager).on('keyup.SquarePen', function(evt, mapEvt) {
+      self.shiftDown = mapEvt.isShift;
+      self.ctrlDown = mapEvt.isCtrl;
+    });
+
     $(board.event_manager).on('dragstart.SquarePen', function(evt, mapEvt) {
-      self.drag_start = mapEvt.mapPoint;
+      self.drag_start = self.getPoint(mapEvt.mapPoint);
     });
 
     $(board.event_manager).on('drag.SquarePen', function(evt, mapEvt) {
-      self.drag_current = mapEvt.mapPoint;
+      self.drag_current = self.getPoint(mapEvt.mapPoint);
     });
 
     $(board.event_manager).on('dragstop.SquarePen', function(evt, mapEvt) {

@@ -2,6 +2,7 @@
 //= require ./geometry
 //= require ./initiative
 //= require ./drawing
+//= require ./board_events
 //= require ./board
 //= require ./actions
 //= require ./tools

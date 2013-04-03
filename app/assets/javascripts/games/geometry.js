@@ -23,6 +23,10 @@ var Geometry = {
     return [x, y];
   },
 
+  getNearestCellCenter: function(mapPoint, cellSize) {
+    return Geometry.getCellMidpoint(Geometry.getCell(mapPoint, cellSize), cellSize);
+  },
+
   roundToNearest: function(value, multiple) {
     var mid = Math.floor(multiple / 2);
     var over = value % multiple;
