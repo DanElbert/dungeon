@@ -4,4 +4,4 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-Dungeon::Application.config.secret_token = 'e1e78cdbeef87acef9eb8bb4f4aa5791c8dd650e8d428bc7ddaefdb97e187d8917d264caf9ad242e1c042dd775f5e49c127ca91e7e1c273a8d1c040780c8ea89'
+Dungeon::Application.config.secret_key_base = 'e1e78cdbeef87acef9eb8bb4f4aa5791c8dd650e8d428bc7ddaefdb97e187d8917d264caf9ad242e1c042dd775f5e49c127ca91e7e1c273a8d1c040780c8ea89'

@@ -37,7 +37,7 @@ module Admin
       @game = Game.find(params[:id])
 
       respond_to do |format|
-        if @game.update_attributes(params[:game])
+        if @game.update_attributes(game_params)
           format.html { redirect_to [:admin, @game], notice: 'Game was successfully updated.' }
           format.json { head :no_content }
         else
@@ -57,6 +57,12 @@ module Admin
         format.html { redirect_to admin_games_url }
         format.json { head :no_content }
       end
+    end
+
+    private
+
+    def game_params
+      params.require(:game).permit(:name, :status)
     end
   end
 end

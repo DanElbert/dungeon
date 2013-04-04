@@ -18,16 +18,22 @@ class GamesController < ApplicationController
   end
 
   def create
-    @game = Game.new(params[:game])
+    @game = Game.new(game_params)
 
     @template = TemplateBoard.find(params[:board_template])
     @game.game_board = GameBoard.from_template(@template)
 
-      if @game.save
-        redirect_to @game, notice: 'Game was successfully created.'
-      else
-        render action: "new"
-      end
+    if @game.save
+      redirect_to @game, notice: 'Game was successfully created.'
+    else
+      render action: "new"
+    end
+  end
+
+  private
+
+  def game_params
+    params.require(:game).permit(:name, :status)
   end
 
 end

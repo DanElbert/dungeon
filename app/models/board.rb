@@ -1,8 +1,8 @@
 class Board < ActiveRecord::Base
   belongs_to :game
   has_many :board_pieces, :dependent => :destroy
-  has_many :board_drawing_actions, :dependent => :destroy, :order => :created_at
-  has_many :board_template_actions, :dependent => :destroy, :order => :created_at
+  has_many :board_drawing_actions, -> { order(:created_at) }, :dependent => :destroy
+  has_many :board_template_actions, -> { order(:created_at) }, :dependent => :destroy
 
   def add_piece(left, top, right, bottom, image)
     p = BoardPiece.new
