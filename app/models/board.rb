@@ -1,5 +1,4 @@
 class Board < ActiveRecord::Base
-  attr_accessible :name
   belongs_to :game
   has_many :board_pieces, :dependent => :destroy
   has_many :board_drawing_actions, :dependent => :destroy, :order => :created_at

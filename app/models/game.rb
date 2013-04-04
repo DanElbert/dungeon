@@ -2,8 +2,6 @@ class Game < ActiveRecord::Base
 
   STATUS = {:open => 'open', :active => 'active', :old => 'old'}
 
-  attr_accessible :status, :name
-
   has_one :game_board, :dependent => :destroy
   has_many :initiatives, :order => :sort_order, :dependent => :destroy
 

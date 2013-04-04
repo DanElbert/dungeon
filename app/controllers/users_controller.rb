@@ -20,7 +20,7 @@ class UsersController < ApplicationController
   end
 
   def submit_user
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
 
     respond_to do |format|
       if @user.save
@@ -42,5 +42,11 @@ class UsersController < ApplicationController
 
   def update
 
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:email, :name, :password, :password_confirmation)
   end
 end

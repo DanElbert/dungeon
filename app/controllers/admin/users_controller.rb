@@ -45,7 +45,7 @@ module Admin
     # POST /users
     # POST /users.json
     def create
-      @user = User.new(params[:user], :as => :admin)
+      @user = User.new(user_params)
 
       respond_to do |format|
         if @user.save
@@ -64,7 +64,7 @@ module Admin
       @user = User.find(params[:id])
 
       respond_to do |format|
-        if @user.update_attributes(params[:user], :as => :admin)
+        if @user.update_attributes(user_params)
           format.html { redirect_to admin_user_path(@user), notice: 'User was successfully updated.' }
           format.json { head :no_content }
         else
@@ -84,6 +84,12 @@ module Admin
         format.html { redirect_to admin_users_path }
         format.json { head :no_content }
       end
+    end
+
+    private
+
+    def user_params
+      params.require(:user).permit(:email, :name, :password, :password_confirmation, :is_admin)
     end
   end
 end

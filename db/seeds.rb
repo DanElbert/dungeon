@@ -6,10 +6,10 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-dan = User.new({:email => "dan.elbert@gmail.com", :name => "Dan", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true}, :as => :admin)
+dan = User.new({:email => "dan.elbert@gmail.com", :name => "Dan", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true})
 dan.save!
 
-marcus = User.new({:email => "marcus.maday@gmail.com", :name => "Marcus", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true}, :as => :admin)
+marcus = User.new({:email => "marcus.maday@gmail.com", :name => "Marcus", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true})
 marcus.save!
 
 template1 = TemplateBoard.new({:name => "30x30 Gray"})
