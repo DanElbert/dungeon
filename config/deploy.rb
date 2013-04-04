@@ -2,7 +2,7 @@ default_run_options[:pty] = true
 set :application, "dungeon"
 
 # RVM Config
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '2.0.0'
 set :rvm_type, :system
 
 # Asset Compilation
@@ -17,7 +17,7 @@ set :scm, :git
 # Host github-dungeon
 #   HostName github.com
 set :repository, "git@github-dungeon:DanElbert/dungeon.git"
-set :branch, "master"
+set :branch, "rails4"
 
 # Web Server Config
 set :deploy_to, "/var/www-apps/#{application}"
