@@ -1,3 +1,8 @@
+// toolMenu plugin
+// plugin for the button menus in the board toolbar
+// buttons display currently selected item, clicking gives
+// menu of buttons displaying other options
+
 (function ($) {
   var pluginName = "toolMenu";
 

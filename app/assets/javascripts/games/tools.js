@@ -71,9 +71,11 @@ GlobalShortCuts.prototype = _.extend(new Tool(), {
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
       var currentZoom = self.board.zoom;
       var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
+      newZoom = Math.round(newZoom * 100) / 100;
       newZoom = Math.min(zoomMax, newZoom);
       newZoom = Math.max(zoomMin, newZoom);
       self.board.setZoom(newZoom);
+      self.board.toolBars.setZoom(newZoom);
     });
   },
   disable: function() {

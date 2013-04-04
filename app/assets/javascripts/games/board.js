@@ -1,7 +1,8 @@
-function Board(canvas, initiativeApi) {
+function Board(canvas, toolBarsApi, initiativeApi) {
   this.images = {};
 
   this.initiative = initiativeApi;
+  this.toolBars = toolBarsApi;
 
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
@@ -286,5 +287,52 @@ function Board(canvas, initiativeApi) {
       }
     }
   };
+
+  $(this.toolBars).on('toolchanged', function(e) {
+    var tool = self.toolBars.getTool();
+    var width = self.toolBars.getLineWidth();
+    var color = self.toolBars.getColor();
+
+    switch (tool) {
+      case "Pointer":
+        self.setTool(new Pointer(self));
+        break;
+      case "Pen":
+        self.setTool(new Pen(self, width, color));
+        break;
+      case "Square":
+        self.setTool(new SquarePen(self, width, color));
+        break;
+      case "Circle":
+        self.setTool(new CirclePen(self, width, color));
+        break;
+      case "Eraser":
+        self.setTool(new Eraser(self, 30));
+        break;
+      case "Measure":
+        self.setTool(new Measure(self, color));
+        break;
+      case "Radius":
+        self.setTool(new RadiusTemplate(self, color));
+        break;
+      case "Cone":
+        self.setTool(new ConeTemplate(self, color));
+        break;
+      case "Line":
+        self.setTool(new Pointer(self));
+        //game_board.setTool(new LineTemplate(game_board, $("#tool_color").toolMenu("value").color));
+        break;
+      default:
+        throw "No such tool";
+    }
+  });
+
+  $(this.toolBars).on('undo', function(e) {
+    self.undo();
+  });
+
+  $(this.toolBars).on('zoomchanged', function(e) {
+    self.setZoom(e.value);
+  });
 };
 

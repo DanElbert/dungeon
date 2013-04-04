@@ -13,121 +13,14 @@ document.addEventListener( 'touchmove' , stopScrolling , false );
 
 $(document).ready(function () {
 
-  game_board = new Board($("#game_board")[0], InitializeInitiativeApi());
+  var initiative = InitializeInitiativeApi();
+  var toolBars = InitializeToolBarsApi();
 
-  $("#tool_menu").toolMenu({
-    values: ["Pointer", "Pen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line"],
-    initialValue: "Pointer",
-    contentCallback: function(value) {
-      return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
-    },
-    selectedCallback: function(value) {
-      switch (value) {
-        case "Pointer":
-          game_board.setTool(new Pointer(game_board));
-          break;
-        case "Pen":
-          selectPenTool();
-          break;
-        case "Square":
-          game_board.setTool(new SquarePen(game_board, $("#tool_line_width").toolMenu("value"), $("#tool_color").toolMenu("value").color));
-          break;
-        case "Circle":
-          game_board.setTool(new CirclePen(game_board, $("#tool_line_width").toolMenu("value"), $("#tool_color").toolMenu("value").color));
-          break;
-        case "Eraser":
-          game_board.setTool(new Eraser(game_board, 30));
-          break;
-        case "Measure":
-          game_board.setTool(new Measure(game_board, $("#tool_color").toolMenu("value").color));
-          break;
-        case "Radius":
-          game_board.setTool(new RadiusTemplate(game_board, $("#tool_color").toolMenu("value").color));
-          break;
-        case "Cone":
-          game_board.setTool(new ConeTemplate(game_board, $("#tool_color").toolMenu("value").color));
-          break;
-        case "Line":
-          game_board.setTool(new Pointer(game_board));
-          //game_board.setTool(new LineTemplate(game_board, $("#tool_color").toolMenu("value").color));
-          break;
-        default:
-          throw "No such tool";
-      }
-    }
-  });
-
-  var crayolaColors8 = [
-    {name: "Black", color: "#000000"},
-    {name: "Blue", color: "#1F75FE"},
-    {name: "Brown", color: "#B4674D"},
-    {name: "Green", color: "#1CAC78"},
-    {name: "Orange", color: "#FF7538"},
-    {name: "Red", color: "#EE204D"},
-    {name: "Purple", color: "#926EAE"},
-    {name: "Yellow", color: "#FCE883"}
-  ];
-
-//  var dansRandomColors = [
-//    {name: "Red", color: "#FF0000"},
-//    {name: "Yellow", color: "#FFFF00"},
-//    {name: "Green", color: "#01DF01"},
-//    {name: "Blue", color: "#0000FF"},
-//    {name: "Black", color: "#000000"}
-//  ];
-
-  $("#tool_color").toolMenu({
-    values: crayolaColors8,
-    initialValue: crayolaColors8[0],
-    contentCallback: function(value) {
-      return $("<div></div>").css("background-color", value.color).css('width', '100%').css('height', '100%');
-    },
-    selectedCallback: function(value) {
-      $("#tool_menu").toolMenu("triggerSelection");
-    }
-  });
-
-  $("#tool_line_width").toolMenu({
-    values: [1, 3, 5, 7, 10, 15],
-    initialValue: 3,
-    contentCallback: function(value) {
-      var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
-      var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + value / 2 + "px"});
-      var line = $("<div></div>").css({clear: "both", height: value + "px", position: "relative", backgroundColor: "black"});
-      wrapper.append(floater);
-      wrapper.append(line);
-      return wrapper;
-    },
-    selectedCallback: function(value) {
-      $("#tool_menu").toolMenu("triggerSelection");
-    }
-  });
+  game_board = new Board($("#game_board")[0], toolBars, initiative);
 
   $(window).resize(function() {
     setCanvasSize();
   });
-
-  $("#zoom_level").change(function () {
-    setSize($(this).val());
-  });
-
-  $("#undo_button").click(function() {
-    game_board.undo();
-  });
-
-  $("#zoom_slider").slider({
-    orientation:"horizontal",
-    range:false,
-    animate:true,
-    min:0.3,
-    max:2.5,
-    step:0.1,
-    value:1,
-    slide:function (event, ui) {
-      $("#zoom_level").val(ui.value).change();
-    }
-  });
-  $("#zoom_level").val($("#zoom_slider").slider("value"));
 
   setCanvasSize();
   refreshBoard();
@@ -155,7 +48,7 @@ function draw_game() {
   window.requestAnimFrame(function () {
     draw_game();
   });
-};
+}
 
 function setSize(zoom) {
   game_board.setZoom(parseFloat(zoom));
@@ -168,10 +61,4 @@ function refreshBoard() {
     game_board.refresh(data);
     draw_game();
   });
-}
-
-function selectPenTool() {
-  var color = $("#tool_color").toolMenu("value").color;
-  var width = $("#tool_line_width").toolMenu("value");
-  game_board.setTool(new Pen(game_board, width, color));
 }
