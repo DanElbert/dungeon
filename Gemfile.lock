@@ -193,6 +193,7 @@ DEPENDENCIES
   rails (= 4.0.0.beta1)
   rvm-capistrano
   sass-rails (~> 4.0.0.beta1)
+  sprockets-rails
   sqlite3
   therubyracer
   thin

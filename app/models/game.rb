@@ -16,7 +16,7 @@ class Game < ActiveRecord::Base
     {
         :name => name,
         :status => status,
-        :board => game_board.as_json,
+        :board => game_board.as_json(options.slice(:image_callback)),
         :initiative => initiatives.to_a.map { |i| {:name => i.name, :value => i.value} }
     }
   end

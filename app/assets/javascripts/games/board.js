@@ -277,13 +277,13 @@ function Board(canvas, toolBarsApi, initiativeApi) {
       }
     };
     for ( var i = 0; i < imgs.length; i++ ) {
-      if (!this.images[imgs[i]]) {
+      if (!this.images[imgs[i].name]) {
         images[i] = new Image();
-        this.images[imgs[i]] = images[i];
+        this.images[imgs[i].name] = images[i];
         images[i].onabort = inc;
         images[i].onerror = inc;
         images[i].onload = inc;
-        images[i].src = ROOT_URL + "assets/" + imgs[i];
+        images[i].src = imgs[i].url;
       }
     }
   };

@@ -13,6 +13,14 @@ gem 'uuid'
 gem 'thin'
 gem 'faye', :require => false
 
+gem 'sprockets-rails', :require => 'sprockets/railtie'
+
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
+gem 'bcrypt-ruby', '~> 3.0.0'
+
+gem 'chunky_png'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -29,12 +37,6 @@ group :deploy do
   gem 'capistrano'
   gem 'rvm-capistrano'
 end
-
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
-gem 'bcrypt-ruby', '~> 3.0.0'
-
-gem 'chunky_png'
 
 group :test do
   gem 'minitest-reporters'

@@ -31,7 +31,8 @@ class Board < ActiveRecord::Base
   end
 
   def board_images
-    board_pieces.map { |p| p.image }.uniq
+    imgs = board_pieces.map { |p| p.image }.uniq
+    imgs.map { |i| {:name => i, :url => (@image_callback ? @image_callback.call(i) : i) } }
   end
 
   def cell_size
@@ -47,6 +48,7 @@ class Board < ActiveRecord::Base
   end
 
   def as_json(options={})
+    @image_callback = options && options[:image_callback]
     opts = {:root => false,
             :except => [:game_id, :created_at, :updated_at],
             :include => [:board_pieces => {:except => [:board_id, :created_at, :updated_at], :methods => [:width, :height]}],
