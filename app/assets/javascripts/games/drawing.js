@@ -182,34 +182,47 @@ function Drawing(context) {
 
   };
 
-  this.drawGrid = function (rows, columns, color) {
+  this.drawGrid = function (x, y, viewPortWidth, viewPortHeight, color) {
 
-    var width = this.gridWidth(columns);
-    var height = this.gridHeight(rows);
+    var firstColumn = Math.floor(x / this.cellSize);
+    var lastColumn = firstColumn + Math.floor(viewPortWidth / this.cellSize);
+
+    var firstRow = Math.floor(y / this.cellSize);
+    var lastRow = firstRow + Math.floor(viewPortHeight / this.cellSize);
+
+
+//    console.log(x);
+//    console.log(y);
+//    console.log(viewPortWidth);
+//    console.log(viewPortHeight);
+//    console.log(firstColumn);
+//    console.log(lastColumn);
+//
+//    throw new Exception();
 
     this.context.beginPath();
     this.context.lineWidth = 1;
     this.context.strokeStyle = color;
 
     // Draw horizontal grid lines
-    for (var x = 0; x <= rows; x++) {
+    for (var row = firstRow; row <= lastRow; row++) {
 
-      var x1 = 0.5;
-      var y1 = (this.cellSize * x) + 0.5;
-      var x2 = width + 0.5;
-      var y2 = (this.cellSize * x) + 0.5;
+      var x1 = x;
+      var y1 = (this.cellSize * row) + 0.5;
+      var x2 = x + viewPortWidth;
+      var y2 = (this.cellSize * row) + 0.5;
 
       this.context.moveTo(x1, y1);
       this.context.lineTo(x2, y2);
     }
 
     // Draw vertical grid lines
-    for (var x = 0; x <= columns; x++) {
+    for (var col = firstColumn; col <= lastColumn; col++) {
 
-      var x1 = (this.cellSize * x) + 0.5;
-      var y1 = 0.5;
-      var x2 = (this.cellSize * x) + 0.5;
-      var y2 = height + 0.5;
+      var x1 = (this.cellSize * col) + 0.5;
+      var y1 = y;
+      var x2 = (this.cellSize * col) + 0.5;
+      var y2 = y + viewPortHeight;
 
       this.context.moveTo(x1, y1);
       this.context.lineTo(x2, y2);
@@ -231,9 +244,9 @@ function Drawing(context) {
     this.context.fill();
   };
 
-  this.colorBackground = function (columns, rows, color) {
+  this.colorBackground = function(x, y, width, height, color) {
     this.context.beginPath();
-    this.context.rect(0, 0, columns * this.cellSize, rows * this.cellSize);
+    this.context.rect(x, y, width, height);
     this.context.fillStyle = color;
     this.context.fill();
   };

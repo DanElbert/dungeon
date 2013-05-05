@@ -26,10 +26,6 @@ class Board < ActiveRecord::Base
     [max_right, max_bottom]
   end
 
-  def board_size
-    board_extents.map { |c| (c + 1) * cell_size }
-  end
-
   def board_images
     imgs = board_pieces.map { |p| p.image }.uniq
     imgs.map { |i| {:name => i, :url => (@image_callback ? @image_callback.call(i) : i) } }
@@ -52,7 +48,7 @@ class Board < ActiveRecord::Base
     opts = {:root => false,
             :except => [:game_id, :created_at, :updated_at],
             :include => [:board_pieces => {:except => [:board_id, :created_at, :updated_at], :methods => [:width, :height]}],
-            :methods => [:board_extents, :board_images, :cell_size, :drawing_actions, :template_actions]}.merge(options)
+            :methods => [:board_images, :cell_size, :drawing_actions, :template_actions]}.merge(options)
     super(opts)
   end
 

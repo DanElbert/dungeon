@@ -20,10 +20,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.drawingDrawing = new Drawing(this.drawingContext);
 
   this.board_data = null;
-  this.rows = 0;
-  this.columns = 0;
-  this.height = 0;
-  this.width = 0;
   this.viewPortCoord = [0, 0];
   this.viewPortSize = [canvas.width, canvas.height];
   this.zoom = 1;
@@ -70,10 +66,11 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
   this.setZoom = function(val) {
     this.zoom = val;
+    var oldSize = this.viewPortSize;
     this.viewPortSize = [this.canvas.width / val, this.canvas.height / val];
-    var newVpx = Math.min(this.width - this.viewPortSize[0], this.viewPortCoord[0]);
-    var newVpy = Math.min(this.height - this.viewPortSize[1], this.viewPortCoord[1]);
-    this.viewPortCoord = [Math.max(0, newVpx), Math.max(0, newVpy)];
+
+    this.viewPortCoord = [this.viewPortCoord[0] + (oldSize[0] - this.viewPortSize[0]),
+      this.viewPortCoord[1] + (oldSize[1] - this.viewPortSize[1])];
 
     this.context.restore();
     this.drawingContext.restore();
@@ -141,10 +138,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.board_data = data.board;
     this.drawing.cellSize = data.board.cell_size;
     this.drawingDrawing.cellSize = data.board.cell_size;
-    this.rows = data.board.board_extents[1] + 1;
-    this.columns = data.board.board_extents[0] + 1;
-    this.width = this.drawing.gridWidth(this.columns);
-    this.height = this.drawing.gridHeight(this.rows);
 
     _.each(data.board.drawing_actions, function(action) {
       this.addAction(action, null, false);
@@ -181,7 +174,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     var data = this.board_data;
     var drawing = this.drawing;
 
-    drawing.colorBackground(this.columns, this.rows, "rgba(50, 50, 50, 1)");
+    drawing.colorBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(50, 50, 50, 1)");
 
     for (var x = 0; x < data.board_pieces.length; x++) {
       var p = data.board_pieces[x];
@@ -190,7 +183,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   };
 
   this.renderBoardGrid = function() {
-    this.drawing.drawGrid(this.rows, this.columns, "rgba(0, 0, 0, 1.0)");
+    this.drawing.drawGrid(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(0, 0, 0, 1.0)");
   };
 
   this.renderDrawing = function() {
@@ -242,12 +235,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     var context = this.context;
     var drawing = this.drawing;
     var data = this.board_data;
-
-    this.rows = data.board_extents[1] + 1;
-    this.columns = data.board_extents[0] + 1;
-
-    this.width = drawing.gridWidth(this.columns);
-    this.height = drawing.gridHeight(this.rows);
 
     this.executeActions();
 
