@@ -2,20 +2,23 @@ function Drawing(context) {
   this.context = context;
   this.cellSize = 50;
 
-  this.clear = function (columns, rows) {
-    this.context.clearRect(0, 0, columns * this.cellSize, rows * this.cellSize);
-  };
+}
+_.extend(Drawing.prototype, {
 
-  this.drawMovementLine = function(start, end) {
+  clear: function (columns, rows) {
+    this.context.clearRect(0, 0, columns * this.cellSize, rows * this.cellSize);
+  },
+
+  drawMovementLine: function(start, end) {
     var startPoint = Geometry.getCellMidpoint(start, this.cellSize);
     var endPoint = Geometry.getCellMidpoint(end, this.cellSize);
 
     var totalMovement = Geometry.getCellDistance(start, end) * 5;
 
     this.drawMeasureLine(startPoint, endPoint, totalMovement);
-  };
+  },
 
-  this.drawMeasureLine = function(start, end, label) {
+  drawMeasureLine: function(start, end, label) {
     this.context.lineWidth = 5;
     this.context.strokeStyle = "#000000";
     this.context.lineCap = 'round';
@@ -53,9 +56,9 @@ function Drawing(context) {
     this.context.fillStyle = 'black';
 
     this.context.fillText(label, midPoint[0], midPoint[1] + 2);
-  };
+  },
 
-  this.drawTemplate = function(cells, border, color) {
+  drawTemplate: function(cells, border, color) {
     this.context.globalAlpha = 0.3;
 
     _.each(cells, function(c) {
@@ -65,9 +68,9 @@ function Drawing(context) {
     this.context.globalAlpha = 1;
 
     this.drawLines("black", 3, border);
-  };
+  },
 
-  this.drawLines = function (color, width, lines) {
+  drawLines: function (color, width, lines) {
     this.context.beginPath();
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
@@ -81,9 +84,9 @@ function Drawing(context) {
     }
 
     this.context.stroke();
-  };
+  },
 
-  this.drawSquare = function(topLeft, bottomRight, color, width) {
+  drawSquare: function(topLeft, bottomRight, color, width) {
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
     this.context.lineCap = 'round';
@@ -96,9 +99,9 @@ function Drawing(context) {
     this.context.lineTo(topLeft[0], topLeft[1]);
 
     this.context.stroke();
-  };
+  },
 
-  this.eraseLines = function(width, lines) {
+  eraseLines: function(width, lines) {
 
     var originalCompositeOperation = this.context.globalCompositeOperation;
     this.context.globalCompositeOperation = 'destination-out';
@@ -124,19 +127,19 @@ function Drawing(context) {
     this.context.stroke();
 
     this.context.globalCompositeOperation = originalCompositeOperation;
-  };
+  },
 
-  this.drawCircle = function(x, y, radius, width, color) {
+  drawCircle: function(x, y, radius, width, color) {
     this.context.beginPath();
     this.context.arc(x, y, radius, 0, 2 * Math.PI, false);
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
     this.context.stroke();
-  };
+  },
 
   // Low level drawing function; places an ellipse in the context path
   // but does not stroke or fill
-  this.drawEllipse = function(x, y, w, h) {
+  drawEllipse: function(x, y, w, h) {
     var kappa = .5522848,
         ox = (w / 2) * kappa, // control point offset horizontal
         oy = (h / 2) * kappa, // control point offset vertical
@@ -152,9 +155,9 @@ function Drawing(context) {
     this.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
     this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
     this.context.closePath();
-  };
+  },
 
-  this.drawTile = function (x, y, width, height, imageObj) {
+  drawTile: function (x, y, width, height, imageObj) {
     var imgWidth = imageObj.width;
     var imgHeight = imageObj.height;
 
@@ -180,25 +183,15 @@ function Drawing(context) {
       }
     }
 
-  };
+  },
 
-  this.drawGrid = function (x, y, viewPortWidth, viewPortHeight, color) {
+  drawGrid: function (x, y, viewPortWidth, viewPortHeight, color) {
 
     var firstColumn = Math.floor(x / this.cellSize);
     var lastColumn = firstColumn + Math.floor(viewPortWidth / this.cellSize);
 
     var firstRow = Math.floor(y / this.cellSize);
     var lastRow = firstRow + Math.floor(viewPortHeight / this.cellSize);
-
-
-//    console.log(x);
-//    console.log(y);
-//    console.log(viewPortWidth);
-//    console.log(viewPortHeight);
-//    console.log(firstColumn);
-//    console.log(lastColumn);
-//
-//    throw new Exception();
 
     this.context.beginPath();
     this.context.lineWidth = 1;
@@ -229,9 +222,9 @@ function Drawing(context) {
     }
 
     this.context.stroke();
-  };
+  },
 
-  this.colorCell = function (column, row, color) {
+  colorCell: function (column, row, color) {
 
     var left = (column * this.cellSize) + 1;
     var top = (row * this.cellSize) + 1;
@@ -242,22 +235,20 @@ function Drawing(context) {
     this.context.rect(left, top, width, height);
     this.context.fillStyle = color;
     this.context.fill();
-  };
+  },
 
-  this.colorBackground = function(x, y, width, height, color) {
+  colorBackground: function(x, y, width, height, color) {
     this.context.beginPath();
     this.context.rect(x, y, width, height);
     this.context.fillStyle = color;
     this.context.fill();
-  };
+  },
 
-  this.gridWidth = function (columns) {
+  gridWidth: function (columns) {
     return columns * this.cellSize;
-  };
+  },
 
-  this.gridHeight = function (rows) {
+  gridHeight: function (rows) {
     return rows * this.cellSize;
-  };
-
-
-}
+  }
+});

@@ -15,6 +15,8 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.template_actions = [];
   this.undo_stack = [];
 
+  this.drawingLayer = new DrawingLayer();
+
   this.drawingCanvas = document.createElement("canvas");
   this.drawingContext = this.drawingCanvas.getContext('2d');
   this.drawingDrawing = new Drawing(this.drawingContext);

@@ -5,6 +5,7 @@
 //= require ./board_events
 //= require ./board
 //= require ./actions
+//= require ./drawing_layer
 //= require ./tools
 //= require ./tool_bars
 //= require ./game_board
