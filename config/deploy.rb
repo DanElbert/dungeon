@@ -17,7 +17,7 @@ set :scm, :git
 # Host github-dungeon
 #   HostName github.com
 set :repository, "git@github-dungeon:DanElbert/dungeon.git"
-set :branch, "rails4"
+set :branch, "master"
 
 # Web Server Config
 set :deploy_to, "/var/www-apps/#{application}"
