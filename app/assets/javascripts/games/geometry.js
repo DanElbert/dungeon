@@ -56,6 +56,21 @@ var Geometry = {
     }
   },
 
+  // Given the corners of 2 rectangles, return whether they overlap
+  rectanglesOverlap: function(leftTopA, rightBottomA, leftTopB, rightBottomB) {
+    var xOverlap = Geometry.inRange(leftTopA[0], leftTopB[0], rightBottomB[0]) ||
+        Geometry.inRange(leftTopB[0], leftTopA[0], rightBottomA[0]);
+
+    var yOverlap = Geometry.inRange(leftTopA[1], leftTopB[1], rightBottomB[1]) ||
+        Geometry.inRange(leftTopB[1], leftTopA[1], rightBottomA[1]);
+
+    return xOverlap && yOverlap;
+  },
+
+  inRange: function(value, min, max) {
+    return (value <= max) && (value >= min);
+  },
+
   // Gets a movement path from start to end using Bresenham's Line Algorithm
   // See http://members.chello.at/~easyfilter/bresenham.html
   getMovementPath: function(startCell, endCell) {

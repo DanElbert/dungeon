@@ -29,11 +29,45 @@ var actionMethods = {
     }
   },
 
+  // An action that is managed by the drawing layer.  Requires bounds and draw methods.
+  drawingAction: {
+    apply: function(board) {
+      board.drawingLayer.addAction(this);
+    },
+
+    // Returns the bounding box of the drawing action as an array of arrays as: [[LEFT, TOP], [RIGHT, BOTTOM]]
+    bounds: function() {
+      if (this.privateData.bounds == null) {
+        this.privateData.bounds = this.calculateBounds();
+      }
+      return this.privateData.bounds;
+    },
+
+    calculateBounds: function() {
+      return [[0,0], [1,1]];
+    },
+
+    // Given a drawing object, applies the drawing action to it
+    draw: function(drawing) { }
+  },
+
   // A pen action consists of a color, a width, and a collection of lines that are to be drawn on the drawing layer
   penAction: {
-    apply: function(board) {
-      board.drawing_actions.push(this);
-      board.drawingDrawing.drawLines(this.color, this.width, this.lines);
+    extend: function() { return "drawingAction"; },
+    draw: function(drawing) {
+      drawing.drawLines(this.color, this.width, this.lines);
+    },
+
+    calculateBounds: function() {
+      var l, t, r, b;
+      var points = _.reduce(this.lines, function(memo, line) { memo.push(line.start); memo.push(line.end); return memo; }, []);
+      _.each(points, function(p) {
+        if (l == null || p[0] < l) l = p[0];
+        if (t == null || p[1] < t) t = p[1];
+        if (r == null || p[0] > r) r = p[0];
+        if (b == null || p[1] > b) b = p[1];
+      });
+      return [[l, t], [r, b]];
     },
 
     validateData: function() {
@@ -43,9 +77,13 @@ var actionMethods = {
 
   // Draws a square.  Requires topLeft, bottomRight, color, and width
   squarePenAction: {
-    apply: function(board) {
-      board.drawing_actions.push(this);
-      board.drawingDrawing.drawSquare(this.topLeft, this.bottomRight, this.color, this.width);
+    extend: function() { return "drawingAction"; },
+    draw: function(drawing) {
+      drawing.drawSquare(this.topLeft, this.bottomRight, this.color, this.width);
+    },
+
+    calculateBounds: function() {
+      return [this.topLeft, this.bottomRight];
     },
 
     validateData: function() {
@@ -55,9 +93,13 @@ var actionMethods = {
 
   // Draws a circle.  Requires center, radius, color, and width
   circlePenAction: {
-    apply: function(board) {
-      board.drawing_actions.push(this);
-      board.drawingDrawing.drawCircle(this.center[0], this.center[1], this.radius, this.width, this.color);
+    extend: function() { return "drawingAction"; },
+    draw: function(drawing) {
+      drawing.drawCircle(this.center[0], this.center[1], this.radius, this.width, this.color);
+    },
+
+    calculateBounds: function() {
+      return [[this.center[0] - this.radius, this.center[1] - this.radius], [this.center[0] + this.radius, this.center[1] + this.radius]];
     },
 
     validateData: function() {
@@ -67,9 +109,21 @@ var actionMethods = {
 
   // An erase action consists of a width and a collection of lines
   eraseAction: {
-    apply: function(board) {
-      board.drawing_actions.push(this);
-      board.drawingDrawing.eraseLines(this.width, this.lines);
+    extend: function() { return "drawingAction"; },
+    draw: function(drawing) {
+      drawing.eraseLines(this.width, this.lines);
+    },
+
+    calculateBounds: function() {
+      var l, t, r, b;
+      var points = _.reduce(this.lines, function(memo, line) { memo.push(line.start); memo.push(line.end); return memo; }, []);
+      _.each(points, function(p) {
+        if (l == null || p[0] < l) l = p[0];
+        if (t == null || p[1] < t) t = p[1];
+        if (r == null || p[0] > r) r = p[0];
+        if (b == null || p[1] > b) b = p[1];
+      });
+      return [[l, t], [r, b]];
     },
 
     validateData: function() {
@@ -79,24 +133,7 @@ var actionMethods = {
   // References a drawing action to remove
   removeDrawingAction: {
     apply: function(board) {
-      var index = null;
-
-      for (var x = board.drawing_actions.length - 1; x >= 0; x--) {
-        if (board.drawing_actions[x].uid == this.actionId) {
-          index = x;
-          break;
-        }
-      }
-
-      if (index != null) {
-        if (index == 0) {
-          board.drawing_actions.shift();
-        } else {
-          board.drawing_actions.splice(index, 1);
-        }
-        board.regenerateDrawing();
-      }
-
+      board.drawingLayer.removeAction(this.actionId);
     },
 
     validateData: function() {

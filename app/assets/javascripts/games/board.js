@@ -17,10 +17,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
   this.drawingLayer = new DrawingLayer();
 
-  this.drawingCanvas = document.createElement("canvas");
-  this.drawingContext = this.drawingCanvas.getContext('2d');
-  this.drawingDrawing = new Drawing(this.drawingContext);
-
   this.board_data = null;
   this.viewPortCoord = [0, 0];
   this.viewPortSize = [canvas.width, canvas.height];
@@ -60,8 +56,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
     this.canvas.width = width;
     this.canvas.height = height;
-    this.drawingCanvas.width = width;
-    this.drawingCanvas.height = height;
 
     this.setZoom(this.zoom);
   };
@@ -75,13 +69,9 @@ function Board(canvas, toolBarsApi, initiativeApi) {
       this.viewPortCoord[1] + (oldSize[1] - this.viewPortSize[1])];
 
     this.context.restore();
-    this.drawingContext.restore();
     this.context.save();
-    this.drawingContext.save();
     this.context.scale(this.zoom, this.zoom);
-    this.drawingContext.scale(this.zoom, this.zoom);
     this.context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
-    this.drawingContext.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
 
     this.regenerateDrawing();
   };
@@ -138,8 +128,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
     this.initiative.update(data.initiative);
     this.board_data = data.board;
-    this.drawing.cellSize = data.board.cell_size;
-    this.drawingDrawing.cellSize = data.board.cell_size;
 
     _.each(data.board.drawing_actions, function(action) {
       this.addAction(action, null, false);
@@ -161,15 +149,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   };
 
   this.regenerateDrawing = function() {
-    this.drawingContext.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
 
-    // Drawing actions typically add themselves to the drawing_actions list, so clear it first
-    var actions = this.drawing_actions;
-    this.drawing_actions = [];
-
-    _.each(actions, function(action) {
-      action.apply(this);
-    }, this);
   };
 
   this.renderBoardBackground = function() {
@@ -193,10 +173,12 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     // So remove all currently set transforms with the identity matrix before
     // copying the drawing layer over
 
-    this.context.save();
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
-    this.context.drawImage(this.drawingCanvas, 0, 0);
-    this.context.restore();
+//    this.context.save();
+//    this.context.setTransform(1, 0, 0, 1, 0, 0);
+//    this.context.drawImage(this.drawingCanvas, 0, 0);
+//    this.context.restore();
+
+    this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing);
   };
 
   this.renderCursor = function() {
