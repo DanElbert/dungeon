@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130329170535) do
+ActiveRecord::Schema.define(version: 20130618204923) do
 
   create_table "board_actions", force: true do |t|
     t.string   "action_type"
@@ -23,24 +23,12 @@ ActiveRecord::Schema.define(version: 20130329170535) do
     t.string   "type"
   end
 
-  create_table "board_pieces", force: true do |t|
-    t.string   "type"
-    t.integer  "board_id"
-    t.integer  "top"
-    t.integer  "bottom"
-    t.integer  "left"
-    t.integer  "right"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "image"
-  end
-
   create_table "boards", force: true do |t|
-    t.string   "type"
     t.integer  "game_id"
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.string   "background_image"
   end
 
   create_table "games", force: true do |t|

@@ -1,5 +1,10 @@
+require 'pathname'
+
 class ApplicationController < ActionController::Base
   protect_from_forgery
+
+  # Make available backgrounds available to views
+  helper_method :get_board_backgrounds
 
   def ensure_valid_user
     if current_user.nil?
@@ -26,5 +31,12 @@ class ApplicationController < ActionController::Base
     else
       session[:user_id] = nil
     end
+  end
+
+  # Returns a hash of available board backgrounds.  Each key is a name and its value is the image path.
+  def get_board_backgrounds
+    bg_path = Rails.root.join("app", "assets", "images", "board", "backgrounds").to_path
+    bg_path += "/*"
+    Hash[Dir[bg_path].map { |i| [File.basename(i), Pathname.new(i).relative_path_from(Rails.root.join("app", "assets", "images")).to_s]}]
   end
 end

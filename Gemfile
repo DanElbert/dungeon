@@ -19,8 +19,6 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'bcrypt-ruby', '~> 3.0.0'
 
-gem 'chunky_png'
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -36,6 +34,7 @@ end
 group :deploy do
   gem 'capistrano'
   gem 'rvm-capistrano'
+  gem 'capistrano-deploytags'
 end
 
 group :test do

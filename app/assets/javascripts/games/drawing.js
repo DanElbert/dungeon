@@ -157,6 +157,25 @@ _.extend(Drawing.prototype, {
     this.context.closePath();
   },
 
+  tileBackground: function(vpX, vpY, vpW, vpH, imageObj) {
+    var imgWidth = imageObj.width;
+    var imgHeight = imageObj.height;
+
+    if (imgWidth == 0 || imgHeight == 0) {
+      return;
+    }
+
+    var x = vpX - (vpX % imgWidth) - imgWidth;
+    var y = vpY - (vpY % imgHeight) - imgHeight;
+
+    this.context.save();
+    var pattern = this.context.createPattern(imageObj, 'repeat');
+    this.context.fillStyle = pattern;
+    this.context.fillRect(x, y, vpW + imgWidth, vpH + imgHeight);
+    //this.context.fillRect(vpX, vpY, vpW, vpH);
+    this.context.restore();
+  },
+
   drawTile: function (x, y, width, height, imageObj) {
     var imgWidth = imageObj.width;
     var imgHeight = imageObj.height;
@@ -182,7 +201,6 @@ _.extend(Drawing.prototype, {
         this.context.drawImage(imageObj, 0, 0, rightClip, bottomClip, xPos, yPos, rightClip, bottomClip);
       }
     }
-
   },
 
   drawGrid: function (x, y, viewPortWidth, viewPortHeight, color) {

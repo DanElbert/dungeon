@@ -9,7 +9,7 @@ class GamesController < ApplicationController
   end
 
   def get_game_data
-    @game = Game.includes(:initiatives, {:game_board => [:board_pieces, :board_drawing_actions]}).find(params[:id])
+    @game = Game.includes(:initiatives, {:board => :board_drawing_actions}).find(params[:id])
     image_proc = Proc.new do |path|
       ActionController::Base.helpers.asset_path(path)
     end
@@ -22,9 +22,8 @@ class GamesController < ApplicationController
 
   def create
     @game = Game.new(game_params)
-
-    @template = TemplateBoard.find(params[:board_template])
-    @game.game_board = GameBoard.from_template(@template)
+    @game.board = Board.new
+    @game.board.background_image = params[:background_image]
 
     if @game.save
       redirect_to @game, notice: 'Game was successfully created.'

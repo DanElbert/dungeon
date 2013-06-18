@@ -24,8 +24,8 @@
   </div>
 
   <div class="field">
-    <%= label_tag 'board_template', 'Board' %>
-    <%= select_tag 'board_template', options_from_collection_for_select(TemplateBoard.all, "id", "name") %>
+    <%= label_tag 'background_image', 'Background' %>
+    <%= select_tag 'background_image', options_from_collection_for_select(get_board_backgrounds, :last, :first) %>
   </div>
 
   <div class="actions">

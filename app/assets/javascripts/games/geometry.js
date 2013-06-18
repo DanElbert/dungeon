@@ -28,13 +28,17 @@ var Geometry = {
   },
 
   roundToNearest: function(value, multiple) {
+    var valueAbs = Math.abs(value);
+
     var mid = Math.floor(multiple / 2);
-    var over = value % multiple;
+    var over = valueAbs % multiple;
     if (over >= mid) {
-      return value + (multiple - over);
+      valueAbs = valueAbs + (multiple - over);
     } else {
-      return value - over;
+      valueAbs = valueAbs - over;
     }
+
+    return value < 0 ? valueAbs * -1 : valueAbs;
   },
 
   // returns the distance between two points
@@ -115,16 +119,21 @@ var Geometry = {
 
   // Given a list of cells, return a list of lines that will
   // draw a border
-  // Note that this method is stupid and slow (O(n^2) stupid); try to cache this
   getBorder: function(cells, cellSize) {
-    var lines = [];
-
-    var cellExists = function(cell) {
-      if (_.find(cells, function(c) { return c[0] == cell[0] && c[1] == cell[1]; })) {
-        return true;
-      }
-      return false;
+    var cellGrid = [];
+    var addCell = function(x, y) {
+      if (cellGrid[x] == null) cellGrid[x] = [];
+      cellGrid[x][y] = true;
     };
+    var cellExists = function(cell) {
+      return cellGrid[cell[0]] && cellGrid[cell[0]][cell[1]];
+    };
+
+    _.each(cells, function(c) {
+      addCell(c[0], c[1]);
+    });
+
+    var lines = [];
 
     for (var x = 0; x < cells.length; x++) {
       var c = cells[x];

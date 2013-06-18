@@ -1,3 +1,0 @@
-class TemplateBoard < Board
-
-end

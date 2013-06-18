@@ -5,9 +5,6 @@ set :application, "dungeon"
 set :rvm_ruby_string, '2.0.0'
 set :rvm_type, :system
 
-# Asset Compilation
-#set :asset_env, "#{asset_env} RAILS_RELATIVE_URL_ROOT=/spellsheet"
-
 # Source code
 set :scm, :git
 
@@ -19,6 +16,9 @@ set :scm, :git
 set :repository, "git@github-dungeon:DanElbert/dungeon.git"
 set :branch, "master"
 
+# Set the stage (required for deploytags; remove if multi-stage is added)
+set :stage, 'production'
+
 # Web Server Config
 set :deploy_to, "/var/www-apps/#{application}"
 
@@ -28,10 +28,11 @@ role :db,  "azathoth", :primary => true # This is where Rails migrations will ru
 
 set :use_sudo, false
 
-require "rvm/capistrano"
-require "bundler/capistrano"
+require 'rvm/capistrano'
+require 'bundler/capistrano'
+require 'capistrano-deploytags'
 
-# if you want to clean up old releases on each deploy uncomment this:
+# clean up old releases on each deploy
 after "deploy:restart", "deploy:cleanup"
 
 # Generate an additional tasks to control the thin cluster

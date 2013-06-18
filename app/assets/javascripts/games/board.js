@@ -11,7 +11,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.current_tool = null;
 
   this.pending_action_queue = [];
-  this.drawing_actions = [];
   this.template_actions = [];
   this.undo_stack = [];
 
@@ -155,13 +154,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.renderBoardBackground = function() {
     var data = this.board_data;
     var drawing = this.drawing;
-
-    drawing.colorBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(50, 50, 50, 1)");
-
-    for (var x = 0; x < data.board_pieces.length; x++) {
-      var p = data.board_pieces[x];
-      drawing.drawTile(p.left, p.top, p.width, p.height, this.images[p.image]);
-    }
+    drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.images[data.background_image]);
   };
 
   this.renderBoardGrid = function() {
