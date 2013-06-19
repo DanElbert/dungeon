@@ -320,6 +320,49 @@ var Geometry = {
     });
   },
 
+  // Given a line segment defined by endpoints p1 and p2, return a list of cells through which the line passes
+  getCellsOnLine: function(p1, p2, cellSize) {
+    // Determine the search space by calculating the enclosing rectangle of cells
+    var minX, maxX, minY, maxY;
+    var bounds = Geometry.getBoundingCellBox([p1, p2], cellSize);
+    minX = bounds[0][0];
+    maxX = bounds[1][0];
+    minY = bounds[0][1];
+    maxY = bounds[1][1];
+
+    // For each cell in the search space, check the position of each cell vertex against the line.  If any points lie
+    // on the line or if any two points have a different val for isLeft, the cell is included
+    var cells = [];
+
+    for (var x = minX; x <= maxX; x++) {
+      for (var y = minY; y <= maxY; y++) {
+        var realX = x * cellSize;
+        var realY = y * cellSize;
+
+        var total = 0;
+
+        _.map([
+          [realX, realY],
+          [realX + cellSize, realY],
+          [realX, realY + cellSize],
+          [realX + cellSize, realY + cellSize]
+        ], function(p) {
+          var isLeft = Geometry.isLeft(p1, p2, p);
+          if (isLeft > 0) isLeft = 1;
+          if (isLeft < 0) isLeft = -1;
+
+          total += isLeft;
+        });
+
+        if (Math.abs(total) < 3) {
+          cells.push([x, y]);
+        }
+      }
+    }
+
+    return cells;
+  },
+
   // Returns an array of cells inside the given polygon
   getCellsInPolygon: function(polygon, cellSize) {
     var cellBounds = Geometry.getBoundingCellBox(polygon);
@@ -361,10 +404,10 @@ var Geometry = {
   // Given a polygon in map coords, return the
   // bounding box of grid cells
   getBoundingCellBox: function(polygon, cellSize) {
-    var left = 9999;
-    var top = 9999;
-    var right = 0;
-    var bottom = 0;
+    var left = 99999;
+    var top = 99999;
+    var right = -99999;
+    var bottom = -99999;
 
     for (var i = 0; i < polygon.length; i++) {
       var v = polygon[i];
@@ -375,7 +418,7 @@ var Geometry = {
     }
 
     var min = [Math.floor(left / cellSize), Math.floor(top / cellSize)];
-    var max = [Math.floor(right / cellSize), Math.floor(bottom / cellSize)];
+    var max = [Math.floor((right - 1) / cellSize), Math.floor((bottom - 1) / cellSize)];
 
     return [min, max];
   },

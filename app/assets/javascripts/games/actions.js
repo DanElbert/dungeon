@@ -170,10 +170,10 @@ var actionMethods = {
     isTemplate: true,
     calculateCells: function() { return []; },
     drawExtras: function(board) { },
-    internalTranslateData: function(action, dx, dy){},
-    cloneAndTranslate: function(dx, dy) {
+    internalTranslateData: function(action, dx, dy, cellSize){},
+    cloneAndTranslate: function(dx, dy, cellSize) {
       var clone = this.clone();
-      this.internalTranslateData(clone, dx, dy);
+      this.internalTranslateData(clone, dx, dy, cellSize);
       return clone;
     },
     apply: function(board) {
@@ -187,7 +187,7 @@ var actionMethods = {
     },
     ensureCells: function(board) {
       if (!this.privateData.cells) {
-        this.privateData.cells = this.calculateCells();
+        this.privateData.cells = this.calculateCells(board);
         this.privateData.border = Geometry.getBorder(this.privateData.cells, board.drawing.cellSize);
       }
     },
@@ -211,11 +211,11 @@ var actionMethods = {
 
   movementTemplateAction: {
     extend: function() { return "templateAction"; },
-    internalTranslateData: function(action, dx, dy){
+    internalTranslateData: function(action, dx, dy, cellSize){
       action.start = [this.start[0] + dx, this.start[1] + dy];
       action.end = [this.end[0] + dx, this.end[1] + dy];
     },
-    calculateCells: function() {
+    calculateCells: function(board) {
       return Geometry.getMovementPath(this.start, this.end);
     },
     drawExtras: function(board) {
@@ -229,10 +229,10 @@ var actionMethods = {
 
   radiusTemplateAction: {
     extend: function() { return "templateAction"; },
-    internalTranslateData: function(action, dx, dy){
+    internalTranslateData: function(action, dx, dy, cellSize){
       action.intersection = [this.intersection[0] + dx, this.intersection[1] + dy];
     },
-    calculateCells: function() {
+    calculateCells: function(board) {
       return Geometry.getCellsInRadius(this.intersection, this.radius);
     },
 
@@ -243,9 +243,15 @@ var actionMethods = {
 
   lineTemplateAction: {
     extend: function() { return "templateAction"; },
-    internalTranslateData: function(action, dx, dy){},
-    calculateCells: function() {
-
+    internalTranslateData: function(action, dx, dy, cellSize){
+      action.start = [this.start[0] + (dx * cellSize), this.start[1] + (dy * cellSize)];
+      action.end = [this.end[0] + (dx * cellSize), this.end[1] + (dy * cellSize)];
+    },
+    drawExtras: function(board) {
+      board.drawing.drawLines('black', 3, [{start: this.start, end: this.end}]);
+    },
+    calculateCells: function(board) {
+      return Geometry.getCellsOnLine(this.start, this.end, board.drawing.cellSize);
     },
 
     validateData: function() {
@@ -255,10 +261,10 @@ var actionMethods = {
 
   coneTemplateAction: {
     extend: function() { return "templateAction"; },
-    internalTranslateData: function(action, dx, dy){
+    internalTranslateData: function(action, dx, dy, cellSize){
       action.intersection = [this.intersection[0] + dx, this.intersection[1] + dy];
     },
-    calculateCells: function() {
+    calculateCells: function(board) {
       return Geometry.getCellsInCone(this.intersection, this.radius, this.angle);
     },
 

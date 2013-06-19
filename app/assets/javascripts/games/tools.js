@@ -189,7 +189,7 @@ Pointer.prototype = _.extend(new Tool(), {
       var dy = this.template_current_cell[1] - this.template_start_cell[1];
 
       var removeAction = {actionType: "removeTemplateAction", actionId: this.selected_template.uid, uid: generateActionId()};
-      var addAction = this.selected_template.cloneAndTranslate(dx, dy);
+      var addAction = this.selected_template.cloneAndTranslate(dx, dy, this.board.drawing.cellSize);
 
       var restoreAction = this.selected_template.clone();
       var undoAction = {actionType: "removeTemplateAction", actionId: addAction.uid, uid: generateActionId()};
@@ -652,6 +652,88 @@ ConeTemplate.prototype = _.extend(new RadialTemplate(), {
       cursorAngle = (cursorAngle + 360 - 90) % 360;
 
       var action = {actionType: "coneTemplateAction", intersection: centerCell, radius: distance, angle: cursorAngle, color: this.color, uid: generateActionId()};
+      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});
+
+function LineTemplate(board, color) {
+  Tool.call(this, board);
+  this.super = Tool.prototype;
+  this.color = color;
+  this.dragging = false;
+  this.startPoint = null;
+  this.currentPoint = null;
+}
+LineTemplate.prototype = _.extend(new Tool(), {
+  enable: function () {
+    var board = this.board;
+    var self = this;
+    var cellSize = this.board.drawing.cellSize;
+
+    $(board.event_manager).on('mousemove.LineTemplate', function(evt, mapEvt) {
+      if (!self.dragging) {
+        self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
+      }
+    });
+
+    $(board.event_manager).on('dragstart.LineTemplate', function (evt, mapEvt) {
+      self.dragging = true;
+    });
+
+    $(board.event_manager).on('drag.LineTemplate', function (evt, mapEvt) {
+      self.currentPoint = mapEvt.mapPoint; // Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
+    });
+
+    $(board.event_manager).on('dragstop.LineTemplate', function (evt, mapEvt) {
+      self.saveAction();
+      self.currentPoint = null;
+      self.dragging = false;
+      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
+    });
+  },
+
+  disable: function () {
+    $(this.board.event_manager).off(".LineTemplate");
+  },
+
+  draw: function() {
+
+    if (this.startPoint) {
+      this.drawCross(this.startPoint);
+    }
+
+    if (this.currentPoint) {
+      this.drawCross(this.currentPoint);
+    }
+
+    if (this.startPoint && this.currentPoint) {
+      if (this.startPoint[0] == this.currentPoint[0] && this.startPoint[1] == this.currentPoint[1]) {
+        return;
+      }
+
+      var cellSize = this.board.drawing.cellSize;
+      var template = Geometry.getCellsOnLine(this.startPoint, this.currentPoint, cellSize);
+      var border = Geometry.getBorder(template, this.board.drawing.cellSize);
+
+      this.board.drawing.drawTemplate(template, border, this.color);
+      this.board.drawing.drawLines('black', 3, [{start: this.startPoint, end: this.currentPoint}]);
+    }
+  },
+
+  drawCross: function(point) {
+    var crossSize = 10;
+    var lines = [
+      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
+      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
+    ];
+    this.board.drawing.drawLines("black", 3, lines);
+  },
+
+  saveAction: function() {
+    if (this.startPoint && this.currentPoint) {
+      var action = {actionType: "lineTemplateAction", start: this.startPoint, end: this.currentPoint, color: this.color, uid: generateActionId()};
       var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

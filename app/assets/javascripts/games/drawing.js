@@ -171,8 +171,7 @@ _.extend(Drawing.prototype, {
     this.context.save();
     var pattern = this.context.createPattern(imageObj, 'repeat');
     this.context.fillStyle = pattern;
-    this.context.fillRect(x, y, vpW + imgWidth, vpH + imgHeight);
-    //this.context.fillRect(vpX, vpY, vpW, vpH);
+    this.context.fillRect(x, y, vpW + (2 * imgWidth), vpH + (2 * imgHeight));
     this.context.restore();
   },
 
@@ -206,10 +205,10 @@ _.extend(Drawing.prototype, {
   drawGrid: function (x, y, viewPortWidth, viewPortHeight, color) {
 
     var firstColumn = Math.floor(x / this.cellSize);
-    var lastColumn = firstColumn + Math.floor(viewPortWidth / this.cellSize);
+    var lastColumn = firstColumn + Math.floor(viewPortWidth / this.cellSize) + 1;
 
     var firstRow = Math.floor(y / this.cellSize);
-    var lastRow = firstRow + Math.floor(viewPortHeight / this.cellSize);
+    var lastRow = firstRow + Math.floor(viewPortHeight / this.cellSize) + 1;
 
     this.context.beginPath();
     this.context.lineWidth = 1;

@@ -283,8 +283,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
         self.setTool(new ConeTemplate(self, color));
         break;
       case "Line":
-        self.setTool(new Pointer(self));
-        //game_board.setTool(new LineTemplate(game_board, $("#tool_color").toolMenu("value").color));
+        self.setTool(new LineTemplate(self, color));
         break;
       default:
         throw "No such tool";

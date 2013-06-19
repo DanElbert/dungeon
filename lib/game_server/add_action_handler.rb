@@ -15,7 +15,7 @@ module GameServer
       # Assume that should_handle_message has already been called and this will always work
       game_id = CHANNEL_REGEX.match(message['channel'])[1].to_i
 
-      game = Game.includes(:game_board).find(game_id)
+      game = Game.includes(:board).find(game_id)
 
       unless game
         message['error'] = "Invalid Game Id"
@@ -29,13 +29,13 @@ module GameServer
 
       if DRAWING_ACTION_TYPES.include? action_data['actionType']
         action = BoardDrawingAction.from_message(action_data)
-        action.board = game.game_board
+        action.board = game.board
         action.save!
       end
 
       if TEMPLATE_ACTION_TYPES.include? action_data['actionType']
         action = BoardTemplateAction.from_message(action_data)
-        action.board = game.game_board
+        action.board = game.board
         action.save!
       end
 
