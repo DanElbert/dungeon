@@ -145,7 +145,8 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.renderBoardBackground = function() {
     var data = this.board_data;
     var drawing = this.drawing;
-    drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.images[data.background_image]);
+    var img = this.images[data.background_image];
+    if (img.loaded) drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], img.image);
   };
 
   this.renderBoardGrid = function() {
@@ -214,24 +215,23 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.hovered_cell = [x, y];
   };
 
-  this.prepareImages = function(imgs, callback) {
+  this.prepareImages = function(imgs) {
     "use strict";
     var loaded = 0;
     var images = [];
     imgs = Object.prototype.toString.apply( imgs ) === '[object Array]' ? imgs : [imgs];
-    var inc = function() {
-      loaded += 1;
-      if ( loaded === imgs.length && callback ) {
-        callback( images );
-      }
-    };
+
     for ( var i = 0; i < imgs.length; i++ ) {
       if (!this.images[imgs[i].name]) {
+
         images[i] = new Image();
-        this.images[imgs[i].name] = images[i];
-        images[i].onabort = inc;
-        images[i].onerror = inc;
-        images[i].onload = inc;
+        var imgObj = {image: images[i], loaded: false};
+        this.images[imgs[i].name] = imgObj;
+
+        images[i].onload = function() {
+          imgObj.loaded = true;
+        };
+
         images[i].src = imgs[i].url;
       }
     }
