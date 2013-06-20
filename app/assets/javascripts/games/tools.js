@@ -683,7 +683,7 @@ LineTemplate.prototype = _.extend(new Tool(), {
     });
 
     $(board.event_manager).on('drag.LineTemplate', function (evt, mapEvt) {
-      self.currentPoint = mapEvt.mapPoint; // Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
+      self.currentPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize); //mapEvt.mapPoint;
     });
 
     $(board.event_manager).on('dragstop.LineTemplate', function (evt, mapEvt) {
@@ -717,8 +717,12 @@ LineTemplate.prototype = _.extend(new Tool(), {
       var template = Geometry.getCellsOnLine(this.startPoint, this.currentPoint, cellSize);
       var border = Geometry.getBorder(template, this.board.drawing.cellSize);
 
+      var startCell = Geometry.getCell(this.startPoint, cellSize);
+      var endCell = Geometry.getCell(this.currentPoint, cellSize);
+      var distance = Geometry.getCellDistance(startCell, endCell) * 5;
+
       this.board.drawing.drawTemplate(template, border, this.color);
-      this.board.drawing.drawLines('black', 3, [{start: this.startPoint, end: this.currentPoint}]);
+      this.board.drawing.drawMeasureLine(this.startPoint, this.currentPoint, distance);
     }
   },
 

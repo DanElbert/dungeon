@@ -71,8 +71,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.context.save();
     this.context.scale(this.zoom, this.zoom);
     this.context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
-
-    this.regenerateDrawing();
   };
 
   this.setTool = function(tool) {
@@ -147,10 +145,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.prepareImages(data.board.board_images);
   };
 
-  this.regenerateDrawing = function() {
-
-  };
-
   this.renderBoardBackground = function() {
     var data = this.board_data;
     var drawing = this.drawing;
@@ -162,15 +156,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   };
 
   this.renderDrawing = function() {
-    // The drawing layer is rendered with the same transforms as the viewport
-    // So remove all currently set transforms with the identity matrix before
-    // copying the drawing layer over
-
-//    this.context.save();
-//    this.context.setTransform(1, 0, 0, 1, 0, 0);
-//    this.context.drawImage(this.drawingCanvas, 0, 0);
-//    this.context.restore();
-
     this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing);
   };
 
@@ -210,8 +195,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     }
 
     var context = this.context;
-    var drawing = this.drawing;
-    var data = this.board_data;
 
     this.executeActions();
 

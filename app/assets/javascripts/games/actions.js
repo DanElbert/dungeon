@@ -248,7 +248,11 @@ var actionMethods = {
       action.end = [this.end[0] + (dx * cellSize), this.end[1] + (dy * cellSize)];
     },
     drawExtras: function(board) {
-      board.drawing.drawLines('black', 3, [{start: this.start, end: this.end}]);
+      var cellSize = board.drawing.cellSize;
+      var startCell = Geometry.getCell(this.start, cellSize);
+      var endCell = Geometry.getCell(this.end, cellSize);
+      var distance = Geometry.getCellDistance(startCell, endCell) * 5;
+      board.drawing.drawMeasureLine(this.start, this.end, distance);
     },
     calculateCells: function(board) {
       return Geometry.getCellsOnLine(this.start, this.end, board.drawing.cellSize);
