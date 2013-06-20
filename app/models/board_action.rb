@@ -4,7 +4,8 @@ class BoardAction < ActiveRecord::Base
 
   after_initialize :init
 
-  def self.from_message(action_model, message)
+  def self.from_message(message)
+    action_model = BoardAction.new
     action_model.uid = message['uid']
     action_model.action_type = message['actionType']
     action_model.properties = message.select do |k, _|

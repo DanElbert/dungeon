@@ -15,6 +15,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.undo_stack = [];
 
   this.drawingLayer = new DrawingLayer();
+  this.pingLayer = new PingLayer();
 
   this.board_data = null;
   this.viewPortCoord = [0, 0];
@@ -82,7 +83,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   };
 
   this.handleAddActionMessage = function(message) {
-    var index = _.indexOf(this.sentMessageIds, message.uid)
+    var index = _.indexOf(this.sentMessageIds, message.uid);
     if (index >= 0) {
       this.sentMessageIds.splice(index, 1);
     } else {
@@ -126,11 +127,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.initiative.update(data.initiative);
     this.board_data = data.board;
 
-    _.each(data.board.drawing_actions, function(action) {
-      this.addAction(action, null, false);
-    }, this);
-
-    _.each(data.board.template_actions, function(action) {
+    _.each(data.board.actions, function(action) {
       this.addAction(action, null, false);
     }, this);
 
@@ -173,6 +170,10 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     }, this);
   };
 
+  this.renderPings = function() {
+    this.pingLayer.draw(this.drawing);
+  };
+
   this.renderTool = function() {
     if (this.current_tool) {
       this.current_tool.draw();
@@ -204,6 +205,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.renderTemplates();
     this.renderBoardGrid();
     this.renderDrawing();
+    this.renderPings();
     this.renderCursor();
     this.renderTool();
   };
@@ -267,6 +269,9 @@ function Board(canvas, toolBarsApi, initiativeApi) {
         break;
       case "Line":
         self.setTool(new LineTemplate(self, color));
+        break;
+      case "Ping":
+        self.setTool(new PingTool(self, color));
         break;
       default:
         throw "No such tool";

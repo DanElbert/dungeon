@@ -743,3 +743,22 @@ LineTemplate.prototype = _.extend(new Tool(), {
     }
   }
 });
+
+function PingTool(board, color) {
+  Tool.call(this, board);
+  this.super = Tool.prototype;
+  this.color = color;
+}
+PingTool.prototype = _.extend(new Tool(), {
+  enable: function() {
+    var self = this;
+    var board = this.board;
+
+    $(board.event_manager).on('click.PingTool', function(evt, mapEvt) {
+      var action = {actionType: "pingAction", point: mapEvt.mapPoint, color: self.color, uid: generateActionId()};
+      self.board.addAction(action, null, true);
+    });
+  },
+  disable: function() {},
+  draw: function() {}
+});

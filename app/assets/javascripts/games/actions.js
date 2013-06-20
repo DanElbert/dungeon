@@ -1,6 +1,8 @@
 
 var actionMethods = {
   default: {
+    isPersistent: false,
+    isRemoval: false,
     apply: function (board) {},
     validateData: function() {},
     extend: function() { return null; },
@@ -29,8 +31,16 @@ var actionMethods = {
     }
   },
 
+  removalAction: {
+    isRemoval: true,
+    validateData: function() {
+      this.ensureFields(["actionId", "uid"]);
+    }
+  },
+
   // An action that is managed by the drawing layer.  Requires bounds and draw methods.
   drawingAction: {
+    isPersistent: true,
     apply: function(board) {
       board.drawingLayer.addAction(this);
     },
@@ -132,16 +142,14 @@ var actionMethods = {
   },
   // References a drawing action to remove
   removeDrawingAction: {
+    extend: function() { return "removalAction"; },
     apply: function(board) {
       board.drawingLayer.removeAction(this.actionId);
-    },
-
-    validateData: function() {
-      this.ensureFields(["actionId", "uid"]);
     }
   },
 
   removeTemplateAction: {
+    extend: function() { return "removalAction"; },
     apply: function(board) {
       var index = null;
 
@@ -159,14 +167,11 @@ var actionMethods = {
           board.template_actions.splice(index, 1);
         }
       }
-    },
-
-    validateData: function() {
-      this.ensureFields(["actionId", "uid"]);
     }
   },
 
   templateAction: {
+    isPersistent: true,
     isTemplate: true,
     calculateCells: function() { return []; },
     drawExtras: function(board) { },
@@ -278,11 +283,21 @@ var actionMethods = {
   },
 
   updateInitiativeAction: {
+    isPersistent: true,
     apply: function (board) {
       board.initiative.update(this.initiative);
     },
     validateData: function() {
       this.ensureFields(["uid", "initiative"]);
+    }
+  },
+
+  pingAction: {
+    apply: function(board) {
+      board.pingLayer.add(this.point, this.color);
+    },
+    validateData: function() {
+      this.ensureFields(["uid", "point", "color"])
     }
   }
 };

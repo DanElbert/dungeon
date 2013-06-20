@@ -1,8 +1,6 @@
 module GameServer
   class AddActionHandler < Handler
 
-    DRAWING_ACTION_TYPES = %w(penAction removeDrawingAction eraseAction squarePenAction circlePenAction)
-    TEMPLATE_ACTION_TYPES = %w(removeTemplateAction movementTemplateAction radiusTemplateAction lineTemplateAction coneTemplateAction)
     COMPOSITE_ACTION_TYPE = 'compositeAction'
     INITIATIVE_ACTION = 'updateInitiativeAction'
     CHANNEL_REGEX = /^\/game\/(\d+)\/add_action$/
@@ -15,7 +13,7 @@ module GameServer
       # Assume that should_handle_message has already been called and this will always work
       game_id = CHANNEL_REGEX.match(message['channel'])[1].to_i
 
-      game = Game.includes(:board).find(game_id)
+      game = Game.includes(:board, :initiatives).find(game_id)
 
       unless game
         message['error'] = "Invalid Game Id"
@@ -27,18 +25,6 @@ module GameServer
 
     def process_action(action_data, game)
 
-      if DRAWING_ACTION_TYPES.include? action_data['actionType']
-        action = BoardDrawingAction.from_message(action_data)
-        action.board = game.board
-        action.save!
-      end
-
-      if TEMPLATE_ACTION_TYPES.include? action_data['actionType']
-        action = BoardTemplateAction.from_message(action_data)
-        action.board = game.board
-        action.save!
-      end
-
       if COMPOSITE_ACTION_TYPE == action_data['actionType']
         action_data['actionList'].each do |sub_action|
           process_action(sub_action, game)
@@ -46,15 +32,22 @@ module GameServer
       end
 
       if INITIATIVE_ACTION == action_data['actionType']
-
         game.initiatives.destroy_all
 
         action_data['initiative'].each_with_index do |init, i|
           game.initiatives << Initiative.from_message(init, i)
         end
-
       end
 
+      if action_data['isRemoval']
+        BoardAction.where(:board_id => game.board.id, :uid => action_data['actionId']).destroy_all
+      end
+
+      if action_data['isPersistent']
+        action = BoardAction.from_message(action_data)
+        action.board = game.board
+        action.save!
+      end
     end
   end
 end

@@ -9,7 +9,7 @@ class GamesController < ApplicationController
   end
 
   def get_game_data
-    @game = Game.includes(:initiatives, {:board => :board_drawing_actions}).find(params[:id])
+    @game = Game.includes(:initiatives, {:board => :board_actions}).find(params[:id])
     image_proc = Proc.new do |path|
       ActionController::Base.helpers.asset_path(path)
     end
