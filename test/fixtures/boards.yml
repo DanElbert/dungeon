@@ -1,10 +1,5 @@
-empty_template:
-  name: empty
-  type: TemplateBoard
-  created_at: <%= Time.now %>
 
-empty_game_board:
+empty_board:
   name: empty
-  type: GameBoard
   created_at: <%= Time.now %>
   game_id: <%= ActiveRecord::FixtureSet.identify(:one) %>

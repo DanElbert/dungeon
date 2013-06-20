@@ -1,13 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  type: BoardDrawingAction
   action_type: MyString
   uid: MyString
-  properties: MyText
 
 two:
-  type: BoardDrawingAction
   action_type: MyString
   uid: MyString
-  properties: MyText
