@@ -3,9 +3,6 @@ require 'pathname'
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  # Make available backgrounds available to views
-  helper_method :get_board_backgrounds
-
   def ensure_valid_user
     if current_user.nil?
       flash[:warning] = "You must login"
@@ -39,4 +36,5 @@ class ApplicationController < ActionController::Base
     bg_path += "/*"
     Hash[Dir[bg_path].map { |i| [File.basename(i), Pathname.new(i).relative_path_from(Rails.root.join("app", "assets", "images")).to_s]}]
   end
+  helper_method :get_board_backgrounds
 end

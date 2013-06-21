@@ -13,8 +13,14 @@
 
   <div class="field">
     <%= f.label :status %><br />
-    <%= f.text_field :status %>
+    <%= f.select :status, Game::STATUS.values %>
   </div>
+
+  <div class="field">
+    <%= label_tag 'background_image', 'Background' %>
+    <%= select_tag 'background_image', options_from_collection_for_select(get_board_backgrounds, :last, :first) %>
+  </div>
+
   <div class="actions">
     <%= f.submit %>
   </div>

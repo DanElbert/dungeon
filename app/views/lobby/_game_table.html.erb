@@ -1,11 +1,18 @@
 
-<table>
-  <tr>
-    <td>Name</td>
-  </tr>
-  <% games.each do |g| %>
-  <tr>
-    <td><%= link_to g.name, game_path(g) %></td>
-  </tr>
-  <% end %>
-</table>
+<% unless games.empty? %>
+
+  <h1><%= title %></h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <% games.each do |g| %>
+    <tr>
+      <td><%= link_to g.name, game_path(g) %></td>
+    </tr>
+    <% end %>
+  </table>
+
+<% end %>

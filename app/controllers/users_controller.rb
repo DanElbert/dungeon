@@ -4,6 +4,12 @@ class UsersController < ApplicationController
 
   end
 
+  def logout
+    set_current_user(nil)
+    session.destroy
+    redirect_to login_path
+  end
+
   def verify_login
     if user = User.authenticate(params[:email], params[:password])
       set_current_user(user)

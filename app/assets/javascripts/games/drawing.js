@@ -214,13 +214,15 @@ _.extend(Drawing.prototype, {
     this.context.lineWidth = 1;
     this.context.strokeStyle = color;
 
+    var x1, y1, x2, y2;
+
     // Draw horizontal grid lines
     for (var row = firstRow; row <= lastRow; row++) {
 
-      var x1 = x;
-      var y1 = (this.cellSize * row) + 0.5;
-      var x2 = x + viewPortWidth;
-      var y2 = (this.cellSize * row) + 0.5;
+      x1 = x;
+      y1 = (this.cellSize * row) + 0.5;
+      x2 = x + viewPortWidth;
+      y2 = (this.cellSize * row) + 0.5;
 
       this.context.moveTo(x1, y1);
       this.context.lineTo(x2, y2);
@@ -229,10 +231,10 @@ _.extend(Drawing.prototype, {
     // Draw vertical grid lines
     for (var col = firstColumn; col <= lastColumn; col++) {
 
-      var x1 = (this.cellSize * col) + 0.5;
-      var y1 = y;
-      var x2 = (this.cellSize * col) + 0.5;
-      var y2 = y + viewPortHeight;
+      x1 = (this.cellSize * col) + 0.5;
+      y1 = y;
+      x2 = (this.cellSize * col) + 0.5;
+      y2 = y + viewPortHeight;
 
       this.context.moveTo(x1, y1);
       this.context.lineTo(x2, y2);

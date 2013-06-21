@@ -9,9 +9,44 @@
 </head>
 <body>
 
-<%= render :partial => 'layouts/flash_message' %>
+<div class="container">
+  <%= render :partial => 'layouts/flash_message' %>
 
-<%= yield %>
+  <div class="navigation">
+
+    <div class="title">
+      <h1>Dungeon</h1>
+      <h2></h2>
+    </div>
+
+    <%= link_to "Logout", logout_path %>
+    <%= if_admin do %>
+      <%= link_to "Admin", admin_path %>
+    <% end %>
+    <div class="clearer"><span></span></div>
+
+  </div>
+
+  <div class="holder_top"></div>
+
+  <div class="holder">
+    <%= yield %>
+    <br/><br/><br/>
+  </div>
+
+  <div class="footer">
+
+    <div class="left">&copy; 2013 Dan Elbert.
+    </div>
+
+    <div class="right">
+      <a href="http://templates.arcsin.se/">Website template</a> by <a href="http://arcsin.se/">Arcsin</a>
+    </div>
+
+    <div class="clearer">&nbsp;</div>
+
+  </div>
+</div>
 
 </body>
 </html>

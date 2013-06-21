@@ -1,8 +1,16 @@
-<p id="notice"><%= notice %></p>
+<p>
+  <b>Name:</b>
+  <%= @game.name %>
+</p>
 
 <p>
   <b>Status:</b>
   <%= @game.status %>
+</p>
+
+<p>
+  <b>Background:</b>
+  <%= @game.board ? @game.board.background_image : '' %>
 </p>
 
 
