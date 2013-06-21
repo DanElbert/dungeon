@@ -3,7 +3,7 @@ function PingLayer() {
   this.defaultDuration = 7;
   // radius
   this.defaultSize = 35;
-  this.defaultPulseCount = 6;
+  this.defaultPulseCount = 5;
 
   this.pings = [];
 }
@@ -44,7 +44,7 @@ _.extend(Ping.prototype, {
 
     var inverse = 1 - animationPoint;
 
-    drawing.drawCircle(this.point[0], this.point[1], this.maxSize * inverse, 3, this.color);
+    //drawing.drawCircle(this.point[0], this.point[1], this.maxSize * inverse, 3, this.color);
     drawing.drawCircle(this.point[0], this.point[1], this.maxSize * animationPoint, 3, this.color);
   },
 
@@ -62,7 +62,10 @@ _.extend(Ping.prototype, {
     if (p >= 1) return 1;
     if (p <= 0) return 0;
 
-    var pulseRange = 1.0 / this.pulseCount;
-    return (p % pulseRange) / pulseRange;
+    var pulseRange = 1.0 / (this.pulseCount * 2);
+    var isDown = Math.floor(p / pulseRange) % 2;
+    var pos = (p % pulseRange) / pulseRange;
+    if (isDown == 1) pos = 1 - pos;
+    return pos;
   }
 });
