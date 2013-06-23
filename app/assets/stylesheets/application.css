@@ -9,12 +9,10 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require jquery.ui.slider
+ *= require base
+ *= require layout
+ *= require skeleton
  *= require_self
  *= require_tree .
  */
-
-/*body {*/
-    /*margin: 0;*/
-    /*padding: 0;*/
-/*}*/
 

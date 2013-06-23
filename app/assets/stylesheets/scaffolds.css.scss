@@ -1,33 +1,31 @@
-//body {
-//  background-color: #fff;
-//  color: #333;
-//  font-family: verdana, arial, helvetica, sans-serif;
-//  font-size: 13px;
-//  line-height: 18px;
-//}
-//
-//p, ol, ul, td {
-//  font-family: verdana, arial, helvetica, sans-serif;
-//  font-size: 13px;
-//  line-height: 18px;
-//}
-//
-//pre {
-//  background-color: #eee;
-//  padding: 10px;
-//  font-size: 11px;
-//}
-//
-//a {
-//  color: #000;
-//  &:visited {
-//    color: #666;
-//  }
-//  &:hover {
-//    color: #fff;
-//    background-color: #000;
-//  }
-//}
+body {
+  background: asset-url('pf-gradient-bk.png') #f9f9ff repeat-x;
+}
+
+#headerBar {
+}
+
+#headerSeparator {
+  border-bottom: 2px solid black;
+  margin-bottom: 15px;
+}
+
+#title {
+}
+
+#navContainer {
+}
+
+#navContainer a {
+  float: right;
+  text-decoration: none;
+  padding: 40px 20px 5px;
+  color: black;
+}
+
+#navContainer a:hover {
+  color: blue;
+}
 
 table
 {
@@ -55,18 +53,11 @@ table tbody tr:hover td
   color: #009;
 }
 
-
-div {
-  &.field, &.actions {
-    margin-bottom: 10px;
-  }
-}
-
 #notice {
   color: green;
 }
 
-.field_with_errors {
+.field_with_errors > label {
   padding: 2px;
   background-color: red;
   display: table;
@@ -78,19 +69,18 @@ div {
   padding: 7px;
   padding-bottom: 0;
   margin-bottom: 20px;
-  background-color: #f0f0f0;
-  h2 {
+  background-color: #fff;
+  h4 {
     text-align: left;
     font-weight: bold;
     padding: 5px 5px 5px 15px;
-    font-size: 12px;
     margin: -7px;
-    margin-bottom: 0px;
+    margin-bottom: 4px;
     background-color: #c00;
     color: #fff;
   }
   ul li {
-    font-size: 12px;
+    margin-left: 20px;
     list-style: square;
   }
 }

@@ -15,6 +15,8 @@ gem 'faye', :require => false
 
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 
+gem 'skeleton-rails'
+
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'bcrypt-ruby', '~> 3.0.0'

@@ -58,12 +58,12 @@ GEM
       debugger-ruby_core_source (~> 1.2.1)
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.2)
-    em-http-request (1.0.3)
-      addressable (>= 2.2.3)
+    em-http-request (1.1.0)
+      addressable (>= 2.3.4)
       cookiejar
-      em-socksify
-      eventmachine (>= 1.0.0.beta.4)
-      http_parser.rb (>= 0.5.3)
+      em-socksify (>= 0.3)
+      eventmachine (>= 1.0.3)
+      http_parser.rb (>= 0.6.0.beta.2)
     em-socksify (0.3.0)
       eventmachine (>= 1.0.0.beta.4)
     erubis (2.7.0)
@@ -83,7 +83,7 @@ GEM
     hashie (2.0.5)
     highline (1.6.19)
     hike (1.2.3)
-    http_parser.rb (0.5.3)
+    http_parser.rb (0.6.0.beta.2)
     i18n (0.6.4)
     jquery-rails (3.0.1)
       railties (>= 3.0, < 5.0)
@@ -98,7 +98,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.23)
-    minitest (4.7.4)
+    minitest (4.7.5)
     minitest-reporters (0.14.20)
       ansi
       builder
@@ -142,6 +142,7 @@ GEM
       railties (>= 4.0.0.beta, < 5.0)
       sass (>= 3.1.10)
       sprockets-rails (~> 2.0.0)
+    skeleton-rails (0.1.0)
     sprockets (2.10.0)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -193,6 +194,7 @@ DEPENDENCIES
   rails (= 4.0.0.rc2)
   rvm-capistrano
   sass-rails (~> 4.0.0.rc2)
+  skeleton-rails
   sprockets-rails
   sqlite3
   therubyracer
