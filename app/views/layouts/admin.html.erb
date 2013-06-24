@@ -1,52 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="description" content="dungeon, a board game project">
+  <meta name="author" content="Dan Elbert">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>Dungeon</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
+
+  <%= yield :header %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
 <div class="container">
-  <%= render :partial => 'layouts/flash_message' %>
-
-  <div class="navigation">
-
-    <div class="title">
+  <div id="headerBar" class="sixteen columns">
+    <div id="title" class="ten columns alpha">
       <h1>Dungeon</h1>
-      <h2></h2>
     </div>
-
-    <%= link_to "Logout", logout_path %>
-    <%= if_admin do %>
+    <div id="navContainer" class="six columns omega">
+      <%= link_to "Logout", logout_path %>
       <%= link_to "Lobby", lobby_path %>
-    <% end %>
-    <%= link_to "Users", admin_users_path %>
-    <%= link_to "Games", admin_games_path %>
-    <div class="clearer"><span></span></div>
-
+      <%= link_to "Users", admin_users_path %>
+      <%= link_to "Games", admin_games_path %>
+    </div>
   </div>
+  <div id="headerSeparator" class="sixteen columns"></div>
 
-  <div class="holder_top"></div>
-
-  <div class="holder">
+  <div class="sixteen columns">
+    <%= render :partial => 'layouts/flash_message' %>
+  </div>
+  <div class="sixteen columns content">
     <%= yield %>
-    <br/><br/>
   </div>
 
-  <div class="footer">
-
-    <div class="left">&copy; 2013 Dan Elbert.
-    </div>
-
-    <div class="right">
-      <a href="http://templates.arcsin.se/">Website template</a> by <a href="http://arcsin.se/">Arcsin</a>
-    </div>
-
-    <div class="clearer">&nbsp;</div>
-
+  <div id="footer" class="two columns offset-by-fourteen">
+    &copy; 2013 Dan Elbert
   </div>
+
 </div>
 
 </body>

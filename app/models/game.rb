@@ -8,8 +8,14 @@ class Game < ActiveRecord::Base
   validates :board, :presence => true
   validates :name, :presence => true
 
-  def board_json
+  def background_image
+    board ? board.background_image : nil
+  end
 
+  def background_image=(val)
+    if board
+      board.background_image = val
+    end
   end
 
   def as_json(options = {})

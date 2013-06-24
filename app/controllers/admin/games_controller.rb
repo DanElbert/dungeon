@@ -36,6 +36,9 @@ module Admin
     def update
       @game = Game.find(params[:id])
 
+      @game.board.background_image = params[:background_image]
+      @game.board.save!
+
       respond_to do |format|
         if @game.update_attributes(game_params)
           format.html { redirect_to [:admin, @game], notice: 'Game was successfully updated.' }
