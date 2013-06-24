@@ -283,7 +283,7 @@ var actionMethods = {
   },
 
   updateInitiativeAction: {
-    isPersistent: true,
+    isPersistent: false, // Technically this is persistent, but it's handled in a special case on the backend
     apply: function (board) {
       board.initiative.update(this.initiative);
     },

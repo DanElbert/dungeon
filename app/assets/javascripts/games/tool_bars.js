@@ -40,7 +40,8 @@ function InitializeToolBarsApi() {
     values: ["Pointer", "Pen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping"],
     initialValue: "Pointer",
     contentCallback: function(value) {
-      return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
+      //return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
+      return value;
     },
     selectedCallback: function(value) {
       triggerToolChanged();

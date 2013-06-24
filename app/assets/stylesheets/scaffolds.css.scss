@@ -43,8 +43,9 @@ table td
 {
   border-bottom: 1px solid #ccc;
   padding: 6px 8px;
+  vertical-align: middle;
 }
-table tbody tr:hover td
+table tr:hover td
 {
   color: #009;
 }

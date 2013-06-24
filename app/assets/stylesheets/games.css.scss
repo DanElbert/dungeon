@@ -21,6 +21,16 @@
   overflow: hidden;
 }
 
+#game_header .title {
+  display: block;
+  float: left;
+  margin-right: 30px;
+}
+
+#game_header .title a {
+  text-decoration: none;
+}
+
 #game_gutter {
   float: left;
   width: 100px;
@@ -30,6 +40,15 @@
   -webkit-user-select  : none;
   -o-user-select       : none;
   user-select          : none;
+}
+
+#zoom_level_label {
+  display: inline;
+}
+
+#zoom_level {
+  display: inline;
+  width: 30px;
 }
 
 #zoom_slider {
@@ -61,7 +80,7 @@
   background-color: #ededed;
   color: #555555;
 
-  font: bold 13px arial;
+  font: bold 13px;
   text-decoration: none;
   text-shadow: 1px 1px 0px #ffffff;
   text-align: center;
@@ -80,13 +99,15 @@
 .menuButton {
   @extend %toolButtonStyle;
   width: 55px;
-  height: 55px;
+  height: 30px;
+  line-height: 30px;
 }
 
 .menuItemButton {
   @extend %toolButtonStyle;
   width: 55px;
-  height: 55px;
+  height: 30px;
+  line-height: 30px;
   float: left;
 }
 
@@ -97,7 +118,8 @@
 .tool {
   @extend %toolButtonStyle;
   width: 55px;
-  height: 55px;
+  height: 30px;
+  line-height: 30px;
 }
 
 $initiative_width: 400px;
@@ -167,6 +189,7 @@ $toggle_width: 75px;
 #newInitForm input {
   width: 80%;
   margin-bottom: 0px;
+  display: block;
 }
 
 #newInitForm {

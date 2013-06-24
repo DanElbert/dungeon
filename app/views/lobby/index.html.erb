@@ -1,8 +1,18 @@
+<h2>Lobby</h2>
+<h3>Join or Create a Game</h3>
 
-<%= render :partial => 'game_table', :locals => {:games => @open_games, :title => 'Open Games'} %>
+<div class="row">
+  <div class="one-third column alpha">
+    <%= render :partial => 'game_table', :locals => {:games => @open_games, :title => 'Open Games'} %>
+  </div>
 
-<%= render :partial => 'game_table', :locals => {:games => @active_games, :title => 'Active Games'} %>
+  <div class="one-third column">
+    <%= render :partial => 'game_table', :locals => {:games => @active_games, :title => 'Active Games'} %>
+  </div>
 
-<%= render :partial => 'game_table', :locals => {:games => @old_games, :title => 'Old Games'} %>
+  <div class="one-third column omega">
+    <%= render :partial => 'game_table', :locals => {:games => @old_games, :title => 'Old Games'} %>
+  </div>
+</div>
 
 <%= link_to "Create New Game", new_game_path, class: 'button' %>

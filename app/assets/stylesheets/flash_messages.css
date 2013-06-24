@@ -1,13 +1,19 @@
+#flashRow {
+    position: relative;
+}
+
 #flashContainer {
+    width: 100%;
     position: absolute;
-    top: 5px;
+    top: 0;
 }
 
 .flash {
+    text-align: center;
     width: 30em;
     padding: 5px;
-    margin-bottom: 2em;
-    margin-left: 2em;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .error {

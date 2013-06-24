@@ -759,6 +759,8 @@ PingTool.prototype = _.extend(new Tool(), {
       self.board.addAction(action, null, true);
     });
   },
-  disable: function() {},
+  disable: function() {
+    $(this.board.event_manager).off(".PingTool");
+  },
   draw: function() {}
 });
