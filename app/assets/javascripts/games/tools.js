@@ -68,6 +68,19 @@ GlobalShortCuts.prototype = _.extend(new Tool(), {
 
     this.viewPortDragging.enable();
 
+    $(this.board.event_manager).on('pinchstart.GlobalShortCuts', function(evt, mapEvt) {
+      self.originalZoom = self.board.zoom;
+    });
+
+    $(this.board.event_manager).on('pinch.GlobalShortCuts', function(evt, mapEvt) {
+      var newZoom = self.originalZoom * mapEvt.scale;
+      newZoom = Math.round(newZoom * 100) / 100;
+      newZoom = Math.min(zoomMax, newZoom);
+      newZoom = Math.max(zoomMin, newZoom);
+      self.board.setZoom(newZoom);
+      self.board.toolBars.setZoom(newZoom);
+    });
+
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
       var currentZoom = self.board.zoom;
       var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
@@ -552,6 +565,7 @@ RadialTemplate.prototype = _.extend(new Tool(), {
     });
 
     $(board.event_manager).on('dragstart.' + this.toolName(), function (evt, mapEvt) {
+      self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       self.dragging = true;
     });
 

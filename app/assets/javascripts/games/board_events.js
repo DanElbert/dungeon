@@ -233,31 +233,101 @@ function BoardEvents(board) {
     evt.preventDefault();
   });
 
-  jqCanvas.on('touchstart.BoardEvents', function(evt) {
-    var nEvt = evt.originalEvent;
-    var touch, canvasCoords;
-    if (nEvt.targetTouches.length == 1) {
-      touch = nEvt.targetTouches[0];
-      canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
-      self.cursorDownHandler(canvasCoords, self.leftMouseState);
-    } else if (nEvt.targetTouches.length == 2) {
+  this.draggingFingers = 0;
 
-    }
-    //evt.stopPropagation();
+  jqCanvas.hammer({
+    drag_max_touches: 2,
+    correct_for_drag_min_distance: true,
+    hold: false,
+    prevent_mouseevents: true,
+    swipe: false,
+    transform_min_rotation: 180,
+    transform_min_scale: 0.1,
+    transform: false
   });
 
-  jqCanvas.on('touchend.BoardEvents', function(evt) {
+  jqCanvas.on('tap.BoardEvents', function(evt) {
+    var coords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+    self.cursorDownHandler(coords, self.leftMouseState);
     self.cursorUpHandler(self.leftMouseState);
-    //evt.stopPropagation();
+    evt.preventDefault();
   });
 
-  jqCanvas.on('touchmove.BoardEvents', function(evt) {
-    var nEvt = evt.originalEvent;
-    if (nEvt.targetTouches.length == 1) {
-      var touch = nEvt.targetTouches[0];
-      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
-      self.cursorMoveHandler(canvasCoords, self.leftMouseState);
+  jqCanvas.on('dragstart.BoardEvents', function(evt) {
+    var coords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+    self.draggingFingers = evt.gesture.touches.length;
+    if (evt.gesture.touches.length == 1) {
+      self.cursorDownHandler(coords, self.leftMouseState);
+    } else if (evt.gesture.touches.length == 2) {
+      self.cursorDownHandler(coords, self.rightMouseState);
     }
-    //evt.stopPropagation();
   });
+
+  jqCanvas.on('drag.BoardEvents', function(evt) {
+    if (self.draggingFingers != evt.gesture.touches.length) {
+      self.cursorUpHandler(self.leftMouseState);
+      self.cursorUpHandler(self.rightMouseState);
+      return;
+    }
+    var coords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+    if (evt.gesture.touches.length == 1) {
+      self.cursorMoveHandler(coords, self.leftMouseState);
+    } else if (evt.gesture.touches.length == 2) {
+      self.cursorMoveHandler(coords, self.rightMouseState);
+    }
+  });
+
+  jqCanvas.on('dragend.BoardEvents', function(evt) {
+    if (evt.gesture.touches.length == 1) {
+      self.cursorUpHandler(self.leftMouseState);
+    } else if (evt.gesture.touches.length == 2) {
+      self.cursorUpHandler(self.rightMouseState);
+    }
+  });
+
+  jqCanvas.on('pinchstart.BoardEvents', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+    var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+    jqThis.trigger('pinchstart', {
+      scale: evt.gesture.scale,
+      center: mapCoords
+    });
+  });
+
+  jqCanvas.on('pinch.BoardEvents', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+    var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+    jqThis.trigger('pinch', {
+      scale: evt.gesture.scale,
+      center: mapCoords
+    });
+  });
+
+//  jqCanvas.on('touchstart.BoardEvents', function(evt) {
+//    var nEvt = evt.originalEvent;
+//    var touch, canvasCoords;
+//    if (nEvt.targetTouches.length == 1) {
+//      touch = nEvt.targetTouches[0];
+//      canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
+//      self.cursorDownHandler(canvasCoords, self.leftMouseState);
+//    } else if (nEvt.targetTouches.length == 2) {
+//
+//    }
+//    //evt.stopPropagation();
+//  });
+//
+//  jqCanvas.on('touchend.BoardEvents', function(evt) {
+//    self.cursorUpHandler(self.leftMouseState);
+//    //evt.stopPropagation();
+//  });
+//
+//  jqCanvas.on('touchmove.BoardEvents', function(evt) {
+//    var nEvt = evt.originalEvent;
+//    if (nEvt.targetTouches.length == 1) {
+//      var touch = nEvt.targetTouches[0];
+//      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
+//      self.cursorMoveHandler(canvasCoords, self.leftMouseState);
+//    }
+//    //evt.stopPropagation();
+//  });
 }
