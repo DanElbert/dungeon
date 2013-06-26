@@ -153,12 +153,23 @@ Pointer.prototype = _.extend(new Tool(), {
 
     $(board.event_manager).on('keydown.Pointer', function(evt, mapEvt) {
       if (self.selected_template && (mapEvt.key == 8 || mapEvt.key == 46)) {
-        var removeAction = {actionType: "removeTemplateAction", actionId: self.selected_template.uid, uid: generateActionId()};
-        var restoreAction = self.selected_template.clone();
-        self.board.addAction(removeAction, restoreAction, true);
+        self.removeTemplate(self.selected_template);
         self.selected_template = null;
       }
     });
+
+    $(board.event_manager).on('hold.Pointer', function(evt, mapEvt) {
+      if (self.selected_template && self.selected_template.containsCell(self.board, mapEvt.mapPointCell)) {
+        self.removeTemplate(self.selected_template);
+        self.selected_template = null;
+      }
+    });
+  },
+
+  removeTemplate: function(template) {
+    var removeAction = {actionType: "removeTemplateAction", actionId: template.uid, uid: generateActionId()};
+    var restoreAction = template.clone();
+    this.board.addAction(removeAction, restoreAction, true);
   },
 
   disable: function() {

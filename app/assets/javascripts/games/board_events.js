@@ -243,11 +243,9 @@ function BoardEvents(board) {
   jqCanvas.hammer({
     drag_max_touches: 2,
     correct_for_drag_min_distance: true,
-    hold: false,
+    hold_threshold: 2000,
     prevent_mouseevents: true,
     swipe: false,
-    transform_min_rotation: 180,
-    transform_min_scale: 0.1,
     transform: false
   });
 
@@ -305,6 +303,15 @@ function BoardEvents(board) {
     jqThis.trigger('pinch', {
       scale: evt.gesture.scale,
       center: mapCoords
+    });
+  });
+
+  jqCanvas.on('hold.BoardEvents', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+    var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+    jqThis.trigger('hold', {
+      mapPoint: mapCoords,
+      mapPointCell: self.getCell(mapCoords[0], mapCoords[1])
     });
   });
 }
