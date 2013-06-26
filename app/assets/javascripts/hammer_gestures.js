@@ -7,19 +7,18 @@ Hammer.gestures.Pinch = {
   triggered: false,
   handler: function(ev, inst) {
 
-    // atleast multitouch
-    if(ev.touches.length < 2) {
-      return;
-    }
-
-    ev.preventDefault();
-
     switch(ev.eventType) {
       case Hammer.EVENT_START:
         this.triggered = false;
         break;
 
       case Hammer.EVENT_MOVE:
+
+        // atleast multitouch
+        if(ev.touches.length < 2) {
+          return;
+        }
+
         var scale_threshold = Math.abs(1-ev.scale);
 
         // when the distance we moved is too small we skip this gesture

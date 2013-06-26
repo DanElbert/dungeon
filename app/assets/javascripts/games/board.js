@@ -60,13 +60,24 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.setZoom(this.zoom);
   };
 
-  this.setZoom = function(val) {
-    this.zoom = val;
-    var oldSize = this.viewPortSize;
-    this.viewPortSize = [this.canvas.width / val, this.canvas.height / val];
+  // Rounds the zoom and ensures it's within the min and max zoom values
+  this.normalizeZoom = function(zoom) {
+    var zoomMax = 2.5;
+    var zoomMin = 0.3;
+    var newZoom = Math.round(zoom * 100) / 100;
+    newZoom = Math.min(zoomMax, newZoom);
+    newZoom = Math.max(zoomMin, newZoom);
+    return newZoom;
+  };
 
-    this.viewPortCoord = [this.viewPortCoord[0] + (oldSize[0] - this.viewPortSize[0]),
-      this.viewPortCoord[1] + (oldSize[1] - this.viewPortSize[1])];
+  this.setZoom = function(val, mapCenter) {
+    val = this.normalizeZoom(val);
+    if (!mapCenter) mapCenter = [this.viewPortCoord[0] + this.viewPortSize[0] / 2, this.viewPortCoord[1] + this.viewPortSize[1] / 2];
+    var canvasCenter = [(mapCenter[0] - this.viewPortCoord[0]) * this.zoom, (mapCenter[1] - this.viewPortCoord[1]) * this.zoom];
+
+    this.zoom = val;
+    this.viewPortSize = [this.canvas.width / val, this.canvas.height / val];
+    this.viewPortCoord = [mapCenter[0] - (canvasCenter[0] / this.zoom), mapCenter[1] - (canvasCenter[1] / this.zoom)];
 
     this.context.restore();
     this.context.save();
@@ -146,7 +157,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     var data = this.board_data;
     var drawing = this.drawing;
     var img = this.images[data.background_image];
-    if (img.loaded) drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], img.image);
+    if (img && img.loaded) drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], img.image);
   };
 
   this.renderBoardGrid = function() {

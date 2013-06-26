@@ -130,10 +130,12 @@ _.extend(Drawing.prototype, {
   },
 
   drawCircle: function(x, y, radius, width, color) {
-    this.context.beginPath();
-    this.context.arc(x, y, radius, 0, 2 * Math.PI, false);
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
+    this.context.beginPath();
+    // For some reason, some browsers draw filled squares when the angle is 2.0 * PI; this fixes it without visual issues
+    this.context.arc(x, y, radius, 0, 1.95 * Math.PI, false);
+    this.context.closePath();
     this.context.stroke();
   },
 

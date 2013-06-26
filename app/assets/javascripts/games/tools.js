@@ -63,8 +63,7 @@ GlobalShortCuts.prototype = _.extend(new Tool(), {
     var self = this;
 
     var scrollZoomFactor = -0.001;
-    var zoomMin = 0.3;
-    var zoomMax = 2.5;
+    var scaleZoomFactor = 0.5;
 
     this.viewPortDragging.enable();
 
@@ -73,21 +72,16 @@ GlobalShortCuts.prototype = _.extend(new Tool(), {
     });
 
     $(this.board.event_manager).on('pinch.GlobalShortCuts', function(evt, mapEvt) {
-      var newZoom = self.originalZoom * mapEvt.scale;
-      newZoom = Math.round(newZoom * 100) / 100;
-      newZoom = Math.min(zoomMax, newZoom);
-      newZoom = Math.max(zoomMin, newZoom);
-      self.board.setZoom(newZoom);
+      var scale = ((mapEvt.scale - 1) * scaleZoomFactor) + 1;
+      var newZoom = self.originalZoom * scale;
+      self.board.setZoom(newZoom, mapEvt.center);
       self.board.toolBars.setZoom(newZoom);
     });
 
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
       var currentZoom = self.board.zoom;
       var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
-      newZoom = Math.round(newZoom * 100) / 100;
-      newZoom = Math.min(zoomMax, newZoom);
-      newZoom = Math.max(zoomMin, newZoom);
-      self.board.setZoom(newZoom);
+      self.board.setZoom(newZoom, mapEvt.mapPoint);
       self.board.toolBars.setZoom(newZoom);
     });
   },

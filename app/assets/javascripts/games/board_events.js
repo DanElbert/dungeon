@@ -8,6 +8,9 @@ function BoardEvents(board) {
   var jqThis = $(this);
   var jqCanvas = $(board.canvas);
 
+  // Track mouse location as it moves so that we can use it in events that don't give the mouse location
+  this.mouseCanvasPoint = null;
+
   this.leftMouseState = {
     down: false,
     dragging: false,
@@ -146,7 +149,8 @@ function BoardEvents(board) {
       deltaX: deltaX,
       deltaY: deltaY,
       mapScaledDeltaX: deltaX / self.board.zoom,
-      mapScaledDeltaY: deltaY / self.board.zoom
+      mapScaledDeltaY: deltaY / self.board.zoom,
+      mapPoint: self.getMapCoordinates(self.mouseCanvasPoint[0], self.mouseCanvasPoint[1])
     });
   };
 
@@ -215,13 +219,14 @@ function BoardEvents(board) {
   });
 
   jqCanvas.on('mousemove.BoardEvents', function(evt) {
-    var canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-    self.cursorMoveHandler(canvasCoords, self.leftMouseState);
-    self.cursorMoveHandler(canvasCoords, self.rightMouseState);
+    self.mouseCanvasPoint = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+    self.cursorMoveHandler(self.mouseCanvasPoint, self.leftMouseState);
+    self.cursorMoveHandler(self.mouseCanvasPoint, self.rightMouseState);
     evt.preventDefault();
   });
 
   jqCanvas.on('mouseout.BoardEvents', function(evt) {
+    self.mouseCanvasPoint = null;
     self.cursorUpHandler(self.leftMouseState);
     self.cursorUpHandler(self.rightMouseState);
   });
@@ -302,32 +307,4 @@ function BoardEvents(board) {
       center: mapCoords
     });
   });
-
-//  jqCanvas.on('touchstart.BoardEvents', function(evt) {
-//    var nEvt = evt.originalEvent;
-//    var touch, canvasCoords;
-//    if (nEvt.targetTouches.length == 1) {
-//      touch = nEvt.targetTouches[0];
-//      canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
-//      self.cursorDownHandler(canvasCoords, self.leftMouseState);
-//    } else if (nEvt.targetTouches.length == 2) {
-//
-//    }
-//    //evt.stopPropagation();
-//  });
-//
-//  jqCanvas.on('touchend.BoardEvents', function(evt) {
-//    self.cursorUpHandler(self.leftMouseState);
-//    //evt.stopPropagation();
-//  });
-//
-//  jqCanvas.on('touchmove.BoardEvents', function(evt) {
-//    var nEvt = evt.originalEvent;
-//    if (nEvt.targetTouches.length == 1) {
-//      var touch = nEvt.targetTouches[0];
-//      var canvasCoords = self.getCanvasCoordinates(touch.pageX, touch.pageY);
-//      self.cursorMoveHandler(canvasCoords, self.leftMouseState);
-//    }
-//    //evt.stopPropagation();
-//  });
 }
