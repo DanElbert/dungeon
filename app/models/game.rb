@@ -20,10 +20,6 @@ class Game < ActiveRecord::Base
   end
 
   def is_owner(current_user_id)
-    puts "==============="
-    puts current_user_id
-    puts self.user_id
-    puts current_user_id == self.user_id
     current_user_id == self.user_id
   end
 
