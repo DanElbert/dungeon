@@ -18,7 +18,7 @@ module Dungeon
 
     # Add Faye to the middleware stack
     # Note that by referencing the Static middleware, serve_static_assets needs to be left on
-    config.middleware.insert_after 'ActionDispatch::Static', 'GameServerMiddleware', mount: '/game_server', timeout: 35
+    config.middleware.insert_after 'ActionDispatch::Static', 'GameServerMiddleware', mount: '/game_server', timeout: 35, ping: 30
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
