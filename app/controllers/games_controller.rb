@@ -13,7 +13,7 @@ class GamesController < ApplicationController
     image_proc = Proc.new do |path|
       ActionController::Base.helpers.asset_path(path)
     end
-    render :json => @game.to_json(:image_callback => image_proc)
+    render :json => @game.to_json(:image_callback => image_proc, :current_user_id => current_user.id)
   end
 
   def new

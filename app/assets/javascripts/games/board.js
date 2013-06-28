@@ -10,6 +10,8 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.event_manager = new BoardEvents(this);
   this.current_tool = null;
 
+  this.isOwner = false;
+
   this.pending_action_queue = [];
   this.template_actions = [];
   this.undo_stack = [];
@@ -137,6 +139,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
     this.initiative.update(data.initiative);
     this.board_data = data.board;
+    this.isOwner = data.is_owner;
 
     _.each(data.board.actions, function(action) {
       this.addAction(action, null, false);
