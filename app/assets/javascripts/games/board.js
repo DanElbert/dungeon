@@ -17,6 +17,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.undo_stack = [];
 
   this.drawingLayer = new DrawingLayer();
+  this.fogLayer = new DrawingLayer();
   this.pingLayer = new PingLayer();
 
   this.board_data = null;
@@ -171,6 +172,16 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing);
   };
 
+  this.renderFog = function() {
+    if (this.isOwner){
+      this.context.globalAlpha = 0.5;
+    }
+    this.fogLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing);
+    if (this.isOwner) {
+      this.context.globalAlpha = 1.0;
+    }
+  };
+
   this.renderCursor = function() {
     if (this.hovered_cell) {
       this.drawing.colorCell(this.hovered_cell[0], this.hovered_cell[1], "rgba(0, 204, 0, 0.25)");
@@ -220,6 +231,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.renderTemplates();
     this.renderBoardGrid();
     this.renderDrawing();
+    this.renderFog();
     this.renderPings();
     this.renderCursor();
     this.renderTool();
@@ -254,7 +266,10 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   $(this.toolBars).on('toolchanged', function(e) {
     var tool = self.toolBars.getTool();
     var width = self.toolBars.getLineWidth();
+    var fogWidth = self.toolBars.getFogLineWidth();
     var color = self.toolBars.getColor();
+
+    self.toolBars.setStandardLineWidths();
 
     switch (tool) {
       case "Pointer":
@@ -286,6 +301,14 @@ function Board(canvas, toolBarsApi, initiativeApi) {
         break;
       case "Ping":
         self.setTool(new PingTool(self, color));
+        break;
+      case "Add Fog":
+        self.setTool(new AddFogPen(self, fogWidth));
+        self.toolBars.setFogLineWidths();
+        break;
+      case "Remove Fog":
+        self.setTool(new RemoveFogPen(self, fogWidth));
+        self.toolBars.setFogLineWidths();
         break;
       default:
         throw "No such tool";

@@ -45,9 +45,7 @@ function setCanvasSize() {
 function draw_game() {
   game_board.update();
 
-  window.requestAnimFrame(function () {
-    draw_game();
-  });
+  window.requestAnimFrame(draw_game);
 }
 
 function setSize(zoom) {

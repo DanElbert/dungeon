@@ -10,12 +10,23 @@ function InitializeToolBarsApi() {
     getLineWidth: function() {
       return $("#tool_line_width").toolMenu("value");
     },
+    getFogLineWidth: function() {
+      return $("#fog_tool_line_width").toolMenu("value");
+    },
     getZoom: function() {
       return parseFloat($("#zoom_level").val());
     },
     setZoom: function(val) {
       $("#zoom_level").val(val);
       $("#zoom_slider").slider("value", val);
+    },
+    setStandardLineWidths: function() {
+      $("#tool_line_width").show();
+      $("#fog_tool_line_width").hide();
+    },
+    setFogLineWidths: function() {
+      $("#tool_line_width").hide();
+      $("#fog_tool_line_width").show();
     }
   };
 
@@ -37,7 +48,7 @@ function InitializeToolBarsApi() {
   }
 
   $("#tool_menu").toolMenu({
-    values: ["Pointer", "Pen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping"],
+    values: ["Pointer", "Pen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping", "Add Fog", "Remove Fog"],
     initialValue: "Pointer",
     contentCallback: function(value) {
       //return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
@@ -85,6 +96,22 @@ function InitializeToolBarsApi() {
       var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
       var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + value / 2 + "px"});
       var line = $("<div></div>").css({clear: "both", height: value + "px", position: "relative", backgroundColor: "black"});
+      wrapper.append(floater);
+      wrapper.append(line);
+      return wrapper;
+    },
+    selectedCallback: function(value) {
+      triggerToolChanged();
+    }
+  });
+
+  $("#fog_tool_line_width").toolMenu({
+    values: [25, 75, 100, 200, 500],
+    initialValue: 75,
+    contentCallback: function(value) {
+      var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
+      var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + (value / 25) / 2 + "px"});
+      var line = $("<div></div>").css({clear: "both", height: (value / 25) + "px", position: "relative", backgroundColor: "black"});
       wrapper.append(floater);
       wrapper.append(line);
       return wrapper;

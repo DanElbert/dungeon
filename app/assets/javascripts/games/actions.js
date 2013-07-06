@@ -85,6 +85,60 @@ var actionMethods = {
     }
   },
 
+  // An add fog action consists of a width, and a collection of lines that are to be drawn on the fog layer
+  addFogPenAction: {
+    extend: function() { return "drawingAction"; },
+    apply: function(board) {
+      board.fogLayer.addAction(this);
+    },
+    draw: function(drawing) {
+      drawing.drawLines('rgba(1, 1, 1, 1)', this.width, this.lines);
+    },
+
+    calculateBounds: function() {
+      var l, t, r, b;
+      var points = _.reduce(this.lines, function(memo, line) { memo.push(line.start); memo.push(line.end); return memo; }, []);
+      _.each(points, function(p) {
+        if (l == null || p[0] < l) l = p[0];
+        if (t == null || p[1] < t) t = p[1];
+        if (r == null || p[0] > r) r = p[0];
+        if (b == null || p[1] > b) b = p[1];
+      });
+      return [[l, t], [r, b]];
+    },
+
+    validateData: function() {
+      this.ensureFields(["width", "lines", "uid"]);
+    }
+  },
+
+  // An remove fog action consists of a width, and a collection of lines that are to be drawn on the fog layer
+  removeFogPenAction: {
+    extend: function() { return "drawingAction"; },
+    apply: function(board) {
+      board.fogLayer.addAction(this);
+    },
+    draw: function(drawing) {
+      drawing.eraseLines(this.width, this.lines);
+    },
+
+    calculateBounds: function() {
+      var l, t, r, b;
+      var points = _.reduce(this.lines, function(memo, line) { memo.push(line.start); memo.push(line.end); return memo; }, []);
+      _.each(points, function(p) {
+        if (l == null || p[0] < l) l = p[0];
+        if (t == null || p[1] < t) t = p[1];
+        if (r == null || p[0] > r) r = p[0];
+        if (b == null || p[1] > b) b = p[1];
+      });
+      return [[l, t], [r, b]];
+    },
+
+    validateData: function() {
+      this.ensureFields(["width", "lines", "uid"]);
+    }
+  },
+
   // Draws a square.  Requires topLeft, bottomRight, color, and width
   squarePenAction: {
     extend: function() { return "drawingAction"; },
@@ -145,6 +199,14 @@ var actionMethods = {
     extend: function() { return "removalAction"; },
     apply: function(board) {
       board.drawingLayer.removeAction(this.actionId);
+    }
+  },
+
+  // References a drawing action to remove
+  removeFogAction: {
+    extend: function() { return "removalAction"; },
+    apply: function(board) {
+      board.fogLayer.removeAction(this.actionId);
     }
   },
 
