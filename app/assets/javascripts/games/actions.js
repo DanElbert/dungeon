@@ -89,7 +89,7 @@ var actionMethods = {
   addFogPenAction: {
     extend: function() { return "drawingAction"; },
     apply: function(board) {
-      board.fogLayer.addAction(this);
+      board.drawingLayer.addFogAction(this);
     },
     draw: function(drawing) {
       drawing.drawLines('rgba(1, 1, 1, 1)', this.width, this.lines);
@@ -116,7 +116,7 @@ var actionMethods = {
   removeFogPenAction: {
     extend: function() { return "drawingAction"; },
     apply: function(board) {
-      board.fogLayer.addAction(this);
+      board.drawingLayer.addFogAction(this);
     },
     draw: function(drawing) {
       drawing.eraseLines(this.width, this.lines);
@@ -206,7 +206,7 @@ var actionMethods = {
   removeFogAction: {
     extend: function() { return "removalAction"; },
     apply: function(board) {
-      board.fogLayer.removeAction(this.actionId);
+      board.drawingLayer.removeAction(this.actionId);
     }
   },
 

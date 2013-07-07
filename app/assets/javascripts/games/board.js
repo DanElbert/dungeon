@@ -17,7 +17,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.undo_stack = [];
 
   this.drawingLayer = new DrawingLayer();
-  this.fogLayer = new DrawingLayer();
   this.pingLayer = new PingLayer();
 
   this.board_data = null;
@@ -170,16 +169,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
   this.renderDrawing = function() {
     this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing);
-  };
-
-  this.renderFog = function() {
-    if (this.isOwner){
-      this.context.globalAlpha = 0.5;
-    }
-    this.fogLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing);
-    if (this.isOwner) {
-      this.context.globalAlpha = 1.0;
-    }
   };
 
   this.renderCursor = function() {

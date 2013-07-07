@@ -12,6 +12,14 @@ _.extend(DrawingLayer.prototype, {
     }, this);
   },
 
+  addFogAction: function(a) {
+    var actionBounds = a.bounds();
+    var tiles = this.getTilesForRectangle(actionBounds[0], actionBounds[1]);
+    _.each(tiles, function(tile) {
+      tile.addFogAction(a);
+    }, this);
+  },
+
   removeAction: function(id) {
     _.each(this.tileList, function(tile) {
       tile.removeAction(id);
@@ -67,10 +75,15 @@ function Tile(size, x, y) {
   this.topLeft = [x * size, y * size];
   this.bottomRight = [(x + 1) * size, (y + 1) * size];
   this.actions = [];
+  this.fogActions = [];
   this.isDrawn = false;
   this.canvas = null;
   this.context = null;
   this.drawing = null;
+
+  this.fogCanvas = null;
+  this.fogContext = null;
+  this.fogDrawing = null;
 }
 _.extend(Tile.prototype, {
   is: function(x, y) {
@@ -79,21 +92,40 @@ _.extend(Tile.prototype, {
 
   addAction: function(a) {
     this.actions.push(a);
-    if (this.canvas != null) {
-      a.draw(this.drawing);
-    }
+    this.reDraw();
+  },
+
+  addFogAction: function(a) {
+    this.fogActions.push(a);
+    this.reDraw();
   },
 
   removeAction: function(uid) {
     var index = null;
-    for (var x = 0; x < this.actions.length; x++) {
+    var x = null;
+    for (x = 0; x < this.actions.length; x++) {
       if (this.actions[x].uid == uid) index = x;
     }
 
     if (index != null) {
       this.actions.splice(index, 1);
       this.clear();
+      return;
     }
+
+    for (x = 0; x < this.fogActions.length; x++) {
+      if (this.fogActions[x].uid == uid) index = x;
+    }
+
+    if (index != null) {
+      this.fogActions.splice(index, 1);
+      this.clear();
+    }
+  },
+
+  reDraw: function() {
+    this.clear();
+    this.draw();
   },
 
   draw: function() {
@@ -102,10 +134,21 @@ _.extend(Tile.prototype, {
 
     this.ensureCanvas();
     var d = this.drawing;
+    var fd = this.fogDrawing;
 
     _.each(this.actions, function(a) {
       a.draw(d);
     });
+
+    _.each(this.fogActions, function(a) {
+      a.draw(fd)
+    });
+
+    this.context.save();
+    this.context.globalCompositeOperation = '';
+
+    this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    this.context.restore();
 
     this.isDrawn = true;
   },
@@ -120,12 +163,18 @@ _.extend(Tile.prototype, {
   ensureCanvas: function() {
     if (this.canvas == null) {
       this.canvas = document.createElement("canvas");
+      this.fogCanvas = document.createElement("canvas");
       this.canvas.width = this.size;
       this.canvas.height = this.size;
+      this.fogCanvas.width = this.size;
+      this.fogCanvas.height = this.size;
       this.context = this.canvas.getContext('2d');
+      this.fogContext = this.fogCanvas.getContext('2d');
       this.drawing = new Drawing(this.context);
+      this.fogDrawing = new Drawing(this.fogContext);
 
       this.context.translate(-1 * this.topLeft[0], -1 * this.topLeft[1]);
+      this.fogContext.translate(-1 * this.topLeft[0], -1 * this.topLeft[1]);
     }
   }
 });
