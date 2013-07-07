@@ -2,6 +2,7 @@ function DrawingLayer() {
   this.tileSize = 500;
   this.tileList = [];
   this.tileLookup = {};
+  this.isOwner = false;
 }
 _.extend(DrawingLayer.prototype, {
   addAction: function(a) {
@@ -51,7 +52,7 @@ _.extend(DrawingLayer.prototype, {
         var tile = this.tileLookup[key];
 
         if (tile == null) {
-          tile = new Tile(this.tileSize, x, y);
+          tile = new Tile(this.tileSize, x, y, this.isOwner);
           this.tileLookup[key] = tile;
           this.tileList.push(tile);
         }
@@ -68,8 +69,9 @@ _.extend(DrawingLayer.prototype, {
   }
 });
 
-function Tile(size, x, y) {
+function Tile(size, x, y, isOwner) {
   this.size = size;
+  this.isOwner = isOwner;
   this.x = x;
   this.y = y;
   this.topLeft = [x * size, y * size];
@@ -145,7 +147,12 @@ _.extend(Tile.prototype, {
     });
 
     this.context.save();
-    this.context.globalCompositeOperation = '';
+
+    if (this.isOwner) {
+      this.context.globalAlpha = 0.25;
+    } else {
+      this.context.globalCompositeOperation = 'destination-out';
+    }
 
     this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
     this.context.restore();

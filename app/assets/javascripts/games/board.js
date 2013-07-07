@@ -140,6 +140,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.initiative.update(data.initiative);
     this.board_data = data.board;
     this.isOwner = data.is_owner;
+    this.drawingLayer.isOwner = this.isOwner;
 
     _.each(data.board.actions, function(action) {
       this.addAction(action, null, false);
@@ -168,7 +169,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   };
 
   this.renderDrawing = function() {
-    this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing);
+    this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing, this.isOwner);
   };
 
   this.renderCursor = function() {
@@ -220,7 +221,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.renderTemplates();
     this.renderBoardGrid();
     this.renderDrawing();
-    this.renderFog();
     this.renderPings();
     this.renderCursor();
     this.renderTool();
