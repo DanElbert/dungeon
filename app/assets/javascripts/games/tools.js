@@ -222,7 +222,7 @@ Pointer.prototype = _.extend(new Tool(), {
   }
 });
 
-function SquarePen(board, width, color) {
+function ShapePen(board, width, color) {
   Tool.call(this, board);
   this.super = Tool.prototype;
 
@@ -234,9 +234,10 @@ function SquarePen(board, width, color) {
 
   this.drag_start = null;
   this.drag_current = null;
+  this.cursor = null;
 }
 
-SquarePen.prototype = _.extend(new Tool(), {
+ShapePen.prototype = _.extend(new Tool(), {
   getPoint: function(mapPoint) {
     if (this.shiftDown) {
       return Geometry.getNearestCellIntersection(mapPoint, this.board.drawing.cellSize);
@@ -247,30 +248,38 @@ SquarePen.prototype = _.extend(new Tool(), {
     }
   },
 
+  eventNamespace: function() {
+    return "ShapePen";
+  },
+
   enable: function() {
 
     var self = this;
     var board = this.board;
 
-    $(board.event_manager).on('keydown.SquarePen', function(evt, mapEvt) {
+    $(board.event_manager).on('keydown.' + this.eventNamespace(), function(evt, mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
     });
 
-    $(board.event_manager).on('keyup.SquarePen', function(evt, mapEvt) {
+    $(board.event_manager).on('keyup.' + this.eventNamespace(), function(evt, mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
     });
 
-    $(board.event_manager).on('dragstart.SquarePen', function(evt, mapEvt) {
+    $(board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.cursor = self.getPoint(mapEvt.mapPoint);
+    });
+
+    $(board.event_manager).on('dragstart.' + this.eventNamespace(), function(evt, mapEvt) {
       self.drag_start = self.getPoint(mapEvt.mapPoint);
     });
 
-    $(board.event_manager).on('drag.SquarePen', function(evt, mapEvt) {
+    $(board.event_manager).on('drag.' + this.eventNamespace(), function(evt, mapEvt) {
       self.drag_current = self.getPoint(mapEvt.mapPoint);
     });
 
-    $(board.event_manager).on('dragstop.SquarePen', function(evt, mapEvt) {
+    $(board.event_manager).on('dragstop.' + this.eventNamespace(), function(evt, mapEvt) {
       self.saveAction();
 
       self.drag_start = null;
@@ -280,10 +289,44 @@ SquarePen.prototype = _.extend(new Tool(), {
 
   disable: function() {
     this.saveAction();
-    $(this.board.event_manager).off('.SquarePen');
+    $(this.board.event_manager).off('.' + this.eventNamespace());
+  },
+
+  drawCross: function(point) {
+    var crossSize = 10;
+    var lines = [
+      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
+      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
+    ];
+    this.board.drawing.drawLines("black", 3, lines);
+  },
+
+  drawShape: function() {
+
   },
 
   draw: function() {
+    if (this.cursor) {
+      this.drawCross(this.cursor);
+    }
+
+    this.drawShape();
+  }
+
+});
+
+function SquarePen(board, width, color) {
+  ShapePen.call(this, board, width, color);
+  this.super = ShapePen.prototype;
+}
+
+SquarePen.prototype = _.extend(new ShapePen(), {
+
+  eventNamespace: function() {
+    return "SquarePen";
+  },
+
+  drawShape: function() {
     if (this.drag_start && this.drag_current) {
       var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
       var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
@@ -311,44 +354,15 @@ SquarePen.prototype = _.extend(new Tool(), {
 });
 
 function CirclePen(board, width, color) {
-  Tool.call(this, board);
-  this.super = Tool.prototype;
-
-  this.width = width;
-  this.color = color;
-
-  this.drag_start = null;
-  this.drag_current = null;
+  ShapePen.call(this, board, width, color);
+  this.super = ShapePen.prototype;
 }
 
-CirclePen.prototype = _.extend(new Tool(), {
-  enable: function() {
-
-    var self = this;
-    var board = this.board;
-
-    $(board.event_manager).on('dragstart.CirclePen', function(evt, mapEvt) {
-      self.drag_start = mapEvt.mapPoint;
-    });
-
-    $(board.event_manager).on('drag.CirclePen', function(evt, mapEvt) {
-      self.drag_current = mapEvt.mapPoint;
-    });
-
-    $(board.event_manager).on('dragstop.CirclePen', function(evt, mapEvt) {
-      self.saveAction();
-
-      self.drag_start = null;
-      self.drag_current = null;
-    });
+CirclePen.prototype = _.extend(new ShapePen(), {
+  eventNamespace: function() {
+    return "CirclePen";
   },
-
-  disable: function() {
-    this.saveAction();
-    $(this.board.event_manager).off('.CirclePen');
-  },
-
-  draw: function() {
+  drawShape: function() {
     if (this.drag_start && this.drag_current) {
       var center = this.drag_start;
       var radius = Geometry.getDistance(this.drag_start, this.drag_current);
