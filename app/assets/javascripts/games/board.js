@@ -269,6 +269,9 @@ function Board(canvas, toolBarsApi, initiativeApi) {
       case "Circle":
         self.setTool(new CirclePen(self, width, color));
         break;
+      case "LinePen":
+        self.setTool(new LinePen(self, width, color));
+        break;
       case "Eraser":
         self.setTool(new Eraser(self, 30));
         break;

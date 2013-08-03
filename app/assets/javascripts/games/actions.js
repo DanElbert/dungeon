@@ -117,6 +117,27 @@ var actionMethods = {
     }
   },
 
+  // Draws a straight line.  Requires start, end, color, and width
+  linePenAction: {
+    extend: function() { return "drawingAction"; },
+    draw: function(drawing) {
+      var lines = [{start: this.start, end: this.end}];
+      drawing.drawLines(this.color, this.width, lines);
+    },
+
+    calculateBounds: function() {
+      var t = Math.min(this.start[1], this.end[1]);
+      var l = Math.min(this.start[0], this.end[0]);
+      var b = Math.max(this.start[1], this.end[1]);
+      var r = Math.max(this.start[0], this.end[0]);
+      return [[l, t], [r, b]];
+    },
+
+    validateData: function() {
+      this.ensureFields(["color", "width", "start", "end", "uid"]);
+    }
+  },
+
   // An erase action consists of a width and a collection of lines
   eraseAction: {
     extend: function() { return "drawingAction"; },

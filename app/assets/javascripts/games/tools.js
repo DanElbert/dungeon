@@ -387,6 +387,35 @@ CirclePen.prototype = _.extend(new ShapePen(), {
   }
 });
 
+function LinePen(board, width, color) {
+  ShapePen.call(this, board, width, color);
+  this.super = ShapePen.prototype;
+}
+
+LinePen.prototype = _.extend(new ShapePen(), {
+  eventNamespace: function() {
+    return "LinePen";
+  },
+  drawShape: function() {
+    if (this.drag_start && this.drag_current) {
+
+      var length = Geometry.getDistance(this.drag_start, this.drag_current);
+      var pathfinderDistance = Math.round((length / this.board.drawing.cellSize) * 5);
+
+      this.board.drawing.drawMeasureLine(this.drag_start, this.drag_current, pathfinderDistance, this.color, this.width);
+    }
+  },
+
+  saveAction: function() {
+    if (this.drag_start && this.drag_current) {
+
+      var action = {actionType: "linePenAction", color: this.color, width: this.width, start: this.drag_start, end: this.drag_current, uid: generateActionId()};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});
+
 function DrawTool(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
