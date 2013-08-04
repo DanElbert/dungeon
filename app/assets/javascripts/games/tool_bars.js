@@ -48,7 +48,7 @@ function InitializeToolBarsApi() {
   }
 
   $("#tool_menu").toolMenu({
-    values: ["Pointer", "Pen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping", "Add Fog", "Remove Fog"],
+    values: ["Pointer", "Pen", "LinePen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping", "Add Fog", "Remove Fog"],
     initialValue: "Pointer",
     contentCallback: function(value) {
       //return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);

@@ -18,9 +18,9 @@ _.extend(Drawing.prototype, {
     this.drawMeasureLine(startPoint, endPoint, totalMovement);
   },
 
-  drawMeasureLine: function(start, end, label) {
-    this.context.lineWidth = 5;
-    this.context.strokeStyle = "#000000";
+  drawMeasureLine: function(start, end, label, color, width) {
+    this.context.lineWidth = width || 5;
+    this.context.strokeStyle = color || "#000000";
     this.context.lineCap = 'round';
 
     this.context.textBaseline = 'middle';
