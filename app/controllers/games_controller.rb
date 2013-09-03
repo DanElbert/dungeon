@@ -57,7 +57,11 @@ class GamesController < ApplicationController
 
   def initiative_names
     histories = InitiativeHistory.where(game_id: params[:id]).order(use_count: :desc).limit(10)
-    histories = histories.where('name NOT IN (?)', Initiative.where(game_id: params[:id]).select(:name).map{ |i| i.name })
+    init_names = Initiative.where(game_id: params[:id]).select(:name).group(:name).pluck(:name)
+
+    if init_names.length > 0
+      histories = histories.where('name NOT IN (?)', init_names)
+    end
 
     if params[:term].present?
       histories = histories.where('name LIKE ?', "#{params[:term]}%")
