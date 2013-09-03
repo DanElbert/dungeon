@@ -122,6 +122,7 @@ function InitializeInitiativeApi(name_url) {
     minLength: 0,
     open: function() { isAutocompleOpen = true; },
     close: function() { isAutocompleOpen = false; },
+    position: { my: "left top", at: "left bottom", collision: "flip" },
     select: function( event, ui ) {
       valueInput.focus();
     }
