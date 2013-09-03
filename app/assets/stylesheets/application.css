@@ -9,6 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require jquery.ui.slider
+ *= require jquery.ui.autocomplete
  *= require base
  *= require layout
  *= require skeleton
@@ -16,3 +17,6 @@
  *= require_tree .
  */
 
+.ui-autocomplete {
+    z-index: 999;
+}

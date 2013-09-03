@@ -2,7 +2,6 @@ module GameServer
   class AddActionHandler < Handler
 
     COMPOSITE_ACTION_TYPE = 'compositeAction'
-    INITIATIVE_ACTION = 'updateInitiativeAction'
     CHANNEL_REGEX = /^\/game\/(\d+)\/add_action$/
 
     def should_handle_message(channel)
@@ -13,7 +12,7 @@ module GameServer
       # Assume that should_handle_message has already been called and this will always work
       game_id = CHANNEL_REGEX.match(message['channel'])[1].to_i
 
-      game = Game.includes(:board, :initiatives).find(game_id)
+      game = Game.includes(:board).find(game_id)
 
       unless game
         message['error'] = "Invalid Game Id"
@@ -28,14 +27,6 @@ module GameServer
       if COMPOSITE_ACTION_TYPE == action_data['actionType']
         action_data['actionList'].each do |sub_action|
           process_action(sub_action, game)
-        end
-      end
-
-      if INITIATIVE_ACTION == action_data['actionType']
-        game.initiatives.destroy_all
-
-        action_data['initiative'].each_with_index do |init, i|
-          game.initiatives << Initiative.from_message(init, i)
         end
       end
 

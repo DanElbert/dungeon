@@ -6,11 +6,15 @@
     <thead>
       <tr>
         <th>Name</th>
+        <th></th>
+        <th></th>
       </tr>
     </thead>
     <% games.each do |g| %>
     <tr>
       <td><%= link_to g.name, game_path(g) %></td>
+      <td><%= link_to 'Initiative', initiative_game_path(g) %></td>
+      <td><%= link_to 'Edit', edit_game_path(g) %></td>
     </tr>
     <% end %>
   </table>

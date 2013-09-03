@@ -4,7 +4,7 @@
 //= require ./drawing
 //= require ./board_events
 //= require ./board
-//= require ./actions
+//= require ./game_actions
 //= require ./drawing_layer
 //= require ./ping_layer
 //= require ./tools

@@ -31,7 +31,6 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   // Used in events
   var self = this;
 
-  this.sentMessageIds = [];
   this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
   this.gameServerClient.addExtension(
       {
@@ -42,9 +41,17 @@ function Board(canvas, toolBarsApi, initiativeApi) {
           callback(message);
         }
       });
-  this.addActionSubscription = this.gameServerClient.subscribe('/game/' + GAME_ID + '/add_action', function(message) {
+
+  this.addActionManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/add_action', function(message) {
     self.handleAddActionMessage(message);
   });
+
+  this.initiativeManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/update_initiative', function(message) {
+    self.handleAddActionMessage(message);
+  });
+
+  this.addActionManager.connect();
+  this.initiativeManager.connect();
 
   $(this.event_manager).on('mousemove', function(evt, mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
@@ -96,18 +103,15 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   };
 
   this.handleAddActionMessage = function(message) {
-    var index = _.indexOf(this.sentMessageIds, message.uid);
-    if (index >= 0) {
-      this.sentMessageIds.splice(index, 1);
-    } else {
-      this.addAction(message, null, false);
-    }
+    this.addAction(message, null, false);
   };
 
   this.sendActionMessage = function(action) {
-    this.sentMessageIds.push(action.uid);
-    // Publish action, omitting any privateData
-    this.gameServerClient.publish('/game/' + GAME_ID + '/add_action', _.omit(action, 'privateData'));
+    this.addActionManager.sendActionMessage(action);
+  };
+
+  this.sendInitiativeMessage = function(action) {
+    this.initiativeManager.sendActionMessage(action);
   };
 
   this.addAction = function(action, undoAction, broadcastAction) {
@@ -115,7 +119,12 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.pending_action_queue.push(action);
 
     if (broadcastAction) {
-      this.sendActionMessage(action);
+      if (action.actionType == 'updateInitiativeAction')
+      {
+        this.sendInitiativeMessage(action);
+      } else {
+        this.sendActionMessage(action);
+      }
     }
 
     if (undoAction) {
@@ -302,5 +311,5 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   $(this.toolBars).on('zoomchanged', function(e) {
     self.setZoom(e.value);
   });
-};
+}
 

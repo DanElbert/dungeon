@@ -7,9 +7,11 @@ Dungeon::Application.routes.draw do
     resources :games, :except => [:new, :create]
   end
 
-  resources :games, :only => [:new, :create, :show] do
+  resources :games, :only => [:new, :create, :show, :edit, :update] do
     member do
       get 'get_game_data'
+      get 'initiative'
+      get 'initiative_names'
     end
   end
 
