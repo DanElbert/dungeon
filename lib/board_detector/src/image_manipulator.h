@@ -20,7 +20,7 @@ class ImageManipulator {
     void set_image(Mat& mat) { this->image = mat; };
     ImageManipulator clone();
     ImageManipulator get_grey_scale();
-    ImageManipulator warp(vector<Point2f>& corners);
+    ImageManipulator warp(vector<Point2f>& corners, int output_width, int output_height);
     int width() { return this->image.cols; };
     int height() { return this->image.rows; };
     ImageManipulator half();

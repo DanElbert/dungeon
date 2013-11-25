@@ -60,23 +60,27 @@ std::vector<ImageManipulator> ImageManipulator::cut_into_quadrants()
   return quadrants;
 }
 
-ImageManipulator ImageManipulator::warp(vector<Point2f>& corners)
+ImageManipulator ImageManipulator::warp(vector<Point2f>& corners, int output_width, int output_height)
 {
-  Point2f source[3];
-  Point2f destination[3];
+  vector<Point2f> source(4, Point2f(0,0));
+  vector<Point2f> destination(4, Point2f(0,0));
 
   source[0] = corners[0];
   source[1] = corners[1];
   source[2] = corners[2];
+  source[3] = corners[3];
 
   destination[0] = Point2f(0, 0);
-  destination[1] = Point2f(800, 0);
-  destination[2] = Point2f(0, 450);
+  destination[1] = Point2f(output_width, 0);
+  destination[2] = Point2f(0, output_height);
+  destination[3] = Point2f(output_width, output_height);
 
-  Mat warp_matrix = getAffineTransform( source, destination );
-  Mat result = Mat::zeros(450, 800, image.type() );
+  //Mat warp_matrix = getPerspectiveTransform( source, destination );
+  Mat warp_matrix = findHomography( source, destination );
+  Mat result = Mat::zeros(output_height, output_width, image.type() );
 
-  warpAffine( image, result, warp_matrix, result.size() );
+  //warpAffine( image, result, warp_matrix, result.size() );
+  warpPerspective(image, result, warp_matrix, result.size());
 
   return ImageManipulator(result);
 }
@@ -104,7 +108,7 @@ string ImageManipulator::window_name = "test";
 
 void ImageManipulator::debug(bool half, std::vector<Point2f>* points)
 {
-#define __DUNGEON_IMAGE_MANIPULATOR_DEBUG
+//#define __DUNGEON_IMAGE_MANIPULATOR_DEBUG
 #ifdef __DUNGEON_IMAGE_MANIPULATOR_DEBUG
   if (!debugging) {
     cv::namedWindow( window_name, CV_WINDOW_AUTOSIZE );

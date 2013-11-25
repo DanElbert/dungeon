@@ -10,6 +10,7 @@
  *
  *= require jquery.ui.slider
  *= require jquery.ui.autocomplete
+ *= require jquery.ui.dialog
  *= require base
  *= require layout
  *= require skeleton

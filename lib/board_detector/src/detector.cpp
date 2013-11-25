@@ -79,7 +79,7 @@ std::vector<Point2f> Detector::calculate_board_corners()
         cornerSubPix(temp.get_image(), pattern_corners, Size(11, 11), Size(-1, -1),
           TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 
-      temp.debug(true, &pattern_corners);
+      //temp.debug(true, &pattern_corners);
 
       attempts++;
     }

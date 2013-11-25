@@ -70,6 +70,7 @@ Dungeon::Application.configure do
   #config.assets.precompile << Proc.new { |path| $stderr.puts "----- [#{path}]"; `touch ~/proof.txt`; false }
   config.assets.precompile << /(?:\/|\\|\A)games(?:\/index)?\.js$/
   config.assets.precompile << 'initiative_screen.js'
+  config.assets.precompile << 'camera.js'
 
 
   # Ignore bad email addresses and do not raise email delivery errors.

@@ -13,23 +13,60 @@ using namespace std;
 
 int main( int argc, char** argv )
 {
+  if (argc < 5) { return -1; }
+
   cv::Mat src_image;
   src_image = imread( argv[1] );
 
   if( !src_image.data )
     { return -1; }
 
-  Detector detector(4, src_image);
+  int pattern_size = atoi(argv[2]);
+  int output_size_x = atoi(argv[3]);
+  int output_size_y = atoi(argv[4]);
+
+  Detector detector(pattern_size, src_image);
 
   vector<cv::Point2f> corners = detector.calculate_board_corners();
 
-  ImageManipulator orig(src_image);
+  if (corners.size() < 4) {
+    cerr << "No Board Found" << endl;
+    return -1;
+  }
 
-  ImageManipulator warped = orig.warp(corners);
+  ImageManipulator orig(src_image);
+  ImageManipulator warped = orig.warp(corners, output_size_x, output_size_y);
 
   warped.debug();
 
-  cout << corners << endl;
+  cv::SimpleBlobDetector::Params parameters;
+  parameters.filterByArea = true;
+  parameters.minArea = 1000;
+  parameters.maxArea = 10000;
+
+  cv::SimpleBlobDetector blob_detector(parameters);
+
+  vector<cv::KeyPoint> keypoints;
+  blob_detector.detect(warped.get_image(), keypoints);
+
+  Mat warped_img = warped.get_image();
+  drawKeypoints( warped_img, keypoints, warped_img, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+
+  warped.debug();
+
+  // output json
+  cout << "{ width: " << warped.width() << ", height: " << warped.height() << ", items: [";
+
+  for (int x = 0; x < keypoints.size(); x++) {
+    cv::KeyPoint kp = keypoints[x];
+    if (x != 0) { cout << ","; }
+    float center_x = kp.pt.x;
+    float center_y = kp.pt.y;
+    float size = kp.size;
+    cout << "{ center: [" << center_x << ", " << center_y << "], size: " << size << "}";
+  }
+
+  cout << "]}" << endl;
 
   return 0;
 }

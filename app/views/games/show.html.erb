@@ -1,8 +1,10 @@
 <% content_for :header do %>
   <%= javascript_include_tag "games/index" %>
   <%= javascript_include_tag "/game_server/client.js" %>
+  <%= javascript_include_tag "camera" %>
 <% end %>
 
+<%= render partial: 'camera' %>
 <div id="game_container">
 
   <div id="initiative_panel" class="closed">

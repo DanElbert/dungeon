@@ -22,7 +22,6 @@ _.extend(ActionMessenger.prototype, {
       this.sentMessageIds.splice(index, 1);
     } else {
       this.callback(message);
-      this.addAction(message, null, false);
     }
   },
 
