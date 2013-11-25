@@ -1,11 +1,6 @@
-function InitializeInitiativeApi() {
-
-  var isOpen = false;
+function InitializeInitiativeApi(name_url) {
   var isRemovingItem = false;
 
-  var toggle = $("#initiative_toggle");
-  var panel = $("#initiative_panel");
-  var controls = $("#initiative_controls");
   var nameInput = $("#initiative_name_input");
   var valueInput = $("#initiative_value_input");
   var list = $("#initiative_list");
@@ -36,6 +31,37 @@ function InitializeInitiativeApi() {
     }
   };
 
+  list.on("click", "span.value", function() {
+    var $valueSpan = $(this);
+    var $input = $("<input type='text' />").addClass("editValue").val($valueSpan.text());
+    $valueSpan.parent().append($input);
+    $valueSpan.hide();
+    $input.focus();
+  });
+
+  list.on("keypress", "input.editValue", function(e) {
+    if (e.keyCode == 13) {
+      valChangedHandler($(this));
+      return false;
+    }
+    return true;
+  });
+
+  list.on("focusout", "input.editValue", function() {
+    var $input = $(this);
+    valChangedHandler($input);
+  });
+
+  function valChangedHandler($input) {
+    var $li = $input.parent();
+    var $valueSpan = $li.children("span.value");
+    $li.data('obj').value = parseInt($input.val());
+    $input.detach();
+    $valueSpan.show();
+
+    triggerChange(api.serialize());
+  }
+
   function triggerChange(newInitiative) {
 
     if (newInitiative == null) {
@@ -58,20 +84,6 @@ function InitializeInitiativeApi() {
 
   $("#clear_initiative").click(function() {
     triggerChange([]);
-  });
-
-  toggle.click(function() {
-    if (isOpen) {
-      isOpen = false;
-      toggle.html("Open");
-      controls.hide();
-      panel.switchClass("open", "closed", 250);
-    } else {
-      isOpen = true;
-      toggle.html("Close");
-      controls.show();
-      panel.switchClass("closed", "open", 250);
-    }
   });
 
   $("#initiative_controls input[type='text']").keypress(function(e) {
@@ -100,6 +112,23 @@ function InitializeInitiativeApi() {
       valueInput.val("");
 
       nameInput.focus();
+    }
+  });
+
+  var isAutocompleOpen = false;
+
+  nameInput.autocomplete({
+    source: name_url,
+    minLength: 0,
+    open: function() { isAutocompleOpen = true; },
+    close: function() { isAutocompleOpen = false; },
+    position: { my: "left top", at: "left bottom", collision: "flip" },
+    select: function( event, ui ) {
+      valueInput.focus();
+    }
+  }).focus(function() {
+    if (!isAutocompleOpen) {
+      nameInput.autocomplete( "search", "" );
     }
   });
 

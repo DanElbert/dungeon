@@ -7,6 +7,7 @@ message_authentication
 router
 handler
 add_action_handler
+update_initiative_handler
 )
 
 dir = File.expand_path('../', __FILE__)

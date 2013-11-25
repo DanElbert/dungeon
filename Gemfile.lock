@@ -135,6 +135,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (10.1.0)
     ref (1.0.5)
+    rice (1.5.3)
     rvm-capistrano (1.4.1)
       capistrano (>= 2.0.0)
     sass (3.2.10)
@@ -192,6 +193,7 @@ DEPENDENCIES
   minitest-reporters
   mysql2
   rails (= 4.0.0)
+  rice
   rvm-capistrano
   sass-rails (~> 4.0.0)
   skeleton-rails

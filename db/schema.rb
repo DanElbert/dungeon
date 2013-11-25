@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130628213726) do
+ActiveRecord::Schema.define(version: 20130903162351) do
 
   create_table "board_actions", force: true do |t|
     t.string   "action_type"
@@ -37,6 +37,17 @@ ActiveRecord::Schema.define(version: 20130628213726) do
     t.string   "name"
     t.integer  "user_id"
   end
+
+  create_table "initiative_histories", force: true do |t|
+    t.integer  "game_id"
+    t.string   "name"
+    t.integer  "use_count"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id", using: :btree
+  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name", using: :btree
 
   create_table "initiatives", force: true do |t|
     t.integer  "game_id"

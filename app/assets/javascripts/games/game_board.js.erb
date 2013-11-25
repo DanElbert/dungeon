@@ -3,6 +3,7 @@ var GAME_SERVER_URL = 'OVERRIDE THIS IN VIEW';
 var GAME_ID = 'OVERRIDE THIS IN VIEW';
 var USER_ID = 'OVERRIDE THIS IN VIEW';
 var USER_AUTH_TOKEN = 'OVERRIDE THIS IN VIEW';
+var INITIATIVE_URL = 'OVERRIDE';
 
 var game_board = null;
 var game_data = null;
@@ -11,20 +12,42 @@ var game_data = null;
 function stopScrolling( touchEvent ) { touchEvent.preventDefault(); }
 document.addEventListener( 'touchmove' , stopScrolling , false );
 
-$(document).ready(function () {
+function startGameBoard() {
+  $(document).ready(function () {
 
-  var initiative = InitializeInitiativeApi();
-  var toolBars = InitializeToolBarsApi();
+    var initiative = InitializeInitiativeApi(INITIATIVE_URL);
+    var toolBars = InitializeToolBarsApi();
+    var camera = InitializeCameraApi();
 
-  game_board = new Board($("#game_board")[0], toolBars, initiative);
+    var init_toggle = $("#initiative_toggle");
+    var init_panel = $("#initiative_panel");
+    var init_controls = $("#initiative_controls");
+    var isInitOpen = false;
 
-  $(window).resize(function() {
+    init_toggle.click(function() {
+      if (isInitOpen) {
+        isInitOpen = false;
+        init_toggle.html("Open");
+        init_controls.hide();
+        init_panel.switchClass("open", "closed", 250);
+      } else {
+        isInitOpen = true;
+        init_toggle.html("Close");
+        init_controls.show();
+        init_panel.switchClass("closed", "open", 250);
+      }
+    });
+
+    game_board = new Board($("#game_board")[0], toolBars, initiative);
+
+    $(window).resize(function() {
+      setCanvasSize();
+    });
+
     setCanvasSize();
+    refreshBoard();
   });
-
-  setCanvasSize();
-  refreshBoard();
-});
+}
 
 window.requestAnimFrame = (function () {
   return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||

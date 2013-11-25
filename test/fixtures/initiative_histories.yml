@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  game: one
+  name: jerk
+  use_count: 2
+
+two:
+  game: one
+  name: good guy
+  use_count: 4
