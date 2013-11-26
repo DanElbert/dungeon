@@ -116,8 +116,8 @@ _.extend(BoardDetectionManager.prototype, {
   },
 
   getPatternDimension: function() {
-    // 3% of viewport width
-    return parseInt(this.board.viewPortSize[0] * 0.03);
+    // 5% of viewport width
+    return parseInt(this.board.viewPortSize[0] * 0.05);
   },
 
   sendAction: function(action) {

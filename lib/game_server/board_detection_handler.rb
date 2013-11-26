@@ -56,13 +56,9 @@ module GameServer
             return
           end
 
-          puts "a"
-
           current_session['image'] = data['image_data']['data:image/png;base64,'.length .. -1]
           current_session['image_orientation'] = data['image_orientation']
           current_session.save!
-
-          puts "b"
 
           # call out to image processor to perform work, then send a new message with the tokens
           detector_interface = BoardDetector::Interface.new

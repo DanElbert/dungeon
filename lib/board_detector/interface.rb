@@ -27,15 +27,16 @@ module BoardDetector
 
       File.binwrite(image_filename, Base64.decode64(session.image))
 
-      output_json = get_board_json(image_filename, session.pattern_size, session.detect_width, session.pattern_dimension, session.detect_height)
+      output_json = get_board_json(image_filename, session.pattern_size, session.pattern_dimension, session.detect_width, session.detect_height)
+      puts output_json
 
       if output_json
         output_data = JSON.parse(output_json)
 
-        puts "Found #{output_data.items.length} items: "
-        output_data.items.map do |item|
+        puts "Found #{output_data["items"].length} items: "
+        output_data["items"].map do |item|
           # for now, assume find_board maps its coordinates into the size parameters
-          trans = {center: [item.center[0] + session.detect_offset_x, item.center[1] + session.detect_offset_y], radius: item.size / 2 }
+          trans = {center: [item["center"][0] + session.detect_origin_x, item["center"][1] + session.detect_origin_y], radius: item["size"] / 2 }
           puts "Item:"
           puts trans
           trans
@@ -50,7 +51,9 @@ module BoardDetector
     end
 
     def get_board_json(image_location, pattern_size, pattern_dimension, width, height)
-      output = `#{find_board_file} '#{image_location}' #{pattern_size} #{pattern_dimension} #{width} #{height}`
+      cmd = "#{find_board_file} '#{image_location}' #{pattern_size} #{pattern_dimension} #{width} #{height}"
+      puts cmd
+      output = `#{cmd}`
       unless $? == 0
         return nil
       end

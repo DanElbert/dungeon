@@ -2,6 +2,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "opencv2/features2d/features2d.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -37,15 +38,27 @@ int main( int argc, char** argv )
 
   ImageManipulator orig(src_image);
   ImageManipulator warped = orig.warp(corners, output_size_x, output_size_y);
+  //warped.debug();
+  //warped = warped.get_grey_scale();
+  //warped.soften(3);
+  //warped.threshold(128);
 
   warped.debug();
 
   cv::SimpleBlobDetector::Params parameters;
   parameters.filterByArea = true;
-  parameters.minArea = 1000;
-  parameters.maxArea = 10000;
+  parameters.minArea = 50;
+  parameters.maxArea = 500000;
+  parameters.filterByInertia = false;
+  parameters.filterByConvexity = false;
+  parameters.minThreshold = 100;
+  parameters.maxThreshold = 200;
+  parameters.thresholdStep = 4;
 
   cv::SimpleBlobDetector blob_detector(parameters);
+
+//  int minHessian = 400;
+//  cv::SurfFeatureDetector blob_detector( minHessian );
 
   vector<cv::KeyPoint> keypoints;
   blob_detector.detect(warped.get_image(), keypoints);
@@ -53,7 +66,7 @@ int main( int argc, char** argv )
   warped.debug(false, NULL, &keypoints);
 
   // output json
-  cout << "{ width: " << warped.width() << ", height: " << warped.height() << ", items: [";
+  cout << "{ \"width\": " << warped.width() << ", \"height\": " << warped.height() << ", \"items\": [";
 
   for (int x = 0; x < keypoints.size(); x++) {
     cv::KeyPoint kp = keypoints[x];
@@ -61,7 +74,7 @@ int main( int argc, char** argv )
     float center_x = kp.pt.x;
     float center_y = kp.pt.y;
     float size = kp.size;
-    cout << "{ center: [" << center_x << ", " << center_y << "], size: " << size << "}";
+    cout << "{ \"center\": [" << center_x << ", " << center_y << "], \"size\": " << size << "}";
   }
 
   cout << "]}" << endl;
