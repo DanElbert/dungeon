@@ -3,6 +3,7 @@ class Game < ActiveRecord::Base
   STATUS = {:open => 'open', :active => 'active', :old => 'old'}
 
   has_one :board, :dependent => :destroy
+  has_many :board_detection_sessions, :dependent => :destroy
   has_many :initiatives, -> { order(:sort_order) }, :dependent => :destroy
   has_many :initiative_histories, dependent: :destroy
   belongs_to :user

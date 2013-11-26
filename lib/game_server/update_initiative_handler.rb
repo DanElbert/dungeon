@@ -1,8 +1,6 @@
 module GameServer
   class UpdateInitiativeHandler < Handler
 
-    COMPOSITE_ACTION_TYPE = 'compositeAction'
-    INITIATIVE_ACTION = 'updateInitiativeAction'
     CHANNEL_REGEX = /^\/game\/(\d+)\/update_initiative/
 
     def should_handle_message(channel)

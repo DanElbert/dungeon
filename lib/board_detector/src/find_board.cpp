@@ -13,7 +13,7 @@ using namespace std;
 
 int main( int argc, char** argv )
 {
-  if (argc < 5) { return -1; }
+  if (argc < 6) { return -1; }
 
   cv::Mat src_image;
   src_image = imread( argv[1] );
@@ -22,8 +22,9 @@ int main( int argc, char** argv )
     { return -1; }
 
   int pattern_size = atoi(argv[2]);
-  int output_size_x = atoi(argv[3]);
-  int output_size_y = atoi(argv[4]);
+  int pattern_dimension = atoi(argv[3]);
+  int output_size_x = atoi(argv[4]);
+  int output_size_y = atoi(argv[5]);
 
   Detector detector(pattern_size, src_image);
 
@@ -49,10 +50,7 @@ int main( int argc, char** argv )
   vector<cv::KeyPoint> keypoints;
   blob_detector.detect(warped.get_image(), keypoints);
 
-  Mat warped_img = warped.get_image();
-  drawKeypoints( warped_img, keypoints, warped_img, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
-
-  warped.debug();
+  warped.debug(false, NULL, &keypoints);
 
   // output json
   cout << "{ width: " << warped.width() << ", height: " << warped.height() << ", items: [";

@@ -1,13 +1,26 @@
-function Board(canvas, toolBarsApi, initiativeApi) {
+function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.images = {};
+
+  this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
+  this.gameServerClient.addExtension(
+      {
+        outgoing: function(message, callback) {
+          message['ext'] = message['ext'] || {};
+          message['ext']['user_id'] = USER_ID;
+          message['ext']['auth_token'] = USER_AUTH_TOKEN;
+          callback(message);
+        }
+      });
 
   this.initiative = initiativeApi;
   this.toolBars = toolBarsApi;
+  this.camera = cameraApi;
 
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
   this.drawing = new Drawing(this.context);
   this.event_manager = new BoardEvents(this);
+  this.boardDetectionManager = new BoardDetectionManager(this, this.toolBars, this.camera, this.gameServerClient);
   this.current_tool = null;
 
   this.isOwner = false;
@@ -24,23 +37,14 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   this.viewPortSize = [canvas.width, canvas.height];
   this.zoom = 1;
 
+  this.displayCapturePattern = false;
+
   this.hovered_cell = null;
 
   this.globalShortcutTool = new GlobalShortCuts(this);
 
   // Used in events
   var self = this;
-
-  this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
-  this.gameServerClient.addExtension(
-      {
-        outgoing: function(message, callback) {
-          message['ext'] = message['ext'] || {};
-          message['ext']['user_id'] = USER_ID;
-          message['ext']['auth_token'] = USER_AUTH_TOKEN;
-          callback(message);
-        }
-      });
 
   this.addActionManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/add_action', function(message) {
     self.handleAddActionMessage(message);
@@ -116,6 +120,7 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
   this.addAction = function(action, undoAction, broadcastAction) {
     action = attachActionMethods(action);
+
     this.pending_action_queue.push(action);
 
     if (broadcastAction) {
@@ -204,6 +209,23 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     }
   };
 
+  this.renderCapturePattern = function() {
+    this.drawing.colorBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(255, 255, 255, 1.0)");
+    this.drawing.drawGrid(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(0, 0, 0, 0.05)");
+    var pattern_size = this.boardDetectionManager.getPatternSize();
+    var size = this.boardDetectionManager.getPatternDimension();
+    var gutter = (size / pattern_size);
+    var origin_x = this.viewPortCoord[0];
+    var origin_y = this.viewPortCoord[1];
+    var extent_x = origin_x + this.viewPortSize[0];
+    var extent_y = origin_y + this.viewPortSize[1];
+
+    this.drawing.drawChessBoard(origin_x + gutter, origin_y + gutter, size, pattern_size);
+    this.drawing.drawChessBoard(extent_x - gutter - size, origin_y + gutter, size, pattern_size);
+    this.drawing.drawChessBoard(origin_x + gutter, extent_y - gutter - size, size, pattern_size);
+    this.drawing.drawChessBoard(extent_x - gutter - size, extent_y - gutter - size, size, pattern_size);
+  };
+
   this.executeActions = function() {
     _.each(this.pending_action_queue, function(action) {
       action = attachActionMethods(action);
@@ -225,13 +247,17 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
     context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
 
-    this.renderBoardBackground();
-    this.renderTemplates();
-    this.renderBoardGrid();
-    this.renderDrawing();
-    this.renderPings();
-    this.renderCursor();
-    this.renderTool();
+    if (this.displayCapturePattern) {
+      this.renderCapturePattern();
+    } else {
+      this.renderBoardBackground();
+      this.renderTemplates();
+      this.renderBoardGrid();
+      this.renderDrawing();
+      this.renderPings();
+      this.renderCursor();
+      this.renderTool();
+    }
   };
 
   this.cellHover = function(x, y) {

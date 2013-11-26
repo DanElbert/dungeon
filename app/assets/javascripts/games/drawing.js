@@ -245,6 +245,19 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
   },
 
+  drawChessBoard : function(x, y, size, pattern_size) {
+    var square_size = size / pattern_size;
+
+    for (var i = 0; i < (pattern_size * pattern_size); i++) {
+      var col = i % pattern_size;
+      var row = parseInt(i / pattern_size);
+
+      var color = ((col + row) % 2) == 0 ? "rgba(0, 0, 0, 1.0)" : "rgba(255, 255, 255, 1.0)";
+
+      this.colorBackground(x + (col * square_size), y + (row * square_size), square_size, square_size, color);
+    }
+  },
+
   colorCell: function (column, row, color) {
 
     var left = (column * this.cellSize) + 1;

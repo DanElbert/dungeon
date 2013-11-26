@@ -1,10 +1,14 @@
 
-<div id="camera" style="display:none;">
+<div id="camera">
   <video id="camera_display">
   </video>
-  <canvas id="camera_snapshot" style="display:none;"></canvas>
-  <select id="camera_select"></select>
-  <button id="camera_begin">Start</button>
-  <button id="camera_capture">Capture</button>
-  <button id="camera_quit">Quit</button>
+
+  <div id="camera_controls">
+    <select id="camera_select"></select>
+    <button id="camera_begin">Start</button>
+    <button id="camera_capture">Capture</button>
+    <button id="camera_quit">Quit</button>
+  </div>
 </div>
+
+<canvas id="camera_snapshot" style="display:none;"></canvas>

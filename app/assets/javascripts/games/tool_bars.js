@@ -16,6 +16,24 @@ function InitializeToolBarsApi() {
     setZoom: function(val) {
       $("#zoom_level").val(val);
       $("#zoom_slider").slider("value", val);
+    },
+    showStartCaptureButton: function() {
+      $("#enable_capture_button").show();
+    },
+    hideStartCaptureButton: function() {
+      $("#enable_capture_button").hide();
+    },
+    showEndCaptureButton: function() {
+      $("#end_capture_button").show();
+    },
+    hideEndCaptureButton: function() {
+      $("#end_capture_button").hide();
+    },
+    showCameraButton: function() {
+      $("#open_camera_button").show();
+    },
+    hideCameraButton: function() {
+      $("#open_camera_button").hide();
     }
   };
 
@@ -33,6 +51,21 @@ function InitializeToolBarsApi() {
     var e = $.Event('zoomchanged', {
       value: parseFloat(val)
     });
+    $(api).trigger(e);
+  }
+
+  function triggerCaptureStart() {
+    var e = $.Event('startBoardCapture', {});
+    $(api).trigger(e);
+  }
+
+  function triggerEndCapture() {
+    var e = $.Event('stopBoardCapture', {});
+    $(api).trigger(e);
+  }
+
+  function triggerOpenCamera() {
+    var e = $.Event('openCamera', {});
     $(api).trigger(e);
   }
 
@@ -100,6 +133,18 @@ function InitializeToolBarsApi() {
 
   $("#undo_button").click(function() {
     triggerUndo();
+  });
+
+  $("#enable_capture_button").click(function() {
+    triggerCaptureStart();
+  });
+
+  $("#end_capture_button").click(function() {
+    triggerEndCapture();
+  });
+
+  $("#open_camera_button").click(function() {
+    triggerOpenCamera();
   });
 
   $("#zoom_slider").slider({

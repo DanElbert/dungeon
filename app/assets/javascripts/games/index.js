@@ -9,4 +9,5 @@
 //= require ./ping_layer
 //= require ./tools
 //= require ./tool_bars
+//= require ./board_detection_manager
 //= require ./game_board

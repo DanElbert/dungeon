@@ -106,7 +106,7 @@ void ImageManipulator::erode(int erosion_size) {
 bool ImageManipulator::debugging = false;
 string ImageManipulator::window_name = "test";
 
-void ImageManipulator::debug(bool half, std::vector<Point2f>* points)
+void ImageManipulator::debug(bool half, std::vector<Point2f>* points, std::vector<KeyPoint>* key_points)
 {
 //#define __DUNGEON_IMAGE_MANIPULATOR_DEBUG
 #ifdef __DUNGEON_IMAGE_MANIPULATOR_DEBUG
@@ -123,6 +123,16 @@ void ImageManipulator::debug(bool half, std::vector<Point2f>* points)
         Scalar color(0, 255, 0);
         Mat i = to_show.get_image();
         circle(i, p, 10, color, 4);
+      }
+  }
+
+  if (key_points) {
+    for (int x = 0; x < key_points->size(); x++) {
+      KeyPoint kp = (*key_points)[x];
+      Point2f p = kp.pt;
+      Scalar color(0, 0, 255);
+      Mat i = to_show.get_image();
+      circle(i, p, kp.size / 2, color, 4);
       }
   }
 

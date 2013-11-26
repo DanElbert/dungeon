@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130903162351) do
+ActiveRecord::Schema.define(version: 20131125184911) do
 
   create_table "board_actions", force: true do |t|
     t.string   "action_type"
@@ -20,6 +20,21 @@ ActiveRecord::Schema.define(version: 20130903162351) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "board_id"
+  end
+
+  create_table "board_detection_sessions", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "detect_width"
+    t.integer  "detect_height"
+    t.integer  "image_orientation"
+    t.binary   "image"
+    t.string   "state"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "detect_origin_x"
+    t.integer  "detect_origin_y"
+    t.integer  "pattern_size"
+    t.integer  "pattern_dimension"
   end
 
   create_table "boards", force: true do |t|
@@ -46,8 +61,8 @@ ActiveRecord::Schema.define(version: 20130903162351) do
     t.datetime "updated_at"
   end
 
-  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id", using: :btree
-  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name", using: :btree
+  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id"
+  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name"
 
   create_table "initiatives", force: true do |t|
     t.integer  "game_id"

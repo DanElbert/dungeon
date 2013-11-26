@@ -38,7 +38,7 @@ function startGameBoard() {
       }
     });
 
-    game_board = new Board($("#game_board")[0], toolBars, initiative);
+    game_board = new Board($("#game_board")[0], toolBars, initiative, camera);
 
     $(window).resize(function() {
       setCanvasSize();

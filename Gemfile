@@ -37,7 +37,6 @@ group :deploy do
   gem 'capistrano'
   gem 'rvm-capistrano'
   gem 'capistrano-deploytags'
-  gem 'rice'
 end
 
 group :test do

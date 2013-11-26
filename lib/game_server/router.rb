@@ -10,7 +10,8 @@ module GameServer
       # the result of should_handle_message
       @handlers = [
           AddActionHandler.new,
-          UpdateInitiativeHandler.new
+          UpdateInitiativeHandler.new,
+          BoardDetectionHandler.new
       ]
 
     end

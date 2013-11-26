@@ -220,3 +220,21 @@ $toggle_width: 75px;
 #newInitForm #button_col {
   width: 20%;
 }
+
+#camera {
+  display: none;
+
+  #camera_display {
+    border: 1px solid black;
+    float: left;
+    height: 400px;
+    width: 400px;
+  }
+
+  #camera_controls {
+    height: 85px;
+    width: 150px;
+    margin-left: 15px;
+    float:left;
+  }
+}

@@ -8,6 +8,7 @@ router
 handler
 add_action_handler
 update_initiative_handler
+board_detection_handler
 )
 
 dir = File.expand_path('../', __FILE__)

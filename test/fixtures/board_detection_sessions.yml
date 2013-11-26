@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  game_id: 1
+  detect_origin: 1
+  detect_width: 1
+  detect_height: 1
+  image_orientation: 1
+  image: 
+
+two:
+  game_id: 1
+  detect_origin: 1
+  detect_width: 1
+  detect_height: 1
+  image_orientation: 1
+  image: 

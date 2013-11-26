@@ -29,7 +29,7 @@ class ImageManipulator {
     void erode(int size);
 
     std::vector<ImageManipulator> cut_into_quadrants();
-    void debug(bool half = false, std::vector<Point2f>* points = NULL);
+    void debug(bool half = false, std::vector<Point2f>* points = NULL, std::vector<KeyPoint>* key_points = NULL);
 };
 
 #endif
