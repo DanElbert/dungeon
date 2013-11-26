@@ -279,5 +279,25 @@ _.extend(actionMethods, {
     validateData: function() {
       this.ensureFields(["uid", "point", "color"])
     }
+  },
+
+  setTokensAction: {
+    isPersistent: true,
+    apply: function(board) {
+      board.tokenLayer.setTokens(this.tokens);
+    },
+    validateData: function() {
+      this.ensureFields(["uid", "tokens"]);
+    }
+  },
+
+  clearTokensAction: {
+    isPersistent: true,
+    apply: function(board) {
+      board.tokenLayer.clearTokens();
+    },
+    validateData: function() {
+      this.ensureFields(["uid"]);
+    }
   }
 });

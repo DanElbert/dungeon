@@ -7,6 +7,7 @@
 //= require ./game_actions
 //= require ./drawing_layer
 //= require ./ping_layer
+//= require ./token_layer
 //= require ./tools
 //= require ./tool_bars
 //= require ./board_detection_manager

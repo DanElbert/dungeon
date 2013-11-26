@@ -9,9 +9,9 @@ module GameServer
       # List of handlers.  Should be in order of most specific to least, if there is any overlap in
       # the result of should_handle_message
       @handlers = [
-          AddActionHandler.new,
-          UpdateInitiativeHandler.new,
-          BoardDetectionHandler.new
+          AddActionHandler.new(@server),
+          UpdateInitiativeHandler.new(@server),
+          BoardDetectionHandler.new(@server)
       ]
 
     end

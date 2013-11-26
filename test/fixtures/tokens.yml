@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  game_id: 1
+  token_type: MyString
+  position_x: 1
+  position_y: 1
+  name: MyString
+  height: 1
+  width: 1
+  properties: MyText
+
+two:
+  game_id: 1
+  token_type: MyString
+  position_x: 1
+  position_y: 1
+  name: MyString
+  height: 1
+  width: 1
+  properties: MyText

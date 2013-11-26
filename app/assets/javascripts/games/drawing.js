@@ -129,7 +129,7 @@ _.extend(Drawing.prototype, {
     this.context.globalCompositeOperation = originalCompositeOperation;
   },
 
-  drawCircle: function(x, y, radius, width, color) {
+  drawCircle: function(x, y, radius, width, color, fill) {
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
     this.context.beginPath();
@@ -137,6 +137,20 @@ _.extend(Drawing.prototype, {
     this.context.arc(x, y, radius, 0, 1.95 * Math.PI, false);
     this.context.closePath();
     this.context.stroke();
+    if (fill) {
+      this.context.fillStyle = color;
+      this.context.fill();
+    }
+  },
+
+  drawCircleTiles: function(col, row, width, height, color) {
+    var width_delta = Math.floor(width / 2);
+    var height_delta = Math.floor(height / 2);
+    var center = Geometry.getCellMidpoint([col + width_delta, row + height_delta], this.cellSize);
+
+    this.context.fillStyle = color;
+    drawEllipse(center[0], center[1], width * this.cellSize, height * this.cellSize);
+    this.context.fill();
   },
 
   // Low level drawing function; places an ellipse in the context path

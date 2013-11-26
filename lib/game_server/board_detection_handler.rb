@@ -65,6 +65,11 @@ module GameServer
           items = detector_interface.get_found_objects(current_session)
           #puts items
 
+          self.server.get_client.publish("/game/#{game.id}/add_action", {
+              'text'      => 'New email has arrived!',
+              'inboxSize' => 34
+          })
+
       end
 
     end
