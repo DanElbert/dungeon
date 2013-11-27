@@ -4,6 +4,7 @@ end
 
 files = %w(
 message_authentication
+server_client_extension
 router
 handler
 add_action_handler

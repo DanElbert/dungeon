@@ -42,6 +42,7 @@ module GameServer
             return
           end
 
+          current_session.state = BoardDetectionSession::VALID_STATES[:capturing]
           current_session.detect_origin_x = data['origin_x']
           current_session.detect_origin_y = data['origin_y']
           current_session.detect_width = data['width']
@@ -62,13 +63,30 @@ module GameServer
 
           # call out to image processor to perform work, then send a new message with the tokens
           detector_interface = BoardDetector::Interface.new
-          items = detector_interface.get_found_objects(current_session)
-          #puts items
+          result = detector_interface.get_found_objects(current_session)
 
-          self.server.get_client.publish("/game/#{game.id}/add_action", {
-              'text'      => 'New email has arrived!',
-              'inboxSize' => 34
-          })
+          send_channel = "/game/#{game.id}/board_detection"
+
+          if !result.was_board_found
+            action = BoardAction.build_action_hash('alertAction', nil, {type: 'error', message: 'Unable to find board!'})
+            client.publish(send_channel, action)
+          elsif result.was_board_found && result.items.empty?
+            action = BoardAction.build_action_hash('alertAction', nil, {type: 'warning', message: 'No items found on board'})
+            client.publish(send_channel, action)
+          else
+            action = BoardAction.build_action_hash('alertAction', nil, {type: 'notice', message: "#{result.items.length} items have been marked"})
+            client.publish(send_channel, action)
+
+            token_data = { tokens: result.items.map{ |i| i.as_json } }
+            action = BoardAction.build_action_hash('setTokensAction', nil, token_data)
+            client.publish(send_channel, action)
+          end
+
+
+        when 'finishBoardDetectionAction'
+          if current_session
+            current_session.finish!
+          end
 
       end
 

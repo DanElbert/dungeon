@@ -3,6 +3,8 @@ end
 
 files = %w(
 interface
+detected_object
+detection_result
 )
 
 dir = File.expand_path('../', __FILE__)

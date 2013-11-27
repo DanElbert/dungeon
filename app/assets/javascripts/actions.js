@@ -38,6 +38,15 @@ var actionMethods = {
     validateData: function() {
       this.ensureFields(["uid", "initiative"]);
     }
+  },
+
+  alertAction: {
+    apply: function(board) {
+      flashMessage(this.type, this.message);
+    },
+    validateData: function() {
+      this.ensureFields(["uid", "type", "message"])
+    }
   }
 };
 

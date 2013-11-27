@@ -6,12 +6,15 @@ module GameServer
       @server = faye_server
       @server.add_extension(self)
 
+      @client = @server.get_client
+      @client.add_extension(ServerClientExtension.new(User.system_user))
+
       # List of handlers.  Should be in order of most specific to least, if there is any overlap in
       # the result of should_handle_message
       @handlers = [
-          AddActionHandler.new(@server),
-          UpdateInitiativeHandler.new(@server),
-          BoardDetectionHandler.new(@server)
+          AddActionHandler.new(@server, @client),
+          UpdateInitiativeHandler.new(@server, @client),
+          BoardDetectionHandler.new(@server, @client)
       ]
 
     end
@@ -21,13 +24,12 @@ module GameServer
         authenticated = authenticate(message)
 
         if authenticated && get_handler(message['subscription'])
-          puts "New subscription to #{message['subscription']}"
+          Rails.logger.debug("New subscription to #{message['subscription']}")
         elsif authenticated
-          puts "No handler for #{message['subscription']}"
+          Rails.logger.error("No handler for #{message['subscription']}")
           message['error'] = "Invalid Subscription"
         end
       else
-
         handler = get_handler(message['channel'])
 
         if handler
@@ -36,6 +38,8 @@ module GameServer
 
       end
 
+      # always remove auth attributes before forwarding messages
+      remove_auth_attributes(message)
       callback.call(message)
     end
 

@@ -18,4 +18,9 @@ class BoardDetectionSession < ActiveRecord::Base
     self.state = VALID_STATES[:failed]
     self.save!
   end
+
+  def finish!
+    self.state = VALID_STATES[:finished]
+    self.save!
+  end
 end
