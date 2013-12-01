@@ -51,7 +51,7 @@ _.extend(Ping.prototype, {
     }
     var durationPercent = (new Date() - this.startTime) / (this.animationDuration * 1000);
     if (durationPercent >= 1) {
-      this.finished == true;
+      this.finished = true;
     }
     return this.easingFunction(durationPercent);
   },

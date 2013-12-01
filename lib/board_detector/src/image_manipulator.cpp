@@ -134,7 +134,7 @@ string ImageManipulator::window_name = "test";
 
 void ImageManipulator::debug(bool half, std::vector<Point2f>* points, std::vector<KeyPoint>* key_points)
 {
-#define __DUNGEON_IMAGE_MANIPULATOR_DEBUG
+//#define __DUNGEON_IMAGE_MANIPULATOR_DEBUG
 #ifdef __DUNGEON_IMAGE_MANIPULATOR_DEBUG
   if (!debugging) {
     cv::namedWindow( window_name, CV_WINDOW_AUTOSIZE );

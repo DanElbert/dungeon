@@ -45,7 +45,7 @@ int main( int argc, char** argv )
 
   cv::SimpleBlobDetector::Params parameters;
   parameters.filterByArea = true;
-  parameters.minArea = 2000;
+  parameters.minArea = 750;
   parameters.maxArea = 5000000;
   parameters.filterByInertia = false;
   parameters.filterByConvexity = false;
