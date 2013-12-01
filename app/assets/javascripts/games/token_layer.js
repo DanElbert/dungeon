@@ -6,7 +6,8 @@ function TokenLayer() {
 _.extend(TokenLayer.prototype, {
   draw: function(drawing) {
     _.each(this.tokens, function(t) {
-      drawing.drawCircleTiles(t.position_x, t.position_y, t.width, t.height, "rgba(255,0,0,1.0)");
+      drawing.drawCircleTiles(t.x, t.y, t.width, t.height, "rgba(255,0,0,1.0)");
+      drawing.drawCircle(t.raw_x, t.raw_y, 4, "rgba(0,0,0,1.0)", true);
     }, this);
   },
 

@@ -25,18 +25,18 @@ Point2f Detector::find_closest_point(const vector<Point2f>& points, const Point2
 
 void Detector::set_stage_1_settings(int& soften, int& threshold, int&erode) {
   soften = -1;
-  threshold = 100;
-  erode = -1;
+  threshold = -1;
+  erode = 1;
 }
 
 void Detector::set_stage_2_settings(int& soften, int& threshold, int&erode) {
   soften = 3;
-  threshold = 100;
+  threshold = 75;
   erode = -1;
 }
 
 void Detector::set_stage_3_settings(int& soften, int& threshold, int&erode) {
-  soften = 5;
+  soften = 3;
   threshold = 100;
   erode = 1;
 }
@@ -75,11 +75,12 @@ std::vector<Point2f> Detector::calculate_board_corners()
       found = findChessboardCorners(temp.get_image(), size, pattern_corners,
           CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE);
 
-      if(found)
-        cornerSubPix(temp.get_image(), pattern_corners, Size(11, 11), Size(-1, -1),
-          TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+//      if(found)
+//        cornerSubPix(temp.get_image(), pattern_corners, Size(11, 11), Size(-1, -1),
+//          TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 
-      //temp.debug(true, &pattern_corners);
+      temp.debug(false, &pattern_corners);
+      //temp.debug(false);
 
       attempts++;
     }
@@ -107,7 +108,7 @@ std::vector<Point2f> Detector::calculate_board_corners()
     }
   }
 
-  image.debug(true, &corners);
+  image.debug(false, &corners);
 
   return corners;
 }

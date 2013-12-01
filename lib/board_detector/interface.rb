@@ -1,8 +1,6 @@
 module BoardDetector
   class Interface
 
-    Feature = Struct.new(:x, :y, :width, :height)
-
     def initialize
       # Check that the binary exists
       raise 'Missing board_detector binaries' unless File.exist?(find_board_file)
@@ -70,6 +68,7 @@ module BoardDetector
       cmd = "#{find_board_file} '#{image_location}' #{pattern_size} #{pattern_dimension} #{width} #{height}"
       Rails.logger.debug("Calling: #{cmd}")
       output = `#{cmd}`
+      puts output
       unless $? == 0
         Rails.logger.debug "Call to find_board failed"
         return nil

@@ -21,6 +21,13 @@ ImageManipulator ImageManipulator::get_grey_scale()
   return ImageManipulator(grey);
 }
 
+ImageManipulator ImageManipulator::get_color()
+{
+  Mat color;
+  cvtColor( this->image, color, CV_GRAY2BGR );
+  return ImageManipulator(color);
+}
+
 ImageManipulator ImageManipulator::half()
 {
   int downsize_width = image.cols - (image.cols % 2);
@@ -60,7 +67,7 @@ std::vector<ImageManipulator> ImageManipulator::cut_into_quadrants()
   return quadrants;
 }
 
-ImageManipulator ImageManipulator::warp(vector<Point2f>& corners, int output_width, int output_height)
+ImageManipulator ImageManipulator::warp(vector<Point2f>& corners, int gutter, int output_width, int output_height)
 {
   vector<Point2f> source(4, Point2f(0,0));
   vector<Point2f> destination(4, Point2f(0,0));
@@ -70,10 +77,10 @@ ImageManipulator ImageManipulator::warp(vector<Point2f>& corners, int output_wid
   source[2] = corners[2];
   source[3] = corners[3];
 
-  destination[0] = Point2f(0, 0);
-  destination[1] = Point2f(output_width, 0);
-  destination[2] = Point2f(0, output_height);
-  destination[3] = Point2f(output_width, output_height);
+  destination[0] = Point2f(gutter, gutter);
+  destination[1] = Point2f(output_width - gutter, gutter);
+  destination[2] = Point2f(gutter, output_height - gutter);
+  destination[3] = Point2f(output_width - gutter, output_height - gutter);
 
   //Mat warp_matrix = getPerspectiveTransform( source, destination );
   Mat warp_matrix = findHomography( source, destination );
@@ -103,26 +110,50 @@ void ImageManipulator::erode(int erosion_size) {
   cv::erode( image, image, element );
 }
 
+void ImageManipulator::mask_pattern(int pattern_dimension, int gutter_size)
+{
+  int gutter = gutter_size / 2;
+  Point basePoints[] = {Point(0, 0), Point(pattern_dimension, pattern_dimension)};
+  int offsets[][2] = {
+    {gutter, gutter},
+    {gutter, this->height() - (gutter + pattern_dimension)},
+    {this->width() - (gutter + pattern_dimension), gutter},
+    {this->width() - (gutter + pattern_dimension), this->height() - (gutter + pattern_dimension)}
+  };
+
+  Mat img = this->get_image();
+  Scalar color(255, 255, 255);
+
+  for (int x = 0; x < 4; x++) {
+    cv::rectangle(img, Point(basePoints[0].x + offsets[x][0], basePoints[0].y + offsets[x][1]), Point(basePoints[1].x + offsets[x][0], basePoints[1].y + offsets[x][1]), color, -1, 8);
+  }
+}
+
 bool ImageManipulator::debugging = false;
 string ImageManipulator::window_name = "test";
 
 void ImageManipulator::debug(bool half, std::vector<Point2f>* points, std::vector<KeyPoint>* key_points)
 {
-//#define __DUNGEON_IMAGE_MANIPULATOR_DEBUG
+#define __DUNGEON_IMAGE_MANIPULATOR_DEBUG
 #ifdef __DUNGEON_IMAGE_MANIPULATOR_DEBUG
   if (!debugging) {
     cv::namedWindow( window_name, CV_WINDOW_AUTOSIZE );
     debugging = true;
   }
 
-  ImageManipulator to_show = this->clone();
+  ImageManipulator to_show(this->image);
+  if (this->image.type() == CV_8UC1) {
+    to_show = this->get_color();
+  } else {
+    to_show = this->clone();
+  }
 
   if (points) {
     for (int x = 0; x < points->size(); x++) {
         Point2f p = (*points)[x];
         Scalar color(0, 255, 0);
         Mat i = to_show.get_image();
-        circle(i, p, 10, color, 4);
+        circle(i, p, 6, color, 1);
       }
   }
 
@@ -132,7 +163,7 @@ void ImageManipulator::debug(bool half, std::vector<Point2f>* points, std::vecto
       Point2f p = kp.pt;
       Scalar color(0, 0, 255);
       Mat i = to_show.get_image();
-      circle(i, p, kp.size / 2, color, 4);
+      circle(i, p, kp.size / 2, color, 2);
       }
   }
 

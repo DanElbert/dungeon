@@ -17,8 +17,8 @@ ActiveRecord::Schema.define(version: 20131126220526) do
     t.string   "action_type"
     t.string   "uid"
     t.text     "properties"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "board_id"
   end
 
@@ -40,15 +40,15 @@ ActiveRecord::Schema.define(version: 20131126220526) do
   create_table "boards", force: true do |t|
     t.integer  "game_id"
     t.string   "name"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "background_image"
   end
 
   create_table "games", force: true do |t|
     t.string   "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "name"
     t.integer  "user_id"
   end
@@ -69,8 +69,8 @@ ActiveRecord::Schema.define(version: 20131126220526) do
     t.string   "name"
     t.integer  "value"
     t.integer  "sort_order"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tokens", force: true do |t|
@@ -89,8 +89,8 @@ ActiveRecord::Schema.define(version: 20131126220526) do
   create_table "users", force: true do |t|
     t.string   "email"
     t.string   "name"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "password_digest"
     t.boolean  "is_admin"
     t.string   "auth_token"

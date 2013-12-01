@@ -204,6 +204,10 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     this.pingLayer.draw(this.drawing);
   };
 
+  this.renderTokens = function() {
+    this.tokenLayer.draw(this.drawing);
+  };
+
   this.renderTool = function() {
     if (this.current_tool) {
       this.current_tool.draw();
@@ -250,11 +254,13 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
     if (this.displayCapturePattern) {
       this.renderCapturePattern();
+      //this.renderTokens();
     } else {
       this.renderBoardBackground();
       this.renderTemplates();
       this.renderBoardGrid();
       this.renderDrawing();
+      this.renderTokens();
       this.renderPings();
       this.renderCursor();
       this.renderTool();

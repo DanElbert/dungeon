@@ -20,13 +20,15 @@ class ImageManipulator {
     void set_image(Mat& mat) { this->image = mat; };
     ImageManipulator clone();
     ImageManipulator get_grey_scale();
-    ImageManipulator warp(vector<Point2f>& corners, int output_width, int output_height);
+    ImageManipulator get_color();
+    ImageManipulator warp(vector<Point2f>& corners, int gutter, int output_width, int output_height);
     int width() { return this->image.cols; };
     int height() { return this->image.rows; };
     ImageManipulator half();
     void soften(int size);
     void threshold(int thresh);
     void erode(int size);
+    void mask_pattern(int pattern_dimension, int gutter_size);
 
     std::vector<ImageManipulator> cut_into_quadrants();
     void debug(bool half = false, std::vector<Point2f>* points = NULL, std::vector<KeyPoint>* key_points = NULL);

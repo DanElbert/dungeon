@@ -31,7 +31,7 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
   this.boardDetectionActionManager.connect();
 
   $(this.toolBars).on('startBoardCapture', function(e) {
-    var size = parseInt(board.viewPortSize[0] * 0.03);
+    var size = parseInt(self.getPatternDimension());
     var origin_x = board.viewPortCoord[0];
     var origin_y = board.viewPortCoord[1];
 
@@ -42,7 +42,7 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
           origin_y: origin_y,
           width: board.viewPortSize[0],
           height: board.viewPortSize[1],
-          pattern_size: 4,
+          pattern_size: self.getPatternSize(),
           pattern_dimension: size});
 
     self.board.displayCapturePattern = true;
@@ -116,8 +116,7 @@ _.extend(BoardDetectionManager.prototype, {
   },
 
   getPatternDimension: function() {
-    // 5% of viewport width
-    return parseInt(this.board.viewPortSize[0] * 0.05);
+    return parseInt(this.board.viewPortSize[0] * 0.08);
   },
 
   sendAction: function(action) {

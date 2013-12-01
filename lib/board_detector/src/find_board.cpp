@@ -37,18 +37,16 @@ int main( int argc, char** argv )
   }
 
   ImageManipulator orig(src_image);
-  ImageManipulator warped = orig.warp(corners, output_size_x, output_size_y);
-  //warped.debug();
-  //warped = warped.get_grey_scale();
-  //warped.soften(3);
-  //warped.threshold(128);
+  int gutter = (pattern_dimension / pattern_size) * 2;
+  ImageManipulator warped = orig.warp(corners, gutter, output_size_x, output_size_y);
+  warped.mask_pattern(pattern_dimension, gutter);
 
   warped.debug();
 
   cv::SimpleBlobDetector::Params parameters;
   parameters.filterByArea = true;
-  parameters.minArea = 50;
-  parameters.maxArea = 500000;
+  parameters.minArea = 2000;
+  parameters.maxArea = 5000000;
   parameters.filterByInertia = false;
   parameters.filterByConvexity = false;
   parameters.minThreshold = 100;

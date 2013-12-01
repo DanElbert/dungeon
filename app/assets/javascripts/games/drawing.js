@@ -146,10 +146,10 @@ _.extend(Drawing.prototype, {
   drawCircleTiles: function(col, row, width, height, color) {
     var width_delta = Math.floor(width / 2);
     var height_delta = Math.floor(height / 2);
-    var center = Geometry.getCellMidpoint([col + width_delta, row + height_delta], this.cellSize);
+    var center = Geometry.getCellMidpoint([col, row], this.cellSize);
 
     this.context.fillStyle = color;
-    drawEllipse(center[0], center[1], width * this.cellSize, height * this.cellSize);
+    this.drawEllipse(col * this.cellSize, row * this.cellSize, width * this.cellSize, height * this.cellSize);
     this.context.fill();
   },
 

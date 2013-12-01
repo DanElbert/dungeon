@@ -12,19 +12,19 @@ module BoardDetector
     end
 
     def row
-      (self.y / CELL_SIZE).round
+      (self.y / CELL_SIZE).floor
     end
 
     def column
-      (self.x / CELL_SIZE).round
+      (self.x / CELL_SIZE).floor
     end
 
     def tile_width
-      [(self.width / CELL_SIZE).round, 1].min
+      [(self.width / CELL_SIZE).round, 1].max
     end
 
     def tile_height
-      [(self.height / CELL_SIZE).round, 1].min
+      [(self.height / CELL_SIZE).round, 1].max
     end
 
     def as_json
@@ -32,7 +32,9 @@ module BoardDetector
           x: column,
           y: row,
           height: tile_height,
-          width: tile_width
+          width: tile_width,
+          raw_x: x,
+          raw_y: y
       }
     end
   end

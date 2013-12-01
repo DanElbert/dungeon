@@ -66,6 +66,7 @@ module GameServer
           result = detector_interface.get_found_objects(current_session)
 
           send_channel = "/game/#{game.id}/board_detection"
+          token_channel = "/game/#{game.id}/add_action"
 
           if !result.was_board_found
             action = BoardAction.build_action_hash('alertAction', nil, {type: 'error', message: 'Unable to find board!'})
@@ -79,7 +80,7 @@ module GameServer
 
             token_data = { tokens: result.items.map{ |i| i.as_json } }
             action = BoardAction.build_action_hash('setTokensAction', nil, token_data)
-            client.publish(send_channel, action)
+            client.publish(token_channel, action)
           end
 
 
