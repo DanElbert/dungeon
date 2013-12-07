@@ -344,5 +344,9 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   $(this.toolBars).on('zoomchanged', function(e) {
     self.setZoom(e.value);
   });
+
+  $(this.toolBars).on('clearTokens', function(e) {
+    self.addAction({actionType: "clearTokensAction", uid: generateActionId()}, null, true);
+  });
 }
 

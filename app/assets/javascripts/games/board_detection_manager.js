@@ -35,7 +35,7 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
     var origin_x = board.viewPortCoord[0];
     var origin_y = board.viewPortCoord[1];
 
-    self.sendAction({
+    self.addAction({
           actionType: "submitBoardDetectionGeometryAction",
           uid: generateActionId(),
           origin_x: origin_x,
@@ -52,8 +52,7 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
 
   $(this.toolBars).on('stopBoardCapture', function(e) {
     var action = {actionType: "finishBoardDetectionAction", uid: generateActionId() };
-    self.finishAction(action);
-    self.sendAction(action);
+    self.addAction(action);
   });
 
   $(this.toolBars).on('openCamera', function(e) {
@@ -61,17 +60,16 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
     var width = parseInt(self.board.canvas.width * 0.9);
     var height = parseInt(self.board.canvas.height * 0.9);
     self.camera.open(width, height);
-    self.sendAction({actionType: "initializeBoardDetectionAction", uid: generateActionId()}, null, true, true);
+    self.addAction({actionType: "initializeBoardDetectionAction", uid: generateActionId()}, null, true, true);
   });
 
   $(this.camera).on('capture', function(e) {
-    self.sendAction({actionType: "captureBoardDetectionImageAction", uid: generateActionId(), image_data: e.image_data, image_orientation: e.image_orientation}, null, true, true);
+    self.addAction({actionType: "captureBoardDetectionImageAction", uid: generateActionId(), image_data: e.image_data, image_orientation: e.image_orientation}, null, true, true);
   });
 
   $(this.camera).on('close', function(e) {
     var action = {actionType: "finishBoardDetectionAction", uid: generateActionId() };
-    self.finishAction(action);
-    self.sendAction(action);
+    self.addAction(action);
   });
 
   $(this.camera).on('supportedChanged', function() {
@@ -101,7 +99,28 @@ _.extend(BoardDetectionManager.prototype, {
   },
 
   captureAction: function(action) {
+    this.camera.showWaitMessage("Processing...");
+  },
 
+  detectionResultsAction: function(action) {
+    this.toolBars.showClearTokensButton();
+    this.camera.clearWaitMessage();
+
+    var results = action.results;
+
+    if (!results.was_board_found) {
+      this.board.addAction({actionType: "alertAction", type: "error", message: "Unable to find board", uid: generateActionId()}, null, false);
+    } else if (results.items.length == 0) {
+      this.board.addAction({actionType: "alertAction", type: "warning", message: "No items on board", uid: generateActionId()}, null, false);
+    } else {
+      var count = results.items.length;
+      this.board.addAction({actionType: "alertAction", type: "notice", message: count + " items marked", uid: generateActionId()}, null, false);
+      this.board.addAction({actionType: "setTokensAction", tokens: results.items, uid: generateActionId()}, null, false);
+
+      _.each(results.items, function(item) {
+        this.board.addAction({actionType: "pingAction", point: [item.raw_x, item.raw_y], color: "rgba(255, 0, 0, 1.0)", uid: generateActionId()}, null, false);
+      }, this);
+    }
   },
 
   finishAction: function(action) {
@@ -109,6 +128,7 @@ _.extend(BoardDetectionManager.prototype, {
     this.toolBars.hideStartCaptureButton();
     this.toolBars.hideEndCaptureButton();
     this.board.displayCapturePattern = false;
+    this.camera.disableCapture();
     this.camera.close();
   },
 
@@ -120,8 +140,9 @@ _.extend(BoardDetectionManager.prototype, {
     return parseInt(this.board.viewPortSize[0] * 0.08);
   },
 
-  sendAction: function(action) {
+  addAction: function(action) {
     action = attachActionMethods(action);
+    action.apply(this.board);
     this.boardDetectionActionManager.sendActionMessage(action);
   },
 
@@ -175,7 +196,7 @@ _.extend(actionMethods, {
   boardDetectionResultsAction: {
     extend: function() { return "boardDetectionAction"; },
     apply: function(board) {
-      board.boardDetectionManager.captureAction(this);
+      board.boardDetectionManager.detectionResultsAction(this);
     },
     validateDate: function() {
       this.ensureFields(["uid", "results"]);

@@ -53,9 +53,7 @@ function InitializeCameraApi() {
       }
 
       if (height < ($display.height() + 50)) {
-        console.log("here");
         height = $display.height() + 75;
-        console.log(height);
       }
 
       if (width < $display.width()) {
@@ -69,6 +67,33 @@ function InitializeCameraApi() {
       manual_close = true;
       $camera.dialog("close");
       manual_close = false;
+    },
+
+    showWaitMessage: function(msg) {
+      var pos = $.extend({
+        width: $camera.outerWidth(),
+        height: $camera.outerHeight()
+      }, $camera.position());
+      var $cover = $("<div></div>", {
+        class: 'waitMessage',
+        css: {
+          position: 'absolute',
+          width: pos.width,
+          height: pos.height,
+          backgroundColor: '#000',
+          opacity:.8,
+          'z-index': 200,
+          color: '#FFFFFF',
+          padding: '30px',
+          'font-size': "50px"
+        }
+      });
+      $cover.html(msg);
+      $cover.appendTo($camera);
+    },
+
+    clearWaitMessage: function () {
+      $camera.find(".waitMessage").remove();
     },
 
     enableCapture: function() {
@@ -109,8 +134,8 @@ function InitializeCameraApi() {
 
   function successCallback(stream) {
     window.stream = stream; // make stream available to console
+    $display[0].autoplay = true;
     $display[0].src = window.URL.createObjectURL(stream);
-    $display[0].play();
   }
 
   function errorCallback(error){
@@ -121,6 +146,7 @@ function InitializeCameraApi() {
     if (!!window.stream) {
       $display[0].src = null;
       window.stream.stop();
+      window.stream = null;
     }
   }
 

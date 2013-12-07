@@ -21,10 +21,12 @@ module GameServer
         return
       end
 
-      process_action(message['data'], game)
+      process_action(message, game)
     end
 
-    def process_action(data, game)
+    def process_action(message, game)
+
+      data = message['data']
 
       current_session = BoardDetectionSession.current.where(game_id: game.id).first
 
@@ -61,35 +63,41 @@ module GameServer
           current_session['image_orientation'] = data['image_orientation']
           current_session.save!
 
+          # clear image data from message
+          data['image_data'] = ''
+
           # call out to image processor to perform work, then send a new message with the tokens
-          detector_interface = BoardDetector::Interface.new
-          result = detector_interface.get_found_objects(current_session)
+          detector_interface = BoardDetector::Interface.new(current_session)
 
-          send_channel = "/game/#{game.id}/board_detection"
-          token_channel = "/game/#{game.id}/add_action"
+          detector_interface.callback do |result|
+            send_channel = "/game/#{game.id}/board_detection"
+            token_channel = "/game/#{game.id}/add_action"
 
-          if !result.was_board_found
-            action = BoardAction.build_action_hash('alertAction', nil, {type: 'error', message: 'Unable to find board!'})
-            client.publish(send_channel, action)
-          elsif result.was_board_found && result.items.empty?
-            action = BoardAction.build_action_hash('alertAction', nil, {type: 'warning', message: 'No items found on board'})
-            client.publish(send_channel, action)
-          else
-            action = BoardAction.build_action_hash('alertAction', nil, {type: 'notice', message: "#{result.items.length} items have been marked"})
+            action = BoardAction.build_action_hash('boardDetectionResultsAction', nil, {results: result.as_json})
             client.publish(send_channel, action)
 
-            token_data = { tokens: result.items.map{ |i| i.as_json }, isPersistent: true }
-            action = BoardAction.build_action_hash('setTokensAction', nil, token_data)
-            client.publish(token_channel, action)
-
-            ping_list = result.items.map do |i|
-              BoardAction.build_action_hash('pingAction', nil, {point: [i.x, i.y], color: 'rgba(255, 0, 0, 1.0)'})
-            end
-
-            pings_action = BoardAction.build_action_hash("compositeAction", nil, actionList: ping_list)
-            client.publish(send_channel, pings_action)
+            #if !result.was_board_found
+            #  action = BoardAction.build_action_hash('alertAction', nil, {type: 'error', message: 'Unable to find board!'})
+            #  client.publish(send_channel, action)
+            #elsif result.was_board_found && result.items.empty?
+            #  action = BoardAction.build_action_hash('alertAction', nil, {type: 'warning', message: 'No items found on board'})
+            #  client.publish(send_channel, action)
+            #else
+            #  action = BoardAction.build_action_hash('alertAction', nil, {type: 'notice', message: "#{result.items.length} items have been marked"})
+            #  client.publish(send_channel, action)
+            #
+            #  token_data = { tokens: result.items.map{ |i| i.as_json }, isPersistent: true }
+            #  action = BoardAction.build_action_hash('setTokensAction', nil, token_data)
+            #  client.publish(token_channel, action)
+            #
+            #  ping_list = result.items.map do |i|
+            #    BoardAction.build_action_hash('pingAction', nil, {point: [i.x, i.y], color: 'rgba(255, 0, 0, 1.0)'})
+            #  end
+            #
+            #  pings_action = BoardAction.build_action_hash("compositeAction", nil, actionList: ping_list)
+            #  client.publish(send_channel, pings_action)
+            #end
           end
-
 
         when 'finishBoardDetectionAction'
           if current_session

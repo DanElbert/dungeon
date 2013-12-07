@@ -34,6 +34,12 @@ function InitializeToolBarsApi() {
     },
     hideCameraButton: function() {
       $("#open_camera_button").hide();
+    },
+    showClearTokensButton: function() {
+      $("#clear_tokens_button").show();
+    },
+    hideClearTokensButton: function() {
+      $("#clear_tokens_button").hide();
     }
   };
 
@@ -66,6 +72,11 @@ function InitializeToolBarsApi() {
 
   function triggerOpenCamera() {
     var e = $.Event('openCamera', {});
+    $(api).trigger(e);
+  }
+
+  function triggerClearTokens() {
+    var e = $.Event("clearTokens", {});
     $(api).trigger(e);
   }
 
@@ -145,6 +156,10 @@ function InitializeToolBarsApi() {
 
   $("#open_camera_button").click(function() {
     triggerOpenCamera();
+  });
+
+  $("#clear_tokens_button").click(function() {
+    triggerClearTokens();
   });
 
   $("#zoom_slider").slider({

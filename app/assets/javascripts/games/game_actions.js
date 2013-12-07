@@ -295,6 +295,7 @@ _.extend(actionMethods, {
     isPersistent: true,
     apply: function(board) {
       board.tokenLayer.clearTokens();
+      board.toolBars.hideClearTokensButton();
     },
     validateData: function() {
       this.ensureFields(["uid"]);

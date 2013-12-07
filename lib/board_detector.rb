@@ -5,6 +5,7 @@ files = %w(
 interface
 detected_object
 detection_result
+deferrable_child_process
 )
 
 dir = File.expand_path('../', __FILE__)
