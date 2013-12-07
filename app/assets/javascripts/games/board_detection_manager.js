@@ -109,6 +109,7 @@ _.extend(BoardDetectionManager.prototype, {
     this.toolBars.hideStartCaptureButton();
     this.toolBars.hideEndCaptureButton();
     this.board.displayCapturePattern = false;
+    this.camera.close();
   },
 
   getPatternSize: function() {
@@ -168,6 +169,16 @@ _.extend(actionMethods, {
     },
     validateDate: function() {
       this.ensureFields(["uid", "image_data", "image_orientation"]);
+    }
+  },
+
+  boardDetectionResultsAction: {
+    extend: function() { return "boardDetectionAction"; },
+    apply: function(board) {
+      board.boardDetectionManager.captureAction(this);
+    },
+    validateDate: function() {
+      this.ensureFields(["uid", "results"]);
     }
   },
 

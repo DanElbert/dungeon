@@ -78,9 +78,16 @@ module GameServer
             action = BoardAction.build_action_hash('alertAction', nil, {type: 'notice', message: "#{result.items.length} items have been marked"})
             client.publish(send_channel, action)
 
-            token_data = { tokens: result.items.map{ |i| i.as_json } }
+            token_data = { tokens: result.items.map{ |i| i.as_json }, isPersistent: true }
             action = BoardAction.build_action_hash('setTokensAction', nil, token_data)
             client.publish(token_channel, action)
+
+            ping_list = result.items.map do |i|
+              BoardAction.build_action_hash('pingAction', nil, {point: [i.x, i.y], color: 'rgba(255, 0, 0, 1.0)'})
+            end
+
+            pings_action = BoardAction.build_action_hash("compositeAction", nil, actionList: ping_list)
+            client.publish(send_channel, pings_action)
           end
 
 

@@ -254,7 +254,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
     if (this.displayCapturePattern) {
       this.renderCapturePattern();
-      //this.renderTokens();
+      this.renderPings();
     } else {
       this.renderBoardBackground();
       this.renderTemplates();
