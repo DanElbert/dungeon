@@ -204,6 +204,30 @@
   width: 20%;
 }
 
+#initiative_display_toggle {
+  font-size: 80%;
+}
+
+#initiative_controls.view_mode {
+  #newInitForm {
+    display: none;
+  }
+
+  button {
+    display: none;
+  }
+
+  .initiativeItem {
+    height: 15px;
+    padding: 5px;
+    font-size: 80%;
+
+    span {
+      padding: 0;
+    }
+  }
+}
+
 #camera {
   display: none;
 

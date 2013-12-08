@@ -28,6 +28,16 @@ function InitializeInitiativeApi(name_url) {
       });
 
       list.sortable("refresh");
+    },
+
+    enterViewMode: function() {
+      $("#initiative_controls").addClass("view_mode");
+      list.sortable("disable");
+    },
+
+    leaveViewMode: function() {
+      $("#initiative_controls").removeClass("view_mode");
+      list.sortable("enable");
     }
   };
 

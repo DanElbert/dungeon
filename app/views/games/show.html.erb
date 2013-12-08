@@ -10,13 +10,9 @@
   <button id="open_initiative_button">Initiative</button>
   <div id="initiative_window" class="scroll">
     <%= render partial: 'initiative' %>
-  </div>
 
-  <!--<div id="initiative_panel" class="closed">-->
-    <!--<div id="initiative_toggle">-->
-      <!--Open-->
-    <!--</div>-->
-  <!--</div>-->
+    <button id="initiative_display_toggle">View Mode</button>
+  </div>
 
   <div id="game_header">
     <h3 class="title"><%= link_to "Dungeon", lobby_path, style: 'text-decoration: none;' %></h3>

@@ -51,6 +51,8 @@ function startGameBoard() {
     });
 
     var init_toggle = $("#initiative_toggle");
+    var init_display_toggle = $("#initiative_display_toggle");
+    var init_view_mode = false;
     var init_panel = $("#initiative_panel");
     var init_controls = $("#initiative_controls");
     var isInitOpen = false;
@@ -66,6 +68,18 @@ function startGameBoard() {
         init_toggle.html("Close");
         init_controls.show();
         init_panel.switchClass("closed", "open", 250);
+      }
+    });
+
+    init_display_toggle.click(function() {
+      if (init_view_mode) {
+        init_view_mode = false;
+        initiative.leaveViewMode();
+        init_display_toggle.html("View Mode");
+      } else {
+        init_view_mode = true;
+        initiative.enterViewMode();
+        init_display_toggle.html("Edit Mode");
       }
     });
 
