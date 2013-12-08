@@ -332,6 +332,9 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
       case "Ping":
         self.setTool(new PingTool(self, color));
         break;
+      case "Label":
+        self.setTool(new LabelTool(self, color));
+        break;
       default:
         throw "No such tool";
     }

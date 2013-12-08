@@ -23,10 +23,6 @@ _.extend(Drawing.prototype, {
     this.context.strokeStyle = color || "#000000";
     this.context.lineCap = 'round';
 
-    this.context.textBaseline = 'middle';
-    this.context.textAlign = 'center';
-    this.context.font = 'bold 25px sans-serif';
-
     this.context.beginPath();
     this.context.moveTo(start[0], start[1]);
     this.context.lineTo(end[0], end[1]);
@@ -34,7 +30,23 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
 
     var midPoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
-    var fontWidth = this.context.measureText(label).width;
+
+    this.drawLabel(midPoint, label, "black", "black", "white");
+  },
+
+  drawLabel: function(midPoint, text, textColor, outlineColor, fillColor) {
+    this.context.save();
+
+    this.context.fillStyle = fillColor || "white";
+    this.context.strokeStyle = outlineColor || "black";
+    this.context.lineWidth = 2;
+    this.context.lineCap = 'round';
+    this.context.font = 'bold 25px sans-serif';
+    this.context.textBaseline = 'middle';
+    this.context.textAlign = 'center';
+
+
+    var fontWidth = this.context.measureText(text).width;
     fontWidth = Math.max(fontWidth, 20);
     var fontHeight = 28;
 
@@ -47,15 +59,13 @@ _.extend(Drawing.prototype, {
     this.context.arc(midPoint[0] - (fontWidth / 2), midPoint[1], fontHeight / 2, Math.PI / 2, 1.5 * Math.PI, false);
     this.context.closePath();
 
-    this.context.fillStyle = 'white';
-    this.context.strokeStyle = 'black';
-    this.context.lineWidth = 2;
     this.context.stroke();
     this.context.fill();
 
-    this.context.fillStyle = 'black';
+    this.context.fillStyle = textColor || "black";
+    this.context.fillText(text, midPoint[0], midPoint[1] + 2);
 
-    this.context.fillText(label, midPoint[0], midPoint[1] + 2);
+    this.context.restore();
   },
 
   drawTemplate: function(cells, border, color) {
