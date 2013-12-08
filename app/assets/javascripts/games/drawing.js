@@ -34,6 +34,7 @@ _.extend(Drawing.prototype, {
     this.drawLabel(midPoint, label, "black", "black", "white");
   },
 
+  // Draws some text in a rounded box and returns the bounding box
   drawLabel: function(midPoint, text, textColor, outlineColor, fillColor) {
     this.context.save();
 
@@ -45,10 +46,13 @@ _.extend(Drawing.prototype, {
     this.context.textBaseline = 'middle';
     this.context.textAlign = 'center';
 
-
-    var fontWidth = this.context.measureText(text).width;
-    fontWidth = Math.max(fontWidth, 20);
+    var fontSize = this.context.measureText(text);
+    var fontWidth = Math.max(fontSize.width, 20);
     var fontHeight = 28;
+
+    var xOffset = (fontWidth / 2) + (fontHeight / 2);
+    var yOffset = fontHeight / 2;
+    var bounds = [[midPoint[0] - xOffset, midPoint[1] - yOffset], [midPoint[0] + xOffset, midPoint[1] + yOffset]];
 
     // draw ovalish box
     this.context.beginPath();
@@ -66,6 +70,8 @@ _.extend(Drawing.prototype, {
     this.context.fillText(text, midPoint[0], midPoint[1] + 2);
 
     this.context.restore();
+
+    return bounds;
   },
 
   drawTemplate: function(cells, border, color) {

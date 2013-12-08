@@ -836,6 +836,7 @@ function LabelTool(board, color) {
   this.ctrlDown = false;
   this.textLocation = null;
   this.textBox = null;
+  this.textBounds = null;
 }
 LabelTool.prototype = _.extend(new Tool(), {
   enable: function() {
@@ -858,6 +859,16 @@ LabelTool.prototype = _.extend(new Tool(), {
             .focusout(function() {
               self.save();
             })
+            .keydown(function(e) {
+              if (e.keyCode == 13) { //enter
+                self.save();
+                return false;
+              } else if (e.keyCode == 27) { // Esc
+                self.clear();
+                return false;
+              }
+              return true;
+            })
             .appendTo("body")
             .focus();
       }
@@ -878,12 +889,18 @@ LabelTool.prototype = _.extend(new Tool(), {
     });
   },
   disable: function() {
-    $(this.board.event_manager).off(".PingTool");
+    $(this.board.event_manager).off(".LabelTool");
+    this.clear();
   },
   draw: function() {
     if (this.textBox) {
       var txt = this.textBox.val();
-      this.board.drawing.drawLabel(this.textLocation, txt, this.color, "rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255, 0.25");
+      var seconds = parseInt(new Date().getTime() / 1000);
+      var outlineColor = "rgba(255, 255, 255, 0.25";
+      if ((seconds % 2) == 0) {
+        outlineColor = "rgba(0, 0, 0, 1.0)";
+      }
+      this.textBounds = this.board.drawing.drawLabel(this.textLocation, txt, this.color, outlineColor, "rgba(255, 255, 255, 0.25");
     }
 
     if (this.cursor) {
@@ -893,9 +910,30 @@ LabelTool.prototype = _.extend(new Tool(), {
 
   save: function() {
     if (this.textBox) {
+
+      var txt = this.textBox.val();
+      var action = {
+        actionType: "labelAction",
+        point: this.textLocation,
+        color: this.color,
+        text: txt,
+        bound: this.textBounds,
+        uid: generateActionId()};
+
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+
+      this.board.addAction(action, undoAction, true);
+    }
+
+    this.clear();
+  },
+
+  clear: function() {
+    if (this.textBox) {
       this.textBox.remove();
       this.textBox = null;
     }
+    this.textLocation = null;
   },
 
   drawCross: function(point) {

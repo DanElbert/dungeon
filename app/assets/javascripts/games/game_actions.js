@@ -30,6 +30,19 @@ _.extend(actionMethods, {
     draw: function(drawing) { }
   },
 
+  labelAction: {
+    extend: function() { return "drawingAction"; },
+    draw: function(drawing) {
+      drawing.drawLabel(this.point, this.text, this.color, "rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255, 0.25");
+    },
+    calculateBounds: function() {
+      return this.bound;
+    },
+    validateData: function() {
+      this.ensureFields(["color", "text", "point", "bound", "uid"]);
+    }
+  },
+
   // A pen action consists of a color, a width, and a collection of lines that are to be drawn on the drawing layer
   penAction: {
     extend: function() { return "drawingAction"; },

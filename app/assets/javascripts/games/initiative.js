@@ -36,6 +36,7 @@ function InitializeInitiativeApi(name_url) {
     var $input = $("<input type='number' />").addClass("editValue").val($valueSpan.text());
     $valueSpan.parent().append($input);
     $valueSpan.hide();
+    list.sortable("disable");
     $input.focus();
   });
 
@@ -56,8 +57,9 @@ function InitializeInitiativeApi(name_url) {
     var $li = $input.parent();
     var $valueSpan = $li.children("span.value");
     $li.data('obj').value = parseInt($input.val());
-    $input.detach();
+    $input.remove();
     $valueSpan.show();
+    list.sortable("enable");
 
     triggerChange(api.serialize());
   }
