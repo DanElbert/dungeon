@@ -18,12 +18,12 @@ class GamesController < ApplicationController
 
   def new
     @game = Game.new
+    @game.board = Board.new
   end
 
   def create
     @game = Game.new(game_params)
-    @game.board = Board.new
-    @game.board.background_image = params[:background_image]
+    @game.user = current_user
 
     if @game.save
       redirect_to @game, notice: 'Game was successfully created.'

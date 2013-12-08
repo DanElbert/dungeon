@@ -80,7 +80,7 @@
   background-color: #ededed;
   color: #555555;
 
-  font: bold 13px;
+  font-size: 13px;
   text-decoration: none;
   text-shadow: 1px 1px 0px #ffffff;
   text-align: center;
@@ -100,14 +100,14 @@
   @extend %toolButtonStyle;
   width: 55px;
   height: 30px;
-  line-height: 30px;
+  line-height: 15px;
 }
 
 .menuItemButton {
   @extend %toolButtonStyle;
   width: 55px;
   height: 30px;
-  line-height: 30px;
+  line-height: 15px;
   float: left;
 }
 

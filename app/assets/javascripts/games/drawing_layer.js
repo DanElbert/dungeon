@@ -131,7 +131,7 @@ _.extend(Tile.prototype, {
   },
 
   draw: function() {
-    if (this.actions.length == 0 || this.isDrawn)
+    if ((this.actions.length == 0 && this.fogActions.length == 0) || this.isDrawn)
       return;
 
     this.ensureCanvas();

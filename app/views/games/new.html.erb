@@ -1,27 +1,5 @@
 <h2>New game</h2>
 
-<%= form_for(@game) do |f| %>
-  <%= render :partial => 'shared/error_list', :locals => { :model => @game } %>
-
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :status %>
-    <%= f.select :status, Game::STATUS.values %>
-  </div>
-
-  <div class="field">
-    <%= label_tag 'background_image', 'Background' %>
-    <%= select_tag 'background_image', options_from_collection_for_select(get_board_backgrounds, :last, :first) %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
-
+<%= render 'form' %>
 
 <%= link_to 'Back', lobby_path %>

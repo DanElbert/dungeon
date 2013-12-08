@@ -25,47 +25,7 @@
 
       return this.each(function() {
         var $this = $(this);
-        var data = $this.data(pluginName);
-
-        // unbind first to ensure there's only ever 1 handler bound
-        $this.off('.' + pluginName);
-
-        if (!data) {
-          data = {};
-          data.options = options;
-          data.valueItems = [];
-          $this.data(pluginName, data);
-        }
-
-        var itemList = $("<div></div>")
-            .addClass("menuItemList")
-            .hide()
-            .appendTo($this);
-
-        _.each(options.values, function(value) {
-          var item = $("<div></div>")
-              .addClass("menuItemButton")
-              .append(data.options.contentCallback(value))
-              .on('touchstart.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemTouch)
-              .on('click.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemClick)
-              .appendTo(itemList);
-
-          data.valueItems.push(item);
-        });
-
-        $("<span></span>").css("clear", "both").appendTo(itemList);
-
-        var menuButton = $("<div></div>")
-            .addClass("menuButton")
-            .appendTo($this)
-            .on('touchstart.' + pluginName, {menu: $this}, privateMethods.handleMenuTouch)
-            .on('click.' + pluginName, {menu: $this}, privateMethods.handleMenuClick);
-
-        data.itemList = itemList;
-        data.menuButton = menuButton;
-
-        privateMethods.setValue($this, options.initialValue);
-
+        privateMethods.rebuild($this, options);
       });
     },
 
@@ -82,6 +42,16 @@
         var data = menu.data(pluginName);
         return data ? data.value : null;
       }
+    },
+
+    setValues: function(newValues) {
+      return this.each(function() {
+        var $this = $(this);
+        var data = $this.data(pluginName);
+        var options = data.options;
+        options.values = newValues;
+        privateMethods.rebuild($this, options);
+      });
     },
 
     openMenu: function() {
@@ -112,6 +82,49 @@
   };
 
   var privateMethods = {
+    rebuild: function($this, options) {
+      var data = $this.data(pluginName);
+
+      // unbind first to ensure there's only ever 1 handler bound
+      $this.off('.' + pluginName);
+      $this.empty();
+
+      data = data || {};
+      data.options = options;
+      data.valueItems = [];
+      $this.data(pluginName, data);
+
+      var itemList = $("<div></div>")
+          .addClass("menuItemList")
+          .hide()
+          .appendTo($this);
+
+      _.each(options.values, function(value) {
+        var item = $("<div></div>")
+            .addClass("menuItemButton")
+            .append(data.options.contentCallback(value))
+            .on('touchstart.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemTouch)
+            .on('click.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemClick)
+            .appendTo(itemList);
+
+        data.valueItems.push(item);
+      });
+
+      $("<span></span>").css("clear", "both").appendTo(itemList);
+
+      var menuButton = $("<div></div>")
+          .addClass("menuButton")
+          .appendTo($this)
+          .on('touchstart.' + pluginName, {menu: $this}, privateMethods.handleMenuTouch)
+          .on('click.' + pluginName, {menu: $this}, privateMethods.handleMenuClick);
+
+      data.itemList = itemList;
+      data.menuButton = menuButton;
+
+      privateMethods.setValue($this, options.initialValue);
+
+    },
+
     handleMenuClick: function(evt) {
       var menu = evt.data.menu;
       var data = menu.data(pluginName);

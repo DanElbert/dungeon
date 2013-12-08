@@ -157,6 +157,10 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     this.isOwner = data.is_owner;
     this.drawingLayer.isOwner = this.isOwner;
 
+    if (!this.isOwner) {
+      this.toolBars.hideFogTools();
+    }
+
     _.each(data.board.actions, function(action) {
       this.addAction(action, null, false);
     }, this);

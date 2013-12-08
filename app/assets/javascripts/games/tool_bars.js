@@ -28,9 +28,6 @@ function InitializeToolBarsApi() {
       $("#tool_line_width").hide();
       $("#fog_tool_line_width").show();
     },
-    hideFogButtons: function() {
-
-    },
     showStartCaptureButton: function() {
       $("#enable_capture_button").show();
     },
@@ -54,8 +51,20 @@ function InitializeToolBarsApi() {
     },
     hideClearTokensButton: function() {
       $("#clear_tokens_button").hide();
+    },
+    hideFogTools: function() {
+      $("#tool_menu").toolMenu("setValues", getTools(false));
     }
   };
+
+  function getTools(includeFog) {
+    var tools = ["Pointer", "Pen", "LinePen", "Label", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping"];
+
+    if (includeFog) {
+      tools = tools.concat(["Add Fog", "Remove Fog"]);
+    }
+    return tools;
+  }
 
   function triggerToolChanged() {
     var e = $.Event('toolchanged', {});
@@ -95,7 +104,7 @@ function InitializeToolBarsApi() {
   }
 
   $("#tool_menu").toolMenu({
-    values: ["Pointer", "Pen", "LinePen", "Label", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping", "Add Fog", "Remove Fog"],
+    values: getTools(true),
     initialValue: "Pointer",
     contentCallback: function(value) {
       return value;
