@@ -14,6 +14,7 @@
  *= require base
  *= require layout
  *= require skeleton
+ *= require image-picker
  *= require_self
  *= require_tree .
  */

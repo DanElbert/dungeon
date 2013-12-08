@@ -22,3 +22,16 @@
     <%= f.submit %>
   </div>
 <% end %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var $select = $("#game_board_attributes_background_image");
+    $select.children("option").each(function() {
+      var $this = $(this);
+      var url = ROOT_URL + "assets/" + $this.attr("value");
+      $this.attr("data-img-src", url);
+    });
+
+    $select.imagepicker();
+  });
+</script>
