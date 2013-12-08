@@ -4,6 +4,13 @@ module GameServer
   class Handler
     include MessageAuthentication
 
+    attr_accessor :server, :client
+
+    def initialize(server, client)
+      self.server = server
+      self.client = client
+    end
+
     def should_handle_message(channel)
       false
     end

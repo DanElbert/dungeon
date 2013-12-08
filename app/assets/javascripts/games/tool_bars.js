@@ -27,6 +27,33 @@ function InitializeToolBarsApi() {
     setFogLineWidths: function() {
       $("#tool_line_width").hide();
       $("#fog_tool_line_width").show();
+    },
+    hideFogButtons: function() {
+
+    },
+    showStartCaptureButton: function() {
+      $("#enable_capture_button").show();
+    },
+    hideStartCaptureButton: function() {
+      $("#enable_capture_button").hide();
+    },
+    showEndCaptureButton: function() {
+      $("#end_capture_button").show();
+    },
+    hideEndCaptureButton: function() {
+      $("#end_capture_button").hide();
+    },
+    showCameraButton: function() {
+      $("#open_camera_button").show();
+    },
+    hideCameraButton: function() {
+      $("#open_camera_button").hide();
+    },
+    showClearTokensButton: function() {
+      $("#clear_tokens_button").show();
+    },
+    hideClearTokensButton: function() {
+      $("#clear_tokens_button").hide();
     }
   };
 
@@ -47,11 +74,30 @@ function InitializeToolBarsApi() {
     $(api).trigger(e);
   }
 
+  function triggerCaptureStart() {
+    var e = $.Event('startBoardCapture', {});
+    $(api).trigger(e);
+  }
+
+  function triggerEndCapture() {
+    var e = $.Event('stopBoardCapture', {});
+    $(api).trigger(e);
+  }
+
+  function triggerOpenCamera() {
+    var e = $.Event('openCamera', {});
+    $(api).trigger(e);
+  }
+
+  function triggerClearTokens() {
+    var e = $.Event("clearTokens", {});
+    $(api).trigger(e);
+  }
+
   $("#tool_menu").toolMenu({
-    values: ["Pointer", "Pen", "LinePen", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping", "Add Fog", "Remove Fog"],
+    values: ["Pointer", "Pen", "LinePen", "Label", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping", "Add Fog", "Remove Fog"],
     initialValue: "Pointer",
     contentCallback: function(value) {
-      //return $("<div></div>").css({height: '100%', paddingTop: "18px"}).text(value);
       return value;
     },
     selectedCallback: function(value) {
@@ -127,6 +173,22 @@ function InitializeToolBarsApi() {
 
   $("#undo_button").click(function() {
     triggerUndo();
+  });
+
+  $("#enable_capture_button").click(function() {
+    triggerCaptureStart();
+  });
+
+  $("#end_capture_button").click(function() {
+    triggerEndCapture();
+  });
+
+  $("#open_camera_button").click(function() {
+    triggerOpenCamera();
+  });
+
+  $("#clear_tokens_button").click(function() {
+    triggerClearTokens();
   });
 
   $("#zoom_slider").slider({

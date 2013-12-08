@@ -11,6 +11,8 @@ body {
 }
 
 #title {
+  margin-bottom: -35px;
+  z-index: 10;
 }
 
 #navContainer {
@@ -25,6 +27,13 @@ body {
 
 #navContainer a:hover {
   color: blue;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 table
@@ -80,4 +89,14 @@ table tr:hover td
     margin-left: 20px;
     list-style: square;
   }
+}
+
+div.thumbnail {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+}
+
+.image_picker_image {
+
 }

@@ -7,14 +7,13 @@ Dungeon::Application.routes.draw do
     resources :games, :except => [:new, :create]
   end
 
-  resources :games, :only => [:new, :create, :show] do
+  resources :games, :only => [:new, :create, :show, :edit, :update] do
     member do
       get 'get_game_data'
+      get 'initiative'
+      get 'initiative_names'
     end
   end
-
-  match '/games/:id/drawing(/:version)' => 'games#drawing', :via => :get, :as => :drawing_game
-  match '/games/:id/drawing' => 'games#update_drawing', :via => :post, :as => :update_drawing_game
 
   match '/lobby' => 'lobby#index', :via => :get, :as => :lobby
 

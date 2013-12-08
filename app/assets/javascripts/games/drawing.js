@@ -23,10 +23,6 @@ _.extend(Drawing.prototype, {
     this.context.strokeStyle = color || "#000000";
     this.context.lineCap = 'round';
 
-    this.context.textBaseline = 'middle';
-    this.context.textAlign = 'center';
-    this.context.font = 'bold 25px sans-serif';
-
     this.context.beginPath();
     this.context.moveTo(start[0], start[1]);
     this.context.lineTo(end[0], end[1]);
@@ -34,9 +30,29 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
 
     var midPoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
-    var fontWidth = this.context.measureText(label).width;
-    fontWidth = Math.max(fontWidth, 20);
+
+    this.drawLabel(midPoint, label, "black", "black", "white");
+  },
+
+  // Draws some text in a rounded box and returns the bounding box
+  drawLabel: function(midPoint, text, textColor, outlineColor, fillColor) {
+    this.context.save();
+
+    this.context.fillStyle = fillColor || "white";
+    this.context.strokeStyle = outlineColor || "black";
+    this.context.lineWidth = 2;
+    this.context.lineCap = 'round';
+    this.context.font = 'bold 25px sans-serif';
+    this.context.textBaseline = 'middle';
+    this.context.textAlign = 'center';
+
+    var fontSize = this.context.measureText(text);
+    var fontWidth = Math.max(fontSize.width, 20);
     var fontHeight = 28;
+
+    var xOffset = (fontWidth / 2) + (fontHeight / 2);
+    var yOffset = fontHeight / 2;
+    var bounds = [[midPoint[0] - xOffset, midPoint[1] - yOffset], [midPoint[0] + xOffset, midPoint[1] + yOffset]];
 
     // draw ovalish box
     this.context.beginPath();
@@ -47,15 +63,15 @@ _.extend(Drawing.prototype, {
     this.context.arc(midPoint[0] - (fontWidth / 2), midPoint[1], fontHeight / 2, Math.PI / 2, 1.5 * Math.PI, false);
     this.context.closePath();
 
-    this.context.fillStyle = 'white';
-    this.context.strokeStyle = 'black';
-    this.context.lineWidth = 2;
     this.context.stroke();
     this.context.fill();
 
-    this.context.fillStyle = 'black';
+    this.context.fillStyle = textColor || "black";
+    this.context.fillText(text, midPoint[0], midPoint[1] + 2);
 
-    this.context.fillText(label, midPoint[0], midPoint[1] + 2);
+    this.context.restore();
+
+    return bounds;
   },
 
   drawTemplate: function(cells, border, color) {
@@ -129,7 +145,7 @@ _.extend(Drawing.prototype, {
     this.context.globalCompositeOperation = originalCompositeOperation;
   },
 
-  drawCircle: function(x, y, radius, width, color) {
+  drawCircle: function(x, y, radius, width, color, fill) {
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
     this.context.beginPath();
@@ -137,6 +153,20 @@ _.extend(Drawing.prototype, {
     this.context.arc(x, y, radius, 0, 1.95 * Math.PI, false);
     this.context.closePath();
     this.context.stroke();
+    if (fill) {
+      this.context.fillStyle = color;
+      this.context.fill();
+    }
+  },
+
+  drawCircleTiles: function(col, row, width, height, color) {
+    var width_delta = Math.floor(width / 2);
+    var height_delta = Math.floor(height / 2);
+    var center = Geometry.getCellMidpoint([col, row], this.cellSize);
+
+    this.context.fillStyle = color;
+    this.drawEllipse(col * this.cellSize, row * this.cellSize, width * this.cellSize, height * this.cellSize);
+    this.context.fill();
   },
 
   // Low level drawing function; places an ellipse in the context path
@@ -243,6 +273,19 @@ _.extend(Drawing.prototype, {
     }
 
     this.context.stroke();
+  },
+
+  drawChessBoard : function(x, y, size, pattern_size) {
+    var square_size = size / pattern_size;
+
+    for (var i = 0; i < (pattern_size * pattern_size); i++) {
+      var col = i % pattern_size;
+      var row = parseInt(i / pattern_size);
+
+      var color = ((col + row) % 2) == 0 ? "rgba(0, 0, 0, 1.0)" : "rgba(255, 255, 255, 1.0)";
+
+      this.colorBackground(x + (col * square_size), y + (row * square_size), square_size, square_size, color);
+    }
   },
 
   colorCell: function (column, row, color) {

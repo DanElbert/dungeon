@@ -1,8 +1,7 @@
 class BoardAction < ActiveRecord::Base
-  belongs_to :board
-  serialize :properties
+  include HasSerializedProperties
 
-  after_initialize :init
+  belongs_to :board
 
   def self.from_message(message)
     action_model = BoardAction.new
@@ -29,22 +28,18 @@ class BoardAction < ActiveRecord::Base
     self.action_type
   end
 
-  def init
-    # ActiveRecord uses method_missing to init its own attribute accessors,
-    # so wait until after init to enable the property accessors
-    self.properties ||= {}
-    @enable_properties_methods = true
-  end
+  def self.build_action_hash(type, uid, properties)
+    uid ||= build_uid
 
-  def method_missing(sym, *args, &block)
-    if @enable_properties_methods && self.properties.key?(sym.to_s)
-      return self.properties[sym.to_s]
+    action = {actionType: type, uid: uid}
+    properties.each do |k, v|
+      action[k] = v
     end
 
-    super
+    action
   end
 
-  def respond_to?(name, include_private = false)
-    (@enable_properties_methods && self.properties.key?(name.to_s)) || super
+  def self.build_uid
+    ('0000' + rand(36**4).to_s(36))[-4..-1]
   end
 end

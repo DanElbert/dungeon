@@ -1,11 +1,6 @@
-function InitializeInitiativeApi() {
-
-  var isOpen = false;
+function InitializeInitiativeApi(name_url) {
   var isRemovingItem = false;
 
-  var toggle = $("#initiative_toggle");
-  var panel = $("#initiative_panel");
-  var controls = $("#initiative_controls");
   var nameInput = $("#initiative_name_input");
   var valueInput = $("#initiative_value_input");
   var list = $("#initiative_list");
@@ -33,8 +28,51 @@ function InitializeInitiativeApi() {
       });
 
       list.sortable("refresh");
+    },
+
+    enterViewMode: function() {
+      $("#initiative_controls").addClass("view_mode");
+      list.sortable("disable");
+    },
+
+    leaveViewMode: function() {
+      $("#initiative_controls").removeClass("view_mode");
+      list.sortable("enable");
     }
   };
+
+  list.on("click", "span.value", function() {
+    var $valueSpan = $(this);
+    var $input = $("<input type='number' />").addClass("editValue").val($valueSpan.text());
+    $valueSpan.parent().append($input);
+    $valueSpan.hide();
+    list.sortable("disable");
+    $input.focus();
+  });
+
+  list.on("keypress", "input.editValue", function(e) {
+    if (e.keyCode == 13) {
+      valChangedHandler($(this));
+      return false;
+    }
+    return true;
+  });
+
+  list.on("focusout", "input.editValue", function() {
+    var $input = $(this);
+    valChangedHandler($input);
+  });
+
+  function valChangedHandler($input) {
+    var $li = $input.parent();
+    var $valueSpan = $li.children("span.value");
+    $li.data('obj').value = parseInt($input.val());
+    $input.remove();
+    $valueSpan.show();
+    list.sortable("enable");
+
+    triggerChange(api.serialize());
+  }
 
   function triggerChange(newInitiative) {
 
@@ -58,20 +96,6 @@ function InitializeInitiativeApi() {
 
   $("#clear_initiative").click(function() {
     triggerChange([]);
-  });
-
-  toggle.click(function() {
-    if (isOpen) {
-      isOpen = false;
-      toggle.html("Open");
-      controls.hide();
-      panel.switchClass("open", "closed", 250);
-    } else {
-      isOpen = true;
-      toggle.html("Close");
-      controls.show();
-      panel.switchClass("closed", "open", 250);
-    }
   });
 
   $("#initiative_controls input[type='text']").keypress(function(e) {
@@ -98,18 +122,47 @@ function InitializeInitiativeApi() {
 
       nameInput.val("");
       valueInput.val("");
-
-      nameInput.focus();
     }
   });
 
+  var isAutocompleOpen = false;
+
+  nameInput.autocomplete({
+    source: name_url,
+    minLength: 0,
+    open: function() { isAutocompleOpen = true; },
+    close: function() { isAutocompleOpen = false; },
+    position: { my: "left top", at: "left bottom", collision: "flip" },
+    select: function( event, ui ) {
+      valueInput.focus();
+    }
+  }).on("click", function() {
+    if (!isAutocompleOpen) {
+      nameInput.autocomplete( "search", "" );
+    }
+  });
+
+  var $dragTarget = $("<ul></ul>")
+      .css({
+        margin: "0",
+        padding: "0",
+        position: "absolute"
+      })
+      .addClass("ui-widget")
+      .appendTo("body");
+
   list.sortable({
+    helper: "clone",
+    appendTo: $dragTarget,
+    zIndex: 9000,
     over: function (event, ui) {
-      ui.item.removeClass("removing");
+      ui.helper.removeClass("removing");
       isRemovingItem = false;
     },
     out: function (event, ui) {
-      ui.item.addClass("removing");
+      if (ui.helper) {
+        ui.helper.addClass("removing");
+      }
       isRemovingItem = true;
     },
     beforeStop: function (event, ui) {
@@ -118,7 +171,6 @@ function InitializeInitiativeApi() {
       }
     },
     stop: function(event, ui) {
-      ui.item.removeClass("removing");
       triggerChange();
     }
   });

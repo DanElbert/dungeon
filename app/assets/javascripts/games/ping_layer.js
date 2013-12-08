@@ -38,9 +38,6 @@ function Ping(point, color, maxSize, pulseCount, duration) {
 _.extend(Ping.prototype, {
   draw: function(drawing) {
     var animationPoint = this.calculateEasing();
-    if (animationPoint >= 1) {
-      this.finished = true;
-    }
 
     var inverse = 1 - animationPoint;
 
@@ -53,6 +50,9 @@ _.extend(Ping.prototype, {
       this.startTime = new Date();
     }
     var durationPercent = (new Date() - this.startTime) / (this.animationDuration * 1000);
+    if (durationPercent >= 1) {
+      this.finished = true;
+    }
     return this.easingFunction(durationPercent);
   },
 

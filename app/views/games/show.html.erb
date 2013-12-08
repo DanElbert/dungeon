@@ -1,11 +1,18 @@
 <% content_for :header do %>
   <%= javascript_include_tag "games/index" %>
   <%= javascript_include_tag "/game_server/client.js" %>
+  <%= javascript_include_tag "camera" %>
 <% end %>
 
+<%= render partial: 'camera' %>
 <div id="game_container">
 
-  <%= render partial: 'initiative' %>
+  <button id="open_initiative_button">Initiative</button>
+  <div id="initiative_window" class="scroll">
+    <%= render partial: 'initiative' %>
+
+    <button id="initiative_display_toggle">View Mode</button>
+  </div>
 
   <div id="game_header">
     <h3 class="title"><%= link_to "Dungeon", lobby_path, style: 'text-decoration: none;' %></h3>
@@ -29,6 +36,13 @@
 
     <div id="undo_button" class="tool">Undo</div>
 
+    <div id="open_camera_button" class="tool">Camera</div>
+
+    <div id="enable_capture_button" class="tool" style="display:none;">BeginCap</div>
+    <div id="end_capture_button" class="tool" style="display:none;">EndCap</div>
+
+    <div id="clear_tokens_button" class="tool" style="display:none;">ClrTokens</div>
+
   </div>
 
   <div id="game_board_container">
@@ -43,5 +57,8 @@
   GAME_ID = <%= @game.id %>;
   USER_ID = <%= current_user.id %>;
   USER_AUTH_TOKEN = '<%= current_user.auth_token %>';
+  INITIATIVE_URL = '<%= initiative_names_game_path(@game) %>';
+
+  startGameBoard();
 
 </script>

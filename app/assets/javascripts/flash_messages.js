@@ -15,5 +15,5 @@ function flashMessage(flashType, message) {
   timeoutIdContainer.id = setTimeout(function() {
     $flashDiv.unbind(".Flash");
     $flashDiv.hide({effect: "fade", duration: 1000});
-  }, 10000);
+  }, 5000);
 }

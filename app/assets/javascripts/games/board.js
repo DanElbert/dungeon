@@ -1,37 +1,6 @@
-function Board(canvas, toolBarsApi, initiativeApi) {
+function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.images = {};
 
-  this.initiative = initiativeApi;
-  this.toolBars = toolBarsApi;
-
-  this.canvas = canvas;
-  this.context = this.canvas.getContext('2d');
-  this.drawing = new Drawing(this.context);
-  this.event_manager = new BoardEvents(this);
-  this.current_tool = null;
-
-  this.isOwner = false;
-
-  this.pending_action_queue = [];
-  this.template_actions = [];
-  this.undo_stack = [];
-
-  this.drawingLayer = new DrawingLayer();
-  this.pingLayer = new PingLayer();
-
-  this.board_data = null;
-  this.viewPortCoord = [0, 0];
-  this.viewPortSize = [canvas.width, canvas.height];
-  this.zoom = 1;
-
-  this.hovered_cell = null;
-
-  this.globalShortcutTool = new GlobalShortCuts(this);
-
-  // Used in events
-  var self = this;
-
-  this.sentMessageIds = [];
   this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
   this.gameServerClient.addExtension(
       {
@@ -42,9 +11,52 @@ function Board(canvas, toolBarsApi, initiativeApi) {
           callback(message);
         }
       });
-  this.addActionSubscription = this.gameServerClient.subscribe('/game/' + GAME_ID + '/add_action', function(message) {
+
+  this.initiative = initiativeApi;
+  this.toolBars = toolBarsApi;
+  this.camera = cameraApi;
+
+  this.canvas = canvas;
+  this.context = this.canvas.getContext('2d');
+  this.drawing = new Drawing(this.context);
+  this.event_manager = new BoardEvents(this);
+  this.boardDetectionManager = new BoardDetectionManager(this, this.toolBars, this.camera, this.gameServerClient);
+  this.current_tool = null;
+
+  this.isOwner = false;
+
+  this.pending_action_queue = [];
+  this.template_actions = [];
+  this.undo_stack = [];
+
+  this.drawingLayer = new DrawingLayer();
+  this.pingLayer = new PingLayer();
+  this.tokenLayer = new TokenLayer();
+
+  this.board_data = null;
+  this.viewPortCoord = [0, 0];
+  this.viewPortSize = [canvas.width, canvas.height];
+  this.zoom = 1;
+
+  this.displayCapturePattern = false;
+
+  this.hovered_cell = null;
+
+  this.globalShortcutTool = new GlobalShortCuts(this);
+
+  // Used in events
+  var self = this;
+
+  this.addActionManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/add_action', function(message) {
     self.handleAddActionMessage(message);
   });
+
+  this.initiativeManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/update_initiative', function(message) {
+    self.handleAddActionMessage(message);
+  });
+
+  this.addActionManager.connect();
+  this.initiativeManager.connect();
 
   $(this.event_manager).on('mousemove', function(evt, mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
@@ -96,26 +108,29 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   };
 
   this.handleAddActionMessage = function(message) {
-    var index = _.indexOf(this.sentMessageIds, message.uid);
-    if (index >= 0) {
-      this.sentMessageIds.splice(index, 1);
-    } else {
-      this.addAction(message, null, false);
-    }
+    this.addAction(message, null, false);
   };
 
   this.sendActionMessage = function(action) {
-    this.sentMessageIds.push(action.uid);
-    // Publish action, omitting any privateData
-    this.gameServerClient.publish('/game/' + GAME_ID + '/add_action', _.omit(action, 'privateData'));
+    this.addActionManager.sendActionMessage(action);
+  };
+
+  this.sendInitiativeMessage = function(action) {
+    this.initiativeManager.sendActionMessage(action);
   };
 
   this.addAction = function(action, undoAction, broadcastAction) {
     action = attachActionMethods(action);
+
     this.pending_action_queue.push(action);
 
     if (broadcastAction) {
-      this.sendActionMessage(action);
+      if (action.actionType == 'updateInitiativeAction')
+      {
+        this.sendInitiativeMessage(action);
+      } else {
+        this.sendActionMessage(action);
+      }
     }
 
     if (undoAction) {
@@ -190,10 +205,31 @@ function Board(canvas, toolBarsApi, initiativeApi) {
     this.pingLayer.draw(this.drawing);
   };
 
+  this.renderTokens = function() {
+    this.tokenLayer.draw(this.drawing);
+  };
+
   this.renderTool = function() {
     if (this.current_tool) {
       this.current_tool.draw();
     }
+  };
+
+  this.renderCapturePattern = function() {
+    this.drawing.colorBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(255, 255, 255, 1.0)");
+    this.drawing.drawGrid(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(0, 0, 0, 0.05)");
+    var pattern_size = this.boardDetectionManager.getPatternSize();
+    var size = this.boardDetectionManager.getPatternDimension();
+    var gutter = (size / pattern_size);
+    var origin_x = this.viewPortCoord[0];
+    var origin_y = this.viewPortCoord[1];
+    var extent_x = origin_x + this.viewPortSize[0];
+    var extent_y = origin_y + this.viewPortSize[1];
+
+    this.drawing.drawChessBoard(origin_x + gutter, origin_y + gutter, size, pattern_size);
+    this.drawing.drawChessBoard(extent_x - gutter - size, origin_y + gutter, size, pattern_size);
+    this.drawing.drawChessBoard(origin_x + gutter, extent_y - gutter - size, size, pattern_size);
+    this.drawing.drawChessBoard(extent_x - gutter - size, extent_y - gutter - size, size, pattern_size);
   };
 
   this.executeActions = function() {
@@ -217,13 +253,19 @@ function Board(canvas, toolBarsApi, initiativeApi) {
 
     context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
 
-    this.renderBoardBackground();
-    this.renderTemplates();
-    this.renderBoardGrid();
-    this.renderDrawing();
-    this.renderPings();
-    this.renderCursor();
-    this.renderTool();
+    if (this.displayCapturePattern) {
+      this.renderCapturePattern();
+      this.renderPings();
+    } else {
+      this.renderBoardBackground();
+      this.renderTemplates();
+      this.renderBoardGrid();
+      this.renderDrawing();
+      this.renderTokens();
+      this.renderPings();
+      this.renderCursor();
+      this.renderTool();
+    }
   };
 
   this.cellHover = function(x, y) {
@@ -302,6 +344,9 @@ function Board(canvas, toolBarsApi, initiativeApi) {
         self.setTool(new RemoveFogPen(self, fogWidth));
         self.toolBars.setFogLineWidths();
         break;
+      case "Label":
+        self.setTool(new LabelTool(self, color));
+        break;
       default:
         throw "No such tool";
     }
@@ -314,5 +359,9 @@ function Board(canvas, toolBarsApi, initiativeApi) {
   $(this.toolBars).on('zoomchanged', function(e) {
     self.setZoom(e.value);
   });
-};
+
+  $(this.toolBars).on('clearTokens', function(e) {
+    self.addAction({actionType: "clearTokensAction", uid: generateActionId()}, null, true);
+  });
+}
 

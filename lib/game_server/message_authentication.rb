@@ -10,8 +10,6 @@ module GameServer
         is_valid = User.where(:id => user_id, :auth_token => auth_token).exists?
       end
 
-      remove_auth_attributes(message)
-
       unless is_valid
         message['error'] = 'Authentication Failed'
       end
@@ -24,6 +22,12 @@ module GameServer
         message['ext']['user_id'] = nil
         message['ext']['auth_token'] = nil
       end
+    end
+
+    def add_auth_attributes(message, user)
+      message['ext'] ||= {}
+      message['ext']['user_id'] ||= user.id
+      message['ext']['auth_token'] ||= user.auth_token
     end
 
   end

@@ -35,6 +35,12 @@ require 'capistrano-deploytags'
 # clean up old releases on each deploy
 after "deploy:restart", "deploy:cleanup"
 
+after "deploy:restart", "compile"
+
+task :compile do
+  run("RAILS_ENV=#{stage} cd #{deploy_to}/current && bundle exec rake compile")
+end
+
 # Generate an additional tasks to control the thin cluster
 namespace :deploy do
   desc "Start the Thin processes"

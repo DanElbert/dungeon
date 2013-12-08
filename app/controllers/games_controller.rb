@@ -32,10 +32,48 @@ class GamesController < ApplicationController
     end
   end
 
+  def edit
+    @game = Game.find(params[:id])
+  end
+
+  def update
+    @game = Game.find(params[:id])
+
+    respond_to do |format|
+      if @game.update_attributes(game_params)
+        format.html { redirect_to lobby_path, notice: 'Game was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @game.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def initiative
+    @game = Game.includes(:initiatives).find(params[:id])
+    @initiative_json = @game.as_json[:initiative].to_json
+  end
+
+  def initiative_names
+    histories = InitiativeHistory.where(game_id: params[:id]).order(use_count: :desc).limit(10)
+    init_names = Initiative.where(game_id: params[:id]).select(:name).group(:name).pluck(:name)
+
+    if init_names.length > 0
+      histories = histories.where('name NOT IN (?)', init_names)
+    end
+
+    if params[:term].present?
+      histories = histories.where('name LIKE ?', "#{params[:term]}%")
+    end
+
+    render json: histories.map { |h| h.name }
+  end
+
   private
 
   def game_params
-    params.require(:game).permit(:name, :status)
+    params.require(:game).permit(:name, :status, {:board_attributes => [:background_image]})
   end
 
 end

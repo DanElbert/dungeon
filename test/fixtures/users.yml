@@ -10,3 +10,9 @@ eddie:
   email: eddie@tet.com
   password_digest: $2a$10$.OES.WDG.J279jemQ6929O5eJbM56SBPHCBzW2tN7PfceTyXhFoZm #qwerty2
   name: Eddie Dean
+
+system:
+  email: dungeon@system.com
+  password_digest: junkjunk
+  name: System
+  is_admin: true
