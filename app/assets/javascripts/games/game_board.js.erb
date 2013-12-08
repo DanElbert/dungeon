@@ -8,16 +8,47 @@ var INITIATIVE_URL = 'OVERRIDE';
 var game_board = null;
 var game_data = null;
 
-// Disable mobile device scrolling
-function stopScrolling( touchEvent ) { touchEvent.preventDefault(); }
-document.addEventListener( 'touchmove' , stopScrolling , false );
-
 function startGameBoard() {
+
+//  // Disable mobile device scrolling
+//  function stopScrolling( touchEvent ) { touchEvent.preventDefault(); }
+//  document.addEventListener( 'touchmove' , stopScrolling , false );
+
+  $('body').delegate('#game_container','touchmove',function(e){
+    e.preventDefault();
+  }).delegate('.scroll','touchmove',function(){
+    e.stopPropagation();
+  });
+
   $(document).ready(function () {
 
     var initiative = InitializeInitiativeApi(INITIATIVE_URL);
     var toolBars = InitializeToolBarsApi();
     var camera = InitializeCameraApi();
+
+    var init_window = $("#initiative_window");
+    var init_button = $("#open_initiative_button");
+
+    var height = $(window).height() * 0.85;
+
+    init_window.dialog({
+      autoOpen: false,
+      title: "Initiative",
+      width: 360,
+      maxWidth: 360,
+      height: height,
+      position: {my: "right top", at: "right-5 top+5", of: "body"},
+      open: function() {
+        init_button.hide();
+      },
+      close: function() {
+        init_button.show();
+      }
+    });
+
+    init_button.click(function() {
+      init_window.dialog("open");
+    });
 
     var init_toggle = $("#initiative_toggle");
     var init_panel = $("#initiative_panel");

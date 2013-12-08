@@ -33,7 +33,7 @@ function InitializeInitiativeApi(name_url) {
 
   list.on("click", "span.value", function() {
     var $valueSpan = $(this);
-    var $input = $("<input type='text' />").addClass("editValue").val($valueSpan.text());
+    var $input = $("<input type='number' />").addClass("editValue").val($valueSpan.text());
     $valueSpan.parent().append($input);
     $valueSpan.hide();
     $input.focus();
@@ -110,8 +110,6 @@ function InitializeInitiativeApi(name_url) {
 
       nameInput.val("");
       valueInput.val("");
-
-      nameInput.focus();
     }
   });
 
@@ -126,19 +124,33 @@ function InitializeInitiativeApi(name_url) {
     select: function( event, ui ) {
       valueInput.focus();
     }
-  }).focus(function() {
+  }).on("click", function() {
     if (!isAutocompleOpen) {
       nameInput.autocomplete( "search", "" );
     }
   });
 
+  var $dragTarget = $("<ul></ul>")
+      .css({
+        margin: "0",
+        padding: "0",
+        position: "absolute"
+      })
+      .addClass("ui-widget")
+      .appendTo("body");
+
   list.sortable({
+    helper: "clone",
+    appendTo: $dragTarget,
+    zIndex: 9000,
     over: function (event, ui) {
-      ui.item.removeClass("removing");
+      ui.helper.removeClass("removing");
       isRemovingItem = false;
     },
     out: function (event, ui) {
-      ui.item.addClass("removing");
+      if (ui.helper) {
+        ui.helper.addClass("removing");
+      }
       isRemovingItem = true;
     },
     beforeStop: function (event, ui) {
@@ -147,7 +159,6 @@ function InitializeInitiativeApi(name_url) {
       }
     },
     stop: function(event, ui) {
-      ui.item.removeClass("removing");
       triggerChange();
     }
   });
