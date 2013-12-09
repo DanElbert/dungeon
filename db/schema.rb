@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131208025622) do
+ActiveRecord::Schema.define(version: 20131209002748) do
 
   create_table "board_actions", force: true do |t|
     t.string   "action_type"
@@ -69,19 +69,6 @@ ActiveRecord::Schema.define(version: 20131208025622) do
     t.string   "name"
     t.integer  "value"
     t.integer  "sort_order"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "tokens", force: true do |t|
-    t.integer  "game_id"
-    t.string   "token_type"
-    t.integer  "position_x"
-    t.integer  "position_y"
-    t.string   "name"
-    t.integer  "height"
-    t.integer  "width"
-    t.text     "properties"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

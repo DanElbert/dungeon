@@ -49,15 +49,8 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.6.3)
-    columnize (0.3.6)
     cookiejar (0.3.0)
     daemons (1.1.9)
-    debugger (1.6.3)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.4)
-    debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.4)
     em-http-request (1.1.1)
       addressable (>= 2.3.4)
       cookiejar
@@ -184,7 +177,6 @@ DEPENDENCIES
   capistrano
   capistrano-deploytags
   coffee-rails (~> 4.0.0)
-  debugger
   faye
   jquery-rails
   jquery-ui-rails
