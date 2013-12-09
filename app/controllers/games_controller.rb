@@ -19,6 +19,7 @@ class GamesController < ApplicationController
   def new
     @game = Game.new
     @game.board = Board.new
+    @game.campaign_id = params[:campaign_id] if params[:campaign_id]
   end
 
   def create

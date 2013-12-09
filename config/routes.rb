@@ -1,5 +1,7 @@
 Dungeon::Application.routes.draw do
 
+  resources :campaigns
+
   match '/admin' => 'admin/users#index', :via => :get
 
   namespace "admin" do

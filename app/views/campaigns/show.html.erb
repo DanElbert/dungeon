@@ -1,0 +1,13 @@
+
+<h2><%= "#{@campaign.name} (#{@campaign.user_name})" %></h2>
+
+<div class="row">
+  <div class="one-third column alpha">
+    <%= render :partial => 'game_table', :locals => {:games => @campaign.games, :title => 'Games'} %>
+  </div>
+</div>
+
+<%= link_to "Create New Game", new_game_path(campaign_id: @campaign.id), class: 'button' %>
+
+<%= link_to 'Edit', edit_campaign_path(@campaign) %> |
+<%= link_to 'Back', campaigns_path %>

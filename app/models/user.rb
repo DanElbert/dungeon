@@ -2,6 +2,8 @@ class User < ActiveRecord::Base
 
   SYSTEM_USER_EMAIL = 'dungeon@system.com'
 
+  has_many :campaigns
+
   has_secure_password
 
   validates_presence_of :email

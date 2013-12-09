@@ -7,6 +7,7 @@ class Game < ActiveRecord::Base
   has_many :initiatives, -> { order(:sort_order) }, :dependent => :destroy
   has_many :initiative_histories, dependent: :destroy
   belongs_to :user
+  belongs_to :campaign
 
   accepts_nested_attributes_for :board, update_only: true
 
