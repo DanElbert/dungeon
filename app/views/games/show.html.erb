@@ -15,7 +15,7 @@
   </div>
 
   <div id="game_header">
-    <h3 class="title"><%= link_to "Dungeon", lobby_path, style: 'text-decoration: none;' %></h3>
+    <h3 class="title"><%= link_to "Dungeon", campaign_path(@game.campaign), style: 'text-decoration: none;' %></h3>
     <div style="float: left;">
       <label id="zoom_level_label" for="zoom_level">Zoom:</label>
       <input type="text" id="zoom_level" />

@@ -1,5 +1,6 @@
 class CampaignsController < ApplicationController
   before_action :set_campaign, only: [:show, :edit, :update, :destroy]
+  before_filter :ensure_valid_user
 
   # GET /campaigns
   def index
@@ -22,6 +23,7 @@ class CampaignsController < ApplicationController
   # POST /campaigns
   def create
     @campaign = Campaign.new(campaign_params)
+    @campaign.user = current_user
 
     if @campaign.save
       redirect_to @campaign, notice: 'Campaign was successfully created.'
@@ -53,6 +55,6 @@ class CampaignsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def campaign_params
-      params[:campaign]
+      params.require(:campaign).permit(:name)
     end
 end

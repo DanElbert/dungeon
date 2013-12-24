@@ -1,24 +1,17 @@
-<h1>Listing campaigns</h1>
+<h2>Campaigns</h2>
 
 <table>
   <thead>
     <tr>
       <th>Name</th>
       <th>Owner</th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
-
   <tbody>
     <% @campaigns.each do |campaign| %>
       <tr>
-        <td><%= campaign.name %></td>
+        <td><%= link_to campaign.name, campaign %></td>
         <td><%= campaign.user ? campaign.user.name : '<NONE>' %></td>
-        <td><%= link_to 'Show', campaign %></td>
-        <td><%= link_to 'Edit', edit_campaign_path(campaign) %></td>
-        <td><%= link_to 'Destroy', campaign, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -26,4 +19,4 @@
 
 <br>
 
-<%= link_to 'New Campaign', new_campaign_path %>
+<%= link_to 'New Campaign', new_campaign_path, class: 'button' %>

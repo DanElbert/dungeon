@@ -14,9 +14,9 @@
     <% games.each do |g| %>
     <tr>
       <td><%= link_to g.name, game_path(g) %></td>
-      <td><%= g.created_at.localtime.strftime("%b %d, %Y %I:%M %P") %></td>
+      <td><%= g.created_at.localtime.strftime("%m/%d/%y %H:%M") %></td>
       <td><%= link_to 'Initiative', initiative_game_path(g) %></td>
-      <td><%= link_to 'Edit', edit_game_path(g) %></td>
+      <td><%= link_to_if if_owner(g), 'Edit', edit_game_path(g) %></td>
     </tr>
     <% end %>
   </table>
