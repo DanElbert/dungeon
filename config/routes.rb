@@ -1,5 +1,9 @@
 Dungeon::Application.routes.draw do
 
+  resources :campaigns do
+    resources :games, :only => [:new, :create]
+  end
+
   match '/admin' => 'admin/users#index', :via => :get
 
   namespace "admin" do
@@ -7,7 +11,7 @@ Dungeon::Application.routes.draw do
     resources :games, :except => [:new, :create]
   end
 
-  resources :games, :only => [:new, :create, :show, :edit, :update] do
+  resources :games, :only => [:show, :edit, :update] do
     member do
       get 'get_game_data'
       get 'initiative'
@@ -15,7 +19,7 @@ Dungeon::Application.routes.draw do
     end
   end
 
-  match '/lobby' => 'lobby#index', :via => :get, :as => :lobby
+  match '/lobby' => 'campaigns#index', :via => :get, :as => :lobby
 
   match '/login' => 'users#login', :via => :get, :as => :login
   match '/login' => 'users#verify_login', :via => :post
@@ -25,5 +29,5 @@ Dungeon::Application.routes.draw do
   match 'user/edit' => 'users#edit', :via => :get, :as => :edit_user
   match 'user/edit' => 'users#update', :via => :post
 
-  root :to => 'lobby#index'
+  root :to => 'campaigns#index'
 end

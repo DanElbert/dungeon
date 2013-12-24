@@ -1,12 +1,12 @@
 class Game < ActiveRecord::Base
 
-  STATUS = {:open => 'open', :active => 'active', :old => 'old'}
+  STATUS = {:active => 'active', :hidden => 'hidden', :archived => 'archived'}
 
   has_one :board, :dependent => :destroy
   has_many :board_detection_sessions, :dependent => :destroy
   has_many :initiatives, -> { order(:sort_order) }, :dependent => :destroy
   has_many :initiative_histories, dependent: :destroy
-  belongs_to :user
+  belongs_to :campaign
 
   accepts_nested_attributes_for :board, update_only: true
 
@@ -35,7 +35,11 @@ class Game < ActiveRecord::Base
   end
 
   def is_owner(current_user_id)
-    current_user_id == self.user_id
+    current_user_id == self.campaign.user_id
+  end
+
+  def user_id
+    self.campaign.user_id if self.campaign
   end
 
   def as_json(options = {})

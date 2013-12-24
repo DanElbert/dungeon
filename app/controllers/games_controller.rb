@@ -1,10 +1,10 @@
 class GamesController < ApplicationController
 
-  before_filter :ensure_valid_user
+  before_action :ensure_valid_user
+  before_action :set_game, only: [:show, :edit, :update]
+  before_action :set_campaign, only: [:new, :create]
 
   def show
-    @game = Game.find(params[:id])
-
     render :layout => "game_board"
   end
 
@@ -18,12 +18,13 @@ class GamesController < ApplicationController
 
   def new
     @game = Game.new
+    @game.campaign = @campaign
     @game.board = Board.new
   end
 
   def create
     @game = Game.new(game_params)
-    @game.user = current_user
+    @game.campaign = @campaign
 
     if @game.save
       redirect_to @game, notice: 'Game was successfully created.'
@@ -33,19 +34,19 @@ class GamesController < ApplicationController
   end
 
   def edit
-    @game = Game.find(params[:id])
+    ensure_owner(@game)
   end
 
   def update
-    @game = Game.find(params[:id])
-
-    respond_to do |format|
-      if @game.update_attributes(game_params)
-        format.html { redirect_to lobby_path, notice: 'Game was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @game.errors, status: :unprocessable_entity }
+    ensure_owner(@game) do
+      respond_to do |format|
+        if @game.update_attributes(game_params)
+          format.html { redirect_to campaign_path(@game.campaign), notice: 'Game was successfully updated.' }
+          format.json { head :no_content }
+        else
+          format.html { render action: "edit" }
+          format.json { render json: @game.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -71,6 +72,14 @@ class GamesController < ApplicationController
   end
 
   private
+
+  def set_game
+    @game = Game.find(params[:id])
+  end
+
+  def set_campaign
+    @campaign = Campaign.find(params[:campaign_id])
+  end
 
   def game_params
     params.require(:game).permit(:name, :status, {:board_attributes => [:background_image]})

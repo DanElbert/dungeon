@@ -2,5 +2,4 @@
 
 <%= render 'form' %>
 
-<%= link_to 'Show', @game %> |
-<%= link_to 'Back', lobby_path %>
+<%= link_to 'Cancel', campaign_path(@game.campaign), class: 'button' %>

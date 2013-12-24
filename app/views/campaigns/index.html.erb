@@ -1,0 +1,22 @@
+<h2>Campaigns</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Owner</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @campaigns.each do |campaign| %>
+      <tr>
+        <td><%= link_to campaign.name, campaign %></td>
+        <td><%= campaign.user ? campaign.user.name : '<NONE>' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Campaign', new_campaign_path, class: 'button' %>

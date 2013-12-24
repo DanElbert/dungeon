@@ -17,6 +17,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def ensure_owner(item)
+    unless current_user && item && (item.user_id == current_user.id || current_user.is_admin)
+      flash[:warning] = "Operation Not Permitted"
+      return redirect_to lobby_path
+    end
+    yield if block_given?
+  end
+
   def current_user
     @current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
