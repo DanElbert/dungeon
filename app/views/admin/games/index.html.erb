@@ -3,6 +3,7 @@
 <table>
   <tr>
     <th>Name</th>
+    <th>Campaign</th>
     <th>Status</th>
     <th></th>
     <th></th>
@@ -12,6 +13,7 @@
 <% @games.each do |game| %>
   <tr>
     <td><%= game.name %></td>
+    <td><%= game.campaign.name %></td>
     <td><%= game.status %></td>
     <td><%= link_to 'Show', [:admin, game] %></td>
     <td><%= link_to 'Edit', edit_admin_game_path(game) %></td>

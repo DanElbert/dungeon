@@ -4,10 +4,8 @@ module Admin
     layout 'admin'
     before_filter :ensure_admin_user
 
-    # GET /games
-    # GET /games.json
     def index
-      @games = Game.all
+      @games = Game.includes(:campaign).joins(:campaign).order('campaigns.name, games.name').all
 
       respond_to do |format|
         format.html # index.html.erb
@@ -15,8 +13,6 @@ module Admin
       end
     end
 
-    # GET /games/1
-    # GET /games/1.json
     def show
       @game = Game.find(params[:id])
 
@@ -26,13 +22,10 @@ module Admin
       end
     end
 
-    # GET /games/1/edit
     def edit
       @game = Game.find(params[:id])
     end
 
-    # PUT /games/1
-    # PUT /games/1.json
     def update
       @game = Game.find(params[:id])
 
@@ -47,8 +40,6 @@ module Admin
       end
     end
 
-    # DELETE /games/1
-    # DELETE /games/1.json
     def destroy
       @game = Game.find(params[:id])
       @game.destroy
