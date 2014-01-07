@@ -1,0 +1,13 @@
+<p>
+  <b>Name:</b>
+  <%= @campaign.name %>
+</p>
+
+<p>
+  <b>User:</b>
+  <%= @campaign.user_name %>
+</p>
+
+
+<%= link_to 'Edit', edit_admin_campaign_path(@campaign) %> |
+<%= link_to 'Back', admin_campaigns_path %>

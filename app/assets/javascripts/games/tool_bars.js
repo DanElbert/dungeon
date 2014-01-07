@@ -145,8 +145,8 @@ function InitializeToolBarsApi() {
   });
 
   $("#tool_line_width").toolMenu({
-    values: [1, 3, 5, 7, 10, 15],
-    initialValue: 3,
+    values: [3, 5, 7, 10, 15, 20],
+    initialValue: 5,
     contentCallback: function(value) {
       var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
       var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + value / 2 + "px"});

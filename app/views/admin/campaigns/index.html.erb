@@ -1,0 +1,23 @@
+<h2>Listing campaigns</h2>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>User</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @campaigns.each do |campaign| %>
+  <tr>
+    <td><%= campaign.name %></td>
+    <td><%= campaign.user_name %></td>
+    <td><%= link_to 'Show', [:admin, campaign] %></td>
+    <td><%= link_to 'Edit', edit_admin_campaign_path(campaign) %></td>
+    <td><%= link_to 'Destroy', [:admin, campaign], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+

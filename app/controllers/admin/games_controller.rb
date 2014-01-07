@@ -36,9 +36,6 @@ module Admin
     def update
       @game = Game.find(params[:id])
 
-      @game.board.background_image = params[:background_image]
-      @game.board.save!
-
       respond_to do |format|
         if @game.update_attributes(game_params)
           format.html { redirect_to [:admin, @game], notice: 'Game was successfully updated.' }
@@ -57,7 +54,7 @@ module Admin
       @game.destroy
 
       respond_to do |format|
-        format.html { redirect_to admin_games_url }
+        format.html { redirect_to admin_games_url, notice: 'Game Deleted' }
         format.json { head :no_content }
       end
     end
@@ -65,7 +62,7 @@ module Admin
     private
 
     def game_params
-      params.require(:game).permit(:name, :status)
+      params.require(:game).permit(:name, :status, :campaign_id, {:board_attributes => [:background_image]})
     end
   end
 end

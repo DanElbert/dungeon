@@ -1,0 +1,17 @@
+<%= form_for([:admin, @campaign]) do |f| %>
+  <%= render partial: 'shared/error_list', locals: {model: @campaign} %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :user %>
+    <%= f.select :user_id, User.all.map {|c| [ c.name, c.id ] }, { include_blank: "<None>" } %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -9,6 +9,7 @@ Dungeon::Application.routes.draw do
   namespace "admin" do
     resources :users
     resources :games, :except => [:new, :create]
+    resources :campaigns, :except => [:new, :create]
   end
 
   resources :games, :only => [:show, :edit, :update] do

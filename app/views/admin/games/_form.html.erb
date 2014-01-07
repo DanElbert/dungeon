@@ -12,11 +12,25 @@
   </div>
 
   <div class="field">
-    <%= label_tag 'background_image', 'Background' %>
-    <%= select_tag 'background_image', options_from_collection_for_select(get_board_backgrounds, :last, :first) %>
+    <%= f.label :campaign %>
+    <%= f.select :campaign_id, Campaign.all.map {|c| [ c.name, c.id ] } %>
   </div>
+
+  <%= f.fields_for :board do |board_form| %>
+    <div class="field">
+      <%= board_form.label :background_image %>
+      <%= board_form.select :background_image, get_background_image_options(board_form.object.background_image) %>
+    </div>
+  <% end %>
 
   <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var $select = $("#game_board_attributes_background_image");
+    $select.imagepicker();
+  });
+</script>
