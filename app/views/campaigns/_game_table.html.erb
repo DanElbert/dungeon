@@ -9,6 +9,7 @@
         <th>Created</th>
         <th></th>
         <th></th>
+        <th></th>
       </tr>
     </thead>
     <% games.each do |g| %>
@@ -17,6 +18,7 @@
       <td><%= g.created_at.localtime.strftime("%m/%d/%y %H:%M") %></td>
       <td><%= link_to 'Initiative', initiative_game_path(g) %></td>
       <td><%= link_to_if if_owner(g), 'Edit', edit_game_path(g) %></td>
+      <td><%= link_to_if if_owner(g), 'Destroy', game_path(g), { method: :delete, data: {confirm: 'Are you sure?'} } %></td>
     </tr>
     <% end %>
   </table>

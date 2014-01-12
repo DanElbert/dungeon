@@ -13,6 +13,9 @@ function InitializeToolBarsApi() {
     getFogLineWidth: function() {
       return $("#fog_tool_line_width").toolMenu("value");
     },
+    getEraserWidth: function() {
+      return $("#eraser_tool_width").toolMenu("value");
+    },
     getZoom: function() {
       return parseFloat($("#zoom_level").val());
     },
@@ -23,10 +26,17 @@ function InitializeToolBarsApi() {
     setStandardLineWidths: function() {
       $("#tool_line_width").show();
       $("#fog_tool_line_width").hide();
+      $("#eraser_tool_width").hide();
     },
     setFogLineWidths: function() {
       $("#tool_line_width").hide();
       $("#fog_tool_line_width").show();
+      $("#eraser_tool_width").hide();
+    },
+    setEraserWidths: function() {
+      $("#tool_line_width").hide();
+      $("#fog_tool_line_width").hide();
+      $("#eraser_tool_width").show();
     },
     showStartCaptureButton: function() {
       $("#enable_capture_button").show();
@@ -167,6 +177,22 @@ function InitializeToolBarsApi() {
       var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
       var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + (value / 25) / 2 + "px"});
       var line = $("<div></div>").css({clear: "both", height: (value / 25) + "px", position: "relative", backgroundColor: "black"});
+      wrapper.append(floater);
+      wrapper.append(line);
+      return wrapper;
+    },
+    selectedCallback: function(value) {
+      triggerToolChanged();
+    }
+  });
+
+  $("#eraser_tool_width").toolMenu({
+    values: [10, 30, 50, 75, 125],
+    initialValue: 30,
+    contentCallback: function(value) {
+      var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
+      var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + (value / 8) / 2 + "px"});
+      var line = $("<div></div>").css({clear: "both", height: (value / 8) + "px", position: "relative", backgroundColor: "black"});
       wrapper.append(floater);
       wrapper.append(line);
       return wrapper;

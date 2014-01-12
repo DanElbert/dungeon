@@ -1,7 +1,7 @@
 class GamesController < ApplicationController
 
   before_action :ensure_valid_user
-  before_action :set_game, only: [:show, :edit, :update]
+  before_action :set_game, only: [:show, :edit, :update, :destroy]
   before_action :set_campaign, only: [:new, :create]
 
   def show
@@ -48,6 +48,14 @@ class GamesController < ApplicationController
           format.json { render json: @game.errors, status: :unprocessable_entity }
         end
       end
+    end
+  end
+
+  def destroy
+    ensure_owner(@game) do
+      @game.status = Game::STATUS[:deleted]
+      @game.save!
+      redirect_to campaign_path(@game.campaign)
     end
   end
 

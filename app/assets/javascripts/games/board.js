@@ -302,6 +302,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     var tool = self.toolBars.getTool();
     var width = self.toolBars.getLineWidth();
     var fogWidth = self.toolBars.getFogLineWidth();
+    var eraseWidth = self.toolBars.getEraserWidth();
     var color = self.toolBars.getColor();
 
     self.toolBars.setStandardLineWidths();
@@ -323,7 +324,8 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
         self.setTool(new LinePen(self, width, color));
         break;
       case "Eraser":
-        self.setTool(new Eraser(self, 30));
+        self.setTool(new Eraser(self, eraseWidth));
+        self.toolBars.setEraserWidths();
         break;
       case "Measure":
         self.setTool(new Measure(self, color));

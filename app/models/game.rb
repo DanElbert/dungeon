@@ -1,6 +1,6 @@
 class Game < ActiveRecord::Base
 
-  STATUS = {:active => 'active', :hidden => 'hidden', :archived => 'archived'}
+  STATUS = {:active => 'active', :hidden => 'hidden', :archived => 'archived', :deleted => 'deleted'}
 
   has_one :board, :dependent => :destroy
   has_many :board_detection_sessions, :dependent => :destroy
