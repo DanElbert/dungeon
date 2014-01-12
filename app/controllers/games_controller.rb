@@ -55,6 +55,7 @@ class GamesController < ApplicationController
     ensure_owner(@game) do
       @game.status = Game::STATUS[:deleted]
       @game.save!
+      flash[:notice] = 'Game deleted'
       redirect_to campaign_path(@game.campaign)
     end
   end
