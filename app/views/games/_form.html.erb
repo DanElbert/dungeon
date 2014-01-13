@@ -26,6 +26,10 @@
 <script type="text/javascript">
   $(document).ready(function() {
     var $select = $("#game_board_attributes_background_image");
-    $select.imagepicker();
+    $select.imagepicker({
+      initialized: function() {
+        console.log(this);
+      }
+    });
   });
 </script>
