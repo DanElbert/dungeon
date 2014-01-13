@@ -27,7 +27,7 @@
 
 </div>
 
-<% if if_admin || if_owner(@campaign) %>
+<% if if_owner(@campaign) %>
   <%= link_to 'Edit', edit_campaign_path(@campaign), class: 'button' %>
   <%= link_to 'Create New Game', new_campaign_game_path(@campaign), class: 'button' %>
 <% end %>

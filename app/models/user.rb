@@ -18,7 +18,11 @@ class User < ActiveRecord::Base
   end
 
   def self.system_user
-    where(email: SYSTEM_USER_EMAIL).first
+    begin
+      where(email: SYSTEM_USER_EMAIL).first
+    rescue
+      nil
+    end
   end
 
   def set_auth_token

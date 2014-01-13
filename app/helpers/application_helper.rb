@@ -10,7 +10,7 @@ module ApplicationHelper
   end
 
   def if_owner(item, &block)
-    if current_user && item.respond_to?(:user_id) && (item.user_id == current_user.id || current_user.is_admin)
+    if current_user && item.respond_to?(:user_id) && (item.user_id == current_user.id)
       if block
         capture(&block)
       else

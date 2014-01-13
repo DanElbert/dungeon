@@ -18,6 +18,7 @@ class CampaignsController < ApplicationController
 
   # GET /campaigns/1/edit
   def edit
+    ensure_owner(@campaign)
   end
 
   # POST /campaigns
@@ -34,17 +35,21 @@ class CampaignsController < ApplicationController
 
   # PATCH/PUT /campaigns/1
   def update
-    if @campaign.update(campaign_params)
-      redirect_to @campaign, notice: 'Campaign was successfully updated.'
-    else
-      render action: 'edit'
+    ensure_owner(@campaign) do
+      if @campaign.update(campaign_params)
+        redirect_to @campaign, notice: 'Campaign was successfully updated.'
+      else
+        render action: 'edit'
+      end
     end
   end
 
   # DELETE /campaigns/1
   def destroy
-    @campaign.destroy
-    redirect_to campaigns_url, notice: 'Campaign was successfully destroyed.'
+    ensure_owner(@campaign) do
+      @campaign.destroy
+      redirect_to campaigns_url, notice: 'Campaign was successfully destroyed.'
+    end
   end
 
   private
