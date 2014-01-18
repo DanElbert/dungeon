@@ -35,7 +35,7 @@ require 'capistrano-deploytags'
 # clean up old releases on each deploy
 after "deploy:restart", "deploy:cleanup"
 
-after "deploy:restart", "compile"
+before "deploy:restart", "compile"
 
 task :compile do
   run("RAILS_ENV=#{stage} cd #{deploy_to}/current && bundle exec rake compile")
