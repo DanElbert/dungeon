@@ -1,6 +1,147 @@
 function InitializeToolBarsApi() {
 
+  var toolConfig = [
+    {name: "View", tools: [
+      {name: "Pointer"},
+      {name: "Ping"},
+      {name: "Camera"},
+      {name: "Begin Capture"},
+      {name: "End Capture"},
+      {name: "Clear Tokens"},
+      {name: "Zoom", type: "zoom"}
+    ]},
+
+    {name: "Draw", tools: [
+      {name: "Pen"},
+      {name: "Line"},
+      {name: "Square"},
+      {name: "Circle"},
+      {name: "Label"},
+      {name: "Eraser"}
+    ]},
+
+    {name: "Templates", tools: [
+      {name: "Measure"},
+      {name: "Radius"},
+      {name: "Cone"},
+      {name: "Line"}
+    ]},
+
+    {name: "Fog", tools: [
+      {name: "Add"},
+      {name: "Remove"}
+    ]}
+  ];
+
+  var $ribbon = $("#tool_ribbon");
+  var $tabStrip = $("<div></div>")
+      .addClass("tab_strip")
+      .appendTo($ribbon);
+
+  var $tabContents = $("<div></div>")
+      .addClass("tab_contents")
+      .appendTo($ribbon);
+
+  var $tabs = $("<ul></ul>")
+      .addClass("tabs")
+      .appendTo($tabStrip);
+
+  var toolMap = {};
+  var tabMap = {};
+
+  _.each(toolConfig, function(tab, index) {
+
+    var $content = $("<div></div>")
+        .hide()
+        .addClass("ribbon_panel")
+        .appendTo($tabContents);
+
+    var $li = $("<li></li>")
+        .data("tabName", tab.name)
+        .data("content", $content)
+        .html(tab.name)
+        .appendTo($tabs);
+
+    _.each(tab.tools, function(tool) {
+      if (tool.type) {
+
+      } else {
+        var $button = $("<div></div>")
+            .addClass("tool")
+            .html(tool.name)
+            .data("toolName", tool.name)
+            .appendTo($content);
+
+        toolMap[tool.name] = $button;
+      }
+    });
+
+    $content.append($("<br/>").css({clear: "both"}));
+  });
+
+  $tabStrip.append($("<br/>").css({clear: "both"}));
+
+  selectTab(toolConfig[0].name);
+
+  function selectTab(name) {
+    var $lis = $ribbon.find(".tabs li");
+    var $contents = $ribbon.find("div.ribbon_panel").hide();
+    $lis.removeClass("selected");
+    $lis.each(function() {
+      var $this = $(this);
+      if ($this.data("tabName") == name) {
+        $this.addClass("selected");
+        $this.data("content").show();
+      }
+    });
+  }
+
+  $ribbon.on("click", ".tabs li", function() {
+    selectTab($(this).data("tabName"));
+  });
+
   var api = {
+    getTool: function() {
+      return $("#tool_menu").toolMenu("value");
+    },
+    getZoom: function() {
+      return parseFloat($("#zoom_level").val());
+    },
+    setZoom: function(val) {
+      $("#zoom_level").val(val);
+      $("#zoom_slider").slider("value", val);
+    },
+    showStartCaptureButton: function() {
+      $("#enable_capture_button").show();
+    },
+    hideStartCaptureButton: function() {
+      $("#enable_capture_button").hide();
+    },
+    showEndCaptureButton: function() {
+      $("#end_capture_button").show();
+    },
+    hideEndCaptureButton: function() {
+      $("#end_capture_button").hide();
+    },
+    showCameraButton: function() {
+      $("#open_camera_button").show();
+    },
+    hideCameraButton: function() {
+      $("#open_camera_button").hide();
+    },
+    showClearTokensButton: function() {
+      $("#clear_tokens_button").show();
+    },
+    hideClearTokensButton: function() {
+      $("#clear_tokens_button").hide();
+    },
+    hideFogTools: function() {
+      $("#tool_menu").toolMenu("setValues", getTools(false));
+    }
+  };
+
+
+  var api_old = {
     getTool: function() {
       return $("#tool_menu").toolMenu("value");
     },
