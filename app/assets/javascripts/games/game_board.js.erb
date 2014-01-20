@@ -28,18 +28,20 @@ function startGameBoard() {
 
     var init_window = $("#initiative_window");
     var init_button = $("#open_initiative_button");
-
-    var height = $(window).height() * 0.85;
+    var max_init_height = 500;
 
     init_window.dialog({
       autoOpen: false,
+      dialogClass: "initiative_dialog",
       title: "Initiative",
-      width: 360,
+      width: 225,
       maxWidth: 360,
-      height: height,
       position: {my: "right top", at: "right-5 top+5", of: "body"},
       open: function() {
+        var $this = $(this);
         init_button.hide();
+        var position = $this.dialog( "option", "position" );
+        $this.dialog("option", "position", position);
       },
       close: function() {
         init_button.show();
@@ -85,8 +87,13 @@ function startGameBoard() {
 
     game_board = new Board($("#game_board")[0], toolBars, initiative, camera);
 
-    $(window).resize(function() {
-      setCanvasSize();
+    $(window).resize(function(e) {
+      if (e.target == window) {
+        setCanvasSize();
+
+        var position = init_window.dialog( "option", "position" );
+        init_window.dialog("option", "position", position);
+      }
     });
 
     setCanvasSize();

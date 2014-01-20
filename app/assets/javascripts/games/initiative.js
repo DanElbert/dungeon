@@ -60,13 +60,16 @@ function InitializeInitiativeApi(name_url) {
 
   list.on("focusout", "input.editValue", function() {
     var $input = $(this);
-    valChangedHandler($input);
+    if (parseInt($input.val()) != -999) {
+      valChangedHandler($input);
+    }
   });
 
   function valChangedHandler($input) {
     var $li = $input.parent();
     var $valueSpan = $li.children("span.value");
     $li.data('obj').value = parseInt($input.val());
+    $input.val(-999);
     $input.remove();
     $valueSpan.show();
     list.sortable("enable");
@@ -98,9 +101,10 @@ function InitializeInitiativeApi(name_url) {
     triggerChange([]);
   });
 
-  $("#initiative_controls input[type='text']").keypress(function(e) {
+  $("#newInitForm input[type='text'], #newInitForm input[type='number']").keypress(function(e) {
     if (e.keyCode == 13) {
       $("#initiative_add_button").click();
+      nameInput.focus();
       return false;
     }
   });

@@ -122,6 +122,17 @@
   line-height: 30px;
 }
 
+.initiative_dialog {
+  button, input[type=button] {
+    font-size: 80%;
+  }
+}
+
+#initiative_window {
+  font-size: 80%;
+  background-color: #F9F9FF;
+}
+
 #open_initiative_button {
   position: absolute;
   top: 10px;
@@ -129,7 +140,7 @@
 }
 
 #initiative_controls {
-  width: 300px;
+  width: 16em;
   float: left;
 
   table {
@@ -137,7 +148,6 @@
 
     th{
       padding: 3px;
-      font-size: 80%;
     }
   }
 }
@@ -150,9 +160,8 @@
   list-style-type: none;
   position: relative;
   height: 25px;
-  padding: 8px 7px;
+  padding: 2px 0px 0px 7px;
   margin: 3px;
-  font-size: 20px;
 }
 
 .initiativeItem.removing span {
@@ -189,7 +198,7 @@
 }
 
 #newInitForm td {
-  padding: 4px;
+  padding: 2px;
 }
 
 #newInitForm #name_col {
@@ -197,15 +206,14 @@
 }
 
 #newInitForm #val_col {
-  width: 30%;
+  width: 25%;
 }
 
 #newInitForm #button_col {
-  width: 20%;
+  width: 25%;
 }
 
 #initiative_display_toggle {
-  font-size: 80%;
 }
 
 #initiative_controls.view_mode {
@@ -220,7 +228,6 @@
   .initiativeItem {
     height: 15px;
     padding: 5px;
-    font-size: 80%;
 
     span {
       padding: 0;

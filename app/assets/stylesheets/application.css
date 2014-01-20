@@ -22,3 +22,29 @@
 .ui-autocomplete {
     z-index: 999;
 }
+
+.ui-resizable-handle {
+    background-color:#555;
+    opacity: 0.5;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: .1em 1em;
+}
+
+input[type="number"] {
+    border: 1px solid #ccc;
+    padding: 6px 4px;
+    outline: none;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    font: 13px "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #777;
+    margin: 0;
+    width: 210px;
+    max-width: 100%;
+    display: block;
+    margin-bottom: 20px;
+    background: #fff;
+}
