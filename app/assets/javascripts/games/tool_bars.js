@@ -46,6 +46,9 @@ function InitializeToolBarsApi() {
       .addClass("tabs")
       .appendTo($tabStrip);
 
+  var $currentTool = $("#current_tool");
+  var $toolOptions = $("#tool_options");
+
   var toolMap = {};
   var tabMap = {};
 
@@ -82,6 +85,7 @@ function InitializeToolBarsApi() {
   $tabStrip.append($("<br/>").css({clear: "both"}));
 
   selectTab(toolConfig[0].name);
+  selectTool(toolConfig[0].tools[0].name, []);
 
   function selectTab(name) {
     var $lis = $ribbon.find(".tabs li");
@@ -94,6 +98,10 @@ function InitializeToolBarsApi() {
         $this.data("content").show();
       }
     });
+  }
+
+  function selectTool(name, options) {
+    $currentTool.html(name);
   }
 
   $ribbon.on("click", ".tabs li", function() {
@@ -139,6 +147,13 @@ function InitializeToolBarsApi() {
       $("#tool_menu").toolMenu("setValues", getTools(false));
     }
   };
+
+  function ToolOptions() {
+    this.lineSize = null;
+    this.foreColor = null;
+    this.backColor = null;
+    
+  }
 
 
   var api_old = {

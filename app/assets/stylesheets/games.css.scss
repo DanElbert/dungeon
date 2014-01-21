@@ -76,8 +76,8 @@
 }
 
 %toolButtonStyle {
-  padding: 5px;
-  margin: 8px;
+  padding: 2px;
+  margin: 4px;
 
   background-color: #ededed;
   color: #555555;
@@ -87,6 +87,7 @@
   text-shadow: 1px 1px 0px #ffffff;
   text-align: center;
   vertical-align: middle;
+  line-height: 1.2em;
 
   box-shadow: inset 0px 1px 0px 0px #ffffff;
   border-radius: 6px;
@@ -121,7 +122,6 @@
   @extend %toolButtonStyle;
   width: 55px;
   height: 30px;
-  line-height: 30px;
 }
 
 .initiative_dialog {
