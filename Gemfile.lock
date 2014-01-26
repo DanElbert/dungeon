@@ -172,6 +172,7 @@ DEPENDENCIES
   faye
   jquery-rails
   jquery-ui-rails
+  json
   minitest-reporters
   mysql2
   rails (= 4.0.2)

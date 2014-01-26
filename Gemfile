@@ -9,6 +9,7 @@ gem 'sqlite3'
 gem 'mysql2'
 
 gem 'uuid'
+gem 'json'
 
 gem 'thin'
 gem 'faye', :require => false

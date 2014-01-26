@@ -20,7 +20,7 @@ test:
 
 production:
   adapter: mysql2
-  host: azathoth.thenever.
+  host: rlyeh.thenever.
   username: dungeon_user
   password: Ww3SBp9v2hcEs2wd
   database: dungeon
