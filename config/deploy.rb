@@ -22,9 +22,9 @@ set :stage, 'production'
 # Web Server Config
 set :deploy_to, "/var/www-apps/#{application}"
 
-role :web, "azathoth"                          # Your HTTP server, Apache/etc
-role :app, "azathoth"                          # This may be the same as your `Web` server
-role :db,  "azathoth", :primary => true # This is where Rails migrations will run
+role :web, "rlyeh"                          # Your HTTP server, Apache/etc
+role :app, "rlyeh"                          # This may be the same as your `Web` server
+role :db,  "rlyeh", :primary => true # This is where Rails migrations will run
 
 set :use_sudo, false
 
