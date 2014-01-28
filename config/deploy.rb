@@ -20,7 +20,7 @@ set :branch, "master"
 set :stage, 'production'
 
 # Web Server Config
-set :deploy_to, "/var/www-apps/#{application}"
+set :deploy_to, "/var/www/#{application}"
 
 role :web, "rlyeh"                          # Your HTTP server, Apache/etc
 role :app, "rlyeh"                          # This may be the same as your `Web` server
