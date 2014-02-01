@@ -95,7 +95,9 @@ _.extend(Drawing.prototype, {
     for (var x = 0; x < lines.length; x++) {
       var start = lines[x].start;
       var end = lines[x].end;
-      this.context.moveTo(start[0], start[1]);
+      if (x == 0 || !Geometry.areEqual(start, lines[x-1].end)) {
+        this.context.moveTo(start[0], start[1]);
+      }
       this.context.lineTo(end[0], end[1]);
     }
 
