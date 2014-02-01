@@ -33,6 +33,16 @@ function InitializeToolBarsApi() {
     ]}
   ];
 
+  var specialTools = {
+    zoom: function() {
+      var $wrapper = $('<div></div>');
+      $('<div style="float: left;"><label id="zoom_level_label" for="zoom_level">Zoom:</label><input type="text" id="zoom_level" /></div>').appendTo($wrapper);
+      $('<div style="float: left; margin-left: 20px;"><div id="zoom_slider"></div></div>').appendTo($wrapper);
+      $('<br style="clear: both;" />').appendTo($wrapper);
+      return $wrapper;
+    }
+  };
+
   var $ribbon = $("#tool_ribbon");
   var $tabStrip = $("<div></div>")
       .addClass("tab_strip")
@@ -51,6 +61,7 @@ function InitializeToolBarsApi() {
 
   var toolMap = {};
   var tabMap = {};
+  var currentTool = null;
 
   _.each(toolConfig, function(tab, index) {
 
@@ -65,14 +76,19 @@ function InitializeToolBarsApi() {
         .html(tab.name)
         .appendTo($tabs);
 
+    tabMap[tab.name] = $li;
+
     _.each(tab.tools, function(tool) {
       if (tool.type) {
-
+        var widget = specialTools[tool.type]();
+        toolMap[tool.name] = widget;
+        widget.appendTo($content);
       } else {
         var $button = $("<div></div>")
             .addClass("tool")
             .html(tool.name)
             .data("toolName", tool.name)
+            .click(function() { selectTool(tool.name); })
             .appendTo($content);
 
         toolMap[tool.name] = $button;
@@ -102,6 +118,7 @@ function InitializeToolBarsApi() {
 
   function selectTool(name, options) {
     $currentTool.html(name);
+    currentTool = name;
   }
 
   $ribbon.on("click", ".tabs li", function() {
@@ -110,7 +127,7 @@ function InitializeToolBarsApi() {
 
   var api = {
     getTool: function() {
-      return $("#tool_menu").toolMenu("value");
+      return currentTool;
     },
     getZoom: function() {
       return parseFloat($("#zoom_level").val());
@@ -120,31 +137,31 @@ function InitializeToolBarsApi() {
       $("#zoom_slider").slider("value", val);
     },
     showStartCaptureButton: function() {
-      $("#enable_capture_button").show();
+      toolMap["Begin Capture"].show();
     },
     hideStartCaptureButton: function() {
-      $("#enable_capture_button").hide();
+      toolMap["Begin Capture"].hide();
     },
     showEndCaptureButton: function() {
-      $("#end_capture_button").show();
+      toolMap["End Capture"].show();
     },
     hideEndCaptureButton: function() {
-      $("#end_capture_button").hide();
+      toolMap["End Capture"].hide();
     },
     showCameraButton: function() {
-      $("#open_camera_button").show();
+      toolMap["Camera"].show();
     },
     hideCameraButton: function() {
-      $("#open_camera_button").hide();
+      toolMap["Camera"].hide();
     },
     showClearTokensButton: function() {
-      $("#clear_tokens_button").show();
+      toolMap["Clear Tokens"].show();
     },
     hideClearTokensButton: function() {
-      $("#clear_tokens_button").hide();
+      toolMap["Clear Tokens"].hide();
     },
     hideFogTools: function() {
-      $("#tool_menu").toolMenu("setValues", getTools(false));
+      tabMap["Fog"].hide();
     }
   };
 
