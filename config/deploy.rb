@@ -2,7 +2,7 @@ default_run_options[:pty] = true
 set :application, "dungeon"
 
 # RVM Config
-set :rvm_ruby_string, '2.0.0'
+set :rvm_ruby_string, '2.1.0'
 set :rvm_type, :system
 
 # Source code
@@ -20,11 +20,11 @@ set :branch, "master"
 set :stage, 'production'
 
 # Web Server Config
-set :deploy_to, "/var/www-apps/#{application}"
+set :deploy_to, "/var/www/#{application}"
 
-role :web, "azathoth"                          # Your HTTP server, Apache/etc
-role :app, "azathoth"                          # This may be the same as your `Web` server
-role :db,  "azathoth", :primary => true # This is where Rails migrations will run
+role :web, "rlyeh"                          # Your HTTP server, Apache/etc
+role :app, "rlyeh"                          # This may be the same as your `Web` server
+role :db,  "rlyeh", :primary => true # This is where Rails migrations will run
 
 set :use_sudo, false
 

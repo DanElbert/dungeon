@@ -1,4 +1,6 @@
 require File.expand_path('../boot', __FILE__)
+require 'oj'
+Oj.mimic_JSON
 require 'rails/all'
 
 require File.expand_path('../../lib/game_server_middleware', __FILE__)

@@ -6,6 +6,9 @@ _.extend(Tool.prototype, {
   enable: function() {},
   disable: function() {},
   draw: function() {},
+  roundPoint: function(p) {
+    return [p[0]>>0, p[1]>>0];
+  },
   setCursor: function(s) {
     $(this.board.canvas).css('cursor', s);
   },
@@ -272,11 +275,11 @@ ShapePen.prototype = _.extend(new Tool(), {
     });
 
     $(board.event_manager).on('dragstart.' + this.eventNamespace(), function(evt, mapEvt) {
-      self.drag_start = self.getPoint(mapEvt.mapPoint);
+      self.drag_start = self.roundPoint(self.getPoint(mapEvt.mapPoint));
     });
 
     $(board.event_manager).on('drag.' + this.eventNamespace(), function(evt, mapEvt) {
-      self.drag_current = self.getPoint(mapEvt.mapPoint);
+      self.drag_current = self.roundPoint(self.getPoint(mapEvt.mapPoint));
     });
 
     $(board.event_manager).on('dragstop.' + this.eventNamespace(), function(evt, mapEvt) {
@@ -343,8 +346,8 @@ SquarePen.prototype = _.extend(new ShapePen(), {
 
   saveAction: function() {
     if (this.drag_start && this.drag_current) {
-      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
-      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
+      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]) >> 0, Math.min(this.drag_start[1], this.drag_current[1]) >> 0];
+      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]) >> 0, Math.max(this.drag_start[1], this.drag_current[1]) >> 0];
 
       var action = {actionType: "squarePenAction", color: this.color, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
@@ -377,8 +380,8 @@ CirclePen.prototype = _.extend(new ShapePen(), {
 
   saveAction: function() {
     if (this.drag_start && this.drag_current) {
-      var center = this.drag_start;
-      var radius = Geometry.getDistance(this.drag_start, this.drag_current);
+      var center = this.drag_start>>0;
+      var radius = Geometry.getDistance(this.drag_start, this.drag_current)>>0;
 
       var action = {actionType: "circlePenAction", color: this.color, width: this.width, center: center, radius: radius, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
@@ -429,6 +432,7 @@ DrawTool.prototype = _.extend(new Tool(), {
   minimumLineDistance: function() { return 0; },
   saveAction: function() { },
   handleMouseMove: function(location) {
+    location = this.roundPoint(location);
     if (this.previous_point == null) {
       this.previous_point = location;
     }

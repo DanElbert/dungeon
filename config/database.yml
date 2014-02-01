@@ -9,6 +9,16 @@ development:
   pool: 5
   timeout: 5000
 
+
+dev_prod:
+  adapter: mysql2
+  host: rlyeh.thenever.
+  username: dungeon_user
+  password: Ww3SBp9v2hcEs2wd
+  database: dungeon
+  pool: 5
+  timeout: 5000
+
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
@@ -20,7 +30,7 @@ test:
 
 production:
   adapter: mysql2
-  host: azathoth.thenever.
+  host: rlyeh.thenever.
   username: dungeon_user
   password: Ww3SBp9v2hcEs2wd
   database: dungeon

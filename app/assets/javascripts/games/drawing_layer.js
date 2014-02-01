@@ -127,7 +127,6 @@ _.extend(Tile.prototype, {
 
   reDraw: function() {
     this.clear();
-    this.draw();
   },
 
   draw: function() {
@@ -135,6 +134,9 @@ _.extend(Tile.prototype, {
       return;
 
     this.ensureCanvas();
+
+    this.context.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+
     var d = this.drawing;
     var fd = this.fogDrawing;
 
@@ -161,9 +163,6 @@ _.extend(Tile.prototype, {
   },
 
   clear: function() {
-    if (this.canvas != null) {
-      this.context.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
-    }
     this.isDrawn = false;
   },
 
