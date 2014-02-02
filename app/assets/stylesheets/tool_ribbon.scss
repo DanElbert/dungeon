@@ -1,21 +1,32 @@
 
 div#tool_ribbon {
   border: 1px solid black;
-
   height: 70px;
+  margin-left: 90px;
+  position: absolute;
 
   .tool {
+    float: left;
+  }
+
+  .ribbon_panel {
+    float: left;
+  }
+
+  .tab_contents {
     float: left;
   }
 
   ul.tabs {
 
     margin: 0;
+    float: left;
 
     li {
       float: left;
-      border: 1px solid black;
-      margin: 0 4px;
+      border-right: 1px solid black;
+      border-bottom: 1px solid black;
+      margin: 0;
       padding: 2px 4px;
     }
 

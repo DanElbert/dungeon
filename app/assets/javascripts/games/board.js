@@ -105,6 +105,8 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     }
     this.current_tool = tool;
     this.current_tool.enable();
+    this.current_tool.optionsChanged();
+    this.toolBars.setOptions(tool.getOptions());
   };
 
   this.handleAddActionMessage = function(message) {
@@ -298,63 +300,31 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     }
   };
 
+  this.toolMap = {
+    "Pointer": new Pointer(this),
+    "Pen": new Pen(this),
+    "Square": new SquarePen(this),
+    "Circle": new CirclePen(this),
+    "Line Pen": new LinePen(this),
+    "Eraser": new Eraser(this),
+    "Measure": new Measure(this),
+    "Radius": new RadiusTemplate(this),
+    "Cone": new ConeTemplate(this),
+    "Line": new LineTemplate(this),
+    "Ping": new PingTool(this),
+    "Add Fog": new AddFogPen(this),
+    "Remove Fog": new RemoveFogPen(this),
+    "Label": new LabelTool(this)
+  };
+
   $(this.toolBars).on('toolchanged', function(e) {
-    var tool = self.toolBars.getTool();
-    var width = self.toolBars.getLineWidth();
-    var fogWidth = self.toolBars.getFogLineWidth();
-    var eraseWidth = self.toolBars.getEraserWidth();
-    var color = self.toolBars.getColor();
+    var toolName = self.toolBars.getTool();
+    var tool = self.toolMap[toolName];
 
-    self.toolBars.setStandardLineWidths();
-
-    switch (tool) {
-      case "Pointer":
-        self.setTool(new Pointer(self));
-        break;
-      case "Pen":
-        self.setTool(new Pen(self, width, color));
-        break;
-      case "Square":
-        self.setTool(new SquarePen(self, width, color));
-        break;
-      case "Circle":
-        self.setTool(new CirclePen(self, width, color));
-        break;
-      case "LinePen":
-        self.setTool(new LinePen(self, width, color));
-        break;
-      case "Eraser":
-        self.setTool(new Eraser(self, eraseWidth));
-        self.toolBars.setEraserWidths();
-        break;
-      case "Measure":
-        self.setTool(new Measure(self, color));
-        break;
-      case "Radius":
-        self.setTool(new RadiusTemplate(self, color));
-        break;
-      case "Cone":
-        self.setTool(new ConeTemplate(self, color));
-        break;
-      case "Line":
-        self.setTool(new LineTemplate(self, color));
-        break;
-      case "Ping":
-        self.setTool(new PingTool(self, color));
-        break;
-      case "Add Fog":
-        self.setTool(new AddFogPen(self, fogWidth));
-        self.toolBars.setFogLineWidths();
-        break;
-      case "Remove Fog":
-        self.setTool(new RemoveFogPen(self, fogWidth));
-        self.toolBars.setFogLineWidths();
-        break;
-      case "Label":
-        self.setTool(new LabelTool(self, color));
-        break;
-      default:
-        throw "No such tool";
+    if (tool) {
+      self.setTool(tool);
+    } else {
+      throw "No such tool";
     }
   });
 

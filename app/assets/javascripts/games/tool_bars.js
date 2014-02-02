@@ -4,16 +4,16 @@ function InitializeToolBarsApi() {
     {name: "View", tools: [
       {name: "Pointer"},
       {name: "Ping"},
-      {name: "Camera"},
-      {name: "Begin Capture"},
-      {name: "End Capture"},
-      {name: "Clear Tokens"},
+      {name: "Camera", type: "event", eventName: "openCamera"},
+      {name: "Begin Capture", type: "event", eventName: "startBoardCapture"},
+      {name: "End Capture", type: "event", eventName: "stopBoardCapture"},
+      {name: "Clear Tokens", type: "event", eventName: "clearTokens"},
       {name: "Zoom", type: "zoom"}
     ]},
 
     {name: "Draw", tools: [
       {name: "Pen"},
-      {name: "Line"},
+      {name: "Line Pen"},
       {name: "Square"},
       {name: "Circle"},
       {name: "Label"},
@@ -28,18 +28,96 @@ function InitializeToolBarsApi() {
     ]},
 
     {name: "Fog", tools: [
-      {name: "Add"},
-      {name: "Remove"}
+      {name: "Add Fog"},
+      {name: "Remove Fog"}
     ]}
   ];
 
   var specialTools = {
-    zoom: function() {
-      var $wrapper = $('<div></div>');
+    zoom: function(tool) {
+      // This is kind of hacky.  These IDs are referenced in other places; should probably try to generalize this somehow
+      var $wrapper = $('<div></div>').css({float: 'left'});
       $('<div style="float: left;"><label id="zoom_level_label" for="zoom_level">Zoom:</label><input type="text" id="zoom_level" /></div>').appendTo($wrapper);
       $('<div style="float: left; margin-left: 20px;"><div id="zoom_slider"></div></div>').appendTo($wrapper);
       $('<br style="clear: both;" />').appendTo($wrapper);
       return $wrapper;
+    },
+
+    event: function(tool) {
+      return $("<div></div>")
+          .addClass("tool")
+          .html(tool.name)
+          .click(function() { triggerEvent(tool.eventName, {}); });
+    }
+  };
+
+  var optionBuilders = {
+    color: function(option) {
+      var crayolaColors8 = [
+        {name: "Black", color: "#000000"},
+        {name: "Blue", color: "#1F75FE"},
+        {name: "Brown", color: "#B4674D"},
+        {name: "Green", color: "#1CAC78"},
+        {name: "Orange", color: "#FF7538"},
+        {name: "Red", color: "#EE204D"},
+        {name: "Purple", color: "#926EAE"},
+        {name: "Yellow", color: "#FCE883"}
+      ];
+
+      var $widget = $('<div></div>').addClass('toolMenu');
+      var vals = _.map(crayolaColors8, function(c) { return c.color; });
+
+      $widget.toolMenu({
+        values: vals,
+        initialValue: option.value || crayolaColors8[0].color,
+        contentCallback: function(value) {
+          return $("<div></div>").css("background-color", value).css('width', '100%').css('height', '100%');
+        },
+        selectedCallback: function(value) {
+          triggerOptionChanged(option.name, value);
+        }
+      });
+
+      return $widget;
+    },
+
+    size: function(option) {
+
+      var $widget = $('<div></div>').addClass('toolMenu');
+
+      var maxHeight = 20;
+      var minHeight = 3;
+
+      var maxSize = -1;
+      var minSize = 99999;
+      _.each(option.sizes, function(s) {
+        if (s > maxSize) maxSize = s;
+        if (s < minSize) minSize = s;
+      });
+
+      var heightMap = {};
+      _.each(option.sizes, function(s) {
+        var dist = (s - minSize) / (maxSize - minSize);
+        heightMap[s] = (minHeight + ((maxHeight - minHeight) * dist))>>0;
+      });
+
+      $widget.toolMenu({
+        values: option.sizes,
+        initialValue: option.value,
+        contentCallback: function(value) {
+          var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
+          var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + heightMap[value] / 2 + "px"});
+          var line = $("<div></div>").css({clear: "both", height: heightMap[value] + "px", position: "relative", backgroundColor: "black"});
+          wrapper.append(floater);
+          wrapper.append(line);
+          return wrapper;
+        },
+        selectedCallback: function(value) {
+          triggerOptionChanged(option.name, value);
+        }
+      });
+
+      return $widget;
     }
   };
 
@@ -56,12 +134,15 @@ function InitializeToolBarsApi() {
       .addClass("tabs")
       .appendTo($tabStrip);
 
+  $ribbon.append($('<div></div>').css({'clear': 'both'}));
+
   var $currentTool = $("#current_tool");
   var $toolOptions = $("#tool_options");
 
   var toolMap = {};
   var tabMap = {};
   var currentTool = null;
+  var currentOptions = null;
 
   _.each(toolConfig, function(tab, index) {
 
@@ -80,7 +161,7 @@ function InitializeToolBarsApi() {
 
     _.each(tab.tools, function(tool) {
       if (tool.type) {
-        var widget = specialTools[tool.type]();
+        var widget = specialTools[tool.type](tool);
         toolMap[tool.name] = widget;
         widget.appendTo($content);
       } else {
@@ -100,8 +181,12 @@ function InitializeToolBarsApi() {
 
   $tabStrip.append($("<br/>").css({clear: "both"}));
 
+  $ribbon.on("click", ".tabs li", function() {
+    selectTab($(this).data("tabName"));
+  });
+
   selectTab(toolConfig[0].name);
-  selectTool(toolConfig[0].tools[0].name, []);
+  selectTool(toolConfig[0].tools[0].name);
 
   function selectTab(name) {
     var $lis = $ribbon.find(".tabs li");
@@ -119,15 +204,29 @@ function InitializeToolBarsApi() {
   function selectTool(name, options) {
     $currentTool.html(name);
     currentTool = name;
+    triggerToolChanged();
   }
 
-  $ribbon.on("click", ".tabs li", function() {
-    selectTab($(this).data("tabName"));
-  });
+  function buildOptions(options) {
+    clearOptions();
+    currentOptions = options;
+    options.each(function(opt) {
+      var widget = optionBuilders[opt.type](opt);
+      $toolOptions.append(widget);
+    }, this);
+  }
+
+  function clearOptions() {
+    currentOptions = null;
+    $toolOptions.empty();
+  }
 
   var api = {
     getTool: function() {
       return currentTool;
+    },
+    setOptions: function(options) {
+      buildOptions(options);
     },
     getZoom: function() {
       return parseFloat($("#zoom_level").val());
@@ -170,6 +269,38 @@ function InitializeToolBarsApi() {
     this.foreColor = null;
     this.backColor = null;
     
+  }
+
+  function triggerToolChanged() {
+    var e = $.Event('toolchanged', {});
+    $(api).trigger(e);
+  }
+
+  function triggerUndo() {
+    var e = $.Event('undo', {});
+    $(api).trigger(e);
+  }
+
+  function triggerZoomChanged(val) {
+    var e = $.Event('zoomchanged', {
+      value: parseFloat(val)
+    });
+    $(api).trigger(e);
+  }
+
+  function triggerOptionChanged(name, value) {
+    if (currentOptions) {
+      var opt = currentOptions.get(name);
+      var oldValue = opt.value;
+      opt.value = value;
+      var e = $.Event('changed', {name: name, oldValue: oldValue});
+      $(currentOptions).trigger(e);
+    }
+  }
+
+  function triggerEvent(name, options) {
+    var e = $.Event(name, options || {});
+    $(api).trigger(e);
   }
 
 
@@ -247,43 +378,6 @@ function InitializeToolBarsApi() {
       tools = tools.concat(["Add Fog", "Remove Fog"]);
     }
     return tools;
-  }
-
-  function triggerToolChanged() {
-    var e = $.Event('toolchanged', {});
-    $(api).trigger(e);
-  }
-
-  function triggerUndo() {
-    var e = $.Event('undo', {});
-    $(api).trigger(e);
-  }
-
-  function triggerZoomChanged(val) {
-    var e = $.Event('zoomchanged', {
-      value: parseFloat(val)
-    });
-    $(api).trigger(e);
-  }
-
-  function triggerCaptureStart() {
-    var e = $.Event('startBoardCapture', {});
-    $(api).trigger(e);
-  }
-
-  function triggerEndCapture() {
-    var e = $.Event('stopBoardCapture', {});
-    $(api).trigger(e);
-  }
-
-  function triggerOpenCamera() {
-    var e = $.Event('openCamera', {});
-    $(api).trigger(e);
-  }
-
-  function triggerClearTokens() {
-    var e = $.Event("clearTokens", {});
-    $(api).trigger(e);
   }
 
   $("#tool_menu").toolMenu({

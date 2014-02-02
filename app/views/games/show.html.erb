@@ -15,41 +15,22 @@
   </div>
 
   <div id="game_header">
-    <h3 class="title"><%= link_to "Dungeon", campaign_path(@game.campaign) %></h3>
+    <div id="header_left">
+      <h3 class="title"><%= link_to "Dungeon", campaign_path(@game.campaign) %></h3>
+
+      <div id="current_tool" class="tool"></div>
+
+    </div>
 
     <div id="tool_ribbon"></div>
-
-    <!--<div style="float: left;">-->
-      <!--<label id="zoom_level_label" for="zoom_level">Zoom:</label>-->
-      <!--<input type="text" id="zoom_level" />-->
-    <!--</div>-->
-    <!--<div style="float: left; margin-left: 20px;">-->
-      <!--<div id="zoom_slider"></div>-->
-    <!--</div>-->
-    <!--<br style="clear: both;" />-->
 
   </div>
 
   <div id="game_gutter">
 
-    <div id="current_tool" class="tool"></div>
+    <div id="undo_button" class="tool">Undo</div>
 
     <div id="tool_options"></div>
-
-    <!--<div id="tool_menu" class="toolMenu"></div>-->
-    <!--<div id="tool_color" class="toolMenu"></div>-->
-    <!--<div id="tool_line_width" class="toolMenu"></div>-->
-    <!--<div id="fog_tool_line_width" class="toolMenu" style="display:none;"></div>-->
-    <!--<div id="eraser_tool_width" class="toolMenu" style="display: none;"></div>-->
-
-    <!--<div id="undo_button" class="tool">Undo</div>-->
-
-    <!--<div id="open_camera_button" class="tool">Camera</div>-->
-
-    <!--<div id="enable_capture_button" class="tool" style="display:none;">Begin Capture</div>-->
-    <!--<div id="end_capture_button" class="tool" style="display:none;">End Capture</div>-->
-
-    <!--<div id="clear_tokens_button" class="tool" style="display:none;">Clear Tokens</div>-->
 
   </div>
 

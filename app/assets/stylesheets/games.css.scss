@@ -21,9 +21,12 @@
   overflow: hidden;
 }
 
+#header_left {
+  float: left;
+}
+
 #game_header .title {
   display: block;
-  float: left;
   margin-right: 15px;
   font-size: 14px;
   line-height: 1em;
@@ -51,6 +54,7 @@
 #zoom_level {
   display: inline;
   width: 30px;
+  margin: 0;
 }
 
 #zoom_slider {

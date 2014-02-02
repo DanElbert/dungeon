@@ -1,10 +1,51 @@
 
+var SHARED_TOOL_OPTIONS= {
+  drawingColor: {type: "color", name: "color", value: "#000000"},
+  drawingBackgroundColor: {type: "color", name: "backgroundColor", includeClear: true, value: "rgba(0,0,0,0)"},
+  drawingWidth: {type: "size", name: "width", sizes: [3, 5, 7, 10, 15, 20], value: 7 },
+  fogWidth: {type: "size", name: "width", sizes: [25, 75, 100, 200, 500], value: 75 },
+  templateColor: {type: "color", name: "color", value: "#EE204D"}
+};
+
+function ToolOptions() {
+  this.sorted = [];
+  this.indexed = {};
+}
+
+_.extend(ToolOptions.prototype, {
+  add: function(option) {
+    if (!option.name)
+      throw "Options must have names";
+
+    this.indexed[option.name] = option;
+    this.sorted.push(option);
+  },
+
+  get: function(name) {
+    return this.indexed[name];
+  },
+
+  each: function(iterator, context) {
+    _.each(this.sorted, iterator, context);
+  }
+});
+
 function Tool(board) {
   this.board = board;
+  this.options = new ToolOptions();
+  this.buildOptions();
+  this.optionsChanged();
+  var self = this;
+  $(this.options).on('changed', function(e) {
+    self.optionsChanged();
+  });
 }
 _.extend(Tool.prototype, {
   enable: function() {},
   disable: function() {},
+  getOptions: function() { return this.options; },
+  optionsChanged: function() {},
+  buildOptions: function() {},
   draw: function() {},
   roundPoint: function(p) {
     return [p[0]>>0, p[1]>>0];
@@ -225,12 +266,12 @@ Pointer.prototype = _.extend(new Tool(), {
   }
 });
 
-function ShapePen(board, width, color) {
+function ShapePen(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
 
-  this.width = width;
-  this.color = color;
+  this.width = null;
+  this.color = null;
 
   this.shiftDown = false;
   this.ctrlDown = false;
@@ -241,6 +282,16 @@ function ShapePen(board, width, color) {
 }
 
 ShapePen.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.drawingColor);
+    this.options.add(SHARED_TOOL_OPTIONS.drawingWidth);
+  },
+
+  optionsChanged: function() {
+    this.width = this.options.get("width").value;
+    this.color = this.options.get("color").value;
+  },
+
   getPoint: function(mapPoint) {
     if (this.shiftDown) {
       return Geometry.getNearestCellIntersection(mapPoint, this.board.drawing.cellSize);
@@ -318,8 +369,8 @@ ShapePen.prototype = _.extend(new Tool(), {
 
 });
 
-function SquarePen(board, width, color) {
-  ShapePen.call(this, board, width, color);
+function SquarePen(board) {
+  ShapePen.call(this, board);
   this.super = ShapePen.prototype;
 }
 
@@ -356,8 +407,8 @@ SquarePen.prototype = _.extend(new ShapePen(), {
   }
 });
 
-function CirclePen(board, width, color) {
-  ShapePen.call(this, board, width, color);
+function CirclePen(board) {
+  ShapePen.call(this, board);
   this.super = ShapePen.prototype;
 }
 
@@ -380,7 +431,7 @@ CirclePen.prototype = _.extend(new ShapePen(), {
 
   saveAction: function() {
     if (this.drag_start && this.drag_current) {
-      var center = this.drag_start>>0;
+      var center = this.roundPoint(this.drag_start);
       var radius = Geometry.getDistance(this.drag_start, this.drag_current)>>0;
 
       var action = {actionType: "circlePenAction", color: this.color, width: this.width, center: center, radius: radius, uid: generateActionId()};
@@ -390,8 +441,8 @@ CirclePen.prototype = _.extend(new ShapePen(), {
   }
 });
 
-function LinePen(board, width, color) {
-  ShapePen.call(this, board, width, color);
+function LinePen(board) {
+  ShapePen.call(this, board);
   this.super = ShapePen.prototype;
 }
 
@@ -472,14 +523,23 @@ DrawTool.prototype = _.extend(new Tool(), {
   }
 });
 
-function Pen(board, width, color) {
+function Pen(board) {
   DrawTool.call(this, board);
   this.super = DrawTool.prototype;
-  this.width = width;
-  this.color = color;
+  this.width = null;
+  this.color = null;
 }
 
 Pen.prototype = _.extend(new DrawTool(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.drawingColor);
+    this.options.add(SHARED_TOOL_OPTIONS.drawingWidth);
+  },
+
+  optionsChanged: function() {
+    this.width = this.options.get("width").value;
+    this.color = this.options.get("color").value;
+  },
   minimumLineDistance: function() { return this.width / 2; },
   eventNamespace: function() { return "Pen"; },
   draw: function() {
@@ -494,13 +554,20 @@ Pen.prototype = _.extend(new DrawTool(), {
   }
 });
 
-function Eraser(board, width) {
+function Eraser(board) {
   DrawTool.call(this, board);
   this.super = DrawTool.prototype;
-  this.width = width;
+  this.width = null;
 }
 
 Eraser.prototype = _.extend(new DrawTool(), {
+  buildOptions: function() {
+    this.options.add({type: "size", name: "width", sizes: [10, 30, 50, 75, 125], value: 30 });
+  },
+
+  optionsChanged: function() {
+    this.width = this.options.get("width").value;
+  },
   minimumLineDistance: function() { return 0; },
   eventNamespace: function() { return "Eraser"; },
   enable: function() {
@@ -540,13 +607,20 @@ Eraser.prototype = _.extend(new DrawTool(), {
   }
 });
 
-function AddFogPen(board, width) {
+function AddFogPen(board) {
   DrawTool.call(this, board);
   this.super = DrawTool.prototype;
-  this.width = width;
+  this.width = null;
 }
 
 AddFogPen.prototype = _.extend(new DrawTool(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.fogWidth);
+  },
+
+  optionsChanged: function() {
+    this.width = this.options.get("width").value;
+  },
   minimumLineDistance: function() { return 0; },
   eventNamespace: function() { return "AddFog"; },
   enable: function() {
@@ -586,13 +660,20 @@ AddFogPen.prototype = _.extend(new DrawTool(), {
   }
 });
 
-function RemoveFogPen(board, width) {
+function RemoveFogPen(board) {
   DrawTool.call(this, board);
   this.super = DrawTool.prototype;
-  this.width = width;
+  this.width = null;
 }
 
 RemoveFogPen.prototype = _.extend(new DrawTool(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.fogWidth);
+  },
+
+  optionsChanged: function() {
+    this.width = this.options.get("width").value;
+  },
   minimumLineDistance: function() { return 0; },
   eventNamespace: function() { return "AddFog"; },
   enable: function() {
@@ -632,14 +713,21 @@ RemoveFogPen.prototype = _.extend(new DrawTool(), {
   }
 });
 
-function Measure(board, color) {
+function Measure(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
-  this.color = color;
+  this.color = null;
   this.startCell = null;
   this.currentCell = null;
 }
 Measure.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.templateColor);
+  },
+
+  optionsChanged: function() {
+    this.color = this.options.get("color").value;
+  },
   enable: function () {
     var board = this.board;
     var self = this;
@@ -685,15 +773,22 @@ Measure.prototype = _.extend(new Tool(), {
   }
 });
 
-function RadialTemplate(board, color) {
+function RadialTemplate(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
-  this.color = color;
+  this.color = null;
   this.dragging = false;
   this.center = null;
   this.radiusPoint = null;
 }
 RadialTemplate.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.templateColor);
+  },
+
+  optionsChanged: function() {
+    this.color = this.options.get("color").value;
+  },
   saveAction: function() {},
   toolName: function() { return "Radial"; },
   getCells: function(centerCell, endCell, distance) { return []; },
@@ -763,8 +858,8 @@ RadialTemplate.prototype = _.extend(new Tool(), {
   }
 });
 
-function RadiusTemplate(board, color) {
-  RadialTemplate.call(this, board, color);
+function RadiusTemplate(board) {
+  RadialTemplate.call(this, board);
   this.super = RadialTemplate.prototype;
 }
 RadiusTemplate.prototype = _.extend(new RadialTemplate(), {
@@ -787,8 +882,8 @@ RadiusTemplate.prototype = _.extend(new RadialTemplate(), {
   }
 });
 
-function ConeTemplate(board, color) {
-  RadialTemplate.call(this, board, color);
+function ConeTemplate(board) {
+  RadialTemplate.call(this, board);
   this.super = RadialTemplate.prototype;
 }
 ConeTemplate.prototype = _.extend(new RadialTemplate(), {
@@ -816,15 +911,22 @@ ConeTemplate.prototype = _.extend(new RadialTemplate(), {
   }
 });
 
-function LineTemplate(board, color) {
+function LineTemplate(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
-  this.color = color;
+  this.color = null;
   this.dragging = false;
   this.startPoint = null;
   this.currentPoint = null;
 }
 LineTemplate.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.templateColor);
+  },
+
+  optionsChanged: function() {
+    this.color = this.options.get("color").value;
+  },
   enable: function () {
     var board = this.board;
     var self = this;
@@ -902,12 +1004,19 @@ LineTemplate.prototype = _.extend(new Tool(), {
   }
 });
 
-function PingTool(board, color) {
+function PingTool(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
-  this.color = color;
+  this.color = null;
 }
 PingTool.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add({type: "color", name: "color", value: "#EE204D"});
+  },
+
+  optionsChanged: function() {
+    this.color = this.options.get("color").value;
+  },
   enable: function() {
     var self = this;
     var board = this.board;
@@ -923,10 +1032,10 @@ PingTool.prototype = _.extend(new Tool(), {
   draw: function() {}
 });
 
-function LabelTool(board, color) {
+function LabelTool(board) {
   Tool.call(this, board);
   this.super = Tool.prototype;
-  this.color = color;
+  this.color = null;
   this.cursor = null;
   this.shiftDown = false;
   this.ctrlDown = false;
@@ -935,6 +1044,13 @@ function LabelTool(board, color) {
   this.textBounds = null;
 }
 LabelTool.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add({type: "color", name: "color", value: "#000000"});
+  },
+
+  optionsChanged: function() {
+    this.color = this.options.get("color").value;
+  },
   enable: function() {
     var self = this;
     var board = this.board;

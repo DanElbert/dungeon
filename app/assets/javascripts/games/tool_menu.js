@@ -121,7 +121,7 @@
       data.itemList = itemList;
       data.menuButton = menuButton;
 
-      privateMethods.setValue($this, options.initialValue);
+      privateMethods.setValueNoCallback($this, options.initialValue);
 
     },
 
@@ -178,6 +178,13 @@
     },
 
     setValue: function(menu, value) {
+      privateMethods.setValueNoCallback(menu, value);
+
+      var data = menu.data(pluginName);
+      data.options.selectedCallback(value);
+    },
+
+    setValueNoCallback: function(menu, value) {
       var data = menu.data(pluginName);
       data.value = value;
 
@@ -190,7 +197,6 @@
 
       data.menuButton.empty();
       data.menuButton.append(data.options.contentCallback(value));
-      data.options.selectedCallback(value);
     }
   };
 

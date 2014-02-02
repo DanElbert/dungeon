@@ -136,6 +136,7 @@ _.extend(Tile.prototype, {
     this.ensureCanvas();
 
     this.context.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
 
     var d = this.drawing;
     var fd = this.fogDrawing;
