@@ -17,7 +17,7 @@
 
 #game_header {
   height: 75px;
-  padding: 10px;
+  padding: 7px 0 0 7px;
   overflow: hidden;
 }
 
@@ -39,6 +39,7 @@
 #game_gutter {
   float: left;
   width: 100px;
+  padding: 0 0 0 7px;
 
   -moz-user-select     : none;
   -khtml-user-select   : none;

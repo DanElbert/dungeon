@@ -5,9 +5,9 @@ function InitializeToolBarsApi() {
       {name: "Pointer"},
       {name: "Ping"},
       {name: "Camera", type: "event", eventName: "openCamera"},
-      {name: "Begin Capture", type: "event", eventName: "startBoardCapture"},
-      {name: "End Capture", type: "event", eventName: "stopBoardCapture"},
-      {name: "Clear Tokens", type: "event", eventName: "clearTokens"},
+      {name: "Begin Capture", type: "event", eventName: "startBoardCapture", hidden: true},
+      {name: "End Capture", type: "event", eventName: "stopBoardCapture", hidden: true},
+      {name: "Clear Tokens", type: "event", eventName: "clearTokens", hidden: true},
       {name: "Zoom", type: "zoom"}
     ]},
 
@@ -33,7 +33,15 @@ function InitializeToolBarsApi() {
     ]}
   ];
 
-  var specialTools = {
+  var toolBuilders = {
+    toolButton: function(tool) {
+      return $("<div></div>")
+          .addClass("tool")
+          .html(tool.name)
+          .data("toolName", tool.name)
+          .click(function() { selectTool(tool.name); });
+    },
+
     zoom: function(tool) {
       // This is kind of hacky.  These IDs are referenced in other places; should probably try to generalize this somehow
       var $wrapper = $('<div></div>').css({float: 'left'});
@@ -160,20 +168,16 @@ function InitializeToolBarsApi() {
     tabMap[tab.name] = $li;
 
     _.each(tab.tools, function(tool) {
-      if (tool.type) {
-        var widget = specialTools[tool.type](tool);
-        toolMap[tool.name] = widget;
-        widget.appendTo($content);
-      } else {
-        var $button = $("<div></div>")
-            .addClass("tool")
-            .html(tool.name)
-            .data("toolName", tool.name)
-            .click(function() { selectTool(tool.name); })
-            .appendTo($content);
 
-        toolMap[tool.name] = $button;
+      var toolType = tool.type || "toolButton";
+      var widget = toolBuilders[toolType](tool);
+      toolMap[tool.name] = widget;
+      widget.appendTo($content);
+
+      if (tool.hidden) {
+        widget.hide();
       }
+
     });
 
     $content.append($("<br/>").css({clear: "both"}));

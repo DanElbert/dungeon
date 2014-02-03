@@ -24,14 +24,19 @@ div#tool_ribbon {
 
     li {
       float: left;
-      border-right: 1px solid black;
-      border-bottom: 1px solid black;
-      margin: 0;
-      padding: 2px 4px;
+      margin: 0 2px 0 0;
+      padding: 4px 8px;
+      color: white;
+      font-weight: bold;
+      background-color: #888888;
+      cursor: pointer;
     }
 
     li.selected {
       border-bottom: none;
+      color: black;
+
+      background-color: transparent;
     }
   }
 }
