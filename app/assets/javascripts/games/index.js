@@ -10,5 +10,6 @@
 //= require ./token_layer
 //= require ./tools
 //= require ./tool_bars
+//= require ./view_port_labels
 //= require ./board_detection_manager
 //= require ./game_board
