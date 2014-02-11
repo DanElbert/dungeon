@@ -36,9 +36,12 @@
 }
 
 #current_tool {
-  width: 100%;
+  width: 86px;
   text-align: center;
   vertical-align: middle;
+  border: 2px solid #909090;
+  margin-left: 7px;
+  margin-top: 20px;
 }
 
 #game_gutter {
@@ -128,10 +131,14 @@
   border: 1px solid black;
 }
 
-.tool {
+div.tool {
   @extend %toolButtonStyle;
   width: 55px;
   height: 30px;
+}
+
+button.tool {
+  position: relative;
 }
 
 .initiative_dialog {
