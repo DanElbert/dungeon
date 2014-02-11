@@ -32,6 +32,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.drawingLayer = new DrawingLayer();
   this.pingLayer = new PingLayer();
   this.tokenLayer = new TokenLayer();
+  this.labelLayer = new ViewPortLabels(this);
 
   this.board_data = null;
   this.viewPortCoord = [0, 0];
@@ -269,6 +270,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
       this.renderDrawing();
       this.renderTokens();
       this.renderPings();
+      this.labelLayer.draw();
       this.renderCursor();
       this.renderTool();
     }

@@ -35,20 +35,23 @@ _.extend(Drawing.prototype, {
   },
 
   // Draws some text in a rounded box and returns the bounding box
-  drawLabel: function(midPoint, text, textColor, outlineColor, fillColor) {
+  drawLabel: function(midPoint, text, textColor, outlineColor, fillColor, fontSize) {
+
+    fontSize = fontSize || 25;
+
     this.context.save();
 
     this.context.fillStyle = fillColor || "white";
     this.context.strokeStyle = outlineColor || "black";
     this.context.lineWidth = 2;
     this.context.lineCap = 'round';
-    this.context.font = 'bold 25px sans-serif';
+    this.context.font = 'bold ' + fontSize + 'px sans-serif';
     this.context.textBaseline = 'middle';
     this.context.textAlign = 'center';
 
-    var fontSize = this.context.measureText(text);
-    var fontWidth = Math.max(fontSize.width, 20);
-    var fontHeight = 28;
+    var measuredFontSize = this.context.measureText(text);
+    var fontWidth = Math.max(measuredFontSize.width, (fontSize * 0.8));
+    var fontHeight = fontSize * 1.125;
 
     var xOffset = (fontWidth / 2) + (fontHeight / 2);
     var yOffset = fontHeight / 2;
@@ -67,7 +70,7 @@ _.extend(Drawing.prototype, {
     this.context.fill();
 
     this.context.fillStyle = textColor || "black";
-    this.context.fillText(text, midPoint[0], midPoint[1] + 2);
+    this.context.fillText(text, midPoint[0], midPoint[1]);
 
     this.context.restore();
 
