@@ -184,6 +184,7 @@ _.extend(actionMethods, {
     },
 
     calculateBounds: function() {
+      var margin = this.width / 2;
       var l, t, r, b;
       var points = _.reduce(this.lines, function(memo, line) { memo.push(line.start); memo.push(line.end); return memo; }, []);
       _.each(points, function(p) {
@@ -192,7 +193,7 @@ _.extend(actionMethods, {
         if (r == null || p[0] > r) r = p[0];
         if (b == null || p[1] > b) b = p[1];
       });
-      return [[l, t], [r, b]];
+      return [[l - margin, t - margin], [r + margin, b + margin]];
     },
 
     validateData: function() {

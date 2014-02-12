@@ -35,16 +35,15 @@ function InitializeToolBarsApi() {
 
   var toolBuilders = {
     toolButton: function(tool) {
-      return $("<div></div>")
+      return $("<button></button>")
           .addClass("tool")
           .html(tool.name)
-          .data("toolName", tool.name)
           .click(function() { selectTool(tool.name); });
     },
 
     zoom: function(tool) {
       // This is kind of hacky.  These IDs are referenced in other places; should probably try to generalize this somehow
-      var $wrapper = $('<div></div>').css({float: 'left'});
+      var $wrapper = $('<div></div>').addClass("zoomWrapper").css({float: 'left'});
       $('<div style="float: left;"><label id="zoom_level_label" for="zoom_level">Zoom:</label><input type="text" id="zoom_level" /></div>').appendTo($wrapper);
       $('<div style="float: left; margin-left: 20px;"><div id="zoom_slider"></div></div>').appendTo($wrapper);
       $('<br style="clear: both;" />').appendTo($wrapper);
@@ -52,7 +51,7 @@ function InitializeToolBarsApi() {
     },
 
     event: function(tool) {
-      return $("<div></div>")
+      return $("<button></button>")
           .addClass("tool")
           .html(tool.name)
           .click(function() { triggerEvent(tool.eventName, {}); });
@@ -205,7 +204,7 @@ function InitializeToolBarsApi() {
     });
   }
 
-  function selectTool(name, options) {
+  function selectTool(name) {
     $currentTool.html(name);
     currentTool = name;
     triggerToolChanged();
