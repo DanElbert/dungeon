@@ -45,12 +45,8 @@ _.extend(Drawing.prototype, {
     this.context.strokeStyle = outlineColor || "black";
     this.context.lineWidth = 2;
     this.context.lineCap = 'round';
-    this.context.font = 'bold ' + fontSize + 'px sans-serif';
-    this.context.textBaseline = 'middle';
-    this.context.textAlign = 'center';
 
-    var measuredFontSize = this.context.measureText(text);
-    var fontWidth = Math.max(measuredFontSize.width, (fontSize * 0.8));
+    var fontWidth = this.measureText(text, fontSize);
     var fontHeight = fontSize * 1.125;
 
     var xOffset = (fontWidth / 2) + (fontHeight / 2);
@@ -69,12 +65,44 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
     this.context.fill();
 
-    this.context.fillStyle = textColor || "black";
-    this.context.fillText(text, midPoint[0], midPoint[1]);
+    this.drawText(text, midPoint, fontSize, textColor || "black", null);
 
     this.context.restore();
 
     return bounds;
+  },
+
+  // Draws text at the given point.  Centered by default, align and vAlign are optional params
+  // that map to context.textAlign and context.textBaseLine respectively.
+  // fillColor and strokeColor are both optional.  A null value will prevent the given operation
+  // size is required, and is the font size in pixels (map coords)
+  drawText: function(text, point, size, fillColor, strokeColor, strokeWidth, align, vAlign) {
+    this.context.save();
+
+    if (fillColor) this.context.fillStyle = fillColor;
+    if (strokeColor) this.context.strokeStyle = strokeColor;
+
+    this.context.lineWidth = strokeWidth || 2;
+
+    this.context.font = 'bold ' + size + 'px sans-serif';
+    this.context.textAlign = align || "center";
+    this.context.textBaseline = vAlign || "middle";
+
+    if (fillColor) this.context.fillText(text, point[0], point[1]);
+    if (strokeColor) this.context.strokeText(text, point[0], point[1]);
+
+    this.context.restore();
+  },
+
+  measureText: function(text, size) {
+    this.context.save();
+
+    this.context.font = 'bold ' + size + 'px sans-serif';
+    var measuredFontSize = this.context.measureText(text);
+
+    this.context.restore();
+
+    return measuredFontSize.width;
   },
 
   drawTemplate: function(cells, border, color) {
