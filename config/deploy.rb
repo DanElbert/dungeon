@@ -14,7 +14,7 @@ set :scm, :git
 # Host github-dungeon
 #   HostName github.com
 set :repository, "git@github-dungeon:DanElbert/dungeon.git"
-set :branch, "ribbon"
+set :branch, "master"
 
 # Set the stage (required for deploytags; remove if multi-stage is added)
 set :stage, 'production'
