@@ -2,6 +2,7 @@
 function ViewPortLabels(board) {
   this.board = board;
   this.drawing = board.drawing;
+  this.context = board.context;
 
 }
 _.extend(ViewPortLabels.prototype, {
@@ -38,8 +39,17 @@ _.extend(ViewPortLabels.prototype, {
 
     var cursor = this.board.hovered_cell;
 
-    this.board.context.save();
-    this.board.context.setTransform(1, 0, 0, 1, 0, 0);
+    this.context.save();
+    this.context.setTransform(1, 0, 0, 1, 0, 0);
+
+    this.context.beginPath();
+    this.context.fillStyle = "rgba(100, 100, 100, 0.5)";
+    this.context.rect(0, 0, pixelWidth, 30);
+    this.context.fill();
+
+    this.context.beginPath();
+    this.context.rect(0, 30, 30, pixelHeight);
+    this.context.fill();
 
     var labeled = horizontalPixelOrigin;
     var cur = firstHorizontalTile;
