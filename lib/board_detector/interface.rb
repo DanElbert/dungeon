@@ -3,8 +3,6 @@ module BoardDetector
 
     include EventMachine::Deferrable
 
-    attr_accessor :debug
-
     def initialize(session)
       # Check that the binary exists
       raise 'Missing board_detector binaries' unless File.exist?(find_board_file)
@@ -19,17 +17,17 @@ module BoardDetector
     def async
       operation_cmd = get_command(@session, @image_filename)
 
-      Rails.logger.debug("Calling: \n#{operation_cmd}")
+      Rails.logger.info("Calling: \n#{operation_cmd}")
 
       operation_result = BoardDetector::DeferrableChildProcess.open(operation_cmd)
 
       operation_result.callback do |output, status|
-        Rails.logger.debug "Output from find_board:\n#{output}"
+        Rails.logger.info "Output from find_board:\n#{output}"
         cleanup
         self.succeed(parse_output(output))
       end
 
-      operation_result.errback do |status|
+      operation_result.errback do |output, status|
         Rails.logger.error "Call to find_board failed: #{output}"
         cleanup
         self.succeed(parse_output(nil))
@@ -38,9 +36,9 @@ module BoardDetector
 
     def sync
       cmd = get_command(@session, @image_filename)
-      Rails.logger.debug("Calling: \n#{cmd}")
+      Rails.logger.info("Calling: \n#{cmd}")
       output = `#{cmd}`
-      Rails.logger.debug "Output from find_board:\n#{output}"
+      Rails.logger.info "Output from find_board:\n#{output}"
       unless $? == 0
         Rails.logger.error "Call to find_board failed"
         output = nil

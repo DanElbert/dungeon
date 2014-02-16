@@ -18,7 +18,7 @@ module BoardDetector
     def unbind
       status = get_status
       if status.exitstatus != 0
-        fail(status)
+        fail(@data.join, status)
       else
         succeed(@data.join, status)
       end
