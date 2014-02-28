@@ -35,10 +35,11 @@ function InitializeToolBarsApi() {
 
   var toolBuilders = {
     toolButton: function(tool) {
-      return $("<button></button>")
+      return $("<a></a>")
           .addClass("tool")
+          .addClass("button")
           .html(tool.name)
-          .click(function() { selectTool(tool.name); });
+          .click(function() { selectTool(tool.name); return false; });
     },
 
     zoom: function(tool) {
@@ -51,10 +52,11 @@ function InitializeToolBarsApi() {
     },
 
     event: function(tool) {
-      return $("<button></button>")
+      return $("<a></a>")
           .addClass("tool")
+          .addClass("button")
           .html(tool.name)
-          .click(function() { triggerEvent(tool.eventName, {}); });
+          .click(function() { triggerEvent(tool.eventName, {}); return false; });
     }
   };
 
@@ -207,6 +209,15 @@ function InitializeToolBarsApi() {
   function selectTool(name) {
     $currentTool.html(name);
     currentTool = name;
+
+    _.each(toolMap, function(widget, toolName) {
+      if (toolName == name) {
+        widget.addClass("pressed");
+      } else {
+        widget.removeClass("pressed");
+      }
+    });
+
     triggerToolChanged();
   }
 

@@ -8,6 +8,9 @@ div#tool_ribbon {
 
   .tool {
     float: left;
+    margin: 3px 3px;
+    font-size: .85em;
+
   }
 
   .ribbon_panel {
@@ -26,7 +29,7 @@ div#tool_ribbon {
     li {
       float: left;
       margin: 0 2px 0 0;
-      padding: 4px 8px;
+      padding: 4px 20px;
       color: white;
       font-weight: bold;
       background-color: #888888;
@@ -44,4 +47,16 @@ div#tool_ribbon {
 
 div.zoomWrapper {
   padding: 4px 7px 1px 7px;
+}
+
+// Taken from Skeleton base styling for :active buttons
+.button.pressed {
+  border: 1px solid #666;
+  background: #ccc; /* Old browsers */
+  background: #ccc -moz-linear-gradient(top, rgba(255,255,255,.35) 0%, rgba(10,10,10,.4) 100%); /* FF3.6+ */
+  background: #ccc -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,.35)), color-stop(100%,rgba(10,10,10,.4))); /* Chrome,Safari4+ */
+  background: #ccc -webkit-linear-gradient(top, rgba(255,255,255,.35) 0%,rgba(10,10,10,.4) 100%); /* Chrome10+,Safari5.1+ */
+  background: #ccc -o-linear-gradient(top, rgba(255,255,255,.35) 0%,rgba(10,10,10,.4) 100%); /* Opera11.10+ */
+  background: #ccc -ms-linear-gradient(top, rgba(255,255,255,.35) 0%,rgba(10,10,10,.4) 100%); /* IE10+ */
+  background: #ccc linear-gradient(top, rgba(255,255,255,.35) 0%,rgba(10,10,10,.4) 100%); /* W3C */
 }
