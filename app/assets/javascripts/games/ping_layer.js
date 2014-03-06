@@ -2,7 +2,7 @@ function PingLayer() {
   // In seconds
   this.defaultDuration = 7;
   // radius
-  this.defaultSize = 35;
+  this.defaultSize = 50;
   this.defaultPulseCount = 5;
 
   this.pings = [];
@@ -39,9 +39,8 @@ _.extend(Ping.prototype, {
   draw: function(drawing) {
     var animationPoint = this.calculateEasing();
 
-    var inverse = 1 - animationPoint;
-
-    //drawing.drawCircle(this.point[0], this.point[1], this.maxSize * inverse, 3, this.color);
+    //drawing.drawCircle(this.point[0], this.point[1], this.maxSize * (1 - animationPoint), 3, this.color);
+    drawing.drawCircle(this.point[0], this.point[1], (this.maxSize *0.25) * animationPoint, 3, this.color);
     drawing.drawCircle(this.point[0], this.point[1], this.maxSize * animationPoint, 3, this.color);
   },
 
@@ -59,13 +58,14 @@ _.extend(Ping.prototype, {
   // Returns a value between 0 and 1 that represents the current position in the easing,
   // given a p between 0 and 1 representing the percent of duration expired
   easingFunction: function(p) {
-    if (p >= 1) return 1;
-    if (p <= 0) return 0;
+    // The function
+    //   f(x) = 0.5 - 0.5cos(x)
+    // is a wave with max(y)=1, min(y)=0 and f(0)=0
+    // It completes an oscillation in 2pi
 
-    var pulseRange = 1.0 / (this.pulseCount * 2);
-    var isDown = Math.floor(p / pulseRange) % 2;
-    var pos = (p % pulseRange) / pulseRange;
-    if (isDown == 1) pos = 1 - pos;
-    return pos;
+    var maxX = this.pulseCount * (2 * Math.PI);
+    var x = maxX * p;
+
+    return 0.5 - (0.5 * Math.cos(x));
   }
 });
