@@ -195,7 +195,7 @@ DEPENDENCIES
   capistrano
   capistrano-deploytags
   faye
-  faye-redis (~> 0.2.0)
+  faye-redis
   jquery-rails
   jquery-ui-rails
   minitest-reporters

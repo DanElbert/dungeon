@@ -13,7 +13,7 @@ gem 'oj'
 
 gem 'thin'
 gem 'faye', :require => false
-gem 'faye-redis', '~> 0.2.0', :require => false
+gem 'faye-redis', :require => false
 gem 'redis-rails'
 
 gem 'sprockets-rails', :require => 'sprockets/railtie'

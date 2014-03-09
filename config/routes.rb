@@ -2,6 +2,7 @@ Dungeon::Application.routes.draw do
 
   resources :campaigns do
     resources :games, :only => [:new, :create]
+    resources :images, :only => [:new, :create, :show]
   end
 
   match '/admin' => 'admin/users#index', :via => :get
