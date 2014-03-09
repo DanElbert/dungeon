@@ -4,6 +4,10 @@ Dungeon::Application.configure do
 
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Add Faye to the middleware stack
+  # Note that by referencing the Static middleware, serve_static_assets needs to be left on
+  config.middleware.insert_after 'ActionDispatch::Static', 'GameServerMiddleware', mount: '/game_server', timeout: 35, ping: 30
+
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.

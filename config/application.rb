@@ -2,6 +2,7 @@ require File.expand_path('../boot', __FILE__)
 require 'oj'
 Oj.mimic_JSON
 require 'rails/all'
+require 'faye'
 
 require File.expand_path('../../lib/game_server_middleware', __FILE__)
 
@@ -17,10 +18,6 @@ module Dungeon
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
-
-    # Add Faye to the middleware stack
-    # Note that by referencing the Static middleware, serve_static_assets needs to be left on
-    config.middleware.insert_after 'ActionDispatch::Static', 'GameServerMiddleware', mount: '/game_server', timeout: 35, ping: 30
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"

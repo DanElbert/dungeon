@@ -1,4 +1,3 @@
-require 'faye'
 require File.expand_path('../game_server', __FILE__)
 
 Faye::WebSocket.load_adapter('thin')
