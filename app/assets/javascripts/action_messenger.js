@@ -29,7 +29,7 @@ _.extend(ActionMessenger.prototype, {
     if (this.subscription == null) throw "Messenger is not connected";
     this.sentMessageIds.push(action.uid);
     // Publish action, omitting any privateData
-    this.client.publish(this.url, _.omit(action, 'privateData'));
+    this.client.publish(this.url, action);
   }
 
 });

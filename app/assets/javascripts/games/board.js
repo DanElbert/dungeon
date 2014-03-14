@@ -130,14 +130,13 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     if (broadcastAction) {
       if (action.actionType == 'updateInitiativeAction')
       {
-        this.sendInitiativeMessage(action);
+        this.sendInitiativeMessage(action.serialize());
       } else {
-        this.sendActionMessage(action);
+        this.sendActionMessage(action.serialize());
       }
     }
 
     if (undoAction) {
-      undoAction = attachActionMethods(undoAction);
       this.undo_stack.push(undoAction);
     }
   };
@@ -241,7 +240,6 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
   this.executeActions = function() {
     _.each(this.pending_action_queue, function(action) {
-      action = attachActionMethods(action);
       action.apply(this);
     }, this);
 
