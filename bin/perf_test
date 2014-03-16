@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require_relative '../config/boot'
+require 'event_machine'
+
+url = "http://dungeon.elbertkarsten.com/game_server"
+
+client = Faye::Client.new(url)
+#client.add_extension
+
+game_id = 23
+user_id = 1
+auth_token = "926d9b007dcd01308f0f70def1247391"
+
