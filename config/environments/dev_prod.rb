@@ -22,6 +22,9 @@ Dungeon::Application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  # Use a different cache store in production.
+  config.cache_store = :redis_store, 'redis://rlyeh.thenever:6379/1/cache_store', { expires_in: 90.minutes }
+
   # Do not eager load code on boot.
   config.eager_load = false
 

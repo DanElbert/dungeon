@@ -1,13 +1,62 @@
 #!/usr/bin/env ruby
-require_relative '../config/boot'
-require 'event_machine'
+require_relative '../config/environment'
+require 'eventmachine'
+require 'faye'
 
-url = "http://dungeon.elbertkarsten.com/game_server"
+class ClientExtension
+  def initialize(user_id, token)
+    @user_id = user_id
+    @token = token
+  end
 
-client = Faye::Client.new(url)
-#client.add_extension
+  def outgoing(message, callback)
+    message['ext'] ||= {}
+    message['ext']['user_id'] = @user_id
+    message['ext']['auth_token'] = @token
+
+    callback.call(message)
+  end
+end
+
+messages_to_send = 100
+messages_to_recieve = 100
 
 game_id = 23
 user_id = 1
 auth_token = "926d9b007dcd01308f0f70def1247391"
+url = "http://dungeon.elbertkarsten.com/game_server"
 
+100.times do |x|
+  fork do
+    EM.run do
+      found = 0
+      client = Faye::Client.new(url)
+      client.add_extension(ClientExtension.new(user_id, auth_token))
+
+      client.subscribe("/game/#{game_id}/add_action") do |message|
+
+      end
+
+      messages_to_send.times do |y|
+        action = BoardAction.new({action_type: 'pingAction', uid: BoardAction.build_uid})
+        action.properties["color"] = "#000000"
+        action.properties["point"] = [x * 5, y + x]
+
+        client.publish("/game/#{game_id}/add_action", action.as_json).callback do
+          found += 1
+          #puts '.'
+
+          if found >= messages_to_recieve
+            EM.stop
+          end
+        end
+      end
+
+      #EM.stop
+    end
+    exit
+  end
+end
+
+Process.waitall
+puts "finished"

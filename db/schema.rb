@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 20140309012344) do
     t.integer  "detect_origin_y"
     t.integer  "pattern_size"
     t.integer  "pattern_dimension"
-    t.binary   "image",             limit: 16777216
+    t.binary   "image",             limit: 2147483647
   end
 
   create_table "boards", force: true do |t|
@@ -77,8 +77,8 @@ ActiveRecord::Schema.define(version: 20140309012344) do
     t.datetime "updated_at"
   end
 
-  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id"
-  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name"
+  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id", using: :btree
+  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name", using: :btree
 
   create_table "initiatives", force: true do |t|
     t.integer  "game_id"

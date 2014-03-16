@@ -20,6 +20,9 @@ Dungeon::Application.configure do
   # Code is not reloaded between requests.
   config.cache_classes = true
 
+  # Use a different cache store in production.
+  config.cache_store = :redis_store, 'redis://rlyeh.thenever:6379/0/cache_store', { expires_in: 90.minutes }
+
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both thread web servers
   # and those relying on copy on write to perform better.
@@ -66,9 +69,6 @@ Dungeon::Application.configure do
 
   # Use a different logger for distributed setups.
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
-
-  # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = "http://assets.example.com"
