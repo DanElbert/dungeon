@@ -165,6 +165,14 @@ _.extend(Tile.prototype, {
 
   clear: function() {
     this.isDrawn = false;
+    if (this.actions.length == 0) {
+      this.canvas = null;
+      this.fogCanvas = null;
+      this.context = null;
+      this.fogContext = null;
+      this.drawing = null;
+      this.fogDrawing = null;
+    }
   },
 
   ensureCanvas: function() {
