@@ -143,7 +143,8 @@ _.extend(actionTypes, {
     },
 
     calculateBounds: function() {
-      return [this.properties.topLeft, this.properties.bottomRight];
+      var margin = parseInt(this.properties.width / 2);
+      return [[this.properties.topLeft[0] - margin, this.properties.topLeft[1] - margin], [this.properties.bottomRight[0] + margin, this.properties.bottomRight[1] + margin]];
     },
 
     validateData: function() {
