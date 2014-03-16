@@ -38,6 +38,6 @@ $(document).ready(function() {
     var action = {actionType: "updateInitiativeAction", initiative: evt.initiative, uid: generateActionId()};
     action = attachActionMethods(action);
     action.apply(board);
-    initiativeManager.sendActionMessage(action);
+    initiativeManager.sendActionMessage(action.serialize());
   });
 });

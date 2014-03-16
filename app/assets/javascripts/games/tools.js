@@ -251,9 +251,9 @@ Pointer.prototype = _.extend(new Tool(), {
       var dy = this.template_current_cell[1] - this.template_start_cell[1];
 
       var removeAction = {actionType: "removeTemplateAction", actionId: this.selected_template.uid, uid: generateActionId()};
-      var addAction = this.selected_template.cloneAndTranslate(dx, dy, this.board.drawing.cellSize);
+      var addAction = this.selected_template.cloneAndTranslate(dx, dy, this.board.drawing.cellSize).serialize();
 
-      var restoreAction = this.selected_template.clone();
+      var restoreAction = this.selected_template.clone().serialize();
       var undoAction = {actionType: "removeTemplateAction", actionId: addAction.uid, uid: generateActionId()};
 
       this.board.addAction(
