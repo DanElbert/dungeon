@@ -160,7 +160,7 @@ _.extend(actionTypes, {
 
     calculateBounds: function() {
       var center = this.properties.center;
-      var radius = this.properties.radius;
+      var radius = this.properties.radius + parseInt(this.properties.width / 2);
       return [[center[0] - radius, center[1] - radius], [center[0] + radius, center[1] + radius]];
     },
 
@@ -179,11 +179,12 @@ _.extend(actionTypes, {
     calculateBounds: function() {
       var start = this.properties.start;
       var end = this.properties.end;
+      var margin = parseInt(this.properties.width / 2);
       var t = Math.min(start[1], end[1]);
       var l = Math.min(start[0], end[0]);
       var b = Math.max(start[1], end[1]);
       var r = Math.max(start[0], end[0]);
-      return [[l, t], [r, b]];
+      return [[l - margin, t - margin], [r + margin, b + margin]];
     },
 
     validateData: function() {
