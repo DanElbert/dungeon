@@ -135,7 +135,7 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
   },
 
-  drawSquare: function(topLeft, bottomRight, color, width) {
+  drawSquare: function(topLeft, bottomRight, color, bgColor, width) {
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
     this.context.lineCap = 'round';
@@ -145,7 +145,13 @@ _.extend(Drawing.prototype, {
     this.context.lineTo(bottomRight[0], topLeft[1]);
     this.context.lineTo(bottomRight[0], bottomRight[1]);
     this.context.lineTo(topLeft[0], bottomRight[1]);
-    this.context.lineTo(topLeft[0], topLeft[1]);
+    //this.context.lineTo(topLeft[0], topLeft[1]);
+    this.context.closePath();
+
+    if (bgColor) {
+      this.context.fillStyle = bgColor;
+      this.context.fill();
+    }
 
     this.context.stroke();
   },
@@ -185,11 +191,13 @@ _.extend(Drawing.prototype, {
     // For some reason, some browsers draw filled squares when the angle is 2.0 * PI; this fixes it without visual issues
     this.context.arc(x, y, radius, 0, 1.95 * Math.PI, false);
     this.context.closePath();
-    this.context.stroke();
+
     if (fill) {
-      this.context.fillStyle = color;
+      this.context.fillStyle = fill;
       this.context.fill();
     }
+
+    this.context.stroke();
   },
 
   drawCircleTiles: function(col, row, width, height, color) {

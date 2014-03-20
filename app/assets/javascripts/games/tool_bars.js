@@ -73,6 +73,12 @@ function InitializeToolBarsApi() {
         {name: "Yellow", color: "#FCE883"}
       ];
 
+      var clear = {name: "Clear", color: null};
+
+      if (option.includeClear) {
+        crayolaColors8.unshift(clear);
+      }
+
       var $widget = $('<div></div>').addClass('toolMenu');
       var vals = _.map(crayolaColors8, function(c) { return c.color; });
 
@@ -80,7 +86,13 @@ function InitializeToolBarsApi() {
         values: vals,
         initialValue: option.value || crayolaColors8[0].color,
         contentCallback: function(value) {
-          return $("<div></div>").css("background-color", value).css('width', '100%').css('height', '100%');
+          var $content = $("<div></div>").css('width', '100%').css('height', '100%');
+          if (value == null) {
+            $content.css("background-color", "white");
+          } else {
+            $content.css("background-color", value);
+          }
+          return $content;
         },
         selectedCallback: function(value) {
           triggerOptionChanged(option.name, value);
@@ -226,7 +238,9 @@ function InitializeToolBarsApi() {
     currentOptions = options;
     options.each(function(opt) {
       var widget = optionBuilders[opt.type](opt);
-      $toolOptions.append(widget);
+      var label = $("<span></span>").addClass("optionLabel").html(opt.label);
+      var wrapper = $("<div></div>").append(label).append(widget);
+      $toolOptions.append(wrapper);
     }, this);
   }
 

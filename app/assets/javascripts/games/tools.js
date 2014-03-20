@@ -1,10 +1,10 @@
 
 var SHARED_TOOL_OPTIONS= {
-  drawingColor: {type: "color", name: "color", value: "#000000"},
-  drawingBackgroundColor: {type: "color", name: "backgroundColor", includeClear: true, value: "rgba(0,0,0,0)"},
-  drawingWidth: {type: "size", name: "width", sizes: [3, 5, 7, 10, 15, 20], value: 7 },
-  fogWidth: {type: "size", name: "width", sizes: [25, 75, 100, 200, 500], value: 75 },
-  templateColor: {type: "color", name: "color", value: "#EE204D"}
+  drawingColor: {type: "color", label: "Color", name: "color", value: "#000000"},
+  drawingBackgroundColor: {type: "color", label: "Background Color", name: "backgroundColor", includeClear: true, value: null},
+  drawingWidth: {type: "size", name: "width", label: "Width", sizes: [3, 5, 7, 10, 15, 20], value: 7 },
+  fogWidth: {type: "size", name: "width", label: "Width", sizes: [25, 75, 100, 200, 500], value: 75 },
+  templateColor: {type: "color", name: "color", label: "Color", value: "#EE204D"}
 };
 
 function ToolOptions() {
@@ -272,6 +272,7 @@ function ShapePen(board) {
 
   this.width = null;
   this.color = null;
+  this.backgroundColor = null;
 
   this.shiftDown = false;
   this.ctrlDown = false;
@@ -284,12 +285,16 @@ function ShapePen(board) {
 ShapePen.prototype = _.extend(new Tool(), {
   buildOptions: function() {
     this.options.add(SHARED_TOOL_OPTIONS.drawingColor);
+    this.options.add(SHARED_TOOL_OPTIONS.drawingBackgroundColor);
     this.options.add(SHARED_TOOL_OPTIONS.drawingWidth);
   },
 
   optionsChanged: function() {
     this.width = this.options.get("width").value;
     this.color = this.options.get("color").value;
+    if (this.options.get("backgroundColor")) {
+      this.backgroundColor = this.options.get("backgroundColor").value;
+    }
   },
 
   getPoint: function(mapPoint) {
@@ -385,7 +390,7 @@ SquarePen.prototype = _.extend(new ShapePen(), {
       var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
       var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
 
-      this.board.drawing.drawSquare(topLeft, bottomRight, this.color, this.width);
+      this.board.drawing.drawSquare(topLeft, bottomRight, this.color, this.backgroundColor, this.width);
 
       var xDist = Math.round((Math.abs(topLeft[0] - bottomRight[0]) / this.board.drawing.cellSize) * 5);
       var yDist = Math.round((Math.abs(topLeft[1] - bottomRight[1]) / this.board.drawing.cellSize) * 5);
@@ -400,7 +405,7 @@ SquarePen.prototype = _.extend(new ShapePen(), {
       var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]) >> 0, Math.min(this.drag_start[1], this.drag_current[1]) >> 0];
       var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]) >> 0, Math.max(this.drag_start[1], this.drag_current[1]) >> 0];
 
-      var action = {actionType: "squarePenAction", color: this.color, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
+      var action = {actionType: "squarePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -421,7 +426,7 @@ CirclePen.prototype = _.extend(new ShapePen(), {
       var center = this.drag_start;
       var radius = Geometry.getDistance(this.drag_start, this.drag_current);
 
-      this.board.drawing.drawCircle(center[0], center[1], radius, this.width, this.color);
+      this.board.drawing.drawCircle(center[0], center[1], radius, this.width, this.color, this.backgroundColor);
 
       var pathfinderDistance = Math.round((radius / this.board.drawing.cellSize) * 5);
 
@@ -434,7 +439,7 @@ CirclePen.prototype = _.extend(new ShapePen(), {
       var center = this.roundPoint(this.drag_start);
       var radius = Geometry.getDistance(this.drag_start, this.drag_current)>>0;
 
-      var action = {actionType: "circlePenAction", color: this.color, width: this.width, center: center, radius: radius, uid: generateActionId()};
+      var action = {actionType: "circlePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, center: center, radius: radius, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -447,6 +452,10 @@ function LinePen(board) {
 }
 
 LinePen.prototype = _.extend(new ShapePen(), {
+  buildOptions: function() {
+    this.options.add(SHARED_TOOL_OPTIONS.drawingColor);
+    this.options.add(SHARED_TOOL_OPTIONS.drawingWidth);
+  },
   eventNamespace: function() {
     return "LinePen";
   },
@@ -528,6 +537,7 @@ function Pen(board) {
   this.super = DrawTool.prototype;
   this.width = null;
   this.color = null;
+  this.backgroundColor = null;
 }
 
 Pen.prototype = _.extend(new DrawTool(), {
@@ -562,7 +572,7 @@ function Eraser(board) {
 
 Eraser.prototype = _.extend(new DrawTool(), {
   buildOptions: function() {
-    this.options.add({type: "size", name: "width", sizes: [10, 30, 50, 75, 125], value: 30 });
+    this.options.add({type: "size", name: "width", label: "Width", sizes: [10, 30, 50, 75, 125], value: 30 });
   },
 
   optionsChanged: function() {
@@ -1011,7 +1021,7 @@ function PingTool(board) {
 }
 PingTool.prototype = _.extend(new Tool(), {
   buildOptions: function() {
-    this.options.add({type: "color", name: "color", value: "#EE204D"});
+    this.options.add({type: "color", name: "color", label: "Color", value: "#EE204D"});
   },
 
   optionsChanged: function() {
@@ -1045,7 +1055,7 @@ function LabelTool(board) {
 }
 LabelTool.prototype = _.extend(new Tool(), {
   buildOptions: function() {
-    this.options.add({type: "color", name: "color", value: "#000000"});
+    this.options.add({type: "color", name: "color", label: "Color", value: "#000000"});
   },
 
   optionsChanged: function() {

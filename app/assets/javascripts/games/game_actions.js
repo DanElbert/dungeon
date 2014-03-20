@@ -138,8 +138,11 @@ _.extend(actionTypes, {
 
   // Draws a square.  Requires topLeft, bottomRight, color, and width
   squarePenAction: createActionType("SquarePenAction", DrawingAction, {
+    initialize: function(actionData) {
+      this.super.initialize.apply(this, arguments);
+    },
     draw: function(drawing) {
-      drawing.drawSquare(this.properties.topLeft, this.properties.bottomRight, this.properties.color, this.properties.width);
+      drawing.drawSquare(this.properties.topLeft, this.properties.bottomRight, this.properties.color, this.properties.backgroundColor, this.properties.width);
     },
 
     calculateBounds: function() {
@@ -155,7 +158,7 @@ _.extend(actionTypes, {
   // Draws a circle.  Requires center, radius, color, and width
   circlePenAction: createActionType("CirclePenAction", DrawingAction, {
     draw: function(drawing) {
-      drawing.drawCircle(this.properties.center[0], this.properties.center[1], this.properties.radius, this.properties.width, this.properties.color);
+      drawing.drawCircle(this.properties.center[0], this.properties.center[1], this.properties.radius, this.properties.width, this.properties.color, this.properties.backgroundColor);
     },
 
     calculateBounds: function() {
