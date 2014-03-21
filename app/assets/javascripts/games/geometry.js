@@ -23,6 +23,12 @@ var Geometry = {
     return [x, y];
   },
 
+  getNearestHalfCellSnap: function(mapPoint, cellSize) {
+    var x = Geometry.roundToNearest(mapPoint[0], cellSize / 2);
+    var y = Geometry.roundToNearest(mapPoint[1], cellSize / 2);
+    return [x, y];
+  },
+
   getNearestCellCenter: function(mapPoint, cellSize) {
     return Geometry.getCellMidpoint(Geometry.getCell(mapPoint, cellSize), cellSize);
   },

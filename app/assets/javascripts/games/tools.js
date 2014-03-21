@@ -298,7 +298,9 @@ ShapePen.prototype = _.extend(new Tool(), {
   },
 
   getPoint: function(mapPoint) {
-    if (this.shiftDown) {
+    if (this.shiftDown && this.ctrlDown) {
+      return Geometry.getNearestHalfCellSnap(mapPoint, this.board.drawing.cellSize);
+    } else if (this.shiftDown) {
       return Geometry.getNearestCellIntersection(mapPoint, this.board.drawing.cellSize);
     } else if (this.ctrlDown) {
       return Geometry.getNearestCellCenter(mapPoint, this.board.drawing.cellSize);
@@ -319,11 +321,13 @@ ShapePen.prototype = _.extend(new Tool(), {
     $(board.event_manager).on('keydown.' + this.eventNamespace(), function(evt, mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
+      self.cursor = self.getPoint(self.cursor);
     });
 
     $(board.event_manager).on('keyup.' + this.eventNamespace(), function(evt, mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
+      self.cursor = self.getPoint(self.cursor);
     });
 
     $(board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
@@ -554,6 +558,10 @@ Pen.prototype = _.extend(new DrawTool(), {
   eventNamespace: function() { return "Pen"; },
   draw: function() {
     this.board.drawing.drawLines(this.color, this.width, this.lineBuffer);
+
+    if (this.cursor) {
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, this.color, this.color)
+    }
   },
   saveAction: function() {
     if (this.lineBuffer.length > 0) {
