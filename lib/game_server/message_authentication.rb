@@ -7,9 +7,7 @@ module GameServer
       if message['ext']
         user_id = message['ext']['user_id']
         auth_token = message['ext']['auth_token']
-        is_valid = Rails.cache.fetch("user_auth_check") do
-          User.where(:id => user_id, :auth_token => auth_token).exists?
-        end
+        is_valid = User.where(:id => user_id, :auth_token => auth_token).exists?
       end
 
       unless is_valid
