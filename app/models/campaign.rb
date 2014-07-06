@@ -1,7 +1,7 @@
 class Campaign < ActiveRecord::Base
   has_many :games
   belongs_to :user
-  has_many :images, dependent: :delete_all
+  has_many :copied_images, dependent: :delete_all
 
   before_destroy :check_for_games
 

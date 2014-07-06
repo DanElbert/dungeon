@@ -10,10 +10,7 @@ class GamesController < ApplicationController
 
   def get_game_data
     @game = Game.includes(:campaign, :initiatives, {:board => :board_actions}).find(params[:id])
-    image_proc = Proc.new do |path|
-      ActionController::Base.helpers.asset_path(path)
-    end
-    render :json => Oj.dump(@game.as_json(:image_callback => image_proc, :current_user_id => current_user.id))
+    render :json => Oj.dump(@game.as_json(:current_user_id => current_user.id))
   end
 
   def new

@@ -1,10 +1,10 @@
 class Board < ActiveRecord::Base
   belongs_to :game
+  belongs_to :background_image
   has_many :board_actions, -> { order(:created_at) }, :dependent => :destroy
 
   def board_images
-    imgs = [background_image].compact
-    imgs.map { |i| {:name => i, :url => (@image_callback ? @image_callback.call(i) : i) } }
+    [background_image].compact.map { |i| i.as_json }
   end
 
   def cell_size
@@ -16,11 +16,13 @@ class Board < ActiveRecord::Base
   end
 
   def as_json(options={})
-    @image_callback = options && options[:image_callback]
-    opts = {:root => false,
-            :except => [:game_id, :created_at, :updated_at],
-            :methods => [:board_images, :cell_size, :actions]}.merge(options)
-    super(opts)
+    {
+        actions: actions,
+        board_images: board_images,
+        cell_size: cell_size,
+        id: id,
+        background_image: background_image.filename
+    }
   end
 
 end

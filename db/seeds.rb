@@ -6,5 +6,14 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-dan = User.new({:email => "dan.elbert@gmail.com", :name => "Dan", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true})
-dan.save!
+unless User.where(:email => 'dan.elbert@gmail.com').exists?
+  dan = User.new({:email => "dan.elbert@gmail.com", :name => "Dan", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true})
+  dan.save!
+end
+
+Dir[Rails.root.join('db', 'seed_data', 'background_images', '*')].each do |file|
+  name = File.basename file
+  unless BackgroundImage.where(filename: name).exists?
+    BackgroundImage.create!({filename: name, data: File.binread(file)})
+  end
+end

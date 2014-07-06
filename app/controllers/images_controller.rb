@@ -4,6 +4,8 @@ class ImagesController < ApplicationController
 
   # GET /images/1
   def show
+    FileUtils.mkdir_p Rails.root.join('public', 'images')
+    File.binwrite(Rails.root.join('public', 'images', @image.id.to_s).to_s, @image.data)
     send_data @image.data, filename: @image.filename, disposition: 'inline'
   end
 

@@ -47,7 +47,7 @@ class Game < ActiveRecord::Base
         :name => name,
         :status => status,
         :is_owner => is_owner(options[:current_user_id]),
-        :board => board.as_json(options.slice(:image_callback)),
+        :board => board.as_json(),
         :initiative => initiatives.to_a.map { |i| {:name => i.name, :value => i.value} }
     }
   end
