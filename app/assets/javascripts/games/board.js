@@ -314,7 +314,8 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     "Ping": new PingTool(this),
     "Add Fog": new AddFogPen(this),
     "Remove Fog": new RemoveFogPen(this),
-    "Label": new LabelTool(this)
+    "Label": new LabelTool(this),
+    "Copy": new CopyTool(this)
   };
 
   $(this.toolBars).on('toolchanged', function(e) {

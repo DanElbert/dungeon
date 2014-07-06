@@ -1,0 +1,10 @@
+==  FixImagesDataCol: migrating ===============================================
+-- change_column(:images, :data, :binary, {:limit=>16777216})
+   -> 0.0228s
+==  FixImagesDataCol: migrated (0.0229s) ======================================
+
+==  MigrateBoardsBackgroundImage: migrating ===================================
+-- remove_column(:boards, :background_image)
+   -> 0.0160s
+==  MigrateBoardsBackgroundImage: migrated (0.4012s) ==========================
+

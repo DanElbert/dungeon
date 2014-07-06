@@ -14,7 +14,7 @@
   <%= f.fields_for :board do |board_form| %>
     <div class="field">
       <%= board_form.label :background_image %>
-      <%= board_form.select :background_image, get_background_image_options(board_form.object.background_image) %>
+      <%= board_form.select :background_image_id, get_background_image_options(board_form.object.background_image_id) %>
     </div>
   <% end %>
 
@@ -25,7 +25,7 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    var $select = $("#game_board_attributes_background_image");
+    var $select = $("#game_board_attributes_background_image_id");
     $select.imagepicker({
       initialized: function() {
       }

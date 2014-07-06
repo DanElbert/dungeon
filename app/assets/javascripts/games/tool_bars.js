@@ -17,7 +17,8 @@ function InitializeToolBarsApi() {
       {name: "Square"},
       {name: "Circle"},
       {name: "Label"},
-      {name: "Eraser"}
+      {name: "Eraser"}//,
+      //{name: "Copy"}
     ]},
 
     {name: "Templates", tools: [

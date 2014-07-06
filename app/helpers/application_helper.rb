@@ -19,11 +19,11 @@ module ApplicationHelper
     end
   end
 
-  def get_background_image_options(selected_image)
-    get_board_backgrounds.map do |name, path|
-      selected = selected_image == path
-      url =  ActionController::Base.helpers.asset_path(path)
-      "<option#{selected ? ' selected' : ''} data-img-src='#{url}' value='#{path}'>#{name}</option>"
+  def get_background_image_options(selected_image_id)
+    BackgroundImage.order(:filename).map do |bg|
+      selected = selected_image_id == bg.id
+      url =  image_path(bg)
+      "<option#{selected ? ' selected' : ''} data-img-src='#{url}' value='#{bg.id}'>#{bg.filename}</option>"
     end.join("\n").html_safe
   end
 end
