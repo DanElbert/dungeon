@@ -1196,6 +1196,13 @@ function CopyTool(board) {
   this.drag_current = null;
 }
 CopyTool.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add({type: "copiedImage", url: this.board.copiedArea, name: 'copiedImage'});
+  },
+
+  optionsChanged: function() {
+  },
+
   getPoint: function(mapPoint) {
     if (this.shiftDown && this.ctrlDown) {
       return Geometry.getNearestHalfCellSnap(mapPoint, this.board.drawing.cellSize);
@@ -1254,7 +1261,39 @@ CopyTool.prototype = _.extend(new Tool(), {
     $(this.board.event_manager).off('.' + this.eventNamespace());
   },
 
-  saveAction: function() {},
+  saveAction: function() {
+
+    var self = this;
+
+    if (!this.drag_start || !this.drag_current) {
+      return;
+    }
+
+    var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
+    var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
+
+    var height = bottomRight[1] - topLeft[1];
+    var width = bottomRight[0] - topLeft[0];
+
+    var data = this.board.copyArea(topLeft[0], topLeft[1], height, width);
+
+    var formData = new FormData();
+    formData.append("image[filename]", "copied_data.png");
+    formData.append("image[data]", data);
+
+    $.ajax({
+      url: ROOT_URL + 'copied_images.json',
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function(data, status, xhr) {
+        self.board.copiedArea = data.url;
+        self.getOptions().get("copiedImage").url = data.url;
+        self.board.toolBars.setOptions(self.getOptions());
+      }
+    });
+  },
 
   drawCross: function(point) {
     var crossSize = 10;

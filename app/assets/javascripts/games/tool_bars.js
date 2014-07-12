@@ -17,8 +17,8 @@ function InitializeToolBarsApi() {
       {name: "Square"},
       {name: "Circle"},
       {name: "Label"},
-      {name: "Eraser"}//,
-      //{name: "Copy"}
+      {name: "Eraser"},
+      {name: "Copy"}
     ]},
 
     {name: "Templates", tools: [
@@ -139,6 +139,11 @@ function InitializeToolBarsApi() {
         }
       });
 
+      return $widget;
+    },
+
+    copiedImage: function(options) {
+      var $widget = $('<img></img>').attr('src', options.url);
       return $widget;
     }
   };

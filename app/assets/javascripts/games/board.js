@@ -1,5 +1,4 @@
 function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
-  this.images = {};
 
   this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
   this.gameServerClient.addExtension(
@@ -25,6 +24,8 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
   this.isOwner = false;
 
+  this.copiedArea = null;
+
   this.pending_action_queue = [];
   this.template_actions = [];
   this.undo_stack = [];
@@ -33,6 +34,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.pingLayer = new PingLayer();
   this.tokenLayer = new TokenLayer();
   this.labelLayer = new ViewPortLabels(this);
+  this.imageCache = new ImageCache();
 
   this.board_data = null;
   this.viewPortCoord = [0, 0];
@@ -175,14 +177,14 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     this.globalShortcutTool.disable();
     this.globalShortcutTool.enable();
 
-    this.prepareImages(data.board.board_images);
+    this.imageCache.addImages(data.board.board_images);
   };
 
   this.renderBoardBackground = function() {
     var data = this.board_data;
     var drawing = this.drawing;
-    var img = this.images[data.background_image];
-    if (img && img.loaded) drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], img.image);
+    var img = this.imageCache.getImage(data.background_image);
+    if (img) drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], img);
   };
 
   this.renderBoardGrid = function() {
@@ -278,26 +280,17 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     this.hovered_cell = [x, y];
   };
 
-  this.prepareImages = function(imgs) {
-    "use strict";
-    var loaded = 0;
-    var images = [];
-    imgs = Object.prototype.toString.apply( imgs ) === '[object Array]' ? imgs : [imgs];
-
-    for ( var i = 0; i < imgs.length; i++ ) {
-      if (!this.images[imgs[i].name]) {
-
-        images[i] = new Image();
-        var imgObj = {image: images[i], loaded: false};
-        this.images[imgs[i].name] = imgObj;
-
-        images[i].onload = function() {
-          imgObj.loaded = true;
-        };
-
-        images[i].src = imgs[i].url;
-      }
-    }
+  this.copyArea = function(x, y, height, width) {
+    var canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    var context = canvas.getContext('2d');
+    var drawing = new Drawing(context);
+    context.save();
+    context.translate(-1 * x, -1 * y);
+    this.drawingLayer.draw(x, y, width, height, drawing, this.isOwner);
+    context.restore();
+    return canvas.toDataURL().slice("data:image/png;base64,".length)
   };
 
   this.toolMap = {

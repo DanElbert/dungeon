@@ -15,13 +15,17 @@ class Board < ActiveRecord::Base
     board_actions.map { |a| a.as_json }
   end
 
+  def to_param
+
+  end
+
   def as_json(options={})
     {
         actions: actions,
         board_images: board_images,
         cell_size: cell_size,
         id: id,
-        background_image: background_image.filename
+        background_image: background_image.url
     }
   end
 
