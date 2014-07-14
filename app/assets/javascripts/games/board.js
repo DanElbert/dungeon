@@ -15,9 +15,11 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.toolBars = toolBarsApi;
   this.camera = cameraApi;
 
+  this.imageCache = new ImageCache();
+
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
-  this.drawing = new Drawing(this.context);
+  this.drawing = new Drawing(this.context, this.imageCache);
   this.event_manager = new BoardEvents(this);
   this.boardDetectionManager = new BoardDetectionManager(this, this.toolBars, this.camera, this.gameServerClient);
   this.current_tool = null;
@@ -30,11 +32,10 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.template_actions = [];
   this.undo_stack = [];
 
-  this.drawingLayer = new DrawingLayer();
+  this.drawingLayer = new DrawingLayer(this.imageCache);
   this.pingLayer = new PingLayer();
   this.tokenLayer = new TokenLayer();
   this.labelLayer = new ViewPortLabels(this);
-  this.imageCache = new ImageCache();
 
   this.board_data = null;
   this.viewPortCoord = [0, 0];
@@ -67,6 +68,10 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
   $(this.initiative).on('changed', function(e, evt) {
     self.addAction({actionType: "updateInitiativeAction", initiative: evt.initiative, uid: generateActionId()}, null, true);
+  });
+
+  $(this.imageCache).on("imageloaded", function(evt) {
+    self.drawingLayer.clear();
   });
 
   this.setCanvasSize = function(width, height) {
@@ -183,8 +188,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.renderBoardBackground = function() {
     var data = this.board_data;
     var drawing = this.drawing;
-    var img = this.imageCache.getImage(data.background_image);
-    if (img) drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], img);
+    drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], data.background_image);
   };
 
   this.renderBoardGrid = function() {
@@ -192,7 +196,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   };
 
   this.renderDrawing = function() {
-    this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing, this.isOwner);
+    this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing, false);
   };
 
   this.renderCursor = function() {
@@ -285,10 +289,10 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     canvas.width = width;
     canvas.height = height;
     var context = canvas.getContext('2d');
-    var drawing = new Drawing(context);
+    var drawing = new Drawing(context, this.imageCache);
     context.save();
     context.translate(-1 * x, -1 * y);
-    this.drawingLayer.draw(x, y, width, height, drawing, this.isOwner);
+    this.drawingLayer.draw(x, y, width, height, drawing, this.isOwner, true);
     context.restore();
     return canvas.toDataURL().slice("data:image/png;base64,".length)
   };

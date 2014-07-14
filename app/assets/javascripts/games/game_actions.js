@@ -197,8 +197,7 @@ _.extend(actionTypes, {
 
   pasteAction: createActionType("PasteAction", DrawingAction, {
     draw: function(drawing) {
-      //var image =
-      drawing.drawImage(this.properties.topLeft[0], this.properties.topLeft[1])
+      drawing.drawImage(this.properties.topLeft[0], this.properties.topLeft[1], this.properties.url)
     },
 
     calculateBounds: function() {

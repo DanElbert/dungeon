@@ -1,8 +1,9 @@
-function DrawingLayer() {
+function DrawingLayer(imageCache) {
   this.tileSize = 500;
   this.tileList = [];
   this.tileLookup = {};
   this.isOwner = false;
+  this.imageCache = imageCache;
 }
 _.extend(DrawingLayer.prototype, {
   addAction: function(a) {
@@ -27,12 +28,18 @@ _.extend(DrawingLayer.prototype, {
     }, this);
   },
 
-  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing) {
+  clear: function() {
+    _.each(this.tileList, function(tile) {
+      tile.clear();
+    }, this);
+  },
+
+  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, disableFogDisplay) {
     var tiles = this.getTilesForRectangle([viewPortX, viewPortY], [viewPortX + viewPortWidth, viewPortY + viewPortHeight]);
     var context = drawing.context;
 
     _.each(tiles, function(tile) {
-      tile.draw();
+      tile.draw(disableFogDisplay);
       var tileCanvas = tile.canvas;
       if (tileCanvas != null) {
         context.drawImage(tileCanvas, tile.topLeft[0], tile.topLeft[1]);
@@ -52,7 +59,7 @@ _.extend(DrawingLayer.prototype, {
         var tile = this.tileLookup[key];
 
         if (tile == null) {
-          tile = new Tile(this.tileSize, x, y, this.isOwner);
+          tile = new Tile(this.tileSize, x, y, this.isOwner, this.imageCache);
           this.tileLookup[key] = tile;
           this.tileList.push(tile);
         }
@@ -69,7 +76,7 @@ _.extend(DrawingLayer.prototype, {
   }
 });
 
-function Tile(size, x, y, isOwner) {
+function Tile(size, x, y, isOwner, imageCache) {
   this.size = size;
   this.isOwner = isOwner;
   this.x = x;
@@ -82,6 +89,8 @@ function Tile(size, x, y, isOwner) {
   this.canvas = null;
   this.context = null;
   this.drawing = null;
+  this.imageCache = imageCache;
+  this.isFogDisabled = false;
 
   this.fogCanvas = null;
   this.fogContext = null;
@@ -129,9 +138,13 @@ _.extend(Tile.prototype, {
     this.clear();
   },
 
-  draw: function() {
-    if ((this.actions.length == 0 && this.fogActions.length == 0) || this.isDrawn)
+  draw: function(disableFogDisplay) {
+    disableFogDisplay = !!disableFogDisplay;
+
+    if ((this.actions.length == 0 && this.fogActions.length == 0) || (this.isDrawn && this.isFogDisabled == disableFogDisplay))
       return;
+
+    this.isFogDisabled = disableFogDisplay;
 
     this.ensureCanvas();
 
@@ -157,7 +170,11 @@ _.extend(Tile.prototype, {
       this.context.globalCompositeOperation = 'destination-out';
     }
 
-    this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    if (!this.isOwner || !this.isFogDisabled) {
+      // Only draw the fog if the current user isn't the owner or is the owner and we are drawing fog
+      this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    }
+
     this.context.restore();
 
     this.isDrawn = true;
@@ -185,8 +202,8 @@ _.extend(Tile.prototype, {
       this.fogCanvas.height = this.size;
       this.context = this.canvas.getContext('2d');
       this.fogContext = this.fogCanvas.getContext('2d');
-      this.drawing = new Drawing(this.context);
-      this.fogDrawing = new Drawing(this.fogContext);
+      this.drawing = new Drawing(this.context, this.imageCache);
+      this.fogDrawing = new Drawing(this.fogContext, this.imageCache);
 
       this.context.translate(-1 * this.topLeft[0], -1 * this.topLeft[1]);
       this.fogContext.translate(-1 * this.topLeft[0], -1 * this.topLeft[1]);

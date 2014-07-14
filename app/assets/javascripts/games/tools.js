@@ -1402,14 +1402,30 @@ PasteTool.prototype = _.extend(new Tool(), {
 
   drawImage: function() {
     if (this.board.copiedArea && this.cursor) {
-      var image = this.board.imageCache.getImage(this.board.copiedArea);
-      if (image) {
-        this.board.drawing.drawImage(this.cursor[0], this.cursor[1], image);
-      }
+      this.board.drawing.drawImage(this.cursor[0], this.cursor[1], this.board.copiedArea);
     }
   },
 
   saveAction: function() {
-    console.log("SAVING PASTE ACTION NOW!!!!!");
+    if (this.board.copiedArea && this.cursor) {
+      var imgObj = this.board.imageCache.getImage(this.board.copiedArea);
+
+      if (imgObj) {
+        var width = imgObj.width;
+        var height = imgObj.height;
+
+        var action = {
+          actionType: "pasteAction",
+          url: this.board.copiedArea,
+          topLeft: this.cursor,
+          width: width,
+          height: height,
+          uid: generateActionId()};
+
+        var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+
+        this.board.addAction(action, undoAction, true);
+      }
+    }
   }
 });

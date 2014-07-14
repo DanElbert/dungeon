@@ -1,7 +1,8 @@
-function Drawing(context) {
+function Drawing(context, imageCache) {
   this.context = context;
+  this.imageCache = imageCache;
+  if (this.imageCache == null) throw "imageCache cannot be null";
   this.cellSize = 50;
-
 }
 _.extend(Drawing.prototype, {
 
@@ -145,7 +146,6 @@ _.extend(Drawing.prototype, {
     this.context.lineTo(bottomRight[0], topLeft[1]);
     this.context.lineTo(bottomRight[0], bottomRight[1]);
     this.context.lineTo(topLeft[0], bottomRight[1]);
-    //this.context.lineTo(topLeft[0], topLeft[1]);
     this.context.closePath();
 
     if (bgColor) {
@@ -230,7 +230,12 @@ _.extend(Drawing.prototype, {
     this.context.closePath();
   },
 
-  tileBackground: function(vpX, vpY, vpW, vpH, imageObj) {
+  tileBackground: function(vpX, vpY, vpW, vpH, imageUrl) {
+
+    var imageObj = this.imageCache.getImage(imageUrl);
+
+    if (imageObj == null) return;
+
     var imgWidth = imageObj.width;
     var imgHeight = imageObj.height;
 
@@ -316,8 +321,11 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
   },
 
-  drawImage: function(x, y, imgObj) {
-    this.context.drawImage(imgObj, x, y);
+  drawImage: function(x, y, imageUrl) {
+    var imgObj = this.imageCache.getImage(imageUrl);
+    if (imgObj) {
+      this.context.drawImage(imgObj, x, y);
+    }
   },
 
   drawChessBoard : function(x, y, size, pattern_size) {

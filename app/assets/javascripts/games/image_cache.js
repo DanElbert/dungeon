@@ -22,7 +22,8 @@ _.extend(ImageCache.prototype, {
       var imageData = {image: new Image(), loaded: false};
 
       imageData.image.onload = function() {
-        self.images[url].loaded = true;
+        imageData.loaded = true;
+        $(self).trigger("imageloaded");
       };
 
       imageData.image.src = url;
@@ -31,9 +32,11 @@ _.extend(ImageCache.prototype, {
   },
 
   getImage: function(url) {
-    if (this.images[url] && this.images[url].loaded) {
-      return this.images[url].image;
-    } else if (!this.images[url]) {
+    var imageData = this.images[url];
+
+    if (imageData && imageData.loaded) {
+      return imageData.image;
+    } else if (!imageData) {
       this.addImage(url);
       return null;
     } else {
