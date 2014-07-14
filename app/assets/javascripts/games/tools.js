@@ -1200,9 +1200,6 @@ CopyTool.prototype = _.extend(new Tool(), {
     this.options.add({type: "copiedImage", url: this.board.copiedArea, name: 'copiedImage'});
   },
 
-  optionsChanged: function() {
-  },
-
   getPoint: function(mapPoint) {
     if (this.shiftDown && this.ctrlDown) {
       return Geometry.getNearestHalfCellSnap(mapPoint, this.board.drawing.cellSize);
@@ -1288,7 +1285,7 @@ CopyTool.prototype = _.extend(new Tool(), {
       contentType: false,
       processData: false,
       success: function(data, status, xhr) {
-        self.board.copiedArea = data.url;
+        self.board.setCopiedArea(data.url);
         self.getOptions().get("copiedImage").url = data.url;
         self.board.toolBars.setOptions(self.getOptions());
       }
@@ -1325,5 +1322,94 @@ CopyTool.prototype = _.extend(new Tool(), {
     }
 
     this.drawShape();
+  }
+});
+
+function PasteTool(board) {
+  Tool.call(this, board);
+  this.super = Tool.prototype;
+  this.cursor = null;
+  this.shiftDown = false;
+  this.ctrlDown = false;
+}
+PasteTool.prototype = _.extend(new Tool(), {
+  buildOptions: function() {
+    this.options.add({type: "copiedImage", url: this.board.copiedArea, name: 'copiedImage'});
+  },
+
+  getPoint: function(mapPoint) {
+    if (this.shiftDown && this.ctrlDown) {
+      return Geometry.getNearestHalfCellSnap(mapPoint, this.board.drawing.cellSize);
+    } else if (this.shiftDown) {
+      return Geometry.getNearestCellIntersection(mapPoint, this.board.drawing.cellSize);
+    } else if (this.ctrlDown) {
+      return Geometry.getNearestCellCenter(mapPoint, this.board.drawing.cellSize);
+    } else {
+      return mapPoint;
+    }
+  },
+
+  eventNamespace: function() {
+    return "PasteTool";
+  },
+
+  drawCross: function(point) {
+    var crossSize = 10;
+    var lines = [
+      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
+      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
+    ];
+    this.board.drawing.drawLines("black", 3, lines);
+  },
+
+  enable: function() {
+
+    var self = this;
+    var board = this.board;
+
+    $(board.event_manager).on('keydown.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.shiftDown = mapEvt.isShift;
+      self.ctrlDown = mapEvt.isCtrl;
+      self.cursor = self.getPoint(self.cursor);
+    });
+
+    $(board.event_manager).on('keyup.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.shiftDown = mapEvt.isShift;
+      self.ctrlDown = mapEvt.isCtrl;
+      self.cursor = self.getPoint(self.cursor);
+    });
+
+    $(board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.cursor = self.getPoint(mapEvt.mapPoint);
+    });
+
+    $(board.event_manager).on('click.' + this.eventNamespace(), function(evt, mapEvt) {
+      self.saveAction();
+    });
+  },
+
+  disable: function() {
+    $(this.board.event_manager).off('.' + this.eventNamespace());
+  },
+
+  draw: function() {
+    if (this.cursor) {
+      this.drawCross(this.cursor);
+    }
+
+    this.drawImage();
+  },
+
+  drawImage: function() {
+    if (this.board.copiedArea && this.cursor) {
+      var image = this.board.imageCache.getImage(this.board.copiedArea);
+      if (image) {
+        this.board.drawing.drawImage(this.cursor[0], this.cursor[1], image);
+      }
+    }
+  },
+
+  saveAction: function() {
+    console.log("SAVING PASTE ACTION NOW!!!!!");
   }
 });

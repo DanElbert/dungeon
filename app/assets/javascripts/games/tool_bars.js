@@ -18,7 +18,8 @@ function InitializeToolBarsApi() {
       {name: "Circle"},
       {name: "Label"},
       {name: "Eraser"},
-      {name: "Copy"}
+      {name: "Copy"},
+      {name: "Paste", hidden: true}
     ]},
 
     {name: "Templates", tools: [
@@ -143,8 +144,15 @@ function InitializeToolBarsApi() {
     },
 
     copiedImage: function(options) {
-      var $widget = $('<img></img>').attr('src', options.url);
-      return $widget;
+      var $wrapper = $("<div/>");
+
+      if (options.url) {
+        $wrapper.addClass("tool");
+        var $widget = $("<div/>").css("background-image", "url(\"" + options.url + "\")").addClass("img");
+        $wrapper.append($widget);
+      }
+
+      return $wrapper;
     }
   };
 
@@ -295,6 +303,12 @@ function InitializeToolBarsApi() {
     },
     hideFogTools: function() {
       tabMap["Fog"].hide();
+    },
+    showPasteTool: function() {
+      toolMap["Paste"].show();
+    },
+    hidePasteTool: function() {
+      toolMap["Paste"].hide();
     }
   };
 
@@ -338,170 +352,6 @@ function InitializeToolBarsApi() {
   }
 
 
-  var api_old = {
-    getTool: function() {
-      return $("#tool_menu").toolMenu("value");
-    },
-    getColor: function() {
-      return $("#tool_color").toolMenu("value").color;
-    },
-    getLineWidth: function() {
-      return $("#tool_line_width").toolMenu("value");
-    },
-    getFogLineWidth: function() {
-      return $("#fog_tool_line_width").toolMenu("value");
-    },
-    getEraserWidth: function() {
-      return $("#eraser_tool_width").toolMenu("value");
-    },
-    getZoom: function() {
-      return parseFloat($("#zoom_level").val());
-    },
-    setZoom: function(val) {
-      $("#zoom_level").val(val);
-      $("#zoom_slider").slider("value", val);
-    },
-    setStandardLineWidths: function() {
-      $("#tool_line_width").show();
-      $("#fog_tool_line_width").hide();
-      $("#eraser_tool_width").hide();
-    },
-    setFogLineWidths: function() {
-      $("#tool_line_width").hide();
-      $("#fog_tool_line_width").show();
-      $("#eraser_tool_width").hide();
-    },
-    setEraserWidths: function() {
-      $("#tool_line_width").hide();
-      $("#fog_tool_line_width").hide();
-      $("#eraser_tool_width").show();
-    },
-    showStartCaptureButton: function() {
-      $("#enable_capture_button").show();
-    },
-    hideStartCaptureButton: function() {
-      $("#enable_capture_button").hide();
-    },
-    showEndCaptureButton: function() {
-      $("#end_capture_button").show();
-    },
-    hideEndCaptureButton: function() {
-      $("#end_capture_button").hide();
-    },
-    showCameraButton: function() {
-      $("#open_camera_button").show();
-    },
-    hideCameraButton: function() {
-      $("#open_camera_button").hide();
-    },
-    showClearTokensButton: function() {
-      $("#clear_tokens_button").show();
-    },
-    hideClearTokensButton: function() {
-      $("#clear_tokens_button").hide();
-    },
-    hideFogTools: function() {
-      $("#tool_menu").toolMenu("setValues", getTools(false));
-    }
-  };
-
-  function getTools(includeFog) {
-    var tools = ["Pointer", "Pen", "LinePen", "Label", "Square", "Circle", "Eraser", "Measure", "Radius", "Cone", "Line", "Ping"];
-
-    if (includeFog) {
-      tools = tools.concat(["Add Fog", "Remove Fog"]);
-    }
-    return tools;
-  }
-
-  $("#tool_menu").toolMenu({
-    values: getTools(true),
-    initialValue: "Pointer",
-    contentCallback: function(value) {
-      return value;
-    },
-    selectedCallback: function(value) {
-      triggerToolChanged();
-    }
-  });
-
-  var crayolaColors8 = [
-    {name: "Black", color: "#000000"},
-    {name: "Blue", color: "#1F75FE"},
-    {name: "Brown", color: "#B4674D"},
-    {name: "Green", color: "#1CAC78"},
-    {name: "Orange", color: "#FF7538"},
-    {name: "Red", color: "#EE204D"},
-    {name: "Purple", color: "#926EAE"},
-    {name: "Yellow", color: "#FCE883"}
-  ];
-
-//  var dansRandomColors = [
-//    {name: "Red", color: "#FF0000"},
-//    {name: "Yellow", color: "#FFFF00"},
-//    {name: "Green", color: "#01DF01"},
-//    {name: "Blue", color: "#0000FF"},
-//    {name: "Black", color: "#000000"}
-//  ];
-
-  $("#tool_color").toolMenu({
-    values: crayolaColors8,
-    initialValue: crayolaColors8[0],
-    contentCallback: function(value) {
-      return $("<div></div>").css("background-color", value.color).css('width', '100%').css('height', '100%');
-    },
-    selectedCallback: function(value) {
-      triggerToolChanged();
-    }
-  });
-
-  $("#tool_line_width").toolMenu({
-    values: [3, 5, 7, 10, 15, 20],
-    initialValue: 5,
-    contentCallback: function(value) {
-      var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
-      var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + value / 2 + "px"});
-      var line = $("<div></div>").css({clear: "both", height: value + "px", position: "relative", backgroundColor: "black"});
-      wrapper.append(floater);
-      wrapper.append(line);
-      return wrapper;
-    },
-    selectedCallback: function(value) {
-      triggerToolChanged();
-    }
-  });
-
-  $("#fog_tool_line_width").toolMenu({
-    values: [25, 75, 100, 200, 500],
-    initialValue: 75,
-    contentCallback: function(value) {
-      var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
-      var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + (value / 25) / 2 + "px"});
-      var line = $("<div></div>").css({clear: "both", height: (value / 25) + "px", position: "relative", backgroundColor: "black"});
-      wrapper.append(floater);
-      wrapper.append(line);
-      return wrapper;
-    },
-    selectedCallback: function(value) {
-      triggerToolChanged();
-    }
-  });
-
-  $("#eraser_tool_width").toolMenu({
-    values: [10, 30, 50, 75, 125],
-    initialValue: 30,
-    contentCallback: function(value) {
-      var wrapper = $("<div></div>").css({width: "100%", height: "100%"});
-      var floater = $("<div></div>").css({float: "left", height: "50%", marginBottom: "-" + (value / 8) / 2 + "px"});
-      var line = $("<div></div>").css({clear: "both", height: (value / 8) + "px", position: "relative", backgroundColor: "black"});
-      wrapper.append(floater);
-      wrapper.append(line);
-      return wrapper;
-    },
-    selectedCallback: function(value) {
-      triggerToolChanged();
-    }
-  });
 
   $("#zoom_level").change(function () {
     triggerZoomChanged($(this).val());
@@ -509,22 +359,6 @@ function InitializeToolBarsApi() {
 
   $("#undo_button").click(function() {
     triggerUndo();
-  });
-
-  $("#enable_capture_button").click(function() {
-    triggerCaptureStart();
-  });
-
-  $("#end_capture_button").click(function() {
-    triggerEndCapture();
-  });
-
-  $("#open_camera_button").click(function() {
-    triggerOpenCamera();
-  });
-
-  $("#clear_tokens_button").click(function() {
-    triggerClearTokens();
   });
 
   $("#zoom_slider").slider({

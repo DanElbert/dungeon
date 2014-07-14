@@ -28,6 +28,9 @@ role :db,  "rlyeh", :primary => true # This is where Rails migrations will run
 
 set :use_sudo, false
 
+set :cache_dirs, %w(public/images)
+set :shared_children, fetch(:shared_children) + fetch(:cache_dirs)
+
 require 'rvm/capistrano'
 require 'bundler/capistrano'
 require 'capistrano-deploytags'

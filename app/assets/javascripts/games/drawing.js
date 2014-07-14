@@ -316,6 +316,10 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
   },
 
+  drawImage: function(x, y, imgObj) {
+    this.context.drawImage(imgObj, x, y);
+  },
+
   drawChessBoard : function(x, y, size, pattern_size) {
     var square_size = size / pattern_size;
 

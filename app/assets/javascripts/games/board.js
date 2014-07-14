@@ -293,6 +293,11 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     return canvas.toDataURL().slice("data:image/png;base64,".length)
   };
 
+  this.setCopiedArea = function(url) {
+    this.copiedArea = url;
+    this.toolBars.showPasteTool();
+  };
+
   this.toolMap = {
     "Pointer": new Pointer(this),
     "Pen": new Pen(this),
@@ -308,7 +313,8 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     "Add Fog": new AddFogPen(this),
     "Remove Fog": new RemoveFogPen(this),
     "Label": new LabelTool(this),
-    "Copy": new CopyTool(this)
+    "Copy": new CopyTool(this),
+    "Paste": new PasteTool(this)
   };
 
   $(this.toolBars).on('toolchanged', function(e) {

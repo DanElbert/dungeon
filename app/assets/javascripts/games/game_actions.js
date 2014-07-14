@@ -195,6 +195,22 @@ _.extend(actionTypes, {
     }
   }),
 
+  pasteAction: createActionType("PasteAction", DrawingAction, {
+    draw: function(drawing) {
+      //var image =
+      drawing.drawImage(this.properties.topLeft[0], this.properties.topLeft[1])
+    },
+
+    calculateBounds: function() {
+      var topLeft = this.properties.topLeft;
+      return [topLeft, [topLeft[0] + this.properties.width, topLeft[1] + this.properties.height]];
+    },
+
+    validateData: function() {
+      this.ensureFields(["uid", "url", "topLeft", "width", "height"]);
+    }
+  }),
+
   // An erase action consists of a width and a collection of lines
   eraseAction: createActionType("EraseAction", LineCollectionAction, {
     draw: function(drawing) {
