@@ -128,6 +128,13 @@ GlobalShortCuts.prototype = _.extend(new Tool(), {
       self.board.setZoom(newZoom, mapEvt.mapPoint);
       self.board.toolBars.setZoom(newZoom);
     });
+
+    $(this.board.event_manager).on('keydown.GlobalShortCuts', function(evt, mapEvt) {
+      if (mapEvt.key == 90 && mapEvt.isCtrl) {
+        // ctrl-z
+        self.board.undo();
+      }
+    });
   },
   disable: function() {
     this.viewPortDragging.disable();
