@@ -4,6 +4,8 @@ function InitializeToolBarsApi() {
     {name: "View", tools: [
       {name: "Pointer"},
       {name: "Ping"},
+      {name: "L", type: "event", eventName: "rotateLeft"},
+      {name: "R", type: "event", eventName: "rotateRight"},
       {name: "Camera", type: "event", eventName: "openCamera"},
       {name: "Begin Capture", type: "event", eventName: "startBoardCapture", hidden: true},
       {name: "End Capture", type: "event", eventName: "stopBoardCapture", hidden: true},

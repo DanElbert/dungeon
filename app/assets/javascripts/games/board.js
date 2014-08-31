@@ -41,6 +41,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.viewPortCoord = [0, 0];
   this.viewPortSize = [canvas.width, canvas.height];
   this.zoom = 1;
+  this.rotation = 0;
 
   this.displayCapturePattern = false;
 
@@ -105,6 +106,13 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     this.context.save();
     this.context.scale(this.zoom, this.zoom);
     this.context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
+    this.context.rotate(this.rotation * (Math.PI / 180));
+  };
+
+  this.changeRotation = function(degreeDelta) {
+    this.rotation = this.rotation + degreeDelta;
+    this.rotation = this.rotation % 360;
+    this.setZoom(this.zoom);
   };
 
   this.setTool = function(tool) {
@@ -342,6 +350,14 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
   $(this.toolBars).on('clearTokens', function(e) {
     self.addAction({actionType: "clearTokensAction", uid: generateActionId()}, null, true);
+  });
+
+  $(this.toolBars).on('rotateLeft', function(e) {
+    self.changeRotation(90);
+  });
+
+  $(this.toolBars).on('rotateRight', function(e) {
+    self.changeRotation(-90);
   });
 }
 
