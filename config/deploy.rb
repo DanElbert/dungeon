@@ -2,7 +2,7 @@ default_run_options[:pty] = true
 set :application, "dungeon"
 
 # RVM Config
-set :rvm_ruby_string, '2.1.0'
+set :rvm_ruby_string, '2.1.3'
 set :rvm_type, :system
 
 # Source code
