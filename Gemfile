@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.6'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -36,9 +36,9 @@ group :assets do
 end
 
 group :deploy do
-  gem 'capistrano'
+  gem 'capistrano', '~> 2.15.5'
   gem 'rvm-capistrano'
-  gem 'capistrano-deploytags'
+  gem 'capistrano-deploytags', '~> 0.9.2'
 end
 
 group :test do
