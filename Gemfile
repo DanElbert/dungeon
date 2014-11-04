@@ -22,7 +22,7 @@ gem 'skeleton-rails'
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
-gem 'bcrypt-ruby', '~> 3.1.0'
+gem 'bcrypt', '~> 3.1.9'
 
 # Gems used only for assets and not required
 # in production environments by default.
