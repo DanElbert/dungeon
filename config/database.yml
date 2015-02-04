@@ -9,6 +9,15 @@ development:
   pool: 5
   timeout: 5000
 
+docker:
+  adapter: mysql2
+  host: mysql
+  database: dungeon
+  username: root
+  password: mysupersecret
+  pool: 5
+  timeout: 5000
+
 
 dev_prod:
   adapter: mysql2

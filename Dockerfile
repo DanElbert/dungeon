@@ -63,7 +63,14 @@ ENV BUNDLE_APP_CONFIG $GEM_HOME
 ##############
 
 RUN mkdir /dungeon
-COPY . /dungeon
+COPY Gemfile /dungeon/
+COPY Gemfile.lock /dungeon/
 RUN cd /dungeon && bundle install
-RUN cd /dungeon && bundle exec rake assets:precompile
-CMD /dungeon/rails s
+
+COPY . /dungeon
+#RUN cd /dungeon && bundle exec rake assets:precompile
+ENV RAILS_ENV docker
+RUN mkdir -p /etc/service/dungeon
+COPY run /etc/service/dungeon/
+RUN chmod +x /etc/service/dungeon/run
+CMD /sbin/my_init

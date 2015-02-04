@@ -1,0 +1,20 @@
+mysql:
+  image: mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=mysupersecret
+  volumes:
+    - ~/.dungeon/mysql/:/var/lib/mysql
+
+redis:
+  image: redis
+
+web:
+  build: .
+  working_dir: /dungeon
+  volumes:
+    - .:/dungeon
+  ports:
+    - "3000:3000"
+  links:
+    - mysql
+    - redis
