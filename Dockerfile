@@ -19,4 +19,4 @@ WORKDIR /dungeon
 ENV RAILS_ENV docker
 
 RUN bundle exec rake compile
-
+RUN bundle exec rake assets:clobber assets:precompile

@@ -1,4 +1,5 @@
 .git
 logs/
 public/assets
+public/images
 lib/board_detector/build
