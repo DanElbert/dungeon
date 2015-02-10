@@ -40,8 +40,8 @@ test:
 production:
   adapter: mysql2
   host: rlyeh.thenever.
-  username: dungeon_user
-  password: Ww3SBp9v2hcEs2wd
+  username: <%= ENV['DUNGEON_DB_USER'] %>
+  password: <%= ENV['DUNGEON_DB_PASSWORD'] %>
   database: dungeon
   pool: 5
   timeout: 5000

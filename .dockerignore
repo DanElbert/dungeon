@@ -1,3 +1,4 @@
 .git
 logs/
 public/assets
+lib/board_detector/build
