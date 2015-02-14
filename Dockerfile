@@ -14,6 +14,7 @@ RUN chmod +x /etc/service/dungeon/run
 
 EXPOSE 3000
 
+RUN mkdir -p /dungeon_assets/
 RUN mkdir -p /dungeon
 COPY Gemfile /dungeon/
 COPY Gemfile.lock /dungeon/
