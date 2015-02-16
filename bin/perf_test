@@ -18,15 +18,15 @@ class ClientExtension
   end
 end
 
-messages_to_send = 100
+messages_to_send = 10000
 messages_to_recieve = 100
 
 game_id = 23
 user_id = 1
 auth_token = "926d9b007dcd01308f0f70def1247391"
-url = "http://dungeon.elbertkarsten.com/game_server"
+url = "http://dungeon.elbert.us/game_server"
 
-100.times do |x|
+4.times do |x|
   fork do
     EM.run do
       found = 0
