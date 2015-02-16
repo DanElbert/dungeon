@@ -1,5 +1,7 @@
-.git
+.git/
 logs/
+db/*.sqlite*
+tmp/
 public/assets
 public/images
 lib/board_detector/build
