@@ -1,6 +1,5 @@
 #! /bin/bash
 
 if [ "$SHARE_ASSETS" = "true" ]; then
-	mkdir -p /dungeon_assets/
-	cp -Rp /dungeon/public /dungeon_assets
+	cp -Rp /dungeon_assets/public/* /dungeon/public/
 fi
