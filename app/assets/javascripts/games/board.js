@@ -11,6 +11,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
         }
       });
 
+  this.networkDown = false;
   this.initiative = initiativeApi;
   this.toolBars = toolBarsApi;
   this.camera = cameraApi;
@@ -50,6 +51,25 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
   // Used in events
   var self = this;
+
+  this.gameServerClient.on('transport:down', function() {
+    // the client is offline
+    var alarmFunc = function() {
+      if (self.networkDown) {
+        flashMessage("error", "Cannot Connect to Dungeon Server!!");
+        setTimeout(alarmFunc, 5000);
+      }
+    };
+    self.networkDown = true;
+    alarmFunc();
+  });
+
+  this.gameServerClient.on('transport:up', function() {
+    if (self.networkDown) {
+      self.networkDown = false;
+      flashMessage("notice", "Connection to Dungeon Server Restored.");
+    }
+  });
 
   this.addActionManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/add_action', function(message) {
     self.handleAddActionMessage(message);
