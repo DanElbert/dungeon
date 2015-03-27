@@ -179,7 +179,8 @@ function InitializeCameraApi() {
         triggerClosed();
       }
     },
-    autoOpen: false
+    autoOpen: false,
+    appendTo: "#dialog_container"
   });
 
   $capture_button.click(function() {

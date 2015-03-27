@@ -269,14 +269,14 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
       this.renderPings();
     } else {
       this.renderBoardBackground();
-      this.renderTemplates();
-      this.renderBoardGrid();
       this.renderDrawing();
+      this.renderTool();
+      this.renderBoardGrid();
+      this.renderTemplates();
       this.renderTokens();
       this.renderPings();
       this.labelLayer.draw();
       this.renderCursor();
-      this.renderTool();
     }
   };
 
