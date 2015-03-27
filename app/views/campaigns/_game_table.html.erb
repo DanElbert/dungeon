@@ -2,7 +2,7 @@
 <% unless games.empty? %>
 
   <h4><%= title %></h4>
-  <table>
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>Name</th>
@@ -16,9 +16,9 @@
     <tr>
       <td><%= link_to g.name, game_path(g) %></td>
       <td><%= g.created_at.localtime.strftime("%m/%d/%y %H:%M") %></td>
-      <td><%= link_to 'Initiative', initiative_game_path(g) %></td>
-      <td><%= link_to_if if_owner(g), 'Edit', edit_game_path(g) %></td>
-      <td><%= link_to_if if_owner(g), 'Destroy', game_path(g), { method: :delete, data: {confirm: 'Are you sure?'} } %></td>
+      <td><%= link_to 'Initiative', initiative_game_path(g), class: 'btn btn-default btn-sm' %></td>
+      <td><%= link_to_if if_owner(g), 'Edit', edit_game_path(g), class: 'btn btn-default btn-sm' %></td>
+      <td><%= link_to_if if_owner(g), 'Destroy', game_path(g), { method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn btn-default btn-sm' } %></td>
     </tr>
     <% end %>
   </table>

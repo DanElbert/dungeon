@@ -1,34 +1,34 @@
 
 <h2><%= "#{@campaign.name} (#{@campaign.user_name})" %></h2>
 
-<div class="row">
-  <div class="one-third column alpha">
-    <%= render :partial => 'game_table', :locals => {:games => @campaign.active_games, :title => 'Active Games'} %>
-    <% if @campaign.active_games.empty? %>
-      <h4>No Active Games</h4>
-    <% end %>
-  </div>
 
-  <div class="one-third column">
-    <%= render :partial => 'game_table', :locals => {:games => @campaign.archived_games, :title => 'Old Games'} %>
-    <% if @campaign.archived_games.empty? %>
-      <h4>No Old Games</h4>
-    <% end %>
-  </div>
-
-  <%= if_owner(@campaign) do %>
-    <div class="one-third column omega">
-      <%= render :partial => 'game_table', :locals => {:games => @campaign.hidden_games, :title => 'Hidden Games'} %>
-      <% if @campaign.hidden_games.empty? %>
-        <h4>No Hidden Games</h4>
-      <% end %>
-    </div>
+<div class="col-xs-4">
+  <%= render :partial => 'game_table', :locals => {:games => @campaign.active_games, :title => 'Active Games'} %>
+  <% if @campaign.active_games.empty? %>
+    <h4>No Active Games</h4>
   <% end %>
-
 </div>
 
-<% if if_owner(@campaign) %>
-  <%= link_to 'Edit', edit_campaign_path(@campaign), class: 'button' %>
-  <%= link_to 'Create New Game', new_campaign_game_path(@campaign), class: 'button' %>
+<div class="col-xs-4">
+  <%= render :partial => 'game_table', :locals => {:games => @campaign.archived_games, :title => 'Old Games'} %>
+  <% if @campaign.archived_games.empty? %>
+    <h4>No Old Games</h4>
+  <% end %>
+</div>
+
+<%= if_owner(@campaign) do %>
+  <div class="col-xs-4">
+    <%= render :partial => 'game_table', :locals => {:games => @campaign.hidden_games, :title => 'Hidden Games'} %>
+    <% if @campaign.hidden_games.empty? %>
+      <h4>No Hidden Games</h4>
+    <% end %>
+  </div>
 <% end %>
-<%= link_to 'Back to Lobby', campaigns_path, class: 'button' %>
+
+<div class="col-xs-12">
+  <% if if_owner(@campaign) %>
+    <%= link_to 'Edit', edit_campaign_path(@campaign), class: 'btn btn-primary' %>
+    <%= link_to 'Create New Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
+  <% end %>
+  <%= link_to 'Back to Lobby', campaigns_path, class: 'btn btn-primary' %>
+</div>

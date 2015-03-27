@@ -8,29 +8,27 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require jquery-ui/slider
- *= require jquery-ui/autocomplete
- *= require jquery-ui/dialog
- *= require base
- *= require layout
- *= require skeleton
  *= require image-picker
- *= require_self
- *= require_tree .
+ *= require tool_ribbon
  */
 
-.ui-autocomplete {
-    z-index: 1001;
+@import "games";
+@import "flash_messages";
+@import "flatly_variables";
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "flatly_bootswatch";
+
+div.thumbnail {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+
+  img{
+    max-width: none;
+  }
 }
 
-.ui-resizable-handle {
-    background-color:#555;
-    opacity: 0.5;
-}
-
-.ui-dialog .ui-dialog-titlebar {
-    padding: .1em 1em;
-}
 
 input[type="number"] {
     border: 1px solid #ccc;

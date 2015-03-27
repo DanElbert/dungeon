@@ -16,24 +16,13 @@ gem 'faye', :require => false
 gem 'faye-redis', :require => false
 gem 'redis-rails'
 
-gem 'sprockets-rails', :require => 'sprockets/railtie'
-
-gem 'skeleton-rails'
-
 gem 'jquery-rails'
-gem 'jquery-ui-rails'
+gem 'bootstrap-sass', '~> 3.3.1'
 gem 'bcrypt', '~> 3.1.9'
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 4.0.1'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer', platforms: :ruby
-
-  gem 'uglifier', '>= 1.0.3'
-end
+gem 'sass-rails',   '~> 5.0.1'
+gem 'therubyracer', platforms: :ruby
+gem 'uglifier', '>= 1.0.3'
 
 group :deploy do
   gem 'capistrano', '~> 2.15.5'

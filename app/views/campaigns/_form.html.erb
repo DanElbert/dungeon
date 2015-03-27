@@ -1,12 +1,12 @@
 <%= form_for(@campaign) do |f| %>
   <%= render partial: 'shared/error_list', locals: {model: @campaign} %>
 
-  <div class="field">
+  <div class="form-group">
     <%= f.label :name %>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, class: 'form-control' %>
   </div>
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit class: 'btn btn-primary' %>
   </div>
 <% end %>
