@@ -1,5 +1,5 @@
-function Measure(board) {
-  Tool.call(this, board);
+function Measure(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
   this.color = null;
   this.startCell = null;
@@ -58,8 +58,8 @@ Measure.prototype = _.extend(Measure.prototype, Tool.prototype, {
   }
 });
 
-function RadialTemplate(board) {
-  Tool.call(this, board);
+function RadialTemplate(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
   this.color = null;
   this.dragging = false;
@@ -143,8 +143,8 @@ RadialTemplate.prototype = _.extend(RadialTemplate.prototype, Tool.prototype, {
   }
 });
 
-function RadiusTemplate(board) {
-  RadialTemplate.call(this, board);
+function RadiusTemplate(manager) {
+  RadialTemplate.call(this, manager);
   this.super = RadialTemplate.prototype;
 }
 RadiusTemplate.prototype = _.extend(RadiusTemplate.prototype, RadialTemplate.prototype, {
@@ -167,8 +167,8 @@ RadiusTemplate.prototype = _.extend(RadiusTemplate.prototype, RadialTemplate.pro
   }
 });
 
-function ConeTemplate(board) {
-  RadialTemplate.call(this, board);
+function ConeTemplate(manager) {
+  RadialTemplate.call(this, manager);
   this.super = RadialTemplate.prototype;
 }
 ConeTemplate.prototype = _.extend(ConeTemplate.prototype, RadialTemplate.prototype, {
@@ -196,8 +196,8 @@ ConeTemplate.prototype = _.extend(ConeTemplate.prototype, RadialTemplate.prototy
   }
 });
 
-function LineTemplate(board) {
-  Tool.call(this, board);
+function LineTemplate(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
   this.color = null;
   this.dragging = false;

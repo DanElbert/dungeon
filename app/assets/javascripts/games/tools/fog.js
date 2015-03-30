@@ -1,5 +1,5 @@
-function AddFogPen(board) {
-  DrawTool.call(this, board);
+function AddFogPen(manager) {
+  DrawTool.call(this, manager);
   this.super = DrawTool.prototype;
   this.width = null;
 }
@@ -51,8 +51,8 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
   }
 });
 
-function RemoveFogPen(board) {
-  DrawTool.call(this, board);
+function RemoveFogPen(manager) {
+  DrawTool.call(this, manager);
   this.super = DrawTool.prototype;
   this.width = null;
 }

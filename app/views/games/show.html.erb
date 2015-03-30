@@ -14,31 +14,10 @@
     <!--<button id="initiative_display_toggle">View Mode</button>-->
   <!--</div>-->
 
-  <div id="game_header">
-    <div id="header_left">
-      <h3 class="title"><%= link_to "Dungeon", campaign_path(@game.campaign) %></h3>
-
-      <div id="current_tool"></div>
-
-    </div>
-
-    <div id="tool_ribbon"></div>
-
-  </div>
-
-  <div id="game_gutter">
-
-    <div id="undo_button" class="tool">Undo</div>
-
-    <div id="tool_options"></div>
-
-  </div>
-
   <div id="game_board_container">
     <canvas id="game_board" ></canvas>
   </div>
 
-  <br style="clear: both;"/>
 </div>
 <script type="text/javascript">
   BOARD_DATA_URL = '<%= get_game_data_game_path(@game) %>';

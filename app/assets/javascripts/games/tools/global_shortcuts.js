@@ -1,7 +1,7 @@
-function GlobalShortCuts(board) {
-  Tool.call(this, board);
+function GlobalShortCuts(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
-  this.viewPortDragging = new ViewPortDragging(this, board, 'rightdrag');
+  this.viewPortDragging = new ViewPortDragging(this, this.board, 'rightdrag');
 }
 
 GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, {

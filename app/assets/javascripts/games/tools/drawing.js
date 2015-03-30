@@ -1,5 +1,5 @@
-function DrawTool(board) {
-  Tool.call(this, board);
+function DrawTool(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
 
   this.lineBuffer = [];
@@ -87,8 +87,8 @@ Pen.prototype = _.extend(Pen.prototype, DrawTool.prototype, {
   }
 });
 
-function Eraser(board) {
-  DrawTool.call(this, board);
+function Eraser(manager) {
+  DrawTool.call(this, manager);
   this.super = DrawTool.prototype;
   this.width = null;
 }

@@ -7,29 +7,13 @@
 }
 
 #game_board_container {
-  float: left;
-  position: relative;
-  z-index: 100;
+  height: 100%;
 }
 
 #game_board {
 }
 
-#game_header {
-  height: 75px;
-  overflow: hidden;
-}
 
-#header_left {
-  float: left;
-}
-
-#game_header .title {
-  display: block;
-  margin: 7px 15px 10px 7px;
-  font-size: 20px;
-  line-height: 1em;
-}
 
 #game_header .title a {
   text-decoration: none;

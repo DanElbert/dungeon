@@ -111,11 +111,9 @@ window.requestAnimFrame = (function () {
 
 function setCanvasSize() {
   // Set game board size
-  var portWidth = $(window).width();
-  var portHeight = $(window).height();
-  game_board.setCanvasSize(
-          ((portWidth - $("#game_gutter").outerWidth()) - 20),
-          ((portHeight - $("#game_header").outerHeight()) - 20));
+  var width = $("#game_board_container").width();
+  var height = $(window).height();
+  game_board.setCanvasSize(width, height - 3);
 }
 
 function draw_game() {

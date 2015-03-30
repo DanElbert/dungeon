@@ -1,5 +1,5 @@
-function PingTool(board) {
-  Tool.call(this, board);
+function PingTool(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
   this.color = null;
 }

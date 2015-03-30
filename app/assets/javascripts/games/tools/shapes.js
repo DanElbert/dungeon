@@ -1,5 +1,5 @@
-function ShapePen(board) {
-  Tool.call(this, board);
+function ShapePen(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
 
   this.width = null;
@@ -110,8 +110,8 @@ ShapePen.prototype = _.extend(ShapePen.prototype, Tool.prototype, {
 
 });
 
-function SquarePen(board) {
-  ShapePen.call(this, board);
+function SquarePen(manager) {
+  ShapePen.call(this, manager);
   this.super = ShapePen.prototype;
 }
 
@@ -148,8 +148,8 @@ SquarePen.prototype = _.extend(SquarePen.prototype, ShapePen.prototype, {
   }
 });
 
-function CirclePen(board) {
-  ShapePen.call(this, board);
+function CirclePen(manager) {
+  ShapePen.call(this, manager);
   this.super = ShapePen.prototype;
 }
 
@@ -182,8 +182,8 @@ CirclePen.prototype = _.extend(CirclePen.prototype, ShapePen.prototype, {
   }
 });
 
-function LinePen(board) {
-  ShapePen.call(this, board);
+function LinePen(manager) {
+  ShapePen.call(this, manager);
   this.super = ShapePen.prototype;
 }
 

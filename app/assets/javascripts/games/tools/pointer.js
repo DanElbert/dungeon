@@ -1,8 +1,8 @@
-function Pointer(board) {
-  Tool.call(this, board);
+function Pointer(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
 
-  this.viewPortDragging = new ViewPortDragging(this, board, 'drag');
+  this.viewPortDragging = new ViewPortDragging(this, this.board, 'drag');
   this.selected_template = null;
   this.dragging_template = false;
   this.template_start_cell = null;

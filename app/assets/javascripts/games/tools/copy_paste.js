@@ -1,5 +1,5 @@
-function CopyTool(board) {
-  Tool.call(this, board);
+function CopyTool(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
   this.cursor = null;
   this.shiftDown = false;
@@ -137,8 +137,8 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
   }
 });
 
-function PasteTool(board) {
-  Tool.call(this, board);
+function PasteTool(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
   this.cursor = null;
   this.shiftDown = false;

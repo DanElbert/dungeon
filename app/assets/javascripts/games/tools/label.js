@@ -1,5 +1,5 @@
-function LabelTool(board) {
-  Tool.call(this, board);
+function LabelTool(manager) {
+  Tool.call(this, manager);
   this.super = Tool.prototype;
   this.color = null;
   this.cursor = null;
