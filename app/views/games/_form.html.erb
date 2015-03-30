@@ -8,13 +8,13 @@
 
   <div class="form-group">
     <%= f.label :status %>
-    <%= f.select :status, Game::STATUS.values, class: 'form-control' %>
+    <%= f.select :status, Game::STATUS.values, {}, class: 'form-control' %>
   </div>
 
   <%= f.fields_for :board do |board_form| %>
     <div class="form-group">
       <%= board_form.label :background_image %>
-      <%= board_form.select :background_image_id, get_background_image_options(board_form.object.background_image_id), class: 'form-control' %>
+      <%= board_form.select :background_image_id, get_background_image_options(board_form.object.background_image_id), {}, class: 'form-control' %>
     </div>
   <% end %>
 

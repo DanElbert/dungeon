@@ -1,0 +1,13 @@
+//= require ./tool_options
+//= require ./tool_manager
+//= require ./tool
+//= require ./view_port_dragging
+//= require ./global_shortcuts
+//= require ./pointer
+//= require ./shapes
+//= require ./drawing
+//= require ./templates
+//= require ./ping
+//= require ./label
+//= require ./copy_paste
+//= require ./fog

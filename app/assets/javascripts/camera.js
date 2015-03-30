@@ -172,16 +172,16 @@ function InitializeCameraApi() {
     $camera.dialog("close");
   });
 
-  $camera.dialog({
-    close: function( event, ui ) {
-      stop();
-      if (!manual_close) {
-        triggerClosed();
-      }
-    },
-    autoOpen: false,
-    appendTo: "#dialog_container"
-  });
+  //$camera.dialog({
+  //  close: function( event, ui ) {
+  //    stop();
+  //    if (!manual_close) {
+  //      triggerClosed();
+  //    }
+  //  },
+  //  autoOpen: false,
+  //  appendTo: "#dialog_container"
+  //});
 
   $capture_button.click(function() {
     if (!!window.stream) {

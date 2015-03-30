@@ -23,31 +23,31 @@ function startGameBoard() {
   $(document).ready(function () {
 
     var initiative = InitializeInitiativeApi(INITIATIVE_URL);
-    var toolBars = InitializeToolBarsApi();
+    //var toolBars = {}; //InitializeToolBarsApi();
     var camera = InitializeCameraApi();
 
     var init_window = $("#initiative_window");
     var init_button = $("#open_initiative_button");
     var max_init_height = 500;
 
-    init_window.dialog({
-      appendTo: "#dialog_container",
-      autoOpen: false,
-      dialogClass: "initiative_dialog",
-      title: "Initiative",
-      width: 225,
-      maxWidth: 360,
-      position: {my: "right top", at: "right-5 top+5", of: "body"},
-      open: function() {
-        var $this = $(this);
-        init_button.hide();
-        var position = $this.dialog( "option", "position" );
-        $this.dialog("option", "position", position);
-      },
-      close: function() {
-        init_button.show();
-      }
-    });
+//    init_window.dialog({
+//      appendTo: "#dialog_container",
+//      autoOpen: false,
+//      dialogClass: "initiative_dialog",
+//      title: "Initiative",
+//      width: 225,
+//      maxWidth: 360,
+//      position: {my: "right top", at: "right-5 top+5", of: "body"},
+//      open: function() {
+//        var $this = $(this);
+//        init_button.hide();
+//        var position = $this.dialog( "option", "position" );
+//        $this.dialog("option", "position", position);
+//      },
+//      close: function() {
+//        init_button.show();
+//      }
+//    });
 
     init_button.click(function() {
       init_window.dialog("open");
@@ -86,7 +86,7 @@ function startGameBoard() {
       }
     });
 
-    game_board = new Board($("#game_board")[0], toolBars, initiative, camera);
+    game_board = new Board($("#game_board")[0], initiative, camera);
 
     $(window).resize(function(e) {
       if (e.target == window) {
@@ -131,7 +131,7 @@ function setSize(zoom) {
 function refreshBoard() {
   $.getJSON(BOARD_DATA_URL, function (data) {
     game_data = data;
-    setSize($("#zoom_level").val());
+    setSize(1.0);
     game_board.refresh(data);
     draw_game();
   });

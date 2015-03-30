@@ -1,4 +1,4 @@
-function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
+function Board(canvas, initiativeApi, cameraApi) {
 
   this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
   this.gameServerClient.addExtension(
@@ -13,7 +13,6 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
 
   this.networkDown = false;
   this.initiative = initiativeApi;
-  this.toolBars = toolBarsApi;
   this.camera = cameraApi;
 
   this.imageCache = new ImageCache();
@@ -22,8 +21,8 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.context = this.canvas.getContext('2d');
   this.drawing = new Drawing(this.context, this.imageCache);
   this.event_manager = new BoardEvents(this);
-  this.boardDetectionManager = new BoardDetectionManager(this, this.toolBars, this.camera, this.gameServerClient);
-  this.current_tool = null;
+  this.toolManager = new ToolManager(this);
+  this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, this.gameServerClient);
 
   this.isOwner = false;
 
@@ -46,8 +45,6 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
   this.displayCapturePattern = false;
 
   this.hovered_cell = null;
-
-  this.globalShortcutTool = new GlobalShortCuts(this);
 
   // Used in events
   var self = this;
@@ -127,16 +124,6 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     this.context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
   };
 
-  this.setTool = function(tool) {
-    if (this.current_tool) {
-      this.current_tool.disable();
-    }
-    this.current_tool = tool;
-    this.current_tool.enable();
-    this.current_tool.optionsChanged();
-    this.toolBars.setOptions(tool.getOptions());
-  };
-
   this.handleAddActionMessage = function(message) {
     this.addAction(message, null, false);
   };
@@ -194,13 +181,7 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
       this.addAction(action, null, false);
     }, this);
 
-    // Ensure a current tool:
-    if (!this.current_tool) {
-      this.setTool(new Pointer(this));
-    }
-
-    this.globalShortcutTool.disable();
-    this.globalShortcutTool.enable();
+    this.toolManager.initialize();
 
     this.imageCache.addImages(data.board.board_images);
   };
@@ -322,46 +303,9 @@ function Board(canvas, toolBarsApi, initiativeApi, cameraApi) {
     this.toolBars.showPasteTool();
   };
 
-  this.toolMap = {
-    "Pointer": new Pointer(this),
-    "Pen": new Pen(this),
-    "Square": new SquarePen(this),
-    "Circle": new CirclePen(this),
-    "Line Pen": new LinePen(this),
-    "Eraser": new Eraser(this),
-    "Measure": new Measure(this),
-    "Radius": new RadiusTemplate(this),
-    "Cone": new ConeTemplate(this),
-    "Line": new LineTemplate(this),
-    "Ping": new PingTool(this),
-    "Add Fog": new AddFogPen(this),
-    "Remove Fog": new RemoveFogPen(this),
-    "Label": new LabelTool(this),
-    "Copy": new CopyTool(this),
-    "Paste": new PasteTool(this)
+  this.clearTokens = function(e) {
+    this.addAction({actionType: "clearTokensAction", uid: generateActionId()}, null, true);
   };
 
-  $(this.toolBars).on('toolchanged', function(e) {
-    var toolName = self.toolBars.getTool();
-    var tool = self.toolMap[toolName];
-
-    if (tool) {
-      self.setTool(tool);
-    } else {
-      throw "No such tool";
-    }
-  });
-
-  $(this.toolBars).on('undo', function(e) {
-    self.undo();
-  });
-
-  $(this.toolBars).on('zoomchanged', function(e) {
-    self.setZoom(e.value);
-  });
-
-  $(this.toolBars).on('clearTokens', function(e) {
-    self.addAction({actionType: "clearTokensAction", uid: generateActionId()}, null, true);
-  });
 }
 

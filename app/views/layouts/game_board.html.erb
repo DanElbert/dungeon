@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta name="description" content="dungeon, a board game project">
   <meta name="author" content="Dan Elbert">
-  <title>Dungeon</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <title><%= content_for?(:title) ? yield(:title) : "Dungeon" %></title>
 
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
+
   <%= yield :header %>
   <%= csrf_meta_tags %>
 </head>
@@ -17,7 +18,9 @@
 
 <%= render :partial => 'layouts/flash_message' %>
 
-<%= yield %>
+<div class="container-fluid">
+  <%= yield %>
+</div>
 
 <div id="dialog_container"></div>
 

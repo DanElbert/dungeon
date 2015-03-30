@@ -15,13 +15,13 @@
 // =================================================
 // BoardDetectionManager class
 // =================================================
-function BoardDetectionManager(board, toolBars, camera, gameClient) {
+function BoardDetectionManager(board, toolManager, camera, gameClient) {
   this.board = board;
-  this.toolBars = toolBars;
+  this.toolManager = toolManager;
   this.camera = camera;
 
   // Hide camera button by default
-  this.toolBars.hideCameraButton();
+  this.toolManager.hideCameraButton();
 
   var self = this;
 
@@ -30,7 +30,7 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
   });
   this.boardDetectionActionManager.connect();
 
-  $(this.toolBars).on('startBoardCapture', function(e) {
+  $(this.toolManager).on('startBoardCapture', function(e) {
     var size = parseInt(self.getPatternDimension());
     var origin_x = board.viewPortCoord[0];
     var origin_y = board.viewPortCoord[1];
@@ -50,12 +50,12 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
     self.toolBars.hideStartCaptureButton();
   });
 
-  $(this.toolBars).on('stopBoardCapture', function(e) {
+  $(this.toolManager).on('stopBoardCapture', function(e) {
     var action = {actionType: "finishBoardDetectionAction", uid: generateActionId() };
     self.addAction(action);
   });
 
-  $(this.toolBars).on('openCamera', function(e) {
+  $(this.toolManager).on('openCamera', function(e) {
     self.toolBars.hideCameraButton();
     var width = parseInt(self.board.canvas.width * 0.9);
     var height = parseInt(self.board.canvas.height * 0.9);
@@ -82,7 +82,7 @@ function BoardDetectionManager(board, toolBars, camera, gameClient) {
 _.extend(BoardDetectionManager.prototype, {
   enableCameraButton: function() {
     if (this.camera.supported()) {
-      this.toolBars.showCameraButton();
+      this.toolManager.showCameraButton();
     }
   },
 

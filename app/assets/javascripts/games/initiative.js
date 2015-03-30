@@ -27,7 +27,7 @@ function InitializeInitiativeApi(name_url) {
         list.append(li);
       });
 
-      list.sortable("refresh");
+      //list.sortable("refresh");
     },
 
     enterViewMode: function() {
@@ -131,53 +131,53 @@ function InitializeInitiativeApi(name_url) {
 
   var isAutocompleOpen = false;
 
-  nameInput.autocomplete({
-    source: name_url,
-    minLength: 0,
-    open: function() { isAutocompleOpen = true; },
-    close: function() { isAutocompleOpen = false; },
-    position: { my: "left top", at: "left bottom", collision: "flip" },
-    select: function( event, ui ) {
-      valueInput.focus();
-    }
-  }).on("click", function() {
-    if (!isAutocompleOpen) {
-      nameInput.autocomplete( "search", "" );
-    }
-  });
+  //nameInput.autocomplete({
+  //  source: name_url,
+  //  minLength: 0,
+  //  open: function() { isAutocompleOpen = true; },
+  //  close: function() { isAutocompleOpen = false; },
+  //  position: { my: "left top", at: "left bottom", collision: "flip" },
+  //  select: function( event, ui ) {
+  //    valueInput.focus();
+  //  }
+  //}).on("click", function() {
+  //  if (!isAutocompleOpen) {
+  //    nameInput.autocomplete( "search", "" );
+  //  }
+  //});
 
-  var $dragTarget = $("<ul></ul>")
-      .css({
-        margin: "0",
-        padding: "0",
-        position: "absolute"
-      })
-      .addClass("ui-widget")
-      .appendTo("body");
-
-  list.sortable({
-    helper: "clone",
-    appendTo: $dragTarget,
-    zIndex: 9000,
-    over: function (event, ui) {
-      ui.helper.removeClass("removing");
-      isRemovingItem = false;
-    },
-    out: function (event, ui) {
-      if (ui.helper) {
-        ui.helper.addClass("removing");
-      }
-      isRemovingItem = true;
-    },
-    beforeStop: function (event, ui) {
-      if(isRemovingItem) {
-        ui.item.remove();
-      }
-    },
-    stop: function(event, ui) {
-      triggerChange();
-    }
-  });
+  //var $dragTarget = $("<ul></ul>")
+  //    .css({
+  //      margin: "0",
+  //      padding: "0",
+  //      position: "absolute"
+  //    })
+  //    .addClass("ui-widget")
+  //    .appendTo("body");
+  //
+  //list.sortable({
+  //  helper: "clone",
+  //  appendTo: $dragTarget,
+  //  zIndex: 9000,
+  //  over: function (event, ui) {
+  //    ui.helper.removeClass("removing");
+  //    isRemovingItem = false;
+  //  },
+  //  out: function (event, ui) {
+  //    if (ui.helper) {
+  //      ui.helper.addClass("removing");
+  //    }
+  //    isRemovingItem = true;
+  //  },
+  //  beforeStop: function (event, ui) {
+  //    if(isRemovingItem) {
+  //      ui.item.remove();
+  //    }
+  //  },
+  //  stop: function(event, ui) {
+  //    triggerChange();
+  //  }
+  //});
 
   return api;
 

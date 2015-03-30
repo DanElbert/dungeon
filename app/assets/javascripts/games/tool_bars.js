@@ -361,19 +361,19 @@ function InitializeToolBarsApi() {
     triggerUndo();
   });
 
-  $("#zoom_slider").slider({
-    orientation:"horizontal",
-    range:false,
-    animate:true,
-    min:0.3,
-    max:2.5,
-    step:0.1,
-    value:1,
-    slide:function (event, ui) {
-      $("#zoom_level").val(ui.value).change();
-    }
-  });
-  $("#zoom_level").val($("#zoom_slider").slider("value"));
+  //$("#zoom_slider").slider({
+  //  orientation:"horizontal",
+  //  range:false,
+  //  animate:true,
+  //  min:0.3,
+  //  max:2.5,
+  //  step:0.1,
+  //  value:1,
+  //  slide:function (event, ui) {
+  //    $("#zoom_level").val(ui.value).change();
+  //  }
+  //});
+  //$("#zoom_level").val($("#zoom_slider").slider("value"));
 
 
   return api;
