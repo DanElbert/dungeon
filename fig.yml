@@ -10,8 +10,8 @@ redis:
 
 web:
   build: .
-  volumes:
-    - .:/dungeon
+#  volumes:
+#    - .:/dungeon
   ports:
     - "3000:3000"
   links:

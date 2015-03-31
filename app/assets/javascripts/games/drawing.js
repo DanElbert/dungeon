@@ -110,7 +110,7 @@ _.extend(Drawing.prototype, {
     this.context.globalAlpha = 0.3;
 
     _.each(cells, function(c) {
-      this.colorCell(c[0], c[1], color);
+      this.colorCell(c[0], c[1], color, 0);
     }, this);
 
     this.context.globalAlpha = 1;
@@ -288,6 +288,8 @@ _.extend(Drawing.prototype, {
     var firstRow = Math.floor(y / this.cellSize);
     var lastRow = firstRow + Math.floor(viewPortHeight / this.cellSize) + 1;
 
+    this.context.save();
+    this.context.globalAlpha = 0.5;
     this.context.beginPath();
     this.context.lineWidth = 1;
     this.context.strokeStyle = color;
@@ -319,6 +321,7 @@ _.extend(Drawing.prototype, {
     }
 
     this.context.stroke();
+    this.context.restore();
   },
 
   drawImage: function(x, y, imageUrl) {
@@ -341,12 +344,16 @@ _.extend(Drawing.prototype, {
     }
   },
 
-  colorCell: function (column, row, color) {
+  colorCell: function (column, row, color, borderSize) {
 
-    var left = (column * this.cellSize) + 1;
-    var top = (row * this.cellSize) + 1;
-    var width = this.cellSize - 1;
-    var height = this.cellSize - 1;
+    if (arguments.length < 4) {
+      borderSize = 1;
+    }
+
+    var left = (column * this.cellSize) + borderSize;
+    var top = (row * this.cellSize) + borderSize;
+    var width = this.cellSize - borderSize;
+    var height = this.cellSize - borderSize;
 
     this.context.beginPath();
     this.context.rect(left, top, width, height);
