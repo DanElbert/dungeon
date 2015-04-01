@@ -1,9 +1,6 @@
 function Tool(manager) {
   this.toolManager = manager;
-
-  if (manager) {
-    this.board = manager.board;
-  }
+  this.board = manager.board;
 
   this.options = new ToolOptions();
   this.buildOptions();

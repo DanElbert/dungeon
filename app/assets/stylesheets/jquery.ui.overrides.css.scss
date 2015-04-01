@@ -1,0 +1,34 @@
+
+$resize_side_size: 12px;
+$resize_corner_size: 17px;
+
+.ui-dialog {
+  .ui-dialog-titlebar {
+    padding: .2em 1em;
+  }
+
+  .ui-resizable-handle {
+    background-color:#555;
+    opacity: 0.5;
+  }
+
+//  .ui-resizable-n { height: $resize_side_size; }
+//  .ui-resizable-w { height: $resize_side_size; }
+//  .ui-resizable-s { height: $resize_side_size; }
+//  .ui-resizable-e { height: $resize_side_size; }
+//
+//  .ui-resizable-nw { height: $resize_corner_size; }
+//  .ui-resizable-sw { height: $resize_corner_size; }
+//  .ui-resizable-se { height: $resize_corner_size; }
+//  .ui-resizable-ne { height: $resize_corner_size; }
+}
+
+.ui-widget {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+}
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-family: inherit;
+  font-size: inherit;
+}

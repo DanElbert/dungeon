@@ -11,3 +11,4 @@
 //= require ./label
 //= require ./copy_paste
 //= require ./fog
+//= require ./tool_renderer

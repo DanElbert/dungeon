@@ -9,6 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require image-picker
+ *= require jquery-ui/dialog
  */
 
 @import "games";
@@ -17,6 +18,7 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "flatly_bootswatch";
+@import "jquery.ui.overrides";
 
 div.thumbnail {
   width: 150px;

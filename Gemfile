@@ -1,9 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.0'
-
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+gem 'rails', '4.2.1'
 
 gem 'sqlite3'
 gem 'mysql2'
@@ -16,7 +13,8 @@ gem 'faye', :require => false
 gem 'faye-redis', :require => false
 gem 'redis-rails'
 
-gem 'jquery-rails'
+gem 'jquery-rails', '~> 4.0.3'
+gem 'jquery-ui-rails', '~> 5.0.3'
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'bcrypt', '~> 3.1.9'
 

@@ -225,9 +225,7 @@ function Board(canvas, initiativeApi, cameraApi) {
   };
 
   this.renderTool = function() {
-    if (this.current_tool) {
-      this.current_tool.draw();
-    }
+    this.toolManager.draw();
   };
 
   this.renderCapturePattern = function() {
