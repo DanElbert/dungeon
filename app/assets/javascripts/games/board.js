@@ -122,6 +122,8 @@ function Board(canvas, initiativeApi, cameraApi) {
     this.context.save();
     this.context.scale(this.zoom, this.zoom);
     this.context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
+
+    this.toolManager.updateZoom(this.zoom);
   };
 
   this.handleAddActionMessage = function(message) {

@@ -60,7 +60,7 @@ _.extend(ToolManager.prototype, {
     }
   },
 
-  setUIZoomDisplay: function(zoom) {
+  updateZoom: function(zoom) {
 
   },
 

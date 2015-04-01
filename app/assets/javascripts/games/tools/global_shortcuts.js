@@ -21,14 +21,12 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
       var scale = ((mapEvt.scale - 1) * scaleZoomFactor) + 1;
       var newZoom = self.originalZoom * scale;
       self.board.setZoom(newZoom, mapEvt.center);
-      self.board.toolBars.setZoom(newZoom);
     });
 
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
       var currentZoom = self.board.zoom;
       var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
       self.board.setZoom(newZoom, mapEvt.mapPoint);
-      self.board.toolManager.setUIZoomDisplay(newZoom);
     });
 
     $(this.board.event_manager).on('keydown.GlobalShortCuts', function(evt, mapEvt) {
