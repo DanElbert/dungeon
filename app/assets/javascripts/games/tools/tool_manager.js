@@ -16,14 +16,9 @@ function ToolManager(board) {
   this.toolMap = {
     "Pointer": new Pointer(this),
     "Pen": new Pen(this),
-    "Square": new SquarePen(this),
-    "Circle": new CirclePen(this),
-    "Line Pen": new LinePen(this),
+    "Shape": new ShapeTool(this),
     "Eraser": new Eraser(this),
-    "Measure": new Measure(this),
-    "Radius": new RadiusTemplate(this),
-    "Cone": new ConeTemplate(this),
-    "Line": new LineTemplate(this),
+    "Template": new TemplateTool(this),
     "Ping": new PingTool(this),
     "Add Fog": new AddFogPen(this),
     "Remove Fog": new RemoveFogPen(this),
@@ -51,20 +46,12 @@ function ToolManager(board) {
             handler: function() { self.setTool("Pen"); }
           }),
 
-          new ToolMenu("Line", {
-            handler: function() { self.setTool("Line Pen"); }
-          }),
-
-          new ToolMenu("Box", {
-            handler: function() { self.setTool("Square"); }
-          }),
-
-          new ToolMenu("Circle", {
-            handler: function() { self.setTool("Circle"); }
-          }),
-
           new ToolMenu("Erase", {
             handler: function() { self.setTool("Eraser"); }
+          }),
+
+          new ToolMenu("Shape", {
+            handler: function() { self.setTool("Shape"); }
           }),
 
           new ToolMenu("Label", {
@@ -84,20 +71,8 @@ function ToolManager(board) {
 
       new ToolMenu("Template", {
         children: [
-          new ToolMenu("Measure", {
-            handler: function() { self.setTool("Measure"); }
-          }),
-
-          new ToolMenu("Line", {
-            handler: function() { self.setTool("Line"); }
-          }),
-
-          new ToolMenu("Radius", {
-            handler: function() { self.setTool("Radius"); }
-          }),
-
-          new ToolMenu("Cone", {
-            handler: function() { self.setTool("Cone"); }
+          new ToolMenu("Template", {
+            handler: function() { self.setTool("Template"); }
           })
         ]
       }),
@@ -157,10 +132,15 @@ _.extend(ToolManager.prototype, {
       }
       this.currentTool = tool;
       this.currentTool.enable();
+      this.setOptions();
       this.currentTool.optionsChanged();
     } else {
       throw "No such tool";
     }
+  },
+
+  setOptions: function() {
+
   },
 
   updateZoom: function(zoom) {

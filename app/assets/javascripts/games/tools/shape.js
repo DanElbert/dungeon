@@ -1,10 +1,11 @@
-function ShapePen(manager) {
+function ShapeTool(manager) {
   Tool.call(this, manager);
   this.super = Tool.prototype;
 
   this.width = null;
   this.color = null;
   this.backgroundColor = null;
+  this.shape = null;
 
   this.shiftDown = false;
   this.ctrlDown = false;
@@ -14,8 +15,9 @@ function ShapePen(manager) {
   this.cursor = null;
 }
 
-ShapePen.prototype = _.extend(ShapePen.prototype, Tool.prototype, {
+ShapeTool.prototype = _.extend(ShapeTool.prototype, Tool.prototype, {
   buildOptions: function() {
+    this.options.add({type: "shapes", label: "Shape", name: "shape", value: "rectangle"});
     this.options.add(this.toolManager.sharedTool("drawingColor"));
     this.options.add(this.toolManager.sharedTool("drawingBackgroundColor"));
     this.options.add(this.toolManager.sharedTool("drawingWidth"));
@@ -24,6 +26,7 @@ ShapePen.prototype = _.extend(ShapePen.prototype, Tool.prototype, {
   optionsChanged: function() {
     this.width = this.options.get("width").value;
     this.color = this.options.get("color").value;
+    this.shape = this.options.get("shape").value;
     if (this.options.get("backgroundColor")) {
       this.backgroundColor = this.options.get("backgroundColor").value;
     }
@@ -97,7 +100,31 @@ ShapePen.prototype = _.extend(ShapePen.prototype, Tool.prototype, {
   },
 
   drawShape: function() {
-
+    switch(this.shape) {
+      case "rectangle":
+        this.drawRectangle();
+        break;
+      case "circle":
+        this.drawCircle();
+        break;
+      case "line":
+        this.drawLine();
+        break;
+    }
+  },
+  
+  saveAction: function() {
+    switch(this.shape) {
+      case "rectangle":
+        this.saveRectangle();
+        break;
+      case "circle":
+        this.saveCircle();
+        break;
+      case "line":
+        this.saveLine();
+        break;
+    }
   },
 
   draw: function() {
@@ -106,22 +133,9 @@ ShapePen.prototype = _.extend(ShapePen.prototype, Tool.prototype, {
     }
 
     this.drawShape();
-  }
-
-});
-
-function SquarePen(manager) {
-  ShapePen.call(this, manager);
-  this.super = ShapePen.prototype;
-}
-
-SquarePen.prototype = _.extend(SquarePen.prototype, ShapePen.prototype, {
-
-  eventNamespace: function() {
-    return "SquarePen";
   },
 
-  drawShape: function() {
+  drawRectangle: function() {
     if (this.drag_start && this.drag_current) {
       var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
       var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
@@ -136,28 +150,7 @@ SquarePen.prototype = _.extend(SquarePen.prototype, ShapePen.prototype, {
     }
   },
 
-  saveAction: function() {
-    if (this.drag_start && this.drag_current) {
-      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]) >> 0, Math.min(this.drag_start[1], this.drag_current[1]) >> 0];
-      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]) >> 0, Math.max(this.drag_start[1], this.drag_current[1]) >> 0];
-
-      var action = {actionType: "squarePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
-      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
-    }
-  }
-});
-
-function CirclePen(manager) {
-  ShapePen.call(this, manager);
-  this.super = ShapePen.prototype;
-}
-
-CirclePen.prototype = _.extend(CirclePen.prototype, ShapePen.prototype, {
-  eventNamespace: function() {
-    return "CirclePen";
-  },
-  drawShape: function() {
+  drawCircle: function() {
     if (this.drag_start && this.drag_current) {
       var center = this.drag_start;
       var radius = Geometry.getDistance(this.drag_start, this.drag_current);
@@ -170,32 +163,7 @@ CirclePen.prototype = _.extend(CirclePen.prototype, ShapePen.prototype, {
     }
   },
 
-  saveAction: function() {
-    if (this.drag_start && this.drag_current) {
-      var center = this.roundPoint(this.drag_start);
-      var radius = Geometry.getDistance(this.drag_start, this.drag_current)>>0;
-
-      var action = {actionType: "circlePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, center: center, radius: radius, uid: generateActionId()};
-      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
-    }
-  }
-});
-
-function LinePen(manager) {
-  ShapePen.call(this, manager);
-  this.super = ShapePen.prototype;
-}
-
-LinePen.prototype = _.extend(LinePen.prototype, ShapePen.prototype, {
-  buildOptions: function() {
-    this.options.add(this.toolManager.sharedTool("drawingColor"));
-    this.options.add(this.toolManager.sharedTool("drawingWidth"));
-  },
-  eventNamespace: function() {
-    return "LinePen";
-  },
-  drawShape: function() {
+  drawLine: function() {
     if (this.drag_start && this.drag_current) {
 
       var length = Geometry.getDistance(this.drag_start, this.drag_current);
@@ -205,7 +173,29 @@ LinePen.prototype = _.extend(LinePen.prototype, ShapePen.prototype, {
     }
   },
 
-  saveAction: function() {
+  saveRectangle: function() {
+    if (this.drag_start && this.drag_current) {
+      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]) >> 0, Math.min(this.drag_start[1], this.drag_current[1]) >> 0];
+      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]) >> 0, Math.max(this.drag_start[1], this.drag_current[1]) >> 0];
+
+      var action = {actionType: "squarePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  },
+
+  saveCircle: function() {
+    if (this.drag_start && this.drag_current) {
+      var center = this.roundPoint(this.drag_start);
+      var radius = Geometry.getDistance(this.drag_start, this.drag_current)>>0;
+
+      var action = {actionType: "circlePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, center: center, radius: radius, uid: generateActionId()};
+      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  },
+
+  saveLine: function() {
     if (this.drag_start && this.drag_current) {
 
       var action = {actionType: "linePenAction", color: this.color, width: this.width, start: this.drag_start, end: this.drag_current, uid: generateActionId()};
@@ -213,4 +203,5 @@ LinePen.prototype = _.extend(LinePen.prototype, ShapePen.prototype, {
       this.board.addAction(action, undoAction, true);
     }
   }
+
 });

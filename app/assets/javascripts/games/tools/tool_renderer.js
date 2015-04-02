@@ -14,15 +14,19 @@ _.extend(ToolRenderer.prototype, {
 
   build: function() {
     this.container = $("<div id='tool_container'/>").appendTo($("#dialog_container"));
+    this.renderInto(this.container, this.tools);
+
     this.container.dialog({
       autoOpen: true,
       closeOnEscape: false,
-      position: {my: "left top", at: "left top", of: "#game_board_container"},
+      resizable: false,
+      minWidth: 10,
+      width: 125,
+      height: 450,
+      position: {my: "left top", at: "left+10px top+10px", of: "#game_board_container"},
       dialogClass: "tool_dialog",
       title: "Tools"
     });
-
-    this.renderInto(this.container, this.tools);
   },
 
   renderInto: function(container, tools) {
@@ -37,9 +41,7 @@ _.extend(ToolRenderer.prototype, {
         var wrapper = $("<fieldset />")
             .append($("<legend />").text(tool.displayName()));
 
-        _.each(tool.getChildren(), function(c) {
-          wrapper.append(this.renderTool(c));
-        }, this);
+        this.renderInto(wrapper, tool.getChildren());
 
         return wrapper;
         break;

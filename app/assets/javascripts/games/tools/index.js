@@ -4,7 +4,7 @@
 //= require ./view_port_dragging
 //= require ./global_shortcuts
 //= require ./pointer
-//= require ./shapes
+//= require ./shape.js
 //= require ./drawing
 //= require ./templates
 //= require ./ping

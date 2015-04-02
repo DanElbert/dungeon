@@ -1,3 +1,65 @@
+function TemplateTool(manager) {
+  Tool.call(this, manager);
+  this.super = Tool.prototype;
+
+  this.toolMap = {
+    measure: new Measure(manager),
+    line: new LineTemplate(manager),
+    radius: new RadiusTemplate(manager),
+    cone: new ConeTemplate(manager)
+  };
+
+  this.enabled = false;
+  this.tooloption = {type: "templates", label: "Shape", name: "shape", value: "measure"};
+  this.subTool = "measure";
+}
+
+_.extend(TemplateTool.prototype, Tool.prototype, {
+
+  currentTool: function() {
+    if (this.toolMap && this.subTool) {
+      return this.toolMap[this.subTool];
+    } else {
+      return null;
+    }
+  },
+
+  enable: function() {
+    this.enabled = true;
+    this.currentTool().enable();
+  },
+
+  disable: function() {
+    this.enabled = false;
+    this.currentTool().disable();
+  },
+
+  draw: function() {
+    this.currentTool().draw();
+  },
+
+  optionsChanged: function() {
+
+    if (!this.currentTool()) {
+      return;
+    }
+
+    this.currentTool().disable();
+    this.options.clear();
+    this.options.add(this.tooloption);
+    this.subTool = this.options.get("shape").value;
+    this.currentTool().getOptions().each(function(o) {
+      this.options.addWithoutEvents(o);
+    }, this);
+
+    this.toolManager.setOptions();
+
+    if (this.enabled) {
+      this.currentTool().enable();
+    }
+  }
+});
+
 function Measure(manager) {
   Tool.call(this, manager);
   this.super = Tool.prototype;

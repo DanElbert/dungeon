@@ -10,8 +10,14 @@
 }
 
 .tool_dialog {
+
   .ui-dialog-titlebar-close {
     display: none;
+  }
+
+  .ui-dialog-content {
+    padding: 3px;
+    overflow: hidden;
   }
 
   .tool_button {
