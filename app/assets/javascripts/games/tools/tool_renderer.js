@@ -14,7 +14,7 @@ _.extend(ToolRenderer.prototype, {
 
   build: function() {
     this.container = $("<div id='tool_container'/>").appendTo($("#dialog_container"));
-    this.renderInto(this.container, this.tools);
+    this.buildTools(this.container, this.tools);
 
     this.container.dialog({
       autoOpen: true,
@@ -29,33 +29,100 @@ _.extend(ToolRenderer.prototype, {
     });
   },
 
-  renderInto: function(container, tools) {
-    _.each(tools, function(tool) {
-      container.append(this.renderTool(tool));
+  buildTools: function(container, tools) {
+    _.each(tools, function(t) {
+      this.renderTool(container, t);
     }, this);
   },
 
-  renderTool: function(tool) {
+  renderTool: function(container, tool) {
+    var renderer = null;
     switch (tool.type) {
       case "container":
-        var wrapper = $("<fieldset />")
-            .append($("<legend />").text(tool.displayName()));
-
-        this.renderInto(wrapper, tool.getChildren());
-
-        return wrapper;
+        renderer = new ToolContainerRenderer(container, tool);
         break;
 
       case "button":
-        return $("<button />")
-            .text(tool.displayName())
-            .addClass("tool_button")
-            .on("click", function() { tool.handle(); });
+        renderer = new ToolButtonRenderer(container, tool);
         break;
 
       default:
-        return $("<div />").text(tool.displayName());
+        renderer = new ToolItemRenderer(container, tool);
+    }
+
+    var $e = renderer.render();
+
+    if (tool.children) {
+      this.buildTools($e, tool.children);
     }
   }
 
+});
+
+function ToolItemRenderer(container, tool) {
+  this.container = container;
+  this.tool = tool;
+}
+
+_.extend(ToolItemRenderer.prototype, {
+  createElement: function() {},
+  updateElement: function($e) {},
+
+  ensureElement: function() {
+    var $e = this.container.find(".tool-item-" + this.tool.name);
+    if ($e.length) {
+      return $e;
+    } else {
+      $e = this.createElement();
+      $e.addClass(".tool-item-" + this.tool.name);
+      this.container.append($e);
+      return $e;
+    }
+  },
+
+  render: function() {
+    var $e = this.ensureElement();
+    this.updateElement($e);
+    return $e;
+  }
+});
+
+function ToolContainerRenderer(container, tool) {
+  ToolItemRenderer.call(this, container, tool);
+}
+
+_.extend(ToolContainerRenderer.prototype, ToolItemRenderer.prototype, {
+  createElement: function() {
+    return $("<fieldset />")
+      .append($("<legend />"));
+  },
+  updateElement: function($e) {
+    $e.find("legend").text(this.tool.displayName());
+    if (this.tool.visible) {
+      $e.show();
+    } else {
+      $e.hide();
+    }
+  }
+});
+
+function ToolButtonRenderer(container, tool) {
+  ToolItemRenderer.call(this, container, tool);
+}
+
+_.extend(ToolButtonRenderer.prototype, ToolItemRenderer.prototype, {
+  createElement: function() {
+    var self = this;
+    return $("<button />")
+      .addClass("tool_button")
+      .on("click", function() { self.tool.handle(); });
+  },
+  updateElement: function($e) {
+    $e.text(this.tool.displayName());
+    if (this.tool.visible) {
+      $e.show();
+    } else {
+      $e.hide();
+    }
+  }
 });

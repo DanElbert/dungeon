@@ -180,6 +180,7 @@ function ToolMenu(name, options) {
   this.children = options.children;
   this.handler = options.handler;
   this.type = _.has(options, "type") ? options.type : (this.children ? "container" : "button");
+  this.uid = generateActionId() + generateActionId();
 }
 
 _.extend(ToolMenu.prototype, {
