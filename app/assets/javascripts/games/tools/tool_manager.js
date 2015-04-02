@@ -28,73 +28,71 @@ function ToolManager(board) {
   };
 
   this.toolSet = [
-      new ToolMenu("View", {
+      new ToolMenuItem("View", {
         children: [
-            new ToolMenu("Ping", {
+            new ToolMenuItem("Ping", {
               handler: function() { self.setTool("Ping"); }
             }),
 
-            new ToolMenu("Zoom", {
-
-            })
+          new ZoomMenuItem("Zoom", {})
         ]
       }),
 
-      new ToolMenu("Draw", {
+      new ToolMenuItem("Draw", {
         children: [
-          new ToolMenu("Pen", {
+          new ToolMenuItem("Pen", {
             handler: function() { self.setTool("Pen"); }
           }),
 
-          new ToolMenu("Erase", {
+          new ToolMenuItem("Erase", {
             handler: function() { self.setTool("Eraser"); }
           }),
 
-          new ToolMenu("Shape", {
+          new ToolMenuItem("Shape", {
             handler: function() { self.setTool("Shape"); }
           }),
 
-          new ToolMenu("Label", {
+          new ToolMenuItem("Label", {
             handler: function() { self.setTool("Label"); }
           }),
 
-          new ToolMenu("Copy", {
+          new ToolMenuItem("Copy", {
             handler: function() { self.setTool("Copy"); }
           }),
 
-          new ToolMenu("Paste", {
+          new ToolMenuItem("Paste", {
             visible: false,
             handler: function() { self.setTool("Paste"); }
           })
         ]
       }),
 
-      new ToolMenu("Template", {
+      new ToolMenuItem("Template", {
         children: [
-          new ToolMenu("Template", {
+          new ToolMenuItem("Template", {
             handler: function() { self.setTool("Template"); }
           })
         ]
       }),
 
-      new ToolMenu("Fog", {
+      new ToolMenuItem("Fog", {
         visible: false,
         children: [
-          new ToolMenu("Add", {
+          new ToolMenuItem("Add", {
             handler: function() { self.setTool("Add Fog"); }
           }),
 
-          new ToolMenu("Remove", {
+          new ToolMenuItem("Remove", {
             handler: function() { self.setTool("Remove Fog"); }
           })
         ]
       }),
 
-      new ToolMenu("Tokens", {
+      new ToolMenuItem("Tokens", {
         visible: false
       }),
 
-      new ToolMenu("Undo", {
+      new ToolMenuItem("Undo", {
         handler: function() { self.board.undo(); }
       })
   ];
@@ -104,10 +102,19 @@ function ToolManager(board) {
 
 _.extend(ToolManager.prototype, {
 
+  // Draws the current tool onto the board
   draw: function() {
     if (this.currentTool) {
       this.currentTool.draw();
     }
+  },
+
+  // Builds and/or updates the HTML tool menu
+  render: function() {
+    if (!this.renderer) {
+      this.renderer = new ToolRenderer(this.toolSet);
+    }
+    this.renderer.render();
   },
 
   initialize: function() {
@@ -119,8 +126,7 @@ _.extend(ToolManager.prototype, {
     this.globalShortcutTool.disable();
     this.globalShortcutTool.enable();
 
-    this.renderer = new ToolRenderer(this.toolSet);
-    this.renderer.render();
+    this.render();
   },
 
   setTool: function(name) {
@@ -144,7 +150,8 @@ _.extend(ToolManager.prototype, {
   },
 
   updateZoom: function(zoom) {
-
+    this.getMenuItem("Zoom").value = zoom;
+    this.render();
   },
 
   undo: function() {
@@ -167,15 +174,33 @@ _.extend(ToolManager.prototype, {
 
   },
 
+  getMenuItem: function(name) {
+    var recur = function(items, name) {
+      var found = null;
+      _.find(items, function(i) {
+        if (i.name == name) {
+          found = i;
+          return true;
+        }
+        found = recur(i.getChildren(), name);
+        return found != null;
+      }, this);
+      return found;
+    };
+
+    return recur(this.toolSet, name);
+  },
+
   sharedTool: function(name) {
     return this.sharedToolOptions[name];
   }
 });
 
-function ToolMenu(name, options) {
+function ToolMenuItem(name, options) {
   this.name = name;
   this.label = options.label;
   this.toolTip = options.toolTip;
+  this.active = _.has(options, "active") ? options.active : false;
   this.visible = _.has(options, "visible") ? options.visible : true;
   this.children = options.children;
   this.handler = options.handler;
@@ -183,7 +208,7 @@ function ToolMenu(name, options) {
   this.uid = generateActionId() + generateActionId();
 }
 
-_.extend(ToolMenu.prototype, {
+_.extend(ToolMenuItem.prototype, {
   handle: function() {
     if (this.handler) {
       this.handler.call(this);
@@ -196,5 +221,17 @@ _.extend(ToolMenu.prototype, {
 
   getChildren: function() {
     return this.children || [];
+  }
+});
+
+function ZoomMenuItem(name, options) {
+  ToolMenuItem.call(this, name, options);
+  this.type = "zoom";
+  this.value = options.value || 1.0;
+}
+
+_.extend(ZoomMenuItem.prototype, ToolMenuItem.prototype, {
+  displayName: function() {
+    return this.value;
   }
 });

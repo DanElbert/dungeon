@@ -99,7 +99,7 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
       success: function(data, status, xhr) {
         self.board.setCopiedArea(data.url);
         self.getOptions().get("copiedImage").url = data.url;
-        self.board.toolBars.setOptions(self.getOptions());
+        self.toolManager.setOptions();
       }
     });
   },

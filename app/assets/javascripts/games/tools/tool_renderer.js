@@ -52,9 +52,7 @@ _.extend(ToolRenderer.prototype, {
 
     var $e = renderer.render();
 
-    if (tool.children) {
-      this.buildTools($e, tool.children);
-    }
+    this.buildTools($e, tool.getChildren());
   }
 
 });
@@ -65,8 +63,13 @@ function ToolItemRenderer(container, tool) {
 }
 
 _.extend(ToolItemRenderer.prototype, {
-  createElement: function() {},
-  updateElement: function($e) {},
+  createElement: function() {
+    return $("<div />");
+  },
+
+  updateElement: function($e) {
+    $e.text(this.tool.displayName());
+  },
 
   ensureElement: function() {
     var $e = this.container.find(".tool-item-" + this.tool.name);
