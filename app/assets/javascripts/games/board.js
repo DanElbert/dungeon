@@ -22,6 +22,7 @@ function Board(canvas, initiativeApi, cameraApi) {
   this.drawing = new Drawing(this.context, this.imageCache);
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
+  this.mainMenu = new MainMenu(this);
   this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, this.gameServerClient);
 
   this.isOwner = false;
@@ -176,7 +177,7 @@ function Board(canvas, initiativeApi, cameraApi) {
     this.drawingLayer.isOwner = this.isOwner;
 
     if (!this.isOwner) {
-      this.toolBars.hideFogTools();
+      this.toolManager.hideFogTools();
     }
 
     _.each(data.board.actions, function(action) {
@@ -184,6 +185,7 @@ function Board(canvas, initiativeApi, cameraApi) {
     }, this);
 
     this.toolManager.initialize();
+    this.mainMenu.render();
 
     this.imageCache.addImages(data.board.board_images);
   };
@@ -300,7 +302,7 @@ function Board(canvas, initiativeApi, cameraApi) {
 
   this.setCopiedArea = function(url) {
     this.copiedArea = url;
-    this.toolBars.showPasteTool();
+    this.toolManager.showPasteTool();
   };
 
   this.clearTokens = function(e) {

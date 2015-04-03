@@ -146,12 +146,18 @@ _.extend(ToolManager.prototype, {
   },
 
   setOptions: function() {
-
+    if (this.currentTool) {
+      this.renderer.updateOptions(this.currentTool.getOptions());
+    }
   },
 
   updateZoom: function(zoom) {
     this.getMenuItem("Zoom").value = zoom;
     this.render();
+  },
+
+  toggleDisplay: function() {
+    this.renderer.toggleDisplay();
   },
 
   undo: function() {
@@ -164,6 +170,17 @@ _.extend(ToolManager.prototype, {
 
   changeZoom: function(zoom) {
     this.board.setZoom(zoom);
+  },
+
+  showPasteTool: function() {
+    this.getMenuItem("Paste").visible = true;
+    this.render();
+  },
+
+  hideFogTools: function() {
+    this.getMenuItem("Add").visible = false;
+    this.getMenuItem("Remove").visible = false;
+    this.render();
   },
 
   hideCameraButton: function() {

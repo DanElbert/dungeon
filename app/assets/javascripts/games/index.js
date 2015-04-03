@@ -12,4 +12,5 @@
 //= require ./view_port_labels
 //= require ./board_detection_manager
 //= require ./image_cache
+//= require ./main_menu
 //= require ./game_board

@@ -2,19 +2,21 @@
 function ToolRenderer(tools) {
   this.tools = tools;
   this.container = null;
+  this.defaultPosition = {my: "left top", at: "left+25px top+20px", of: "#game_board_container"};
 }
 
 _.extend(ToolRenderer.prototype, {
 
   render: function() {
     if (!this.container) {
-      this.build();
+      this.initContainer();
     }
+    this.buildTools(this.container, this.tools);
   },
 
-  build: function() {
+  initContainer: function() {
+    var self = this;
     this.container = $("<div id='tool_container'/>").appendTo($("#dialog_container"));
-    this.buildTools(this.container, this.tools);
 
     this.container.dialog({
       autoOpen: true,
@@ -22,11 +24,27 @@ _.extend(ToolRenderer.prototype, {
       resizable: false,
       minWidth: 10,
       width: 125,
-      height: 450,
-      position: {my: "left top", at: "left+10px top+10px", of: "#game_board_container"},
+      height: 350,
+      position: this.defaultPosition,
       dialogClass: "tool_dialog",
-      title: "Tools"
+      title: "Tools",
+      open: function(evt, ui) {
+        var $this = $(this);
+        $this.dialog("option", "position", self.defaultPosition);
+      }
     });
+  },
+
+  updateOptions: function(options) {
+
+  },
+
+  toggleDisplay: function() {
+    if (this.container.dialog("isOpen")) {
+      this.container.dialog("close");
+    } else {
+      this.container.dialog("open");
+    }
   },
 
   buildTools: function(container, tools) {
@@ -64,7 +82,7 @@ function ToolItemRenderer(container, tool) {
 
 _.extend(ToolItemRenderer.prototype, {
   createElement: function() {
-    return $("<div />");
+    return $("<span />");
   },
 
   updateElement: function($e) {
@@ -77,7 +95,7 @@ _.extend(ToolItemRenderer.prototype, {
       return $e;
     } else {
       $e = this.createElement();
-      $e.addClass(".tool-item-" + this.tool.name);
+      $e.addClass("tool-item-" + this.tool.name);
       this.container.append($e);
       return $e;
     }
