@@ -22,11 +22,15 @@
   }
 
   .tool_button {
-    @extend .btn;
-    @extend .btn-default;
-    @extend .btn-sm;
     margin: 2px;
     width: 50px;
+  }
+
+  .tool_button.zoom {
+    width: 100px;
+
+    span.glyphicon { width: 50px; margin-right: 0; }
+    span { width: 50px; margin-left: 0; }
   }
 
   fieldset {

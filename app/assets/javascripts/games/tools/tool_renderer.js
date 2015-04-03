@@ -64,6 +64,10 @@ _.extend(ToolRenderer.prototype, {
         renderer = new ToolButtonRenderer(container, tool);
         break;
 
+      case "zoom":
+        renderer = new ZoomToolRenderer(container, tool);
+        break;
+
       default:
         renderer = new ToolItemRenderer(container, tool);
     }
@@ -135,11 +139,54 @@ _.extend(ToolButtonRenderer.prototype, ToolItemRenderer.prototype, {
   createElement: function() {
     var self = this;
     return $("<button />")
-      .addClass("tool_button")
-      .on("click", function() { self.tool.handle(); });
+        .addClass("tool_button")
+        .attr("data-toggle", "tooltip")
+        .attr("data-placement", "right")
+        .attr("title", this.tool.toolTip())
+        .on("click", function() { self.tool.handle(); })
+        .tooltip({container: 'body', delay: 250});
   },
   updateElement: function($e) {
-    $e.text(this.tool.displayName());
+    $e.empty();
+    if (this.tool.glyph) {
+      $e.append(
+          $("<span />").addClass('glyphicon').addClass(this.tool.glyph)
+      );
+    } else {
+      $e.text(this.tool.displayName());
+    }
+
+    if (this.tool.visible) {
+      $e.show();
+    } else {
+      $e.hide();
+    }
+  }
+});
+
+function ZoomToolRenderer(container, tool) {
+  ToolItemRenderer.call(this, container, tool);
+}
+
+_.extend(ZoomToolRenderer.prototype, ToolItemRenderer.prototype, {
+  createElement: function() {
+    var self = this;
+    return $("<button />")
+        .addClass("tool_button zoom")
+        .on("click", function() { self.tool.handle(); });
+  },
+  updateElement: function($e) {
+    $e.empty();
+
+    $e.append(
+        $("<span />").addClass('glyphicon').addClass(this.tool.glyph)
+    );
+
+    $e.append(
+        $("<span />").text(this.tool.displayName())
+    );
+
+
     if (this.tool.visible) {
       $e.show();
     } else {

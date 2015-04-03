@@ -28,64 +28,61 @@ function ToolManager(board) {
   };
 
   this.toolSet = [
-      new ToolMenuItem("View", {
-        children: [
-            new ToolMenuItem("Ping", {
-              handler: function() { self.setTool("Ping"); }
-            }),
-
-          new ZoomMenuItem("Zoom", {})
-        ]
+      new ZoomMenuItem("Zoom", {
+        glyph: "glyphicon-zoom-in"
       }),
 
-      new ToolMenuItem("Draw", {
-        children: [
-          new ToolMenuItem("Pen", {
-            handler: function() { self.setTool("Pen"); }
-          }),
+      new ToolMenuItem("Ping", {
+        glyph: "glyphicon-screenshot",
+        handler: function() { self.setTool("Ping"); }
+      }),
 
-          new ToolMenuItem("Erase", {
-            handler: function() { self.setTool("Eraser"); }
-          }),
+      new ToolMenuItem("Pen", {
+        glyph: 'glyphicon-pencil',
+        handler: function() { self.setTool("Pen"); }
+      }),
 
-          new ToolMenuItem("Shape", {
-            handler: function() { self.setTool("Shape"); }
-          }),
+      new ToolMenuItem("Erase", {
+        glyph: "glyphicon-erase",
+        handler: function() { self.setTool("Eraser"); }
+      }),
 
-          new ToolMenuItem("Label", {
-            handler: function() { self.setTool("Label"); }
-          }),
+      new ToolMenuItem("Shape", {
+        glyph: "glyphicon-triangle-top",
+        handler: function() { self.setTool("Shape"); }
+      }),
 
-          new ToolMenuItem("Copy", {
-            handler: function() { self.setTool("Copy"); }
-          }),
+      new ToolMenuItem("Label", {
+        glyph: "glyphicon-text-color",
+        handler: function() { self.setTool("Label"); }
+      }),
 
-          new ToolMenuItem("Paste", {
-            visible: false,
-            handler: function() { self.setTool("Paste"); }
-          })
-        ]
+      new ToolMenuItem("Copy", {
+        glyph: "glyphicon-copy",
+        handler: function() { self.setTool("Copy"); }
+      }),
+
+      new ToolMenuItem("Paste", {
+        glyph: "glyphicon-paste",
+        visible: false,
+        handler: function() { self.setTool("Paste"); }
       }),
 
       new ToolMenuItem("Template", {
-        children: [
-          new ToolMenuItem("Template", {
-            handler: function() { self.setTool("Template"); }
-          })
-        ]
+        glyph: "glyphicon-th",
+        handler: function() { self.setTool("Template"); }
       }),
 
-      new ToolMenuItem("Fog", {
-        visible: false,
-        children: [
-          new ToolMenuItem("Add", {
-            handler: function() { self.setTool("Add Fog"); }
-          }),
+      new ToolMenuItem("AddFog", {
+        toolTip: "Add Fog",
+        glyph: "glyphicon-cloud-download",
+        handler: function() { self.setTool("Add Fog"); }
+      }),
 
-          new ToolMenuItem("Remove", {
-            handler: function() { self.setTool("Remove Fog"); }
-          })
-        ]
+      new ToolMenuItem("RemoveFog", {
+        toolTip: "Remove Fog",
+        glyph: "glyphicon-cloud-upload",
+        handler: function() { self.setTool("Remove Fog"); }
       }),
 
       new ToolMenuItem("Tokens", {
@@ -93,6 +90,7 @@ function ToolManager(board) {
       }),
 
       new ToolMenuItem("Undo", {
+        glyph: "glyphicon-menu-left",
         handler: function() { self.board.undo(); }
       })
   ];
@@ -178,8 +176,8 @@ _.extend(ToolManager.prototype, {
   },
 
   hideFogTools: function() {
-    this.getMenuItem("Add").visible = false;
-    this.getMenuItem("Remove").visible = false;
+    this.getMenuItem("AddFog").visible = false;
+    this.getMenuItem("RemoveFog").visible = false;
     this.render();
   },
 
@@ -216,9 +214,10 @@ _.extend(ToolManager.prototype, {
 function ToolMenuItem(name, options) {
   this.name = name;
   this.label = options.label;
-  this.toolTip = options.toolTip;
+  this.customToolTip = options.toolTip;
   this.active = _.has(options, "active") ? options.active : false;
   this.visible = _.has(options, "visible") ? options.visible : true;
+  this.glyph = options.glyph;
   this.children = options.children;
   this.handler = options.handler;
   this.type = _.has(options, "type") ? options.type : (this.children ? "container" : "button");
@@ -234,6 +233,10 @@ _.extend(ToolMenuItem.prototype, {
 
   displayName: function() {
     return this.label || this.name;
+  },
+
+  toolTip: function() {
+    return this.customToolTip || this.displayName();
   },
 
   getChildren: function() {
