@@ -22,6 +22,7 @@
     <div id="navContainer" class="six columns omega">
       <% if current_user %>
           <%= link_to "Logout", logout_path %>
+          <%= link_to "Profile", edit_user_path %>
       <% end %>
       <%= if_admin do %>
           <%= link_to "Admin", admin_path %>
