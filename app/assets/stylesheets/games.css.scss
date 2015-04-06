@@ -29,8 +29,8 @@
   .tool_button.zoom {
     width: 100px;
 
-    span.glyphicon { width: 50px; margin-right: 0; }
-    span { width: 50px; margin-left: 0; }
+    span.glyphicon { width: 50px; margin-left: auto; margin-right: 0; }
+    span { width: 50px; margin-left: 0; margin-right: auto; }
   }
 
   fieldset {
