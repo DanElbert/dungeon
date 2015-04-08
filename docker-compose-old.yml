@@ -1,0 +1,53 @@
+mysql:
+  image: mysql:latest
+  environment:
+    - MYSQL_ROOT_PASSWORD=mysupersecret
+  volumes_from:
+    - dungeon_db_data
+
+redis:
+  image: redis:latest
+
+proxy:
+  image: 'nginx:latest'
+  ports:
+    - "3000:80"
+  volumes_from:
+    - web1
+  volumes:
+    - docker/nginx_proxy.conf:/etc/nginx/conf.d/default.conf
+  links:
+    - web1
+    - web2
+    - web3
+    - web4
+
+web1:
+  build: .
+  environment:
+    - RAILS_ENV=docker
+    - SHARE_ASSETS=true
+  env_file: docker/variables.env
+  volumes:
+    - /dungeon/public
+    - log/:dungeon/log
+  links:
+    - redis
+    - mysql
+
+web2: &web
+  build: .
+  environment:
+    - RAILS_ENV=docker
+  env_file: docker/variables.env
+  volumes_from:
+    - web1
+  links:
+    - redis
+    - mysql
+
+web3:
+  <<: *web
+
+web4:
+  <<: *web

@@ -1,3 +1,4 @@
+
 redis:
   image: 'redis:latest'
 
@@ -17,11 +18,13 @@ proxy:
 
 
 web1:
-  image: 'danelbert/dungeon:latest'
+  image: 'danelbert/dungeon:production'
   environment:
     - RAILS_ENV=production
     - SHARE_ASSETS=true
-  env_file: variables.env
+<% if env_file_exists? %>
+  env_file: docker-compose-production.env
+<% end %>
   volumes:
     - /dungeon/public
     - /var/log/dungeon/:dungeon/log
@@ -30,10 +33,12 @@ web1:
 
 
 web2: &web
-  image: 'danelbert/dungeon:latest'
+  image: 'danelbert/dungeon:production'
   environment:
     - RAILS_ENV=production
-  env_file: variables.env
+<% if env_file_exists? %>
+  env_file: docker-compose-production.env
+<% end %>
   volumes_from:
     - web1
   links:

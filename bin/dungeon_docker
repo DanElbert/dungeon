@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+COMMANDS = [
+    'init',
+    'dev',
+    'production'
+]
+
+if ARGV.length != 1 || !COMMANDS.include?(ARGV.first.to_s.downcase)
+  STDERR.puts "Invalid command"
+  STDERR.puts "Usage: #{$0} { #{COMMANDS.join(' | ')} }"
+  STDERR.puts
+  exit 1
+end
+
+def file_path(path_from_rails_root)
+  File.expand_path(File.dirname(__FILE__) + "/../#{path_from_rails_root}")
+end
+
+def env_file_exists?
+  File.exists?(file_path('docker-compose-production.env'))
+end
+
+def docker_compose
+  if system('which docker-compose')
+    'docker-compose'
+  else
+    'fig'
+  end
+end
+
+def init
+  unless system('docker inspect dungeon_db_data')
+    puts 'Creating data container...'
+    `docker create -v /var/lib/mysql -v /data --name dungeon_db_data mysql:latest`
+
+    Dir.chdir(file_path('.')) do
+      `#{docker_compose} build`
+
+      bash_cmd = 'sleep 10 && rake db:create db:migrate db:seed'
+      `#{docker_compose} run web bash -c "#{bash_cmd}"`
+      `#{docker_compose} rm --force`
+    end
+  end
+end
+
+def dev
+  `#{docker_compose} up`
+end
+
+def production
+  yml_file = YAML.load(ERB.new(File.read("#{Rails.root}/config/app_config.yml")).result(binding))
+end
+
+send(ARGV.first.to_s.downcase.to_sym)
