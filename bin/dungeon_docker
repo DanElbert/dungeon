@@ -1,9 +1,13 @@
 #!/usr/bin/env ruby
 
+require 'erb'
+
 COMMANDS = [
     'init',
     'dev',
-    'production'
+    'dev_down',
+    'production',
+    'production_down'
 ]
 
 if ARGV.length != 1 || !COMMANDS.include?(ARGV.first.to_s.downcase)
@@ -18,11 +22,19 @@ def file_path(path_from_rails_root)
 end
 
 def env_file_exists?
-  File.exists?(file_path('docker-compose-production.env'))
+  File.exists?(prod_env_file)
+end
+
+def prod_env_file
+  file_path('docker-compose-production.env')
+end
+
+def prod_yml_file
+  file_path('docker-compose-production.yml')
 end
 
 def docker_compose
-  if system('which docker-compose')
+  if system('which docker-compose >/dev/null 2>&1')
     'docker-compose'
   else
     'fig'
@@ -45,11 +57,26 @@ def init
 end
 
 def dev
-  `#{docker_compose} up`
+  system "#{docker_compose} up -d"
+end
+
+def dev_down
+  system "#{docker_compose} stop"
+end
+
+def prep_prod
+  yml_contents = ERB.new(File.read(file_path("docker/docker-compose-production.yml.erb"))).result(binding)
+  File.write(prod_yml_file, yml_contents)
 end
 
 def production
-  yml_file = YAML.load(ERB.new(File.read("#{Rails.root}/config/app_config.yml")).result(binding))
+  prep_prod
+  system "#{docker_compose} --file \"#{prod_yml_file}\" up -d"
+end
+
+def production_down
+  prep_prod
+  system "#{docker_compose} --file \"#{prod_yml_file}\" stop"
 end
 
 send(ARGV.first.to_s.downcase.to_sym)
