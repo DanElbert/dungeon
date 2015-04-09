@@ -71,6 +71,7 @@ end
 
 def production
   prep_prod
+  system "#{docker_compose} --file \"#{prod_yml_file}\" pull"
   system "#{docker_compose} --file \"#{prod_yml_file}\" up -d"
 end
 
