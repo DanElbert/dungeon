@@ -1,14 +1,19 @@
 
 <%= form_tag(login_path, :method => :post) do %>
-  Email
-  <%= text_field_tag :email %>
 
-  Password
-  <%= password_field_tag :password %>
+  <div class="form-group">
+    <%= label_tag :email, "Email" %>
+    <%= text_field_tag :email, nil, class: 'form-control' %>
+  </div>
 
-  <%= submit_tag("Login") %>
+  <div class="form-group">
+    <%= label_tag :password, "Password" %>
+    <%= password_field_tag :password, nil, class: 'form-control' %>
+  </div>
+
+  <%= submit_tag("Login", class: 'btn btn-primary') %>
 <% end %>
 
 <br />
 
-<%= link_to "Create an Account", create_user_path %>
+<%= link_to "Create an Account", new_user_path, class: 'btn btn-default' %>

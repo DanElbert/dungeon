@@ -17,7 +17,7 @@
 @import "bootstrap-sprockets";
 @import "flatly_variables";
 // For some reason the flatly variables breaks font paths; fix them.
-$icon-font-path: "/assets/bootstrap/";
+//$icon-font-path: "/assets/bootstrap/";
 @import "bootstrap";
 @import "flatly_bootswatch";
 @import "jquery.ui.overrides";

@@ -5,15 +5,17 @@ mysql:
   volumes_from:
     - dungeon_db_data
 
+
 redis:
   image: redis:latest
 
+
 web:
   build: .
-#  volumes:
-#    - .:/dungeon
   ports:
     - "3000:3000"
+  environment:
+    - RAILS_ENV=docker
   links:
-    - mysql
     - redis
+    - mysql
