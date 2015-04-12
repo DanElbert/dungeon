@@ -1,7 +1,9 @@
 
 function ToolRenderer(tools) {
   this.tools = tools;
+  this.options = null;
   this.container = null;
+  this.optionContainer = null;
   this.defaultPosition = {my: "left top", at: "left+25px top+20px", of: "#game_board_container"};
 }
 
@@ -36,7 +38,8 @@ _.extend(ToolRenderer.prototype, {
   },
 
   updateOptions: function(options) {
-
+    this.options = options;
+    this.renderOptions();
   },
 
   toggleDisplay: function() {
@@ -75,6 +78,21 @@ _.extend(ToolRenderer.prototype, {
     var $e = renderer.render();
 
     this.buildTools($e, tool.getChildren());
+  },
+
+  renderOptions: function() {
+    if (this.optionContainer) {
+      this.optionContainer.remove();
+    }
+
+    this.optionContainer = $("<div id='option_container' />")
+      .appendTo(this.container);
+
+    if (this.options) {
+      this.options.each(function(o) {
+        $("<span />").text(o.name + ": " + o.value).appendTo(this.optionContainer);
+      }, this);
+    }
   }
 
 });
@@ -100,6 +118,9 @@ _.extend(ToolItemRenderer.prototype, {
     } else {
       $e = this.createElement();
       $e.addClass("tool-item-" + this.tool.name);
+      if (this.tool.doubleWide) {
+        $e.addClass("double_wide");
+      }
       this.container.append($e);
       return $e;
     }
@@ -192,5 +213,40 @@ _.extend(ZoomToolRenderer.prototype, ToolItemRenderer.prototype, {
     } else {
       $e.hide();
     }
+  }
+});
+
+function ListOptionRenderer(container, opt) {
+  this.container = container;
+  this.option = opt;
+}
+
+_.extend(ListOptionRenderer.prototype, {
+  render: function() {
+
+  }
+});
+
+function ColorOptionRenderer(container, opt) {
+  ListOptionRenderer.call(this, container, opt);
+  this.baseColors = [
+    {name: "Black", color: "#000000"},
+    {name: "Blue", color: "#1F75FE"},
+    {name: "Brown", color: "#B4674D"},
+    {name: "Green", color: "#1CAC78"},
+    {name: "Orange", color: "#FF7538"},
+    {name: "Red", color: "#EE204D"},
+    {name: "Purple", color: "#926EAE"},
+    {name: "Yellow", color: "#FCE883"}
+  ];
+}
+
+_.extend(ColorOptionRenderer.prototype, ListOptionRenderer.prototype, {
+  colors: function() {
+    var colors = this.baseColors.clone();
+    if (this.option.includeClear) {
+      colors.unshift({name: "Clear", color: null});
+    }
+    return colors;
   }
 });

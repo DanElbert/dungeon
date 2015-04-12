@@ -29,6 +29,7 @@ function ToolManager(board) {
 
   this.toolSet = [
       new ZoomMenuItem("Zoom", {
+        doubleWide: true,
         glyph: "glyphicon-zoom-in"
       }),
 
@@ -91,6 +92,7 @@ function ToolManager(board) {
 
       new ToolMenuItem("Undo", {
         glyph: "glyphicon-menu-left",
+        doubleWide: true,
         handler: function() { self.board.undo(); }
       })
   ];
@@ -217,6 +219,7 @@ function ToolMenuItem(name, options) {
   this.customToolTip = options.toolTip;
   this.active = _.has(options, "active") ? options.active : false;
   this.visible = _.has(options, "visible") ? options.visible : true;
+  this.doubleWide = _.has(options, "doubleWide") ? options.doubleWide : false;
   this.glyph = options.glyph;
   this.children = options.children;
   this.handler = options.handler;

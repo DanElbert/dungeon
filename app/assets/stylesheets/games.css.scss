@@ -26,11 +26,13 @@
     width: 50px;
   }
 
-  .tool_button.zoom {
-    width: 100px;
+  .tool_button.double_wide {
+    width: 104px;
+  }
 
-    span.glyphicon { width: 50px; margin-right: 0; }
-    span { width: 50px; margin-left: 0; }
+  .tool_button.zoom {
+    span.glyphicon { width: 50px; margin-left: 0; text-align: left; }
+    span { width: 50px; margin-right: 0; }
   }
 
   fieldset {
