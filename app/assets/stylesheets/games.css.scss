@@ -46,6 +46,19 @@
   }
 }
 
+.menuButton {
+  width: 55px;
+  height: 30px;
+  line-height: 15px;
+}
+
+.menuItemButton {
+  width: 55px;
+  height: 30px;
+  line-height: 15px;
+  float: left;
+}
+
 #main_menu {
   position: absolute;
   right: 0;

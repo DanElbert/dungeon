@@ -90,7 +90,14 @@ _.extend(ToolRenderer.prototype, {
 
     if (this.options) {
       this.options.each(function(o) {
-        $("<span />").text(o.name + ": " + o.value).appendTo(this.optionContainer);
+        switch (o.type) {
+          case "color":
+            new ColorOptionRenderer(this.optionContainer, o).render();
+            break;
+
+          default:
+            $("<span />").text(o.name + ": " + o.value).appendTo(this.optionContainer);
+        }
       }, this);
     }
   }
@@ -243,10 +250,35 @@ function ColorOptionRenderer(container, opt) {
 
 _.extend(ColorOptionRenderer.prototype, ListOptionRenderer.prototype, {
   colors: function() {
-    var colors = this.baseColors.clone();
+    var colors = this.baseColors.slice(0);
     if (this.option.includeClear) {
       colors.unshift({name: "Clear", color: null});
     }
     return colors;
+  },
+
+  render: function() {
+    var self = this;
+    var $widget = $('<div></div>').addClass('toolMenu');
+    var vals = _.map(this.colors(), function(c) { return c.color; });
+
+    $widget.toolMenu({
+      values: vals,
+      initialValue: this.option.value || this.colors()[0].color,
+      contentCallback: function(value) {
+        var $content = $("<div></div>").css('width', '100%').css('height', '100%');
+        if (value == null) {
+          $content.css("background-color", "white");
+        } else {
+          $content.css("background-color", value);
+        }
+        return $content;
+      },
+      selectedCallback: function(value) {
+        self.option.value = value;
+      }
+    });
+
+    $widget.appendTo(this.container);
   }
 });
