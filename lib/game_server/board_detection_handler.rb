@@ -68,8 +68,6 @@ module GameServer
           # call out to image processor to perform work, then send a new message with the tokens
           detector_interface = BoardDetector::Interface.new(current_session)
 
-          client.publish("/game/#{game.id}/add_action", { uid: '99AA', type: 'notice', message: "I'm from the server", actionType: 'alertAction' })
-
           detector_interface.callback do |result|
             send_channel = "/game/#{game.id}/board_detection"
 
