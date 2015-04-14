@@ -12,15 +12,14 @@
  *= require jquery-ui/dialog
  */
 
-@import "games";
-@import "flash_messages";
 @import "bootstrap-sprockets";
 @import "flatly_variables";
-// For some reason the flatly variables breaks font paths; fix them.
-//$icon-font-path: "/assets/bootstrap/";
 @import "bootstrap";
 @import "flatly_bootswatch";
 @import "jquery.ui.overrides";
+@import "games";
+@import "tools";
+@import "flash_messages";
 
 div.thumbnail {
   width: 150px;

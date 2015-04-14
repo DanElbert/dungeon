@@ -1,0 +1,18 @@
+
+#tool_menu {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+
+  //width: 25px;
+  //height: 125px;
+
+  background: #0088cc;
+}
+
+#tool_menu > button {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  display: block;
+}

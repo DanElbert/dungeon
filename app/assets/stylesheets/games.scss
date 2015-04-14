@@ -10,55 +10,6 @@
 #game_board {
 }
 
-.tool_dialog {
-
-  .ui-dialog-titlebar-close {
-    display: none;
-  }
-
-  .ui-dialog-content {
-    padding: 3px;
-    overflow: hidden;
-  }
-
-  .tool_button {
-    margin: 2px;
-    width: 50px;
-  }
-
-  .tool_button.double_wide {
-    width: 104px;
-  }
-
-  .tool_button.zoom {
-    span.glyphicon { width: 50px; margin-left: 0; text-align: left; }
-    span { width: 50px; margin-right: 0; }
-  }
-
-  fieldset {
-    border-bottom: 1px solid black;
-    padding-bottom: 4px;
-  }
-
-  legend {
-    margin-bottom: 0;
-    font-size: .8em;
-  }
-}
-
-.menuButton {
-  width: 55px;
-  height: 30px;
-  line-height: 15px;
-}
-
-.menuItemButton {
-  width: 55px;
-  height: 30px;
-  line-height: 15px;
-  float: left;
-}
-
 #main_menu {
   position: absolute;
   right: 0;

@@ -27,7 +27,81 @@ function ToolManager(board) {
     "Paste": new PasteTool(this)
   };
 
-  this.toolSet = [
+  this.toolSet = new ToolMenu([
+    new ToolMenuGroup("pointer_group", [
+      new ToolMenuItem("pointer", {
+        glyph: "glyphicon-screenshot",
+        handler: function() { self.setTool("Ping"); }
+      }),
+
+      new ToolMenuItem("ping", {
+        glyph: "glyphicon-screenshot",
+        handler: function() { self.setTool("Ping"); }
+      })
+    ]),
+
+    new ToolMenuGroup("view_group", [
+      new ZoomMenuItem("zoom", {
+        glyph: "glyphicon-zoom-in"
+      }),
+
+      new ToolMenuItem("add_viewport_savepoint", {
+        glyph: "glyphicon-plus"
+      })
+    ]),
+
+    new ToolMenuGroup("draw_group", [
+      new ToolMenuItem("Pen", {
+        glyph: 'glyphicon-pencil',
+        handler: function() { self.setTool("Pen"); }
+      }),
+
+      new ToolMenuItem("Erase", {
+        glyph: "glyphicon-erase",
+        handler: function() { self.setTool("Eraser"); }
+      }),
+
+      new ToolMenuItem("Shape", {
+        glyph: "glyphicon-triangle-top",
+        handler: function() { self.setTool("Shape"); }
+      }),
+
+      new ToolMenuItem("Label", {
+        glyph: "glyphicon-text-color",
+        handler: function() { self.setTool("Label"); }
+      }),
+
+      new ToolMenuItem("Copy", {
+        glyph: "glyphicon-copy",
+        handler: function() { self.setTool("Copy"); }
+      }),
+
+      new ToolMenuItem("Paste", {
+        glyph: "glyphicon-paste",
+        visible: false,
+        handler: function() { self.setTool("Paste"); }
+      })
+    ]),
+
+    //new ToolMenuGroup("template_group", [
+    //
+    //]),
+    //
+    //new ToolMenuGroup("fog_group", [
+    //
+    //]),
+    //
+    //new ToolMenuGroup("tokens_group", [
+    //
+    //]),
+
+    new ToolMenuItem("undo", {
+      glyph: "glyphicon-menu-left",
+      handler: function() { self.board.undo(); }
+    })
+  ]);
+
+  this.oldToolSet = [
       new ZoomMenuItem("Zoom", {
         doubleWide: true,
         glyph: "glyphicon-zoom-in"
@@ -152,7 +226,7 @@ _.extend(ToolManager.prototype, {
   },
 
   updateZoom: function(zoom) {
-    this.getMenuItem("Zoom").value = zoom;
+    this.getMenuItem("zoom").value = zoom;
     this.render();
   },
 
@@ -205,12 +279,22 @@ _.extend(ToolManager.prototype, {
       return found;
     };
 
-    return recur(this.toolSet, name);
+    return recur(this.toolSet.getChildren(), name);
   },
 
   sharedTool: function(name) {
     return this.sharedToolOptions[name];
   }
+});
+
+function ToolMenu(children) {
+  this.children = children;
+  this.uid = generateActionId() + generateActionId();
+}
+
+_.extend(ToolMenu.prototype, {
+  getChildren: function() { return this.children; },
+  displayName: function() { return "main"; }
 });
 
 function ToolMenuItem(name, options) {
@@ -219,11 +303,10 @@ function ToolMenuItem(name, options) {
   this.customToolTip = options.toolTip;
   this.active = _.has(options, "active") ? options.active : false;
   this.visible = _.has(options, "visible") ? options.visible : true;
-  this.doubleWide = _.has(options, "doubleWide") ? options.doubleWide : false;
   this.glyph = options.glyph;
   this.children = options.children;
   this.handler = options.handler;
-  this.type = _.has(options, "type") ? options.type : (this.children ? "container" : "button");
+  this.type = _.has(options, "type") ? options.type : "button";
   this.uid = generateActionId() + generateActionId();
 }
 
@@ -245,6 +328,14 @@ _.extend(ToolMenuItem.prototype, {
   getChildren: function() {
     return this.children || [];
   }
+});
+
+function ToolMenuGroup(name, children) {
+  ToolMenuItem.call(this, name, {children: children, type: "mainButton"});
+}
+
+_.extend(ToolMenuGroup.prototype, ToolMenuItem.prototype, {
+
 });
 
 function ZoomMenuItem(name, options) {

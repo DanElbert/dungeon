@@ -4,37 +4,14 @@ function ToolRenderer(tools) {
   this.options = null;
   this.container = null;
   this.optionContainer = null;
-  this.defaultPosition = {my: "left top", at: "left+25px top+20px", of: "#game_board_container"};
 }
 
 _.extend(ToolRenderer.prototype, {
 
   render: function() {
-    if (!this.container) {
-      this.initContainer();
-    }
-    this.buildTools(this.container, this.tools);
-  },
 
-  initContainer: function() {
-    var self = this;
-    this.container = $("<div id='tool_container'/>").appendTo($("#dialog_container"));
-
-    this.container.dialog({
-      autoOpen: true,
-      closeOnEscape: false,
-      resizable: false,
-      minWidth: 10,
-      width: 125,
-      height: 350,
-      position: this.defaultPosition,
-      dialogClass: "tool_dialog",
-      title: "Tools",
-      open: function(evt, ui) {
-        var $this = $(this);
-        $this.dialog("option", "position", self.defaultPosition);
-      }
-    });
+    var renderer = new ToolMenuRenderer($("#game_board_container"), this.tools);
+    renderer.render();
   },
 
   updateOptions: function(options) {
@@ -48,36 +25,6 @@ _.extend(ToolRenderer.prototype, {
     } else {
       this.container.dialog("open");
     }
-  },
-
-  buildTools: function(container, tools) {
-    _.each(tools, function(t) {
-      this.renderTool(container, t);
-    }, this);
-  },
-
-  renderTool: function(container, tool) {
-    var renderer = null;
-    switch (tool.type) {
-      case "container":
-        renderer = new ToolContainerRenderer(container, tool);
-        break;
-
-      case "button":
-        renderer = new ToolButtonRenderer(container, tool);
-        break;
-
-      case "zoom":
-        renderer = new ZoomToolRenderer(container, tool);
-        break;
-
-      default:
-        renderer = new ToolItemRenderer(container, tool);
-    }
-
-    var $e = renderer.render();
-
-    this.buildTools($e, tool.getChildren());
   },
 
   renderOptions: function() {
@@ -119,38 +66,90 @@ _.extend(ToolItemRenderer.prototype, {
   },
 
   ensureElement: function() {
-    var $e = this.container.find(".tool-item-" + this.tool.name);
+    var $e = this.container.find("[data-tool_id='" + this.tool.uid + "']");
     if ($e.length) {
       return $e;
     } else {
       $e = this.createElement();
-      $e.addClass("tool-item-" + this.tool.name);
-      if (this.tool.doubleWide) {
-        $e.addClass("double_wide");
-      }
+      $e.attr("data-tool_id", this.tool.uid);
       this.container.append($e);
       return $e;
     }
   },
 
+  childContainer: function($e) {
+    return $();
+  },
+
   render: function() {
     var $e = this.ensureElement();
     this.updateElement($e);
+
+    var childContainer = this.childContainer($e);
+    var children = this.tool.getChildren();
+
+    if (children && children.length) {
+      childContainer.children().attr("__touched", "0");
+      _.each(children, function(childTool) {
+        var renderer = null;
+        switch (childTool.type) {
+          case "mainButton":
+            renderer = new ToolMainButtonRenderer(childContainer, childTool);
+            break;
+
+          case "button":
+            renderer = new ToolButtonRenderer(childContainer, childTool);
+            break;
+
+          case "zoom":
+            renderer = new ZoomToolRenderer(childContainer, childTool);
+            break;
+
+          default:
+            renderer = new ToolItemRenderer(childContainer, childTool);
+        }
+
+        var $child = renderer.render();
+        $child.attr("__touched", "1");
+      }, this);
+
+      childContainer.find("[__touched='0']").remove();
+      childContainer.children().removeAttr("__touched");
+
+    } else {
+      childContainer.empty();
+    }
+
+    this.container.append($e);
+
     return $e;
   }
 });
 
-function ToolContainerRenderer(container, tool) {
+function ToolMenuRenderer(container, tool) {
   ToolItemRenderer.call(this, container, tool);
 }
 
-_.extend(ToolContainerRenderer.prototype, ToolItemRenderer.prototype, {
+_.extend(ToolMenuRenderer.prototype, ToolItemRenderer.prototype, {
   createElement: function() {
-    return $("<fieldset />")
-      .append($("<legend />"));
+    return $("<div />")
+      .attr("id", "tool_menu");
+  },
+
+  childContainer: function($e) { return $e; },
+
+  updateElement: function($e) {}
+});
+
+function ToolMainButtonRenderer(container, tool) {
+  ToolItemRenderer.call(this, container, tool);
+}
+
+_.extend(ToolMainButtonRenderer.prototype, ToolItemRenderer.prototype, {
+  createElement: function() {
+    return $("<button />");
   },
   updateElement: function($e) {
-    $e.find("legend").text(this.tool.displayName());
     if (this.tool.visible) {
       $e.show();
     } else {
@@ -167,7 +166,6 @@ _.extend(ToolButtonRenderer.prototype, ToolItemRenderer.prototype, {
   createElement: function() {
     var self = this;
     return $("<button />")
-        .addClass("tool_button")
         .attr("data-toggle", "tooltip")
         .attr("data-placement", "right")
         .attr("title", this.tool.toolTip())
