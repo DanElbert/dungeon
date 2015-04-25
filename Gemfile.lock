@@ -39,7 +39,13 @@ GEM
     addressable (2.3.8)
     ansi (1.5.0)
     arel (6.0.0)
+    autoprefixer-rails (5.1.11)
+      execjs
+      json
     bcrypt (3.1.10)
+    bootstrap-sass (3.3.4.1)
+      autoprefixer-rails (>= 5.0.0.1)
+      sass (>= 3.2.19)
     builder (3.2.2)
     capistrano (2.15.5)
       highline
@@ -179,7 +185,6 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
-    skeleton-rails (0.1.0)
     sprockets (3.0.2)
       rack (~> 1.0)
     sprockets-rails (2.2.4)
@@ -213,22 +218,21 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bcrypt (~> 3.1.10)
+  bcrypt (~> 3.1.9)
+  bootstrap-sass (~> 3.3.1)
   capistrano (~> 2.15.5)
   capistrano-deploytags (~> 0.9.2)
   faye
   faye-redis
-  jquery-rails
-  jquery-ui-rails
+  jquery-rails (~> 4.0.3)
+  jquery-ui-rails (~> 5.0.3)
   minitest-reporters
   mysql2
   oj
   rails (= 4.2.1)
   redis-rails
   rvm-capistrano
-  sass-rails (~> 5.0.3)
-  skeleton-rails
-  sprockets-rails
+  sass-rails (~> 5.0.1)
   sqlite3
   therubyracer
   thin
