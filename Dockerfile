@@ -2,7 +2,8 @@ FROM danelbert/docker-ruby:latest
 
 RUN apt-get update && apt-get install -y \
 		cmake \
-		libopencv-dev
+		libopencv-dev \
+		&& rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /etc/my_init.d
 COPY docker/docker_assets_script.sh /etc/my_init.d/
