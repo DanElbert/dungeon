@@ -14,29 +14,29 @@ function ToolManager(board) {
   };
 
   this.toolMap = {
-    "Pointer": new Pointer(this),
-    "Pen": new Pen(this),
-    "Shape": new ShapeTool(this),
-    "Eraser": new Eraser(this),
-    "Template": new TemplateTool(this),
-    "Ping": new PingTool(this),
-    "Add Fog": new AddFogPen(this),
-    "Remove Fog": new RemoveFogPen(this),
-    "Label": new LabelTool(this),
-    "Copy": new CopyTool(this),
-    "Paste": new PasteTool(this)
+    "pointer": new Pointer(this),
+    "pen": new Pen(this),
+    "shape": new ShapeTool(this),
+    "eraser": new Eraser(this),
+    "template": new TemplateTool(this),
+    "ping": new PingTool(this),
+    "add_fog": new AddFogPen(this),
+    "remove_fog": new RemoveFogPen(this),
+    "label": new LabelTool(this),
+    "copy": new CopyTool(this),
+    "paste": new PasteTool(this)
   };
 
   this.toolSet = [
     new ToolMenuGroup("pointer_group", [
       new ToolMenuItem("pointer", {
-        glyph: "glyphicon-screenshot",
-        handler: function() { self.setTool("Ping"); }
+        glyph: "glyphicon-move",
+        handler: function() { self.setTool("pointer"); }
       }),
 
       new ToolMenuItem("ping", {
         glyph: "glyphicon-screenshot",
-        handler: function() { self.setTool("Ping"); }
+        handler: function() { self.setTool("ping"); }
       })
     ]),
 
@@ -51,35 +51,35 @@ function ToolManager(board) {
     ]),
 
     new ToolMenuGroup("draw_group", [
-      new ToolMenuItem("Pen", {
+      new ToolMenuItem("pen", {
         glyph: 'glyphicon-pencil',
-        handler: function() { self.setTool("Pen"); }
+        handler: function() { self.setTool("pen"); }
       }),
 
-      new ToolMenuItem("Erase", {
+      new ToolMenuItem("erase", {
         glyph: "glyphicon-erase",
-        handler: function() { self.setTool("Eraser"); }
+        handler: function() { self.setTool("eraser"); }
       }),
 
-      new ToolMenuItem("Shape", {
+      new ToolMenuItem("shape", {
         glyph: "glyphicon-triangle-top",
-        handler: function() { self.setTool("Shape"); }
+        handler: function() { self.setTool("shape"); }
       }),
 
-      new ToolMenuItem("Label", {
+      new ToolMenuItem("label", {
         glyph: "glyphicon-text-color",
-        handler: function() { self.setTool("Label"); }
+        handler: function() { self.setTool("label"); }
       }),
 
-      new ToolMenuItem("Copy", {
+      new ToolMenuItem("copy", {
         glyph: "glyphicon-copy",
-        handler: function() { self.setTool("Copy"); }
+        handler: function() { self.setTool("copy"); }
       }),
 
-      new ToolMenuItem("Paste", {
+      new ToolMenuItem("paste", {
         glyph: "glyphicon-paste",
         visible: false,
-        handler: function() { self.setTool("Paste"); }
+        handler: function() { self.setTool("paste"); }
       })
     ]),
 
@@ -194,7 +194,7 @@ _.extend(ToolManager.prototype, {
   initialize: function() {
     // Ensure a current tool:
     if (!this.currentTool) {
-      this.setTool("Pointer");
+      this.setTool("pointer");
     }
 
     this.globalShortcutTool.disable();
@@ -214,6 +214,20 @@ _.extend(ToolManager.prototype, {
       this.currentTool.enable();
       this.setOptions();
       this.currentTool.optionsChanged();
+
+      // Select the tool in the menu, unselect anything else
+      var recur = function(tools) {
+        if (!tools || !tools.length) { return false; }
+        var selected = false;
+        _.each(tools, function(t) {
+          t.selected = recur(t.children) || (t.name == name);
+          selected = selected || t.selected;
+        });
+        return selected;
+      };
+      recur(this.toolSet);
+      this.render();
+
     } else {
       throw "No such tool";
     }
@@ -292,6 +306,7 @@ function ToolMenuItem(name, options) {
   this.label = options.label;
   this.tooltip = options.toolTip;
   this.visible = _.has(options, "visible") ? options.visible : true;
+  this.selected = _.has(options, "selected") ? options.selected : false;
   this.glyph = options.glyph;
   this.children = options.children;
   this.handler = options.handler;

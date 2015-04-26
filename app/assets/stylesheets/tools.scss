@@ -17,6 +17,11 @@
   &:hover {
     background-color: lighten($brand-primary, 15%);
   }
+
+  &.selected {
+    color: $brand-primary;
+    background-color: $btn-default-color;
+  }
 }
 
 #tool_menu button {
@@ -35,7 +40,9 @@
   }
 }
 
-.tool_menu_popup > div {
+.tool_menu_popup > div, .tool_menu_popup > button {
+  display: block;
+  background: transparent;
   border: solid 2px white;
   padding: 0 4px;
   margin: 4px;

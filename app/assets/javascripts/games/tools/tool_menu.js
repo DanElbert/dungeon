@@ -8,11 +8,12 @@
 //  {
 //    name: "toolName",
 //    glyph: "optional glyph (uses first or selected child glyph if null)",
+//    selected: false, // boolean that determines visual selected state (determines group glyph when set in children)
 //    tooltip: "optional tooltip (not used if item has children)",
 //    handler: function() { return "optional handler; not used if item has children"; },
 //    children: [
-//      { name: "name", widget: "name of jquery-style plugin to call", options: { data: "set of widget options" }, glyph: "glyph" },
-//      { name: "pen", widget: "toolSelector", options: { toolName: "pen", displayName: "Pen" }, glyph: "pen" }
+//      { name: "name", selected: false, widget: "name of jquery-style plugin to call", options: { data: "set of widget options" }, glyph: "glyph" },
+//      { name: "pen", selected: true, widget: "toolSelector", options: { toolName: "pen", displayName: "Pen" }, glyph: "pen" }
 //    ]
 //  }
 // ]
@@ -21,7 +22,6 @@
   var pluginName = "toolMenu";
 
   var defaultOptions = {
-    selectedTool: null,
     selectedClass: 'selected',
     tools: []
   };
@@ -62,19 +62,47 @@
       _.each(options.tools, function(tool) {
 
         var glyph = tool.glyph;
-        if (glyph == null) {
-          _.each(tool.children, function(c) {
-            if (glyph == null || options.selectedTool == c.name) { glyph = c.glyph; }
+
+        if (tool.children && tool.children.length) {
+          glyph = tool.children[0].glyph;
+          _.each(tool.children, function (c) {
+            if (c.selected) {
+              glyph = c.glyph;
+            }
           }, this);
         }
 
         var item = $("<button />")
           .append($("<span />").addClass("glyphicon").addClass(glyph))
-          //.on('touchstart.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemTouch)
-          .on('mouseenter.' + pluginName, {menu: $this, tool: tool}, privateMethods.handleItemMouseIn)
           .appendTo($this);
+
+        if (tool.children && tool.children.length) {
+          item.on('mouseenter.' + pluginName, {menu: $this, tool: tool}, privateMethods.handleItemMouseIn);
+          //item.on('touchstart.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemTouch)
+        } else {
+          item.on('click.'+ pluginName, tool.handler);
+        }
+
+        if (tool.selected) {
+          item.addClass(options.selectedClass);
+        }
+
       }, this);
 
+    },
+
+    buildButtonWidget: function(tool) {
+      return $("<button />")
+        .append($("<span />").addClass("glyphicon").addClass(tool.glyph))
+        .append($("<span />").text(tool.name))
+        .on('click.' + pluginName, tool.handler);
+    },
+
+    buildZoomWidget: function(tool) {
+      return $("<div />")
+        .append($("<span />").addClass("glyphicon").addClass("glyphicon-zoom-in"))
+        .append($("<span />").text(tool.value))
+        .append($("<span />").addClass("glyphicon").addClass("glyphicon-zoom-out"));
     },
 
     handleItemMouseIn: function(evt) {
@@ -91,10 +119,16 @@
         });
 
         _.each(tool.children, function(c) {
-          $("<div />")
-            .append($("<span />").addClass("glyphicon").addClass(c.glyph))
-            .append($("<span />").text(c.name))
-            .appendTo($popup);
+          switch (c.type) {
+            case "button":
+              $popup.append(privateMethods.buildButtonWidget(c));
+              break;
+            case "zoom":
+              $popup.append(privateMethods.buildZoomWidget(c));
+              break;
+            default:
+              throw "Unknown widget type: [" + c.type + "]";
+          }
         }, this);
 
         var popHeight = $popup.outerHeight();

@@ -41,6 +41,7 @@ _.extend(ViewPortLabels.prototype, {
 
     this.context.save();
     this.context.setTransform(1, 0, 0, 1, 0, 0);
+    this.context.translate(0.5, 0.5);
 
     this.context.beginPath();
     this.context.fillStyle = "rgba(100, 100, 100, 0.5)";
@@ -73,6 +74,6 @@ _.extend(ViewPortLabels.prototype, {
   },
 
   drawLabel: function(point, text, highlight) {
-    this.drawing.drawText(text, point, 18, (highlight ? "grey" : "white"), "black", 1);
+    this.drawing.drawText(text, point, 20, (highlight ? "grey" : "white"), "black", 1);
   }
 });

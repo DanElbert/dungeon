@@ -85,7 +85,7 @@ _.extend(Drawing.prototype, {
 
     this.context.lineWidth = strokeWidth || 2;
 
-    this.context.font = 'bold ' + size + 'px sans-serif';
+    this.context.font = 'bold ' + size + 'px "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif';
     this.context.textAlign = align || "center";
     this.context.textBaseline = vAlign || "middle";
 
