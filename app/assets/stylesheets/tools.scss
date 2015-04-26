@@ -3,11 +3,6 @@
   position: absolute;
   top: 32px;
   left: 32px;
-
-  //width: 25px;
-  //height: 125px;
-
-  background: #0088cc;
 }
 
 #tool_menu > button {
@@ -15,4 +10,37 @@
   width: 30px;
   height: 30px;
   display: block;
+  background-color: $brand-primary;
+  border: none;
+  color: $btn-default-color;
+
+  &:hover {
+    background-color: lighten($brand-primary, 15%);
+  }
+}
+
+#tool_menu button {
+  outline: none;
+}
+
+#tool_menu .tool_menu_popup {
+  position: absolute;
+  background: white;
+  white-space: pre;
+  text-align: left;
+  color: $text-color;
+
+  .glyphicon {
+    padding-right: 10px;
+  }
+}
+
+.tool_menu_popup > div {
+  border: solid 2px white;
+  padding: 0 4px;
+  margin: 4px;
+
+  &:hover {
+    border: solid 2px $gray-lighter;
+  }
 }

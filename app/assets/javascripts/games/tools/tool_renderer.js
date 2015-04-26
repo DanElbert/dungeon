@@ -10,8 +10,15 @@ _.extend(ToolRenderer.prototype, {
 
   render: function() {
 
-    var renderer = new ToolMenuRenderer($("#game_board_container"), this.tools);
-    renderer.render();
+    if (this.container == null) {
+      this.container = $("<div />")
+        .attr("id", "tool_menu")
+        .appendTo("#game_board_container");
+
+      this.container.toolMenu({tools: this.tools});
+    } else {
+      this.container.toolMenu("refresh");
+    }
   },
 
   updateOptions: function(options) {
@@ -20,11 +27,7 @@ _.extend(ToolRenderer.prototype, {
   },
 
   toggleDisplay: function() {
-    if (this.container.dialog("isOpen")) {
-      this.container.dialog("close");
-    } else {
-      this.container.dialog("open");
-    }
+    this.container.toggle();
   },
 
   renderOptions: function() {

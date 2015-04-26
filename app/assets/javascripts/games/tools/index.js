@@ -1,5 +1,6 @@
 //= require ./tool_options
 //= require ./tool_manager
+//= require ./tool_menu
 //= require ./tool
 //= require ./view_port_dragging
 //= require ./global_shortcuts

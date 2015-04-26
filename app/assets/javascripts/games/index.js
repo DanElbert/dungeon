@@ -1,4 +1,3 @@
-//= require ./tool_menu
 //= require ./geometry
 //= require ./initiative
 //= require ./drawing

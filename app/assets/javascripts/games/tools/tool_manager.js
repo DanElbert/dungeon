@@ -27,7 +27,7 @@ function ToolManager(board) {
     "Paste": new PasteTool(this)
   };
 
-  this.toolSet = new ToolMenu([
+  this.toolSet = [
     new ToolMenuGroup("pointer_group", [
       new ToolMenuItem("pointer", {
         glyph: "glyphicon-screenshot",
@@ -99,7 +99,7 @@ function ToolManager(board) {
       glyph: "glyphicon-menu-left",
       handler: function() { self.board.undo(); }
     })
-  ]);
+  ];
 
   this.oldToolSet = [
       new ZoomMenuItem("Zoom", {
@@ -273,13 +273,13 @@ _.extend(ToolManager.prototype, {
           found = i;
           return true;
         }
-        found = recur(i.getChildren(), name);
+        found = recur(i.children, name);
         return found != null;
       }, this);
       return found;
     };
 
-    return recur(this.toolSet.getChildren(), name);
+    return recur(this.toolSet, name);
   },
 
   sharedTool: function(name) {
@@ -287,21 +287,10 @@ _.extend(ToolManager.prototype, {
   }
 });
 
-function ToolMenu(children) {
-  this.children = children;
-  this.uid = generateActionId() + generateActionId();
-}
-
-_.extend(ToolMenu.prototype, {
-  getChildren: function() { return this.children; },
-  displayName: function() { return "main"; }
-});
-
 function ToolMenuItem(name, options) {
   this.name = name;
   this.label = options.label;
-  this.customToolTip = options.toolTip;
-  this.active = _.has(options, "active") ? options.active : false;
+  this.tooltip = options.toolTip;
   this.visible = _.has(options, "visible") ? options.visible : true;
   this.glyph = options.glyph;
   this.children = options.children;
@@ -311,23 +300,6 @@ function ToolMenuItem(name, options) {
 }
 
 _.extend(ToolMenuItem.prototype, {
-  handle: function() {
-    if (this.handler) {
-      this.handler.call(this);
-    }
-  },
-
-  displayName: function() {
-    return this.label || this.name;
-  },
-
-  toolTip: function() {
-    return this.customToolTip || this.displayName();
-  },
-
-  getChildren: function() {
-    return this.children || [];
-  }
 });
 
 function ToolMenuGroup(name, children) {
