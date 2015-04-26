@@ -79,9 +79,9 @@
         if (tool.children && tool.children.length) {
           item.on('mouseenter.' + pluginName, {menu: $this, tool: tool}, privateMethods.handleItemMouseIn);
           //item.on('touchstart.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemTouch)
-        } else {
-          item.on('click.'+ pluginName, tool.handler);
         }
+
+        item.on('click.'+ pluginName, {menu: $this, tool: tool}, privateMethods.handleItemClick);
 
         if (tool.selected) {
           item.addClass(options.selectedClass);
@@ -140,6 +140,20 @@
       }
     },
 
+    handleItemClick: function(evt) {
+      var menu = evt.data.menu;
+      var tool = evt.data.tool;
+
+      if (tool.children && tool.children.length) {
+        var selectedTool = _.find(tool.children, function(c) {return c.selected;}) || tool.children[0];
+        if (selectedTool) {
+          selectedTool.handler();
+        }
+      } else {
+        tool.handler();
+      }
+    },
+
     handleMenuClick: function(evt) {
       var menu = evt.data.menu;
       var data = menu.data(pluginName);
@@ -165,14 +179,6 @@
       menu.one('touchmove', function() { moved = true; });
 
       evt.preventDefault();
-    },
-
-    handleItemClick: function(evt) {
-      var menu = evt.data.menu;
-      var selectedKey = evt.data.value;
-
-      privateMethods.setValue(menu, selectedKey);
-      methods.closeMenu.apply(menu);
     },
 
     handleItemTouch: function(evt) {

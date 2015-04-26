@@ -56,7 +56,7 @@ function ToolManager(board) {
         handler: function() { self.setTool("pen"); }
       }),
 
-      new ToolMenuItem("erase", {
+      new ToolMenuItem("eraser", {
         glyph: "glyphicon-erase",
         handler: function() { self.setTool("eraser"); }
       }),
@@ -215,17 +215,13 @@ _.extend(ToolManager.prototype, {
       this.setOptions();
       this.currentTool.optionsChanged();
 
-      // Select the tool in the menu, unselect anything else
-      var recur = function(tools) {
-        if (!tools || !tools.length) { return false; }
-        var selected = false;
-        _.each(tools, function(t) {
-          t.selected = recur(t.children) || (t.name == name);
-          selected = selected || t.selected;
-        });
-        return selected;
-      };
-      recur(this.toolSet);
+      var menuItem = this.getMenuItem(name);
+
+      if (menuItem) {
+        _.each(this.toolSet, function(t) {t.unselect();});
+        menuItem.select();
+      }
+
       this.render();
 
     } else {
@@ -311,10 +307,26 @@ function ToolMenuItem(name, options) {
   this.children = options.children;
   this.handler = options.handler;
   this.type = _.has(options, "type") ? options.type : "button";
-  this.uid = generateActionId() + generateActionId();
+
+  _.each(this.children, function(c) {c.parent = this;}, this);
 }
 
 _.extend(ToolMenuItem.prototype, {
+  unselect: function() { this.selected = false; },
+
+  unselectOtherChildren: function(keep) {
+    _.each(this.children, function(c) {
+      if (c.name != keep) {c.unselect();}
+    }, this);
+  },
+
+  select: function() {
+    this.selected = true;
+    if (this.parent) {
+      this.parent.unselectOtherChildren(this.name);
+      this.parent.select();
+    }
+  }
 });
 
 function ToolMenuGroup(name, children) {
@@ -322,7 +334,6 @@ function ToolMenuGroup(name, children) {
 }
 
 _.extend(ToolMenuGroup.prototype, ToolMenuItem.prototype, {
-
 });
 
 function ZoomMenuItem(name, options) {
