@@ -40,9 +40,10 @@ function ToolManager(board) {
       })
     ]),
 
-    new ToolMenuGroup("view_group", [
+    new ToolMenuGroup("view_group", {noClickthrough: true}, [
       new ZoomMenuItem("zoom", {
-        glyph: "glyphicon-zoom-in"
+        glyph: "glyphicon-zoom-in",
+        handler: function(zoom) { self.changeZoom(zoom); }
       }),
 
       new ToolMenuItem("add_viewport_savepoint", {
@@ -303,6 +304,7 @@ function ToolMenuItem(name, options) {
   this.tooltip = options.toolTip;
   this.visible = _.has(options, "visible") ? options.visible : true;
   this.selected = _.has(options, "selected") ? options.selected : false;
+  this.noClickthrough = _.has(options, "noClickthrough") ? options.noClickthrough : false;
   this.glyph = options.glyph;
   this.children = options.children;
   this.handler = options.handler;
@@ -329,8 +331,13 @@ _.extend(ToolMenuItem.prototype, {
   }
 });
 
-function ToolMenuGroup(name, children) {
-  ToolMenuItem.call(this, name, {children: children, type: "mainButton"});
+function ToolMenuGroup(name, options, children) {
+  if (arguments.length == 2) {
+    children = options;
+    options = {};
+  }
+  _.extend(options, {children: children, type: "mainButton"});
+  ToolMenuItem.call(this, name, options);
 }
 
 _.extend(ToolMenuGroup.prototype, ToolMenuItem.prototype, {

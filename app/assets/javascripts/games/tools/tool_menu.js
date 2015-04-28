@@ -99,10 +99,26 @@
     },
 
     buildZoomWidget: function(tool) {
+
+      var optionFunc = function(val) {
+        var txt = Math.round(val) + "%";
+        return $("<option />").attr("value", val / 100).text(txt)
+      };
+
+      var $select = $("<select />")
+        .addClass("form-control input-sm")
+        .append(optionFunc(tool.value * 100))
+        .change(function() {
+          var val = $(this).val();
+          tool.handler(val);
+        });
+
+      for (var z = 50; z <= 250; z += 50) {
+        $select.append(optionFunc(z));
+      }
+
       return $("<div />")
-        .append($("<span />").addClass("glyphicon").addClass("glyphicon-zoom-in"))
-        .append($("<span />").text(tool.value))
-        .append($("<span />").addClass("glyphicon").addClass("glyphicon-zoom-out"));
+        .append($select);
     },
 
     handleItemMouseIn: function(evt) {
@@ -112,7 +128,10 @@
       if (tool.children && tool.children.length) {
         var $popup = $("<div />")
           .addClass("tool_menu_popup")
-          .appendTo($button);
+          .appendTo($button)
+          .on("click." + pluginName, function(e) {
+            e.stopPropagation();
+          });
 
         $button.one("mouseleave." + pluginName, function() {
           $popup.remove();
@@ -144,7 +163,7 @@
       var menu = evt.data.menu;
       var tool = evt.data.tool;
 
-      if (tool.children && tool.children.length) {
+      if (tool.children && tool.children.length && !tool.noClickthrough) {
         var selectedTool = _.find(tool.children, function(c) {return c.selected;}) || tool.children[0];
         if (selectedTool) {
           selectedTool.handler();
