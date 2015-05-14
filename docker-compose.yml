@@ -1,5 +1,5 @@
 mysql:
-  image: mysql:latest
+  image: mysql:5.6
   environment:
     - MYSQL_ROOT_PASSWORD=mysupersecret
   volumes_from:
@@ -10,7 +10,7 @@ redis:
   image: redis:latest
 
 
-web:
+web1:
   build: .
   ports:
     - "3000:3000"

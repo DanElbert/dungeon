@@ -2,15 +2,6 @@
 redis:
   image: 'redis:latest'
 
-<% unless env_file_exists? %>
-mysql:
-  image: 'mysql:latest'
-  environment:
-    - MYSQL_ROOT_PASSWORD=mysupersecret
-  volumes_from:
-    - dungeon_db_data
-<% end %>
-
 proxy:
   image: 'nginx:latest'
   ports:
@@ -31,33 +22,23 @@ web1:
   environment:
     - RAILS_ENV=production
     - SHARE_ASSETS=true
-<% if env_file_exists? %>
-  env_file: docker-compose-production.env
-<% end %>
+  env_file: /etc/default/dungeon
   volumes:
     - /dungeon/public
     - log:dungeon/log
   links:
     - redis
-<% unless env_file_exists? %>
-    - mysql
-<% end %>
 
 
 web2: &web
   image: 'danelbert/dungeon:production'
   environment:
     - RAILS_ENV=production
-<% if env_file_exists? %>
   env_file: docker-compose-production.env
-<% end %>
   volumes_from:
     - web1
   links:
     - redis
-<% unless env_file_exists? %>
-    - mysql
-<% end %>
 
 
 web3:
