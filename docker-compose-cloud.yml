@@ -28,7 +28,7 @@ proxy:
 
 
 web1:
-  image: 'danelbert/dungeon:production'
+  image: 'danelbert/dungeon:beta'
   environment:
     - RAILS_ENV=production
     - SHARE_ASSETS=true
@@ -41,7 +41,7 @@ web1:
 
 
 web2: &web
-  image: 'danelbert/dungeon:production'
+  image: 'danelbert/dungeon:beta'
   environment:
     - RAILS_ENV=production
   volumes_from:
