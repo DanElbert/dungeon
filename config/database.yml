@@ -31,8 +31,8 @@ test:
 production:
   adapter: mysql2
   host: <%= ENV['DUNGEON_DB_HOST'] || 'mysql' %>
-  username: <%= ENV['DUNGEON_DB_USER'] || 'root' %>
-  password: <%= ENV['DUNGEON_DB_PASSWORD'] || 'mysupersecret' %>
+  username: <%= ENV['DUNGEON_DB_USER'] || 'dungeon_user' %>
+  password: <%= ENV['DUNGEON_DB_PASSWORD'] || 'dungeon_password' %>
   database: dungeon
   pool: 5
   timeout: 5000
