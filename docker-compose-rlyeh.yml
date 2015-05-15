@@ -3,7 +3,7 @@ redis:
   image: 'redis:latest'
 
 proxy:
-  image: 'nginx:latest'
+  image: 'danelbert/nginx:latest'
   ports:
     - "3000:80"
   volumes_from:
