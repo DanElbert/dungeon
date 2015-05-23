@@ -16,6 +16,7 @@ function BoardEvents(board) {
     dragging: false,
     dragStart: null,
     previousDrag: null,
+    previousClick: null,
     eventPrefix: ''
   };
 
@@ -24,6 +25,7 @@ function BoardEvents(board) {
     dragging: false,
     dragStart: null,
     previousDrag: null,
+    previousClick: null,
     eventPrefix: 'right'
   };
 
@@ -118,6 +120,16 @@ function BoardEvents(board) {
         mapPoint: mapPoint,
         mapPointCell: cell
       });
+
+      var now = Date.now();
+      if (mouseState.previousClick && (now - mouseState.previousClick < 500)) {
+        jqThis.trigger(mouseState.eventPrefix + 'dblclick', {
+          mapPoint: mapPoint,
+          mapPointCell: cell
+        });
+      }
+
+      mouseState.previousClick = now;
     }
 
     mouseState.dragStart = null;

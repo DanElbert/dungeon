@@ -29,8 +29,13 @@
   outline: none;
 }
 
-#tool_menu .tool_menu_popup {
+#tool_menu .tool_menu_popup_wrapper {
   position: absolute;
+  background: none;
+  padding: 7px;
+}
+
+#tool_menu .tool_menu_popup {
   background: white;
   white-space: pre;
   text-align: left;

@@ -35,6 +35,11 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
         self.board.undo();
       }
     });
+
+    $(this.board.event_manager).on('dblclick.GlobalShortcuts', function(evt, mapEvt) {
+      var action = {actionType: "pingAction", point: mapEvt.mapPoint, color: "#EE204D", uid: generateActionId()};
+      self.board.addAction(action, null, true);
+    });
   },
   disable: function() {
     this.viewPortDragging.disable();

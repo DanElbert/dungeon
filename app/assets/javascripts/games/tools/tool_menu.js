@@ -125,13 +125,16 @@
       if (tool.children && tool.children.length) {
         var $popup = $("<div />")
           .addClass("tool_menu_popup")
-          .appendTo($button)
           .on("click." + pluginName, function(e) {
             e.stopPropagation();
           });
 
+        var $wrapper = $("<div class='tool_menu_popup_wrapper'></div>")
+          .append($popup)
+          .appendTo($button);
+
         $button.one("mouseleave." + pluginName, function() {
-          $popup.remove();
+          $wrapper.remove();
         });
 
         _.each(tool.children, function(c) {
@@ -147,12 +150,12 @@
           }
         }, this);
 
-        var popHeight = $popup.outerHeight();
+        var popHeight = $wrapper.outerHeight();
         var buttonOffset = $button.offset();
         var buttonVMiddle = buttonOffset.top + ($button.outerHeight() / 2);
         var buttonRight = buttonOffset.left + $button.outerWidth();
 
-        $popup.offset({ top: buttonVMiddle - (popHeight / 2), left: buttonRight });
+        $wrapper.offset({ top: buttonVMiddle - (popHeight / 2), left: buttonRight });
       }
     },
 
