@@ -51,3 +51,14 @@
     border: solid 2px $gray-lighter;
   }
 }
+
+#tool_option_menu {
+  position: absolute;
+  top: 32px;
+  left: 100px;
+  background: white;
+
+  span {
+    border: solid 1px black;
+  }
+}

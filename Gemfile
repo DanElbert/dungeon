@@ -18,7 +18,7 @@ gem 'redis-rails'
 
 gem 'jquery-rails', '~> 4.0.3'
 gem 'jquery-ui-rails', '~> 5.0.3'
-gem 'bootstrap-sass', '~> 3.3.1'
+gem 'bootstrap-sass', '~> 3.3.4'
 gem 'bcrypt', '~> 3.1.9'
 
 gem 'sass-rails',   '~> 5.0.1'

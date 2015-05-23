@@ -34,7 +34,7 @@ web2: &web
   image: 'danelbert/dungeon:production'
   environment:
     - RAILS_ENV=production
-  env_file: docker-compose-production.env
+  env_file: /etc/default/dungeon
   volumes_from:
     - web1
   links:

@@ -12,8 +12,8 @@
 //    tooltip: "optional tooltip (not used if item has children)",
 //    handler: function() { return "optional handler; not used if item has children"; },
 //    children: [
-//      { name: "name", selected: false, widget: "name of jquery-style plugin to call", options: { data: "set of widget options" }, glyph: "glyph" },
-//      { name: "pen", selected: true, widget: "toolSelector", options: { toolName: "pen", displayName: "Pen" }, glyph: "pen" }
+//      { name: "name", selected: false, type: "type of tool", glyph: "glyph", handler: function() { } },
+//      { name: "pen", selected: true, type: "button", glyph: "pen", handler: function() { } }
 //    ]
 //  }
 // ]
@@ -33,31 +33,28 @@
 
       return this.each(function() {
         var $this = $(this);
-        privateMethods.rebuild($this, options);
+        var data = {options: options};
+        $this.data(pluginName, data);
+        privateMethods.rebuild($this);
       });
     },
 
     refresh: function() {
       return this.each(function() {
         var $this = $(this);
-        var data = $this.data(pluginName);
-        var options = data.options;
-        privateMethods.rebuild($this, options);
+        privateMethods.rebuild($this);
       });
     }
   };
 
   var privateMethods = {
-    rebuild: function($this, options) {
+    rebuild: function($this) {
       var data = $this.data(pluginName);
+      var options = data.options;
 
       // unbind first to ensure there's only ever 1 handler bound
       $this.off('.' + pluginName);
       $this.empty();
-
-      data = data || {};
-      data.options = options;
-      $this.data(pluginName, data);
 
       _.each(options.tools, function(tool) {
 

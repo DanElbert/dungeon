@@ -19,6 +19,10 @@ function ToolManager(board) {
     "shape": new ShapeTool(this),
     "eraser": new Eraser(this),
     "template": new TemplateTool(this),
+    "measure_template": new Measure(this),
+    "line_template": new LineTemplate(this),
+    "radius_template": new RadialTemplate(this),
+    "cone_template": new ConeTemplate(this),
     "ping": new PingTool(this),
     "add_fog": new AddFogPen(this),
     "remove_fog": new RemoveFogPen(this),
@@ -84,14 +88,40 @@ function ToolManager(board) {
       })
     ]),
 
-    //new ToolMenuGroup("template_group", [
-    //
-    //]),
-    //
-    //new ToolMenuGroup("fog_group", [
-    //
-    //]),
-    //
+    new ToolMenuGroup("template_group", [
+      new ToolMenuItem("measure_template", {
+        glyph: "glyphicon-option-vertical",
+        handler: function() { self.setTool("measure_template"); }
+      }),
+
+      new ToolMenuItem("line_template", {
+        glyph: "glyphicon-minus",
+        handler: function() { self.setTool("line_template"); }
+      }),
+
+      new ToolMenuItem("radius_template", {
+        glyph: "glyphicon-record",
+        handler: function() { self.setTool("radius_template"); }
+      }),
+
+      new ToolMenuItem("cone_template", {
+        glyph: "glyphicon-triangle-bottom",
+        handler: function() { self.setTool("cone_template"); }
+      })
+    ]),
+
+    new ToolMenuGroup("fog_group", [
+      new ToolMenuItem("add_fog", {
+        glyph: "glyphicon-cloud",
+        handler: function() { self.setTool("add_fog"); }
+      }),
+
+      new ToolMenuItem("remove_fog", {
+        glyph: "glyphicon-eye-open",
+        handler: function() { self.setTool("remove_fog"); }
+      })
+    ]),
+
     //new ToolMenuGroup("tokens_group", [
     //
     //]),
@@ -100,76 +130,6 @@ function ToolManager(board) {
       glyph: "glyphicon-menu-left",
       handler: function() { self.board.undo(); }
     })
-  ];
-
-  this.oldToolSet = [
-      new ZoomMenuItem("Zoom", {
-        doubleWide: true,
-        glyph: "glyphicon-zoom-in"
-      }),
-
-      new ToolMenuItem("Ping", {
-        glyph: "glyphicon-screenshot",
-        handler: function() { self.setTool("Ping"); }
-      }),
-
-      new ToolMenuItem("Pen", {
-        glyph: 'glyphicon-pencil',
-        handler: function() { self.setTool("Pen"); }
-      }),
-
-      new ToolMenuItem("Erase", {
-        glyph: "glyphicon-erase",
-        handler: function() { self.setTool("Eraser"); }
-      }),
-
-      new ToolMenuItem("Shape", {
-        glyph: "glyphicon-triangle-top",
-        handler: function() { self.setTool("Shape"); }
-      }),
-
-      new ToolMenuItem("Label", {
-        glyph: "glyphicon-text-color",
-        handler: function() { self.setTool("Label"); }
-      }),
-
-      new ToolMenuItem("Copy", {
-        glyph: "glyphicon-copy",
-        handler: function() { self.setTool("Copy"); }
-      }),
-
-      new ToolMenuItem("Paste", {
-        glyph: "glyphicon-paste",
-        visible: false,
-        handler: function() { self.setTool("Paste"); }
-      }),
-
-      new ToolMenuItem("Template", {
-        glyph: "glyphicon-th",
-        handler: function() { self.setTool("Template"); }
-      }),
-
-      new ToolMenuItem("AddFog", {
-        toolTip: "Add Fog",
-        glyph: "glyphicon-cloud-download",
-        handler: function() { self.setTool("Add Fog"); }
-      }),
-
-      new ToolMenuItem("RemoveFog", {
-        toolTip: "Remove Fog",
-        glyph: "glyphicon-cloud-upload",
-        handler: function() { self.setTool("Remove Fog"); }
-      }),
-
-      new ToolMenuItem("Tokens", {
-        visible: false
-      }),
-
-      new ToolMenuItem("Undo", {
-        glyph: "glyphicon-menu-left",
-        doubleWide: true,
-        handler: function() { self.board.undo(); }
-      })
   ];
 
   this.globalShortcutTool = new GlobalShortCuts(this);
@@ -236,6 +196,7 @@ _.extend(ToolManager.prototype, {
     }
   },
 
+  // Updates the menu UI
   updateZoom: function(zoom) {
     this.getMenuItem("zoom").value = zoom;
     this.render();
@@ -253,6 +214,7 @@ _.extend(ToolManager.prototype, {
     this.board.clearTokens();
   },
 
+  // Changes the board's zoom, which will call updateZoom and update the UI
   changeZoom: function(zoom) {
     this.board.setZoom(zoom);
   },
