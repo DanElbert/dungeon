@@ -2,6 +2,7 @@
 //= require ./tool_manager
 //= require ./tool_menu
 //= require ./tool_options_menu
+//= require ./tool_option_dropdown
 //= require ./tool
 //= require ./view_port_dragging
 //= require ./global_shortcuts

@@ -3,6 +3,7 @@
   position: absolute;
   top: 32px;
   left: 32px;
+  z-index: 200;
 }
 
 #tool_menu > button {
@@ -57,8 +58,19 @@
   top: 32px;
   left: 100px;
   background: white;
+  z-index: 100;
 
-  span {
-    border: solid 1px black;
+  .option_menu {
+    float: left;
+  }
+
+  .option_button {
+    width: 30px;
+    height: 20px;
+  }
+
+  .option_item_button {
+    width: 30px;
+    height: 20px;
   }
 }
