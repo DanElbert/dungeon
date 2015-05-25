@@ -73,12 +73,16 @@
           .append($("<span />").addClass("glyphicon").addClass(glyph))
           .appendTo($this);
 
+        var evtData = {menu: $this, tool: tool};
+
         if (tool.children && tool.children.length) {
-          item.on('mouseenter.' + pluginName, {menu: $this, tool: tool}, privateMethods.handleItemMouseIn);
-          //item.on('touchstart.' + pluginName, {menu: $this, value: value}, privateMethods.handleItemTouch)
+          item.on('mouseenter.' + pluginName, evtData, privateMethods.handleItemMouseIn);
+          item.onFastTap(pluginName, function(e) { privateMethods.handleItemTap.call(this, evtData); });
+        } else {
+          item.onFastTap(pluginName, function(e) { privateMethods.handleItemClick.call(this, {data: evtData}); });
         }
 
-        item.on('click.'+ pluginName, {menu: $this, tool: tool}, privateMethods.handleItemClick);
+        item.on('click.'+ pluginName, evtData, privateMethods.handleItemClick);
 
         if (tool.selected) {
           item.addClass(options.selectedClass);
@@ -92,7 +96,8 @@
       return $("<button />")
         .append($("<span />").addClass("glyphicon").addClass(tool.glyph))
         .append($("<span />").text(tool.name))
-        .on('click.' + pluginName, tool.handler);
+        .on('click.' + pluginName, tool.handler)
+        .onFastTap(pluginName, tool.handler);
     },
 
     buildZoomWidget: function(tool) {
@@ -118,11 +123,21 @@
         .append($select);
     },
 
-    handleItemMouseIn: function(evt) {
-      var tool = evt.data.tool;
-      var $menu = evt.data.menu;
-      var $button = $(this);
+    isPopupOpen: function($button) {
+      if ($button.find(".tool_menu_popup").length) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    openPopup: function($button, tool) {
       if (tool.children && tool.children.length) {
+
+        $button.parent().children().each(function() {
+          privateMethods.closePopup($(this));
+        });
+
         var $popup = $("<div />")
           .addClass("tool_menu_popup")
           .on("click." + pluginName, function(e) {
@@ -132,10 +147,6 @@
         var $wrapper = $("<div class='tool_menu_popup_wrapper'></div>")
           .append($popup)
           .appendTo($button);
-
-        $button.one("mouseleave." + pluginName, function() {
-          $wrapper.remove();
-        });
 
         _.each(tool.children, function(c) {
           switch (c.type) {
@@ -159,6 +170,22 @@
       }
     },
 
+    closePopup: function($button) {
+      $button.find(".tool_menu_popup_wrapper").remove();
+    },
+
+    handleItemMouseIn: function(evt) {
+      var $button = $(this);
+      var tool = evt.data.tool;
+      if (!privateMethods.isPopupOpen($button)) {
+        privateMethods.openPopup($button, tool);
+
+        $button.one("mouseleave." + pluginName, function() {
+          privateMethods.closePopup($button);
+        });
+      }
+    },
+
     handleItemClick: function(evt) {
       var menu = evt.data.menu;
       var tool = evt.data.tool;
@@ -173,70 +200,15 @@
       }
     },
 
-    handleMenuClick: function(evt) {
-      var menu = evt.data.menu;
-      var data = menu.data(pluginName);
-      if (data.isOpen) {
-        methods.closeMenu.apply(menu);
+    handleItemTap: function(data) {
+      var $button = $(this);
+      var tool = data.tool;
+
+      if (privateMethods.isPopupOpen($button)) {
+        privateMethods.closePopup($button);
       } else {
-        methods.openMenu.apply(menu);
+        privateMethods.openPopup($button, tool);
       }
-    },
-
-    handleMenuTouch: function(evt) {
-      var moved = false;
-
-      var simulateClick = function() {
-        if (!moved) {
-          privateMethods.handleMenuClick(evt)
-        }
-      };
-
-      var menu = evt.data.menu;
-
-      menu.one('touchend', simulateClick);
-      menu.one('touchmove', function() { moved = true; });
-
-      evt.preventDefault();
-    },
-
-    handleItemTouch: function(evt) {
-      var moved = false;
-
-      var simulateClick = function() {
-        if (!moved) {
-          privateMethods.handleItemClick(evt)
-        }
-      };
-
-      var menu = evt.data.menu;
-
-      menu.one('touchend', simulateClick);
-      menu.one('touchmove', function() { moved = true; });
-
-      evt.preventDefault();
-    },
-
-    setValue: function(menu, value) {
-      privateMethods.setValueNoCallback(menu, value);
-
-      var data = menu.data(pluginName);
-      data.options.selectedCallback(value);
-    },
-
-    setValueNoCallback: function(menu, value) {
-      var data = menu.data(pluginName);
-      data.value = value;
-
-      _.each(data.options.values, function(v, index) {
-        data.valueItems[index].removeClass(data.options.selectedClass);
-        if (_.isEqual(value, v)) {
-          data.valueItems[index].addClass(data.options.selectedClass);
-        }
-      });
-
-      data.menuButton.empty();
-      data.menuButton.append(data.options.contentCallback(value));
     }
   };
 

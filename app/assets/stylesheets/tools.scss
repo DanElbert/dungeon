@@ -62,16 +62,23 @@
   position: absolute;
   top: 32px;
   left: 100px;
-  background: white;
   z-index: 100;
 
   .option_menu {
-    float: left;
+    display: inline-block;
   }
 
   .option_button {
     width: 30px;
     height: 20px;
+  }
+
+  .option_button, .option_item_button {
+    background: white;
+  }
+
+  .option_item_list {
+    position: absolute;
   }
 
   .option_item_button {
