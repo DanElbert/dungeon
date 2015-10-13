@@ -35,6 +35,12 @@
 
       $this.empty();
 
+      if (toolOptions.length) {
+        $this.show();
+      } else {
+        $this.hide();
+      }
+
       _.each(toolOptions, function(to) {
         switch (to.type) {
           case "color":
@@ -94,25 +100,22 @@
     },
 
     buildShapeOption: function(toolOption) {
-      var $widget = $('<div></div>').addClass('option_menu');
+      var $widget = $('<div></div>')
+          .addClass('option_menu');
 
-      $widget.toolOptionDropdown({
-        values: ["rectangle", "circle", "line"],
-        initialValue: toolOption.value,
-        contentCallback: function(value) {
-          switch (value) {
-            case "rectangle":
-              return "Rectangle";
-            case "circle":
-              return "Circle";
-            case "line":
-              return "Line";
-          }
-        },
-        selectedCallback: function(value) {
-          toolOption.value = value;
-        }
-      });
+      var optionFunc = function(value, txt) {
+        return $("<option />").attr("value", value).text(txt);
+      };
+
+      var $dropdown = $("<select />")
+          .append(optionFunc("rectangle", "Rectangle"))
+          .append(optionFunc("circle", "Circle"))
+          .append(optionFunc("line", "Line"))
+          .change(function() {
+            toolOption.value = $(this).val();
+          })
+          .val(toolOption.value || "rectangle")
+          .appendTo($widget);
 
       return $widget;
     },

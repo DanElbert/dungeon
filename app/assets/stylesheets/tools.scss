@@ -1,13 +1,15 @@
 
+$toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
+
 #tool_menu {
   position: absolute;
   top: 32px;
   left: 32px;
   z-index: 200;
+  box-shadow: $toolpanel_shadow;
 }
 
 #tool_menu > button {
-  position: relative;
   width: 30px;
   height: 30px;
   display: block;
@@ -63,14 +65,27 @@
   top: 32px;
   left: 100px;
   z-index: 100;
+  padding: 4px;
+  background: white;
+  border: 1px solid black;
+  box-shadow: $toolpanel_shadow;
 
   .option_menu {
     display: inline-block;
+    padding-left: 5px;
+    margin-left: 5px;
+    border-left: 1px solid grey;
+
+    &:first-child {
+      padding-left: 0;
+      margin-left: 0;
+      border-left: none;
+    }
   }
 
   .option_button {
-    width: 30px;
-    height: 20px;
+    width: 40px;
+    height: 25px;
   }
 
   .option_button, .option_item_button {

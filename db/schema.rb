@@ -14,90 +14,90 @@
 ActiveRecord::Schema.define(version: 20140706211159) do
 
   create_table "board_actions", force: :cascade do |t|
-    t.string   "action_type", limit: 255
-    t.string   "uid",         limit: 255
-    t.text     "properties",  limit: 65535
+    t.string   "action_type"
+    t.string   "uid"
+    t.text     "properties"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "board_id",    limit: 4
+    t.integer  "board_id"
   end
 
   create_table "board_detection_sessions", force: :cascade do |t|
-    t.integer  "game_id",           limit: 4
-    t.integer  "detect_width",      limit: 4
-    t.integer  "detect_height",     limit: 4
-    t.integer  "image_orientation", limit: 4
-    t.string   "state",             limit: 255
+    t.integer  "game_id"
+    t.integer  "detect_width"
+    t.integer  "detect_height"
+    t.integer  "image_orientation"
+    t.string   "state"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "detect_origin_x",   limit: 4
-    t.integer  "detect_origin_y",   limit: 4
-    t.integer  "pattern_size",      limit: 4
-    t.integer  "pattern_dimension", limit: 4
-    t.binary   "image",             limit: 4294967295
+    t.integer  "detect_origin_x"
+    t.integer  "detect_origin_y"
+    t.integer  "pattern_size"
+    t.integer  "pattern_dimension"
+    t.binary   "image"
   end
 
   create_table "boards", force: :cascade do |t|
-    t.integer  "game_id",             limit: 4
-    t.string   "name",                limit: 255
+    t.integer  "game_id"
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "background_image_id", limit: 4
+    t.integer  "background_image_id"
   end
 
   create_table "campaigns", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.integer  "user_id",    limit: 4
+    t.string   "name"
+    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "games", force: :cascade do |t|
-    t.string   "status",      limit: 255
+    t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name",        limit: 255
-    t.integer  "user_id",     limit: 4
-    t.integer  "campaign_id", limit: 4
+    t.string   "name"
+    t.integer  "user_id"
+    t.integer  "campaign_id"
   end
 
   create_table "images", force: :cascade do |t|
-    t.integer  "campaign_id", limit: 4
-    t.string   "filename",    limit: 255
-    t.binary   "data",        limit: 4294967295
+    t.integer  "campaign_id"
+    t.string   "filename"
+    t.binary   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "type",        limit: 255
+    t.string   "type"
   end
 
   create_table "initiative_histories", force: :cascade do |t|
-    t.integer  "game_id",    limit: 4
-    t.string   "name",       limit: 255
-    t.integer  "use_count",  limit: 4
+    t.integer  "game_id"
+    t.string   "name"
+    t.integer  "use_count"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id", using: :btree
-  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name", using: :btree
+  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id"
+  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name"
 
   create_table "initiatives", force: :cascade do |t|
-    t.integer  "game_id",    limit: 4
-    t.string   "name",       limit: 255
-    t.integer  "value",      limit: 4
-    t.integer  "sort_order", limit: 4
+    t.integer  "game_id"
+    t.string   "name"
+    t.integer  "value"
+    t.integer  "sort_order"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",           limit: 255
-    t.string   "name",            limit: 255
+    t.string   "email"
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "password_digest", limit: 255
-    t.boolean  "is_admin",        limit: 1
-    t.string   "auth_token",      limit: 255
+    t.string   "password_digest"
+    t.boolean  "is_admin"
+    t.string   "auth_token"
   end
 
 end

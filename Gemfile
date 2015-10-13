@@ -1,35 +1,29 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.1'
+gem 'rails', '4.2.4'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
-gem 'mysql2'
+gem 'sqlite3', '~> 1.3.11'
+gem 'mysql2', '~> 0.4.1'
 
-gem 'uuid'
-gem 'oj'
+gem 'uuid', '~> 2.3.8'
+gem 'oj', '~> 2.12.14'
 
-gem 'thin'
-gem 'faye', :require => false
-gem 'faye-redis', :require => false
-gem 'redis-rails'
+gem 'thin', '~> 1.6.4'
+gem 'faye', '~> 1.1.2', :require => false
+gem 'faye-redis', '~> 0.2.0', :require => false
+gem 'redis-rails', '~> 4.0.0'
 
-gem 'jquery-rails', '~> 4.0.3'
-gem 'jquery-ui-rails', '~> 5.0.3'
-gem 'bootstrap-sass', '~> 3.3.4'
-gem 'bcrypt', '~> 3.1.9'
+gem 'jquery-rails', '~> 4.0.5'
+gem 'jquery-ui-rails', '~> 5.0.5'
+gem 'bootstrap-sass', '~> 3.3.5'
+gem 'bcrypt', '~> 3.1.10'
 
-gem 'sass-rails',   '~> 5.0.1'
+gem 'sass-rails',   '~> 5.0.4'
 gem 'therubyracer', platforms: :ruby
 gem 'uglifier', '>= 1.0.3'
-
-group :deploy do
-  gem 'capistrano', '~> 2.15.5'
-  gem 'rvm-capistrano'
-  gem 'capistrano-deploytags', '~> 0.9.2'
-end
 
 group :test do
   gem 'minitest-reporters'

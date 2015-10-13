@@ -220,13 +220,12 @@ _.extend(ToolManager.prototype, {
   },
 
   showPasteTool: function() {
-    this.getMenuItem("Paste").visible = true;
+    this.getMenuItem("paste").visible = true;
     this.render();
   },
 
   hideFogTools: function() {
-    this.getMenuItem("AddFog").visible = false;
-    this.getMenuItem("RemoveFog").visible = false;
+    this.getMenuItem("fog_group").visible = false;
     this.render();
   },
 

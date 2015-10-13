@@ -2,6 +2,8 @@
 // plugin for the options in the board toolbar
 // buttons display currently selected item, clicking gives
 // menu of buttons displaying other options
+//
+// This generic option dropdown UI is used by tool_options_menu
 
 (function ($) {
   var pluginName = "toolOptionDropdown";

@@ -110,6 +110,9 @@
       var $select = $("<select />")
         .addClass("form-control input-sm")
         .append(optionFunc(tool.value * 100))
+        .mousemove(function(evt) {
+          evt.stopPropagation();
+        })
         .change(function() {
           var val = $(this).val();
           tool.handler(val);
@@ -124,11 +127,7 @@
     },
 
     isPopupOpen: function($button) {
-      if ($button.find(".tool_menu_popup").length) {
-        return true;
-      } else {
-        return false;
-      }
+      return !!$button.data(pluginName + "_popup");
     },
 
     openPopup: function($button, tool) {
@@ -144,9 +143,12 @@
             e.stopPropagation();
           });
 
-        var $wrapper = $("<div class='tool_menu_popup_wrapper'></div>")
+        var $wrapper = $("<div />")
+          .addClass("tool_menu_popup_wrapper")
           .append($popup)
-          .appendTo($button);
+          .appendTo($button.parent());
+
+        $button.data(pluginName + "_popup", $wrapper);
 
         _.each(tool.children, function(c) {
           switch (c.type) {
@@ -161,7 +163,7 @@
           }
         }, this);
 
-        var popHeight = $wrapper.outerHeight();
+        var popHeight = $popup.outerHeight();
         var buttonOffset = $button.offset();
         var buttonVMiddle = buttonOffset.top + ($button.outerHeight() / 2);
         var buttonRight = buttonOffset.left + $button.outerWidth();
@@ -171,7 +173,18 @@
     },
 
     closePopup: function($button) {
-      $button.find(".tool_menu_popup_wrapper").remove();
+      var $popup = $button.data(pluginName + "_popup");
+      var handlerNamespace = $button.data(pluginName + "_mouseHandler");
+      if ($popup) {
+        $popup.remove();
+
+        if (handlerNamespace) {
+          $("body").off(handlerNamespace);
+        }
+
+        $button.data(pluginName + "_popup", null);
+        $button.data(pluginName + "_mouseHandler", null);
+      }
     },
 
     handleItemMouseIn: function(evt) {
@@ -180,9 +193,24 @@
       if (!privateMethods.isPopupOpen($button)) {
         privateMethods.openPopup($button, tool);
 
-        $button.one("mouseleave." + pluginName, function() {
-          privateMethods.closePopup($button);
-        });
+        var $popup = $button.data(pluginName + "_popup");
+
+        if ($popup) {
+          var namespace = "." + pluginName + "_popupMouseTracker_" + privateMethods.generateId();
+          $button.data(pluginName + "_mouseHandler", namespace);
+
+          var moveHandler = function(evt) {
+            var buttonBox = privateMethods.getElementBox($button);
+            var popupBox = privateMethods.getElementBox($popup);
+            var point = { x: evt.pageX, y: evt.pageY };
+
+            if (!privateMethods.isInBox(buttonBox, point) && !privateMethods.isInBox(popupBox, point)) {
+              privateMethods.closePopup($button);
+            }
+          };
+
+          $("body").on("mousemove" + namespace, moveHandler);
+        }
       }
     },
 
@@ -209,6 +237,31 @@
       } else {
         privateMethods.openPopup($button, tool);
       }
+    },
+
+    // Returns an object with the following properties: top, left, bottom, right
+    getElementBox: function($elem) {
+      var offset = $elem.offset();
+      var height = $elem.outerHeight();
+      var width = $elem.outerWidth();
+
+      return {
+        top: offset.top,
+        left: offset.left,
+        bottom: offset.top + height,
+        right: offset.left + width
+      };
+    },
+
+    // Returns true if the given point (object with x and y properties) is inside the given box (object as returned by getElementBox)
+    isInBox: function(box, point) {
+      return point.x >= box.left && point.x <= box.right &&
+              point.y >= box.top && point.y <= box.bottom;
+    },
+
+    // Returns a random ID
+    generateId: function() {
+      return "ID_" + (("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).substr(-4));
     }
   };
 
