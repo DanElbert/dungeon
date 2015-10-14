@@ -42,19 +42,26 @@
       }
 
       _.each(toolOptions, function(to) {
+        var $widget = null;
+
         switch (to.type) {
           case "color":
-            $this.append(privateMethods.buildColorOption(to));
+            $widget = privateMethods.buildColorOption(to);
             break;
           case "shapes":
-            $this.append(privateMethods.buildShapeOption(to));
+            $widget = privateMethods.buildShapeOption(to);
             break;
           case "size":
-            $this.append(privateMethods.buildSizeOption(to));
+            $widget = privateMethods.buildSizeOption(to);
             break;
           default:
-            $this.append("<span>" + to.name + "</span>");
+            $widget = $("<span>" + to.name + "</span>");
         }
+
+        $this.append($widget);
+        $widget.attr("title", to.label || to.name);
+        $widget.tooltip({});
+
       }, this);
     },
 

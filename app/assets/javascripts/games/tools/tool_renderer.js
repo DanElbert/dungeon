@@ -28,7 +28,10 @@ _.extend(ToolRenderer.prototype, {
 
   toggleDisplay: function() {
     this.container.toggle();
-    this.optionContainer.toggle();
+
+    if (this.options && this.options.length) {
+      this.optionContainer.toggle();
+    }
   },
 
   renderOptions: function() {

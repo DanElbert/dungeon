@@ -39,7 +39,8 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
     }
 
     if (this.cursor) {
-      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, cursorColor)
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, cursorColor);
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], 2, 1, cursorColor, cursorColor);
     }
   },
   saveAction: function() {
@@ -92,7 +93,8 @@ RemoveFogPen.prototype = _.extend(RemoveFogPen.prototype, DrawTool.prototype, {
     }
 
     if (this.cursor) {
-      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, cursorColor)
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, cursorColor);
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], 2, 1, cursorColor, cursorColor);
     }
   },
   saveAction: function() {

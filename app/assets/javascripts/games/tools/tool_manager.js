@@ -6,11 +6,11 @@ function ToolManager(board) {
   var self = this;
 
   this.sharedToolOptions = {
-    drawingColor: {type: "color", label: "Color", name: "color", value: "#000000"},
-    drawingBackgroundColor: {type: "color", label: "Background Color", name: "backgroundColor", includeClear: true, value: null},
-    drawingWidth: {type: "size", name: "width", label: "Width", sizes: [3, 5, 7, 10, 15, 20], value: 7 },
-    fogWidth: {type: "size", name: "width", label: "Width", sizes: [25, 75, 100, 200, 500], value: 75 },
-    templateColor: {type: "color", name: "color", label: "Color", value: "#EE204D"}
+    drawingColor: new EventingOption({type: "color", label: "Color", name: "color", value: "#000000"}),
+    drawingBackgroundColor: new EventingOption({type: "color", label: "Background Color", name: "backgroundColor", includeClear: true, value: null}),
+    drawingWidth: new EventingOption({type: "size", name: "width", label: "Width", sizes: [3, 5, 7, 10, 15, 20], value: 7 }),
+    fogWidth: new EventingOption({type: "size", name: "width", label: "Width", sizes: [25, 75, 100, 200, 500], value: 75 }),
+    templateColor: new EventingOption({type: "color", name: "color", label: "Color", value: "#EE204D"})
   };
 
   this.toolMap = {
@@ -21,7 +21,7 @@ function ToolManager(board) {
     "template": new TemplateTool(this),
     "measure_template": new Measure(this),
     "line_template": new LineTemplate(this),
-    "radius_template": new RadialTemplate(this),
+    "radius_template": new RadiusTemplate(this),
     "cone_template": new ConeTemplate(this),
     "ping": new PingTool(this),
     "add_fog": new AddFogPen(this),

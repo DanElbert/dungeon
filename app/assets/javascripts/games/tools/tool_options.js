@@ -1,6 +1,18 @@
+// ToolOptions is a collection of options, indexed by name and held in a sorted array
+// Raises an event any time any value of an option changes
 function ToolOptions() {
   this.sorted = [];
   this.indexed = {};
+
+  var self = this;
+
+  Object.defineProperty(this, "length", {
+    enumerable: true,
+    configurable: false,
+    get: function() {
+      return self.sorted.length;
+    }
+  });
 }
 
 _.extend(ToolOptions.prototype, {
@@ -13,7 +25,13 @@ _.extend(ToolOptions.prototype, {
     if (!opt.name)
       throw "Options must have names";
 
-    var option = new EventingOption(opt);
+    var option = null;
+
+    if (opt instanceof EventingOption) {
+      option = opt;
+    } else {
+      option = new EventingOption(opt);
+    }
 
     this.indexed[option.name] = option;
     this.sorted.push(option);
