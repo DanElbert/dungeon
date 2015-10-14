@@ -6,7 +6,7 @@ gem 'rails', '4.2.4'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3', '~> 1.3.11'
-gem 'mysql2', '~> 0.4.1'
+gem 'mysql2', '~> 0.3.20'
 
 gem 'uuid', '~> 2.3.8'
 gem 'oj', '~> 2.12.14'
