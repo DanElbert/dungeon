@@ -11,6 +11,8 @@ mysql:
     - MYSQL_PASSWORD=dungeon_password
   volumes_from:
     - dungeon_db_data
+  volumes:
+    - docker/mysql-small-conf.d/:/etc/mysql/conf.d/
 
 proxy:
   image: 'danelbert/nginx:latest'
