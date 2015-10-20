@@ -15,7 +15,7 @@ mysql:
 proxy:
   image: 'danelbert/nginx:latest'
   ports:
-    - "3000:80"
+    - "80:80"
   volumes_from:
     - web1
   volumes:
