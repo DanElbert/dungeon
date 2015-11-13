@@ -58,6 +58,11 @@
 
       _.each(options.tools, function(tool) {
 
+        // Skip any invisible tools
+        if (!tool.visible) {
+          return;
+        }
+
         var glyph = tool.glyph;
 
         if (tool.children && tool.children.length) {
@@ -151,6 +156,10 @@
         $button.data(pluginName + "_popup", $wrapper);
 
         _.each(tool.children, function(c) {
+          if (!c.visible) {
+            return;
+          }
+
           switch (c.type) {
             case "button":
               $popup.append(privateMethods.buildButtonWidget(c));

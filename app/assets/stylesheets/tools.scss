@@ -82,6 +82,13 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
       margin-left: 0;
       border-left: none;
     }
+
+    .img {
+      height: 50px;
+      width: 50px;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
   }
 
   .option_button {

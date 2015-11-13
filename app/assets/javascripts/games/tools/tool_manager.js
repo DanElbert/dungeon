@@ -10,7 +10,8 @@ function ToolManager(board) {
     drawingBackgroundColor: new EventingOption({type: "color", label: "Background Color", name: "backgroundColor", includeClear: true, value: null}),
     drawingWidth: new EventingOption({type: "size", name: "width", label: "Width", sizes: [3, 5, 7, 10, 15, 20], value: 7 }),
     fogWidth: new EventingOption({type: "size", name: "width", label: "Width", sizes: [25, 75, 100, 200, 500], value: 75 }),
-    templateColor: new EventingOption({type: "color", name: "color", label: "Color", value: "#EE204D"})
+    templateColor: new EventingOption({type: "color", name: "color", label: "Color", value: "#EE204D"}),
+    copiedImage: new EventingOption({type: "copiedImage", url: this.board.copiedArea, name: 'copiedImage'})
   };
 
   this.toolMap = {
