@@ -12,7 +12,7 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
   optionsChanged: function() {
     this.width = this.options.get("width").value;
   },
-  minimumLineDistance: function() { return 0; },
+  minimumLineDistance: function() { return Math.min(5, this.width / 2); },
   eventNamespace: function() { return "AddFog"; },
   enable: function() {
     this.super.enable.apply(this);
@@ -66,7 +66,7 @@ RemoveFogPen.prototype = _.extend(RemoveFogPen.prototype, DrawTool.prototype, {
   optionsChanged: function() {
     this.width = this.options.get("width").value;
   },
-  minimumLineDistance: function() { return 0; },
+  minimumLineDistance: function() { return Math.min(5, this.width / 2); },
   eventNamespace: function() { return "AddFog"; },
   enable: function() {
     this.super.enable.apply(this);
