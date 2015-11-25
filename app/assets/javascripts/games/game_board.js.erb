@@ -22,13 +22,13 @@ function startGameBoard() {
 
   $(document).ready(function () {
 
-    var initiative = InitializeInitiativeApi(INITIATIVE_URL);
+    //var initiative = InitializeInitiativeApi(INITIATIVE_URL);
     //var toolBars = {}; //InitializeToolBarsApi();
     var camera = InitializeCameraApi();
 
-    var init_window = $("#initiative_window");
-    var init_button = $("#open_initiative_button");
-    var max_init_height = 500;
+    //var init_window = $("#initiative_window");
+    //var init_button = $("#open_initiative_button");
+    //var max_init_height = 500;
 
 //    init_window.dialog({
 //      appendTo: "#dialog_container",
@@ -49,51 +49,51 @@ function startGameBoard() {
 //      }
 //    });
 
-    init_button.click(function() {
-      init_window.dialog("open");
-    });
+//    init_button.click(function() {
+//      init_window.dialog("open");
+//    });
 
-    var init_toggle = $("#initiative_toggle");
-    var init_display_toggle = $("#initiative_display_toggle");
-    var init_view_mode = false;
-    var init_panel = $("#initiative_panel");
-    var init_controls = $("#initiative_controls");
-    var isInitOpen = false;
+//    var init_toggle = $("#initiative_toggle");
+//    var init_display_toggle = $("#initiative_display_toggle");
+//    var init_view_mode = false;
+//    var init_panel = $("#initiative_panel");
+//    var init_controls = $("#initiative_controls");
+//    var isInitOpen = false;
+//
+//    init_toggle.click(function() {
+//      if (isInitOpen) {
+//        isInitOpen = false;
+//        init_toggle.html("Open");
+//        init_controls.hide();
+//        init_panel.switchClass("open", "closed", 250);
+//      } else {
+//        isInitOpen = true;
+//        init_toggle.html("Close");
+//        init_controls.show();
+//        init_panel.switchClass("closed", "open", 250);
+//      }
+//    });
+//
+//    init_display_toggle.click(function() {
+//      if (init_view_mode) {
+//        init_view_mode = false;
+//        initiative.leaveViewMode();
+//        init_display_toggle.html("View Mode");
+//      } else {
+//        init_view_mode = true;
+//        initiative.enterViewMode();
+//        init_display_toggle.html("Edit Mode");
+//      }
+//    });
 
-    init_toggle.click(function() {
-      if (isInitOpen) {
-        isInitOpen = false;
-        init_toggle.html("Open");
-        init_controls.hide();
-        init_panel.switchClass("open", "closed", 250);
-      } else {
-        isInitOpen = true;
-        init_toggle.html("Close");
-        init_controls.show();
-        init_panel.switchClass("closed", "open", 250);
-      }
-    });
-
-    init_display_toggle.click(function() {
-      if (init_view_mode) {
-        init_view_mode = false;
-        initiative.leaveViewMode();
-        init_display_toggle.html("View Mode");
-      } else {
-        init_view_mode = true;
-        initiative.enterViewMode();
-        init_display_toggle.html("Edit Mode");
-      }
-    });
-
-    game_board = new Board($("#game_board")[0], initiative, camera);
+    game_board = new Board($("#game_board")[0], camera);
 
     $(window).resize(function(e) {
       if (e.target == window) {
         setCanvasSize();
 
-        var position = init_window.dialog( "option", "position" );
-        init_window.dialog("option", "position", position);
+        //var position = init_window.dialog( "option", "position" );
+        //init_window.dialog("option", "position", position);
       }
     });
 

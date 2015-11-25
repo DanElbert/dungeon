@@ -1,5 +1,6 @@
 //= require ./geometry
 //= require ./initiative
+//= require ./initiative_manager
 //= require ./drawing
 //= require ./board_events
 //= require ./board

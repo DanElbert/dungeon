@@ -1,0 +1,107 @@
+
+div.initiative {
+  background-color: white;
+}
+
+div.initiative_editor {
+  table {
+    margin: 0;
+
+    th{
+      padding: 3px;
+    }
+
+    td {
+      padding: 2px;
+    }
+  }
+
+  input {
+    width: 80%;
+    margin-bottom: 0;
+    display: block;
+  }
+
+  .name_col {
+    width: 50%;
+  }
+
+  .val_col {
+    width: 25%;
+  }
+
+  .button_col {
+    width: 25%;
+  }
+}
+
+div.initiative.view_mode {
+  .initiative_editor {
+    display: none;
+  }
+
+  button {
+    display: none;
+  }
+
+  .initiativeItem {
+    height: 15px;
+    padding: 5px;
+
+    span {
+      padding: 0;
+    }
+  }
+}
+
+div.initiative ul {
+
+  padding: 0;
+
+  li {
+
+    .value {
+      float: right;
+    }
+  }
+}
+
+
+//
+//#initiative_list {
+//  padding: 4px;
+//}
+//
+//.initiativeItem {
+//  list-style-type: none;
+//  position: relative;
+//  height: 25px;
+//  padding: 2px 0px 0px 7px;
+//  margin: 3px;
+//}
+//
+//.initiativeItem.removing span {
+//  color: red;
+//  text-decoration: line-through;
+//}
+//
+//.initiativeItem span, .initiativeItem input {
+//  padding: 3px;
+//  position: absolute;
+//}
+//
+//.initiativeItem .name {
+//  font-weight: bold;
+//}
+//
+//.initiativeItem .value {
+//  right: 0px;
+//}
+//
+//.initiativeItem .editValue {
+//  right: 0px;
+//  width: 30px;
+//}
+//
+
+//

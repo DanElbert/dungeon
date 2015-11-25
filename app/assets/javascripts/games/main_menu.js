@@ -37,7 +37,14 @@ _.extend(MainMenu.prototype, {
   },
 
   initToggle: function() {
+    this.board.initiative.toggleDisplay();
+  },
 
+  getInitiativeContainer: function() {
+    if (this.initiativeContainer == null) {
+      this.initiativeContainer = $("<div />").appendTo("#game_board_container");
+    }
+    return this.initiativeContainer;
   }
 
 });
