@@ -14,9 +14,9 @@
  */
 
 @import "bootstrap-sprockets";
-@import "flatly_variables";
+@import "spacelab_variables";
 @import "bootstrap";
-@import "flatly_bootswatch";
+@import "spacelab_bootswatch";
 @import "jquery.ui.overrides";
 @import "games";
 @import "tools";
@@ -39,6 +39,7 @@ div.thumbnail {
   right: 15px;
   left: auto;
   bottom: auto;
+  z-index: 8000;
 
   .modal-header {
     cursor: move;

@@ -46,7 +46,7 @@ function InitiativeManager(board, init_url) {
   this.initiativeWindow.modal({
     backdrop: false,
     keyboard: false,
-    show: true
+    show: false
   }).draggable({
     handle: ".modal-header"
   });

@@ -40,68 +40,37 @@ div.initiative.view_mode {
     display: none;
   }
 
-  button {
+  button.edit_only {
     display: none;
   }
 
-  .initiativeItem {
-    height: 15px;
-    padding: 5px;
-
-    span {
-      padding: 0;
-    }
+  ul .btn-group {
+    @extend .btn-group-sm;
   }
 }
 
 div.initiative ul {
-
   padding: 0;
+  margin: 5px 0;
+}
 
-  li {
+.initiative_item {
 
-    .value {
-      float: right;
-    }
+  list-style: none;
+
+  .name {
+    width: 14em;
+    overflow: hidden;
+  }
+
+  .value {
+    width: 4em;
+    overflow: hidden;
+  }
+
+  &.removing .btn {
+    @extend .btn-danger;
+    text-decoration: line-through;
   }
 }
 
-
-//
-//#initiative_list {
-//  padding: 4px;
-//}
-//
-//.initiativeItem {
-//  list-style-type: none;
-//  position: relative;
-//  height: 25px;
-//  padding: 2px 0px 0px 7px;
-//  margin: 3px;
-//}
-//
-//.initiativeItem.removing span {
-//  color: red;
-//  text-decoration: line-through;
-//}
-//
-//.initiativeItem span, .initiativeItem input {
-//  padding: 3px;
-//  position: absolute;
-//}
-//
-//.initiativeItem .name {
-//  font-weight: bold;
-//}
-//
-//.initiativeItem .value {
-//  right: 0px;
-//}
-//
-//.initiativeItem .editValue {
-//  right: 0px;
-//  width: 30px;
-//}
-//
-
-//

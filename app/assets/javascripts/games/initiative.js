@@ -86,7 +86,6 @@
           ).appendTo($editor);
 
       var $ul = $("<ul />")
-          .addClass("nav nav-pills nav-stacked")
           .appendTo($container);
 
       var $buttonContainer = $("<div />")
@@ -94,12 +93,12 @@
           .appendTo($container);
 
       var $sortButton = $("<button />")
-          .addClass("btn btn-default btn-sm")
+          .addClass("btn btn-default btn-sm edit_only")
           .text("Sort")
           .appendTo($buttonContainer);
 
       var $clearButton = $("<button />")
-          .addClass("btn btn-default btn-sm")
+          .addClass("btn btn-default btn-sm edit_only")
           .text("Clear")
           .appendTo($buttonContainer);
 
@@ -116,6 +115,7 @@
       $addButton.on("click", function() { privateMethods.addEntry($this); });
       $clearButton.on("click", function() { privateMethods.clear($this); });
       $sortButton.on("click", function() { privateMethods.sort($this); });
+      $viewModeButton.on("click", function() { privateMethods.toggleViewMode($this); });
 
       $inputs.on("keypress", function(e) {
         if (e.keyCode == 13) {
@@ -125,11 +125,12 @@
       });
 
       var isRemovingItem = false;
+      var helperContainer = $("<ul />").css({margin: "0", padding: "0"}).appendTo("body");
 
       $ul.sortable({
-        //helper: "clone",
-        //appendTo: $dragTarget,
+        helper: "clone",
         zIndex: 9000,
+        appendTo: helperContainer,
         over: function (event, ui) {
           ui.helper.removeClass("removing");
           isRemovingItem = false;
@@ -149,6 +150,17 @@
           privateMethods.processReorder($this);
         }
       });
+
+      //$nameInput.typeahead({
+      //},
+      //{
+      //  name: 'init_names',
+      //  source: function(query, sync, async) {
+      //    $.getJSON(options.url, {term: query}, function(data) {
+      //      async(data);
+      //    });
+      //  }
+      //});
 
       // ========= Save data
       var data = {
@@ -220,9 +232,15 @@
       data.list.empty();
 
       _.each(initiativeData, function(init) {
-        var li = $("<li />").addClass("active");
-        var nameSpan = $("<span />").addClass("name").text(init.name).appendTo(li);
-        var valSpan = $("<span />").addClass("value badge").text(init.value).appendTo(li);
+        var li = $("<li />").addClass("initiative_item");
+        var group = $("<div />").addClass("btn-group")
+            .append(
+              $("<span />").addClass("name btn btn-primary").text(init.name)
+            )
+            .append(
+              $("<span />").addClass("value btn btn-primary").text(init.value)
+            )
+            .appendTo(li);
         li.data('obj', init);
         data.list.append(li);
       }, this);
@@ -244,6 +262,10 @@
       });
     },
 
+    toggleViewMode: function($this) {
+      privateMethods.setViewMode($this, !privateMethods.isViewMode($this));
+    },
+
     isViewMode: function($this) {
       return $this.hasClass("view_mode");
     },
@@ -252,9 +274,11 @@
       var data = $this.data(pluginName);
       if (isViewMode) {
         data.viewModeButton.text("Edit Mode");
+        data.list.sortable("disable");
         $this.addClass("view_mode");
       } else {
         data.viewModeButton.text("View Mode");
+        data.list.sortable("enable");
         $this.removeClass("view_mode");
       }
     }
