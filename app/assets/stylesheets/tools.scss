@@ -48,7 +48,7 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   }
 }
 
-.tool_menu_popup > div, .tool_menu_popup > button {
+.tool_menu_popup > .popup_item {
   display: block;
   background: transparent;
   border: solid 2px white;

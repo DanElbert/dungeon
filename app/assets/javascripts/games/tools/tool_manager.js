@@ -35,11 +35,13 @@ function ToolManager(board) {
   this.toolSet = [
     new ToolMenuGroup("pointer_group", [
       new ToolMenuItem("pointer", {
+        label: "Pointer",
         glyph: "glyphicon-move",
         handler: function() { self.setTool("pointer"); }
       }),
 
       new ToolMenuItem("ping", {
+        label: "Ping",
         glyph: "glyphicon-screenshot",
         handler: function() { self.setTool("ping"); }
       })
@@ -47,42 +49,54 @@ function ToolManager(board) {
 
     new ToolMenuGroup("view_group", {noClickthrough: true}, [
       new ZoomMenuItem("zoom", {
+        label: "Zoom",
         glyph: "glyphicon-zoom-in",
         handler: function(zoom) { self.changeZoom(zoom); }
       }),
 
       new ToolMenuItem("add_viewport_savepoint", {
+        label: "Add View Savepoint",
         glyph: "glyphicon-plus"
       })
     ]),
 
     new ToolMenuGroup("draw_group", [
       new ToolMenuItem("pen", {
+        label: "Pen",
         glyph: 'glyphicon-pencil',
         handler: function() { self.setTool("pen"); }
       }),
 
       new ToolMenuItem("eraser", {
+        label: "Eraser",
         glyph: "glyphicon-erase",
         handler: function() { self.setTool("eraser"); }
       }),
 
       new ToolMenuItem("shape", {
+        label: "Shapes",
+        tooltip: "Draw lines, circles, and rectangles",
         glyph: "glyphicon-triangle-top",
         handler: function() { self.setTool("shape"); }
       }),
 
       new ToolMenuItem("label", {
+        label: "Label",
+        tooltip: "Create a text label",
         glyph: "glyphicon-text-color",
         handler: function() { self.setTool("label"); }
       }),
 
       new ToolMenuItem("copy", {
+        label: "Copy",
+        tooltip: "Copy a section of the drawing layer",
         glyph: "glyphicon-copy",
         handler: function() { self.setTool("copy"); }
       }),
 
       new ToolMenuItem("paste", {
+        label: "Paste",
+        tooltip: "Paste copied region",
         glyph: "glyphicon-paste",
         visible: false,
         handler: function() { self.setTool("paste"); }
@@ -91,21 +105,29 @@ function ToolManager(board) {
 
     new ToolMenuGroup("template_group", [
       new ToolMenuItem("measure_template", {
+        label: "Measure",
+        tooltip: "Measures movement distance in a straight line",
         glyph: "glyphicon-option-vertical",
         handler: function() { self.setTool("measure_template"); }
       }),
 
       new ToolMenuItem("line_template", {
+        label: "Line",
+        tooltip: "Creates a line template (ie: Lightning Bolt)",
         glyph: "glyphicon-minus",
         handler: function() { self.setTool("line_template"); }
       }),
 
       new ToolMenuItem("radius_template", {
+        label: "Radius",
+        tooltip: "Creates a circular radius template",
         glyph: "glyphicon-record",
         handler: function() { self.setTool("radius_template"); }
       }),
 
       new ToolMenuItem("cone_template", {
+        label: "Cone",
+        tooltip: "Creates a cone template",
         glyph: "glyphicon-triangle-bottom",
         handler: function() { self.setTool("cone_template"); }
       })
@@ -113,11 +135,13 @@ function ToolManager(board) {
 
     new ToolMenuGroup("fog_group", [
       new ToolMenuItem("add_fog", {
+        label: "Add Fog",
         glyph: "glyphicon-cloud",
         handler: function() { self.setTool("add_fog"); }
       }),
 
       new ToolMenuItem("remove_fog", {
+        label: "Remove Fog",
         glyph: "glyphicon-eye-open",
         handler: function() { self.setTool("remove_fog"); }
       })
@@ -128,6 +152,7 @@ function ToolManager(board) {
     //]),
 
     new ToolMenuItem("undo", {
+      label: "Undo",
       glyph: "glyphicon-menu-left",
       handler: function() { self.board.undo(); }
     })
@@ -263,7 +288,7 @@ _.extend(ToolManager.prototype, {
 function ToolMenuItem(name, options) {
   this.name = name;
   this.label = options.label;
-  this.tooltip = options.toolTip;
+  this.tooltip = options.tooltip;
   this.visible = _.has(options, "visible") ? options.visible : true;
   this.selected = _.has(options, "selected") ? options.selected : false;
   this.noClickthrough = _.has(options, "noClickthrough") ? options.noClickthrough : false;

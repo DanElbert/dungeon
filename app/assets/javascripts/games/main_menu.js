@@ -4,7 +4,7 @@ function MainMenu(board) {
   this.buttons = [
     {name: 'Tools', handler: this.toolToggle},
     {name: 'Initiative', handler: this.initToggle},
-    {name: 'Exit', handler: function() { window.history.back(); }}
+    {name: 'Exit', handler: function() { window.location.href = "/campaigns/" + CAMPAIGN_ID; }}
   ];
 
   this.container = null;

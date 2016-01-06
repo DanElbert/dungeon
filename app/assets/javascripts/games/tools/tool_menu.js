@@ -98,11 +98,18 @@
     },
 
     buildButtonWidget: function(tool) {
-      return $("<button />")
+      var button = $("<button />")
         .append($("<span />").addClass("glyphicon").addClass(tool.glyph))
-        .append($("<span />").text(tool.name))
+        .append($("<span />").text(tool.label || tool.name))
         .on('click.' + pluginName, tool.handler)
         .onFastTap(pluginName, tool.handler);
+
+      if (tool.tooltip) {
+        button.attr('title', tool.tooltip);
+        button.tooltip({placement: 'right'});
+      }
+
+      return button;
     },
 
     buildZoomWidget: function(tool) {
@@ -160,16 +167,22 @@
             return;
           }
 
+          var $widget = null;
+
           switch (c.type) {
             case "button":
-              $popup.append(privateMethods.buildButtonWidget(c));
+              $widget = privateMethods.buildButtonWidget(c);
               break;
             case "zoom":
-              $popup.append(privateMethods.buildZoomWidget(c));
+              $widget = privateMethods.buildZoomWidget(c);
               break;
             default:
               throw "Unknown widget type: [" + c.type + "]";
           }
+
+          $widget.addClass("popup_item");
+          $popup.append($widget);
+
         }, this);
 
         var popHeight = $popup.outerHeight();
