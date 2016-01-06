@@ -151,16 +151,53 @@
         }
       });
 
-      //$nameInput.typeahead({
-      //},
-      //{
-      //  name: 'init_names',
-      //  source: function(query, sync, async) {
-      //    $.getJSON(options.url, {term: query}, function(data) {
-      //      async(data);
-      //    });
-      //  }
-      //});
+      $nameInput.typeahead({
+            minLength: 2
+      },
+      {
+        name: 'init_names',
+        source: function(query, sync, async) {
+          $.getJSON(options.url, {term: query}, function(data) {
+            async(data);
+          });
+        }
+      });
+
+      var inlineValueChangeHandler = function($input) {
+        var $li = $input.closest("li");
+        var $valueSpan = $li.find("span.value");
+        $li.data('obj').value = parseInt($input.val());
+        $input.val(-999);
+        $input.remove();
+        $valueSpan.show();
+        $ul.sortable("enable");
+
+        privateMethods.triggerChange($this, null);
+      };
+
+      $ul.on("click", "span.value", function() {
+        var $valueSpan = $(this);
+        var $input = $("<input type='number' />").addClass("editValue").val($valueSpan.text());
+        $valueSpan.parent().append($input);
+        $valueSpan.hide();
+        $ul.sortable("disable");
+        $input.focus();
+      });
+
+      $ul.on("keypress", "input.editValue", function(e) {
+        if (e.keyCode == 13) {
+          inlineValueChangeHandler($(this));
+          return false;
+        }
+        return true;
+      });
+
+      $ul.on("focusout", "input.editValue", function() {
+        var $input = $(this);
+        if (parseInt($input.val()) != -999) {
+          inlineValueChangeHandler($input);
+        }
+      });
 
       // ========= Save data
       var data = {
@@ -178,7 +215,7 @@
     addEntry: function($this) {
       var data = $this.data(pluginName);
 
-      var name = data.nameInput.val();
+      var name = data.nameInput.typeahead("val"); // data.nameInput.val();
       var val = parseInt(data.valueInput.val());
 
       if (name) {
@@ -192,7 +229,8 @@
 
         privateMethods.triggerChange($this, initData);
 
-        data.nameInput.val("");
+        data.nameInput.typeahead("val", "");
+        data.nameInput.typeahead("close");
         data.valueInput.val("");
         data.nameInput.focus();
       }

@@ -68,6 +68,11 @@ div.initiative ul {
     overflow: hidden;
   }
 
+  .editValue {
+    @extend .form-control;
+    width: 4em;
+  }
+
   &.removing .btn {
     @extend .btn-danger;
     text-decoration: line-through;
