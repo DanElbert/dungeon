@@ -123,6 +123,10 @@
           .append(optionFunc("line", "Line"))
           .change(function() {
             toolOption.value = $(this).val();
+            this.blur();
+          })
+          .mouseleave(function() {
+            this.blur();
           })
           .val(toolOption.value || "rectangle")
           .appendTo($widget);
