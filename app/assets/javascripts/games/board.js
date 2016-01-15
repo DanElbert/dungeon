@@ -265,7 +265,7 @@ function Board(canvas, initiativeApi, cameraApi) {
 
     this.executeActions();
 
-    context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
+    //context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
 
     if (this.displayCapturePattern) {
       this.renderCapturePattern();
