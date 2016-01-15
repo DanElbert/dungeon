@@ -48,7 +48,7 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   }
 }
 
-.tool_menu_popup > div, .tool_menu_popup > button {
+.tool_menu_popup > .popup_item {
   display: block;
   background: transparent;
   border: solid 2px white;
@@ -81,6 +81,13 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
       padding-left: 0;
       margin-left: 0;
       border-left: none;
+    }
+
+    .img {
+      height: 50px;
+      width: 50px;
+      background-repeat: no-repeat;
+      background-size: contain;
     }
   }
 

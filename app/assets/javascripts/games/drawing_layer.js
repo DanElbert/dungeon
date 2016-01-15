@@ -154,6 +154,9 @@ _.extend(Tile.prototype, {
     var d = this.drawing;
     var fd = this.fogDrawing;
 
+    // Show squares around tiles for debugging
+    //d.drawSquare(this.topLeft, this.bottomRight, '#000000', null, 3);
+
     _.each(this.actions, function(a) {
       a.draw(d);
     });

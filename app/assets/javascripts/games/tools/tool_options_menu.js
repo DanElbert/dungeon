@@ -54,6 +54,9 @@
           case "size":
             $widget = privateMethods.buildSizeOption(to);
             break;
+          case "copiedImage":
+            $widget = privateMethods.buildImageOption(to);
+            break;
           default:
             $widget = $("<span>" + to.name + "</span>");
         }
@@ -120,6 +123,10 @@
           .append(optionFunc("line", "Line"))
           .change(function() {
             toolOption.value = $(this).val();
+            this.blur();
+          })
+          .mouseleave(function() {
+            this.blur();
           })
           .val(toolOption.value || "rectangle")
           .appendTo($widget);
@@ -163,6 +170,18 @@
       });
 
       return $widget;
+    },
+
+    buildImageOption: function(toolOption) {
+      var $wrapper = $("<div/>");
+
+      if (toolOption.url) {
+        $wrapper.addClass("option_menu");
+        var $widget = $("<div/>").css("background-image", "url(\"" + toolOption.url + "\")").addClass("img");
+        $wrapper.append($widget);
+      }
+
+      return $wrapper;
     }
   };
 

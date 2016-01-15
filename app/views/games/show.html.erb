@@ -14,6 +14,7 @@
   BOARD_DATA_URL = '<%= get_game_data_game_path(@game) %>';
   GAME_SERVER_URL = '/game_server';
   GAME_ID = <%= @game.id %>;
+  CAMPAIGN_ID = <%= @game.campaign_id %>;
   USER_ID = <%= current_user.id %>;
   USER_AUTH_TOKEN = '<%= current_user.auth_token %>';
   INITIATIVE_URL = '<%= initiative_names_game_path(@game) %>';

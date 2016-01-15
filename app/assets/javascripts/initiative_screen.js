@@ -19,7 +19,16 @@ $(document).ready(function() {
         }
       });
 
-  var initiative = InitializeInitiativeApi(INITIATIVE_URL);
+  var $init = $("#init_box").initiative({
+    url: INITIATIVE_URL
+  });
+
+  var initiative = {
+    update: function(data) {
+      $init.initiative("update", data);
+    }
+  };
+
   var board = {initiative: initiative};
 
   var initiativeManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/update_initiative', function(message) {
@@ -34,7 +43,7 @@ $(document).ready(function() {
 
   initiative.update(INITIAL_DATA);
 
-  $(initiative).on('changed', function(e, evt) {
+  $init.on('changed', function(e, evt) {
     var action = {actionType: "updateInitiativeAction", initiative: evt.initiative, uid: generateActionId()};
     action = attachActionMethods(action);
     action.apply(board);

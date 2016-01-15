@@ -1,4 +1,4 @@
-function Board(canvas, initiativeApi, cameraApi) {
+function Board(canvas, cameraApi) {
 
   this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
   this.gameServerClient.addExtension(
@@ -12,7 +12,6 @@ function Board(canvas, initiativeApi, cameraApi) {
       });
 
   this.networkDown = false;
-  this.initiative = initiativeApi;
   this.camera = cameraApi;
 
   this.imageCache = new ImageCache();
@@ -23,6 +22,7 @@ function Board(canvas, initiativeApi, cameraApi) {
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
+  this.initiative = new InitiativeManager(this, INITIATIVE_URL);
   this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, this.gameServerClient);
 
   this.isOwner = false;
@@ -73,12 +73,12 @@ function Board(canvas, initiativeApi, cameraApi) {
     self.handleAddActionMessage(message);
   });
 
-  this.initiativeManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/update_initiative', function(message) {
+  this.initiativeActionManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/update_initiative', function(message) {
     self.handleAddActionMessage(message);
   });
 
   this.addActionManager.connect();
-  this.initiativeManager.connect();
+  this.initiativeActionManager.connect();
 
   $(this.event_manager).on('mousemove', function(evt, mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
@@ -136,7 +136,7 @@ function Board(canvas, initiativeApi, cameraApi) {
   };
 
   this.sendInitiativeMessage = function(action) {
-    this.initiativeManager.sendActionMessage(action);
+    this.initiativeActionManager.sendActionMessage(action);
   };
 
   this.addAction = function(action, undoAction, broadcastAction) {

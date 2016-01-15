@@ -9,7 +9,7 @@ function CopyTool(manager) {
 }
 CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
   buildOptions: function() {
-    this.options.add({type: "copiedImage", url: this.board.copiedArea, name: 'copiedImage'});
+    this.options.add(this.toolManager.sharedTool("copiedImage"));
   },
 
   getPoint: function(mapPoint) {
@@ -146,7 +146,7 @@ function PasteTool(manager) {
 }
 PasteTool.prototype = _.extend(PasteTool.prototype, Tool.prototype, {
   buildOptions: function() {
-    this.options.add({type: "copiedImage", url: this.board.copiedArea, name: 'copiedImage'});
+    this.options.add(this.toolManager.sharedTool("copiedImage"));
   },
 
   getPoint: function(mapPoint) {
