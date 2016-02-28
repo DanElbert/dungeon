@@ -49,12 +49,12 @@ function BoardEvents(board) {
     var y = canvasY;
 
     // scale to current zoom
-    x = x / this.board.zoom;
-    y = y / this.board.zoom;
+    x = x / this.board.getZoom();
+    y = y / this.board.getZoom();
 
     // Translate to current viewport
-    x = x + this.board.viewPortCoord[0];
-    y = y + this.board.viewPortCoord[1];
+    x = x + this.board.getViewPortCoordinates()[0];
+    y = y + this.board.getViewPortCoordinates()[1];
 
     return [x, y];
   };
@@ -160,8 +160,8 @@ function BoardEvents(board) {
     jqThis.trigger('scroll', {
       deltaX: deltaX,
       deltaY: deltaY,
-      mapScaledDeltaX: deltaX / self.board.zoom,
-      mapScaledDeltaY: deltaY / self.board.zoom,
+      mapScaledDeltaX: deltaX / self.board.getZoom(),
+      mapScaledDeltaY: deltaY / self.board.getZoom(),
       mapPoint: self.getMapCoordinates(self.mouseCanvasPoint[0], self.mouseCanvasPoint[1])
     });
   };

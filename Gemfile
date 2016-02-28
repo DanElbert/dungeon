@@ -19,6 +19,7 @@ gem 'redis-rails', '~> 4.0.0'
 gem 'jquery-rails', '~> 4.0.5'
 gem 'jquery-ui-rails', '~> 5.0.5'
 gem 'bootstrap-sass', '~> 3.3.5'
+gem 'font-awesome-sass', '~> 4.5.0'
 gem 'bcrypt', '~> 3.1.10'
 
 gem 'sass-rails',   '~> 5.0.4'

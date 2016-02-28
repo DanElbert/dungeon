@@ -39,9 +39,8 @@ function Board(canvas, cameraApi) {
   this.labelLayer = new ViewPortLabels(this);
 
   this.board_data = null;
-  this.viewPortCoord = [0, 0];
-  this.viewPortSize = [canvas.width, canvas.height];
-  this.zoom = 1;
+
+  this.viewPortManager = new ViewPortManager(this);
 
   this.displayCapturePattern = false;
 
@@ -97,34 +96,32 @@ function Board(canvas, cameraApi) {
     this.canvas.width = width;
     this.canvas.height = height;
 
-    this.setZoom(this.zoom);
-  };
-
-  // Rounds the zoom and ensures it's within the min and max zoom values
-  this.normalizeZoom = function(zoom) {
-    var zoomMax = 2.5;
-    var zoomMin = 0.3;
-    var newZoom = Math.round(zoom * 100) / 100;
-    newZoom = Math.min(zoomMax, newZoom);
-    newZoom = Math.max(zoomMin, newZoom);
-    return newZoom;
+    this.viewPortManager.setCanvasSize([width, height]);
   };
 
   this.setZoom = function(val, mapCenter) {
-    val = this.normalizeZoom(val);
-    if (!mapCenter) mapCenter = [this.viewPortCoord[0] + this.viewPortSize[0] / 2, this.viewPortCoord[1] + this.viewPortSize[1] / 2];
-    var canvasCenter = [(mapCenter[0] - this.viewPortCoord[0]) * this.zoom, (mapCenter[1] - this.viewPortCoord[1]) * this.zoom];
+    this.viewPortManager.setZoom(val, mapCenter);
+    this.toolManager.updateZoom(this.viewPortManager.normalizeZoom(val));
+  };
 
-    this.zoom = val;
-    this.viewPortSize = [this.canvas.width / val, this.canvas.height / val];
-    this.viewPortCoord = [mapCenter[0] - (canvasCenter[0] / this.zoom), mapCenter[1] - (canvasCenter[1] / this.zoom)];
+  this.getZoom = function(targetZoom) {
+    if (targetZoom) {
+      return this.viewPortManager.getTargetZoom();
+    } else {
+      return this.viewPortManager.getZoom();
+    }
+  };
 
-    this.context.restore();
-    this.context.save();
-    this.context.scale(this.zoom, this.zoom);
-    this.context.translate(-1 * this.viewPortCoord[0], -1 * this.viewPortCoord[1]);
+  this.getViewPortCoordinates = function() {
+    return this.viewPortManager.getCoordinates();
+  };
 
-    this.toolManager.updateZoom(this.zoom);
+  this.setViewPortCoordinates = function(coords) {
+    this.viewPortManager.setCoordinates(coords);
+  };
+
+  this.getViewPortSize = function() {
+    return this.viewPortManager.getSize();
   };
 
   this.handleAddActionMessage = function(message) {
@@ -193,15 +190,15 @@ function Board(canvas, cameraApi) {
   this.renderBoardBackground = function() {
     var data = this.board_data;
     var drawing = this.drawing;
-    drawing.tileBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], data.background_image);
+    drawing.tileBackground(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], data.background_image);
   };
 
   this.renderBoardGrid = function() {
-    this.drawing.drawGrid(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(0, 0, 0, 1.0)");
+    this.drawing.drawGrid(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], "rgba(0, 0, 0, 1.0)");
   };
 
   this.renderDrawing = function() {
-    this.drawingLayer.draw(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], this.drawing, false);
+    this.drawingLayer.draw(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], this.drawing, false);
   };
 
   this.renderCursor = function() {
@@ -231,15 +228,15 @@ function Board(canvas, cameraApi) {
   };
 
   this.renderCapturePattern = function() {
-    this.drawing.colorBackground(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(255, 255, 255, 1.0)");
-    this.drawing.drawGrid(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1], "rgba(0, 0, 0, 0.05)");
+    this.drawing.colorBackground(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], "rgba(255, 255, 255, 1.0)");
+    this.drawing.drawGrid(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], "rgba(0, 0, 0, 0.05)");
     var pattern_size = this.boardDetectionManager.getPatternSize();
     var size = this.boardDetectionManager.getPatternDimension();
     var gutter = (size / pattern_size);
-    var origin_x = this.viewPortCoord[0];
-    var origin_y = this.viewPortCoord[1];
-    var extent_x = origin_x + this.viewPortSize[0];
-    var extent_y = origin_y + this.viewPortSize[1];
+    var origin_x = this.getViewPortCoordinates()[0];
+    var origin_y = this.getViewPortCoordinates()[1];
+    var extent_x = origin_x + this.getViewPortSize()[0];
+    var extent_y = origin_y + this.getViewPortSize()[1];
 
     this.drawing.drawChessBoard(origin_x + gutter, origin_y + gutter, size, pattern_size);
     this.drawing.drawChessBoard(extent_x - gutter - size, origin_y + gutter, size, pattern_size);
@@ -264,8 +261,9 @@ function Board(canvas, cameraApi) {
     var context = this.context;
 
     this.executeActions();
+    this.viewPortManager.update();
 
-    //context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.viewPortSize[0], this.viewPortSize[1]);
+    //context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.getViewPortSize()[0], this.getViewPortSize()[1]);
 
     if (this.displayCapturePattern) {
       this.renderCapturePattern();

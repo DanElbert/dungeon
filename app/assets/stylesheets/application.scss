@@ -18,11 +18,14 @@
 @import "bootstrap";
 @import "spacelab_bootswatch";
 @import "jquery.ui.overrides";
+@import "font-awesome-sprockets";
+@import "font-awesome";
 @import "games";
 @import "tools";
 @import "initiative";
 @import "flash_messages";
 @import "typeahead-bootstrap";
+
 
 div.thumbnail {
   width: 150px;

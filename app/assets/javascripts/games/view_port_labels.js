@@ -10,13 +10,13 @@ _.extend(ViewPortLabels.prototype, {
     var pixelWidth = this.board.canvas.width;
     var pixelHeight = this.board.canvas.height;
 
-    var tilePixelSize = this.drawing.cellSize * this.board.zoom;
+    var tilePixelSize = this.drawing.cellSize * this.board.getZoom();
     var labelStep = 1;
 
-    var originX = this.board.viewPortCoord[0];
-    var originY = this.board.viewPortCoord[1];
+    var originX = this.board.getViewPortCoordinates()[0];
+    var originY = this.board.getViewPortCoordinates()[1];
 
-    var mapTileOrigin = Geometry.getCell(this.board.viewPortCoord, this.drawing.cellSize);
+    var mapTileOrigin = Geometry.getCell(this.board.getViewPortCoordinates(), this.drawing.cellSize);
     var mapTileOriginCenter = Geometry.getCellMidpoint(mapTileOrigin, this.drawing.cellSize);
 
     var firstHorizontalTile = mapTileOrigin[0] + ((originX > mapTileOriginCenter[0]) ? 2 : 1);
@@ -34,8 +34,8 @@ _.extend(ViewPortLabels.prototype, {
       }
     }
 
-    var horizontalPixelOrigin = (((firstHorizontalTile * this.drawing.cellSize) - originX) * this.board.zoom) + (tilePixelSize / 2);
-    var verticalPixelOrigin = (((firstVerticalTile * this.drawing.cellSize) - originY) * this.board.zoom) + (tilePixelSize / 2);
+    var horizontalPixelOrigin = (((firstHorizontalTile * this.drawing.cellSize) - originX) * this.board.getZoom()) + (tilePixelSize / 2);
+    var verticalPixelOrigin = (((firstVerticalTile * this.drawing.cellSize) - originY) * this.board.getZoom()) + (tilePixelSize / 2);
 
     var cursor = this.board.hovered_cell;
 
@@ -56,7 +56,7 @@ _.extend(ViewPortLabels.prototype, {
     var cur = firstHorizontalTile;
 
     while (labeled < pixelWidth) {
-      this.drawLabel([labeled, 15], cur, (cursor && cur == cursor[0]));
+      this.drawLabel([labeled, 15], this.numberToLetters(cur), (cursor && cur == cursor[0]));
       labeled += (tilePixelSize * labelStep);
       cur += labelStep;
     }
@@ -75,5 +75,23 @@ _.extend(ViewPortLabels.prototype, {
 
   drawLabel: function(point, text, highlight) {
     this.drawing.drawText(text, point, 20, (highlight ? "grey" : "white"), "black", 1);
+  },
+
+  numberToLetters: function(value) {
+    var result = "";
+    var negative = value < 0;
+    value = Math.floor(Math.abs(value));
+
+    do {
+      var rem = (value) % 26;
+      value = Math.floor((value) / 26);
+      result = String.fromCharCode(65 + rem) + result;
+    } while (value > 0);
+
+    if (negative) {
+      result = "-" + result;
+    }
+
+    return result;
   }
 });

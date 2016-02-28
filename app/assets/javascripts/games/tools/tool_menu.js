@@ -99,7 +99,7 @@
 
     buildButtonWidget: function(tool) {
       var button = $("<button />")
-        .append($("<span />").addClass("glyphicon").addClass(tool.glyph))
+        .append($("<span />").addClass(tool.glyph))
         .append($("<span />").text(tool.label || tool.name))
         .on('click.' + pluginName, tool.handler)
         .onFastTap(pluginName, tool.handler);

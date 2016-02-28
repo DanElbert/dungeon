@@ -2,6 +2,7 @@ function GlobalShortCuts(manager) {
   Tool.call(this, manager);
   this.super = Tool.prototype;
   this.viewPortDragging = new ViewPortDragging(this, this.board, 'rightdrag');
+  this.stickyViewPort = null;
 }
 
 GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, {
@@ -14,7 +15,7 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
     this.viewPortDragging.enable();
 
     $(this.board.event_manager).on('pinchstart.GlobalShortCuts', function(evt, mapEvt) {
-      self.originalZoom = self.board.zoom;
+      self.originalZoom = self.board.getZoom(true);
     });
 
     $(this.board.event_manager).on('pinch.GlobalShortCuts', function(evt, mapEvt) {
@@ -24,7 +25,7 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
     });
 
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
-      var currentZoom = self.board.zoom;
+      var currentZoom = self.board.getZoom(true);
       var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
       self.board.setZoom(newZoom, mapEvt.mapPoint);
     });
@@ -33,6 +34,20 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
       if (mapEvt.key == 90 && mapEvt.isCtrl) {
         // ctrl-z
         self.board.undo();
+      }
+
+      if (mapEvt.key == 83 && self.stickyViewPort == null) {
+        // s key
+        self.stickyViewPort = {zoom: self.board.getZoom(), coordinates: self.board.getViewPortCoordinates()};
+      }
+    });
+
+    $(this.board.event_manager).on('keyup.GlobalShortCuts', function(evt, mapEvt) {
+      if (mapEvt.key == 83 && self.stickyViewPort != null) {
+        // s key
+        self.board.setZoom(self.stickyViewPort.zoom);
+        self.board.setViewPortCoordinates(self.stickyViewPort.coordinates);
+        self.stickyViewPort = null;
       }
     });
 

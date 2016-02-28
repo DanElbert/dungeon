@@ -1,6 +1,7 @@
 //= require ./geometry
 //= require ./initiative
 //= require ./initiative_manager
+//= require ./animation
 //= require ./drawing
 //= require ./board_events
 //= require ./board
@@ -11,6 +12,7 @@
 //= require ./tools
 //= require ./view_port_labels
 //= require ./board_detection_manager
+//= require ./view_port_manager
 //= require ./image_cache
 //= require ./main_menu
 //= require ./game_board

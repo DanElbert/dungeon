@@ -17,17 +17,14 @@ _.extend(ViewPortDragging.prototype, {
     this.enabled = true;
     $(board.event_manager).on(this.eventName('start'), function(evt, mapEvt) {
       self.drag_mouse_start = mapEvt.mousePoint;
-      self.drag_viewport_start = board.viewPortCoord;
+      self.drag_viewport_start = board.getViewPortCoordinates();
     });
 
     $(board.event_manager).on(this.eventName(''), function(evt, mapEvt) {
-      var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.zoom);
-      var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.zoom);
+      var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.getZoom());
+      var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.getZoom());
 
-      board.viewPortCoord = [self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY];
-
-      // Ensure viewport is bound to within the map
-      board.setZoom(board.zoom);
+      board.setViewPortCoordinates([self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY]);
     });
   },
   disable: function() {
