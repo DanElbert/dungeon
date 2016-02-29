@@ -3,6 +3,12 @@ require 'pathname'
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
+  before_action do
+    puts '=' * 80
+    puts request.env["HTTP_USER_AGENT"]
+    puts '=' * 80
+  end
+
   def ensure_valid_user
     if current_user.nil?
       flash[:warning] = "You must login"

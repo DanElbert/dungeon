@@ -320,6 +320,20 @@ _.extend(actionTypes, {
     }
   }),
 
+  rectangleTemplateAction: createActionType("RectangleTemplateAction", TemplateAction, {
+    internalTranslateData: function(action, dx, dy, cellSize){
+      action.properties.topLeft = [this.properties.topLeft[0] + dx, this.properties.topLeft[1] + dy];
+      action.properties.bottomRight = [this.properties.bottomRight[0] + dx, this.properties.bottomRight[1] + dy];
+    },
+    calculateCells: function(board) {
+      return Geometry.getCellsInRectangle(this.properties.topLeft, this.properties.bottomRight);
+    },
+
+    validateData: function() {
+      this.ensureFields(["topLeft", "bottomRight", "color", "uid"]);
+    }
+  }),
+
   pingAction: createActionType("PingAction", Action, {
     apply: function(board) {
       board.pingLayer.add(this.properties.point, this.properties.color);

@@ -43,8 +43,9 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   text-align: left;
   color: $text-color;
 
-  .glyphicon {
+  .glyphicon, .fa {
     padding-right: 10px;
+    width: 1.5em;
   }
 }
 

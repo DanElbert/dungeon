@@ -185,6 +185,17 @@ var Geometry = {
     return lines;
   },
 
+  getCellsInRectangle: function(topLeft, bottomRight) {
+    var cells = [];
+    for (var x = topLeft[0]; x < bottomRight[0]; x++) {
+      for (var y = topLeft[1]; y < bottomRight[1]; y++) {
+        cells.push([x,y]);
+      }
+    }
+
+    return cells;
+  },
+
   // Returns an array of cells in the Pathfinder Radius template
   // given a center point (in cell coordinates) and
   // a radius (in cells)

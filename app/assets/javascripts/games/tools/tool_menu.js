@@ -78,6 +78,11 @@
           .append($("<span />").addClass("glyphicon").addClass(glyph))
           .appendTo($this);
 
+        if (tool.tooltip) {
+          item.attr('title', tool.tooltip);
+          item.tooltip({placement: 'right'});
+        }
+
         var evtData = {menu: $this, tool: tool};
 
         if (tool.children && tool.children.length) {

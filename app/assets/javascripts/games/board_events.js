@@ -8,6 +8,8 @@ function BoardEvents(board) {
   var jqThis = $(this);
   var jqCanvas = $(board.canvas);
 
+  preventGhosts(jqCanvas);
+
   // Track mouse location as it moves so that we can use it in events that don't give the mouse location
   this.mouseCanvasPoint = null;
 
@@ -265,7 +267,6 @@ function BoardEvents(board) {
     var coords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
     self.cursorDownHandler(coords, self.leftMouseState);
     self.cursorUpHandler(self.leftMouseState);
-    evt.preventDefault();
   });
 
   jqCanvas.on('dragstart.BoardEvents', function(evt) {

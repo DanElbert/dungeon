@@ -22,6 +22,7 @@ function ToolManager(board) {
     "template": new TemplateTool(this),
     "measure_template": new Measure(this),
     "line_template": new LineTemplate(this),
+    "rectangle_template": new RectangleTemplate(this),
     "radius_template": new RadiusTemplate(this),
     "cone_template": new ConeTemplate(this),
     "ping": new PingTool(this),
@@ -114,8 +115,15 @@ function ToolManager(board) {
       new ToolMenuItem("line_template", {
         label: "Line",
         tooltip: "Creates a line template (ie: Lightning Bolt)",
-        glyph: "glyphicon glyphicon-minus",
+        glyph: "fa fa-bolt",
         handler: function() { self.setTool("line_template"); }
+      }),
+
+      new ToolMenuItem("rectangle_template", {
+        label: "Rectangle",
+        tooltip: "Creates a rectangle template",
+        glyph: "fa fa-square-o",
+        handler: function() { self.setTool("rectangle_template"); }
       }),
 
       new ToolMenuItem("radius_template", {
@@ -153,6 +161,7 @@ function ToolManager(board) {
 
     new ToolMenuItem("undo", {
       label: "Undo",
+      tooltip: "Undo",
       glyph: "fa fa-undo",
       handler: function() { self.board.undo(); }
     })

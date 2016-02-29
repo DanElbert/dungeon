@@ -350,3 +350,110 @@ LineTemplate.prototype = _.extend(LineTemplate.prototype, Tool.prototype, {
     }
   }
 });
+
+function RectangleTemplate(manager) {
+  Tool.call(this, manager);
+  this.super = Tool.prototype;
+  this.color = null;
+  this.dragging = false;
+  this.startPoint = null;
+  this.currentPoint = null;
+}
+RectangleTemplate.prototype = _.extend(RectangleTemplate.prototype, Tool.prototype, {
+  buildOptions: function() {
+    this.options.add(this.toolManager.sharedTool("templateColor"));
+  },
+
+  optionsChanged: function() {
+    this.color = this.options.get("color").value;
+  },
+  enable: function () {
+    var board = this.board;
+    var self = this;
+    var cellSize = this.board.drawing.cellSize;
+
+    $(board.event_manager).on('mousemove.RectangleTemplate', function(evt, mapEvt) {
+      if (!self.dragging) {
+        self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
+      }
+    });
+
+    $(board.event_manager).on('dragstart.RectangleTemplate', function (evt, mapEvt) {
+      self.dragging = true;
+    });
+
+    $(board.event_manager).on('drag.RectangleTemplate', function (evt, mapEvt) {
+      self.currentPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize); //mapEvt.mapPoint;
+    });
+
+    $(board.event_manager).on('dragstop.RectangleTemplate', function (evt, mapEvt) {
+      self.saveAction();
+      self.currentPoint = null;
+      self.dragging = false;
+      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
+    });
+  },
+
+  disable: function () {
+    $(this.board.event_manager).off(".RectangleTemplate");
+  },
+
+  canDraw: function() {
+    // Both exist and both x and y are different
+    return (this.startPoint && this.currentPoint) && (this.startPoint[0] != this.currentPoint[0] && this.startPoint[1] != this.currentPoint[1]);
+  },
+
+  topLeft: function() {
+    var cellSize = this.board.drawing.cellSize;
+    return [Math.min(this.startPoint[0], this.currentPoint[0]) / cellSize, Math.min(this.startPoint[1], this.currentPoint[1]) / cellSize];
+  },
+
+  bottomRight: function() {
+    var cellSize = this.board.drawing.cellSize;
+    return [Math.max(this.startPoint[0], this.currentPoint[0]) / cellSize, Math.max(this.startPoint[1], this.currentPoint[1]) / cellSize];
+  },
+
+  draw: function() {
+
+    if (this.startPoint) {
+      this.drawCross(this.startPoint);
+    }
+
+    if (this.currentPoint) {
+      this.drawCross(this.currentPoint);
+    }
+
+    if (this.canDraw()) {
+      var cellSize = this.board.drawing.cellSize;
+      var topLeft = this.topLeft();
+      var bottomRight = this.bottomRight();
+      var template = Geometry.getCellsInRectangle(topLeft, bottomRight);
+
+      var border = Geometry.getBorder(template, cellSize);
+
+      var xDist = Math.abs(topLeft[0] - bottomRight[0]) * 5;
+      var yDist = Math.abs(topLeft[1] - bottomRight[1]) * 5;
+
+      this.board.drawing.drawTemplate(template, border, this.color);
+      this.board.drawing.drawMeasureLine([topLeft[0] * cellSize, (topLeft[1] * cellSize) - 30], [bottomRight[0] * cellSize, (topLeft[1] * cellSize) - 30], xDist);
+      this.board.drawing.drawMeasureLine([(bottomRight[0] * cellSize) + 30, topLeft[1] * cellSize], [(bottomRight[0] * cellSize) + 30, bottomRight[1] * cellSize], yDist);
+    }
+  },
+
+  drawCross: function(point) {
+    var crossSize = 10;
+    var lines = [
+      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
+      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
+    ];
+    this.board.drawing.drawLines("black", 3, lines);
+  },
+
+  saveAction: function() {
+    if (this.canDraw()) {
+      var action = {actionType: "rectangleTemplateAction", topLeft: this.topLeft(), bottomRight: this.bottomRight(), color: this.color, uid: generateActionId()};
+      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+    }
+  }
+});
