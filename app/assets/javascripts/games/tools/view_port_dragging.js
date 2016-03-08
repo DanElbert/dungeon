@@ -24,7 +24,7 @@ _.extend(ViewPortDragging.prototype, {
       var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.getZoom());
       var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.getZoom());
 
-      board.setViewPortCoordinates([self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY]);
+      board.setViewPortCoordinates([self.drag_viewport_start[0] + deltaX, self.drag_viewport_start[1] + deltaY], true);
     });
   },
   disable: function() {

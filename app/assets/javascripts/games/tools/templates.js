@@ -286,6 +286,7 @@ LineTemplate.prototype = _.extend(LineTemplate.prototype, Tool.prototype, {
     });
 
     $(board.event_manager).on('dragstart.LineTemplate', function (evt, mapEvt) {
+      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       self.dragging = true;
     });
 
@@ -379,6 +380,7 @@ RectangleTemplate.prototype = _.extend(RectangleTemplate.prototype, Tool.prototy
     });
 
     $(board.event_manager).on('dragstart.RectangleTemplate', function (evt, mapEvt) {
+      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       self.dragging = true;
     });
 

@@ -49,23 +49,48 @@ _.extend(ViewPortManager.prototype, {
     return this.zoom;
   },
 
-  setZoom: function(newZoom, mapCenter) {
+  setZoom: function(newZoom, mapCenter, noAnimate) {
+
     var val = this.normalizeZoom(newZoom);
 
-    this.targetZoom = val;
-    this.targetZoomCenter = mapCenter;
+    if (noAnimate) {
+      this.applyZoom(val, mapCenter);
+      this.zoomAnimation = null;
+    } else {
+      this.targetZoom = val;
+      this.targetZoomCenter = mapCenter;
 
-    this.zoomAnimation = new Animation(0.5, EasingFactory.cubicOut(), this.zoom, this.targetZoom);
+      this.zoomAnimation = new Animation(0.5, EasingFactory.cubicOut(), this.zoom, this.targetZoom);
+    }
   },
 
   getCoordinates: function() {
     return this.coordinates;
   },
 
-  setCoordinates: function(newCoords) {
-    var current = this.getCoordinates();
-    this.verticalAnimation = new Animation(0.5, EasingFactory.cubicOut(), current[1], newCoords[1]);
-    this.horizontalAnimation = new Animation(0.5, EasingFactory.cubicOut(), current[0], newCoords[0]);
+  setCoordinates: function(newCoords, noAnimate) {
+    if (noAnimate) {
+      this.applyCoordinates(newCoords);
+      this.verticalAnimation = null;
+      this.horizontalAnimation = null;
+    } else {
+      var current = this.getCoordinates();
+      var deltaConst = 1500;
+      var maxTime = 1.0;
+      var ratioX = this.getDeltaRatio(current[0], newCoords[0], deltaConst);
+      var ratioY = this.getDeltaRatio(current[1], newCoords[1], deltaConst);
+      this.verticalAnimation = new Animation(maxTime * ratioY, EasingFactory.linear(), current[1], newCoords[1]);
+      this.horizontalAnimation = new Animation(maxTime * ratioX, EasingFactory.linear(), current[0], newCoords[0]);
+    }
+  },
+
+  getDeltaRatio: function(v1, v2, maxV) {
+    var delta = Math.abs(v1 - v2);
+    if (delta > maxV) {
+      return 1;
+    } else {
+      return delta / maxV;
+    }
   },
 
   getCanvasSize: function() {

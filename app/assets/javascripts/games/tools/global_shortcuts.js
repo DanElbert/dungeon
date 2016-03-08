@@ -21,13 +21,13 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
     $(this.board.event_manager).on('pinch.GlobalShortCuts', function(evt, mapEvt) {
       var scale = ((mapEvt.scale - 1) * scaleZoomFactor) + 1;
       var newZoom = self.originalZoom * scale;
-      self.board.setZoom(newZoom, mapEvt.center);
+      self.board.setZoom(newZoom, mapEvt.center, true);
     });
 
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
       var currentZoom = self.board.getZoom(true);
       var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
-      self.board.setZoom(newZoom, mapEvt.mapPoint);
+      self.board.setZoom(newZoom, mapEvt.mapPoint, true);
     });
 
     $(this.board.event_manager).on('keydown.GlobalShortCuts', function(evt, mapEvt) {

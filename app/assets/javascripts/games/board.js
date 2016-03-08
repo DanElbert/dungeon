@@ -99,8 +99,8 @@ function Board(canvas, cameraApi) {
     this.viewPortManager.setCanvasSize([width, height]);
   };
 
-  this.setZoom = function(val, mapCenter) {
-    this.viewPortManager.setZoom(val, mapCenter);
+  this.setZoom = function(val, mapCenter, noAnimate) {
+    this.viewPortManager.setZoom(val, mapCenter, noAnimate);
     this.toolManager.updateZoom(this.viewPortManager.normalizeZoom(val));
   };
 
@@ -116,8 +116,8 @@ function Board(canvas, cameraApi) {
     return this.viewPortManager.getCoordinates();
   };
 
-  this.setViewPortCoordinates = function(coords) {
-    this.viewPortManager.setCoordinates(coords);
+  this.setViewPortCoordinates = function(coords, noAnimate) {
+    this.viewPortManager.setCoordinates(coords, noAnimate);
   };
 
   this.getViewPortSize = function() {

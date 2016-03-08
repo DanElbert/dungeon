@@ -13,6 +13,11 @@ _.extend(Animation.prototype, {
       return this.finished;
     }
 
+    if (this.duration == 0) {
+      this.finished = this.max;
+      return this.finished;
+    }
+
     var durationPercent = Math.min(1, (new Date() - this.startTime) / (this.duration * 1000));
     var easedValue = this.easing(durationPercent);
     var scaledValue = null;
@@ -53,6 +58,18 @@ var EasingFactory = {
     return function(p) {
       p = p - 1;
       return (p * p * p) + 1;
+    }
+  },
+
+  squareOut: function() {
+    return function(p) {
+      return (p * (p - 2)) * -1;
+    }
+  },
+
+  linear: function() {
+    return function(p) {
+      return p;
     }
   }
 };
