@@ -57,7 +57,8 @@ function ToolManager(board) {
 
       new ToolMenuItem("add_viewport_savepoint", {
         label: "Add View Savepoint",
-        glyph: "glyphicon glyphicon-plus"
+        glyph: "glyphicon glyphicon-plus",
+        visible: false
       })
     ]),
 
