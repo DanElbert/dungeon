@@ -4,8 +4,10 @@
   <meta charset="utf-8">
   <meta name="description" content="dungeon, a board game project">
   <meta name="author" content="Dan Elbert">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>Dungeon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title><%= content_for?(:title) ? yield(:title) : "Dungeon" %></title>
+
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
 
@@ -14,32 +16,41 @@
 </head>
 <body>
 
+<nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <%= link_to "Dungeon", lobby_path, class: 'navbar-brand' %>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-right" id="nav-collapse">
+      <ul class="nav navbar-nav">
+        <li><%= link_to "Logout", logout_path %></li>
+        <li><%= link_to "Lobby", lobby_path %></li>
+        <li><%= link_to "Users", admin_users_path %></li>
+        <li><%= link_to "Campaigns", admin_campaigns_path %></li>
+        <li><%= link_to "Games", admin_games_path %></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<%= render :partial => 'layouts/flash_message' %>
+
 <div class="container">
-  <div id="headerBar" class="sixteen columns">
-    <div id="title" class="ten columns alpha">
-      <h1><%= link_to "Dungeon", lobby_path, style: 'text-decoration: none;' %></h1>
-    </div>
-    <div id="navContainer" class="six columns omega">
-      <%= link_to "Logout", logout_path %>
-      <%= link_to "Lobby", lobby_path %>
-      <%= link_to "Users", admin_users_path %>
-      <%= link_to "Campaigns", admin_campaigns_path %>
-      <%= link_to "Games", admin_games_path %>
-    </div>
-  </div>
-  <div id="headerSeparator" class="sixteen columns"></div>
+  <%= yield %>
+</div>
 
-  <div class="sixteen columns">
-    <%= render :partial => 'layouts/flash_message' %>
+<div class="container-fluid">
+  <div class="col-xs-12">
+    <span class="pull-right">&copy; 2013-2016 Dan Elbert</span>
   </div>
-  <div class="sixteen columns content">
-    <%= yield %>
-  </div>
-
-  <div id="footer" class="two columns offset-by-fourteen">
-    &copy; 2013 Dan Elbert
-  </div>
-
 </div>
 
 <div id="dialog_container"></div>
