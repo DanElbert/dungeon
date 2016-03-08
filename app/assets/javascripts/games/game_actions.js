@@ -357,7 +357,7 @@ _.extend(actionTypes, {
     isPersistent: function() { return true; },
     apply: function(board) {
       board.tokenLayer.clearTokens();
-      board.toolBars.hideClearTokensButton();
+      //board.toolBars.hideClearTokensButton();
     },
     validateData: function() {
       this.ensureFields(["uid"]);
