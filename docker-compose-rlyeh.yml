@@ -25,7 +25,7 @@ web1:
   env_file: /etc/default/dungeon
   volumes:
     - /dungeon/public
-    - log:dungeon/log
+    - log:/dungeon/log
   links:
     - redis
 

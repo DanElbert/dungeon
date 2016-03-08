@@ -36,7 +36,7 @@ web1:
     - SHARE_ASSETS=true
   volumes:
     - /dungeon/public
-    - log:dungeon/log
+    - log:/dungeon/log
   links:
     - redis
     - mysql
