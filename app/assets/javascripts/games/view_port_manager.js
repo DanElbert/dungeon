@@ -5,7 +5,6 @@ function ViewPortManager(board) {
   this.canvasSize = [board.canvas.width, board.canvas.height];
   this.zoom = 1;
   this.zoomAnimation = null;
-  this.targetZoomCenter = null;
   this.verticalAnimation = null;
   this.horizontalAnimation = null;
 
@@ -14,11 +13,11 @@ function ViewPortManager(board) {
 _.extend(ViewPortManager.prototype, {
 
   update: function() {
+
     if (this.zoomAnimation) {
-      this.applyZoom(this.zoomAnimation.calculateEasing(), this.targetZoomCenter);
+      this.applyZoom(this.zoomAnimation.calculateEasing(), null);
       if (this.zoomAnimation.finished) {
         this.zoomAnimation = null;
-        this.targetZoomCenter = null;
       }
     }
 
@@ -35,6 +34,8 @@ _.extend(ViewPortManager.prototype, {
         this.horizontalAnimation = null;
       }
     }
+
+    this.applyGeometry();
   },
 
   getTargetZoom: function() {
@@ -53,14 +54,23 @@ _.extend(ViewPortManager.prototype, {
 
     var val = this.normalizeZoom(newZoom);
 
+    if (!mapCenter) mapCenter = [this.coordinates[0] + this.size[0] / 2, this.coordinates[1] + this.size[1] / 2];
+    var canvasCenter = [(mapCenter[0] - this.coordinates[0]) * this.zoom, (mapCenter[1] - this.coordinates[1]) * this.zoom];
+    var newCoordinates = [mapCenter[0] - (canvasCenter[0] / val), mapCenter[1] - (canvasCenter[1] / val)];
+
     if (noAnimate) {
-      this.applyZoom(val, mapCenter);
+      this.applyZoom(val);
+      this.setCoordinates(newCoordinates, true);
       this.zoomAnimation = null;
     } else {
-      this.targetZoom = val;
-      this.targetZoomCenter = mapCenter;
 
-      this.zoomAnimation = new Animation(0.5, EasingFactory.cubicOut(), this.zoom, this.targetZoom);
+      this.setCoordinates(newCoordinates);
+
+      var deltaConst = 1.5;
+      var maxTime = 1.0;
+      var ratio = this.getDeltaRatio(this.zoom, val, deltaConst);
+
+      this.zoomAnimation = new Animation(maxTime * ratio, EasingFactory.linear(), this.zoom, val);
     }
   },
 
@@ -118,20 +128,17 @@ _.extend(ViewPortManager.prototype, {
 
   applyCoordinates: function(coordinates) {
     this.coordinates = coordinates;
-    this.applyZoom(this.zoom);
   },
 
   applyZoom: function(val, mapCenter) {
     val = this.normalizeZoom(val);
-    if (!mapCenter) mapCenter = [this.coordinates[0] + this.size[0] / 2, this.coordinates[1] + this.size[1] / 2];
-    var canvasCenter = [(mapCenter[0] - this.coordinates[0]) * this.zoom, (mapCenter[1] - this.coordinates[1]) * this.zoom];
 
     this.zoom = val;
     this.size = [this.board.canvas.width / val, this.board.canvas.height / val];
-    this.coordinates = [mapCenter[0] - (canvasCenter[0] / this.zoom), mapCenter[1] - (canvasCenter[1] / this.zoom)];
+  },
 
-    this.board.context.restore();
-    this.board.context.save();
+  applyGeometry: function() {
+    this.board.context.setTransform(1, 0, 0, 1, 0, 0);
     this.board.context.scale(this.zoom, this.zoom);
     this.board.context.translate(-1 * this.coordinates[0], -1 * this.coordinates[1]);
   }
