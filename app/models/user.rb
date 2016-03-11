@@ -6,15 +6,20 @@ class User < ActiveRecord::Base
 
   has_secure_password
 
-  validates_presence_of :email
-  validates_uniqueness_of :email
+  validates :email,
+            presence: true,
+            format: { with: /\A.+@.+\z/, message: 'must be a valid email', allow_blank: true},
+            uniqueness: { case_sensitive: false, allow_blank: true },
+            exclusion: { in: [SYSTEM_USER_EMAIL], message: "email '%{value}' is reserved.", allow_blank: true }
 
-  validates :email, exclusion: { in: [SYSTEM_USER_EMAIL], message: "email '%{value}' is reserved." }
+  validates :username,
+            format: { with: /\A[\w._-]+\z/, message: 'may only contain word characters, \'.\', \'_\', or \'-\'', allow_blank: true},
+            uniqueness: { case_sensitive: false, allow_blank: true }
 
   before_create :set_auth_token
 
   def self.authenticate(email, password)
-    find_by_email(email).try(:authenticate, password)
+    where("email = ? OR username = ?", email, email).first.try(:authenticate, password)
   end
 
   def self.system_user

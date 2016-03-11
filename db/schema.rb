@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140706211159) do
+ActiveRecord::Schema.define(version: 20160311174557) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string   "action_type"
@@ -98,6 +98,9 @@ ActiveRecord::Schema.define(version: 20140706211159) do
     t.string   "password_digest"
     t.boolean  "is_admin"
     t.string   "auth_token"
+    t.string   "username"
   end
+
+  add_index "users", ["email"], name: "index_users_on_email"
 
 end

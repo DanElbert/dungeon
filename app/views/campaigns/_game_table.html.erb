@@ -1,26 +1,35 @@
 
-<% unless games.empty? %>
+<% if games.empty? %>
 
-  <h4><%= title %></h4>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Created</th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <% games.each do |g| %>
-    <tr>
-      <td><%= link_to g.name, game_path(g) %></td>
-      <td><%= g.created_at.localtime.strftime("%m/%d/%y %H:%M") %></td>
-      <td><%= link_to 'Initiative', initiative_game_path(g), class: 'btn btn-default btn-sm' %></td>
-      <td><%= link_to_if if_owner(g), 'Edit', edit_game_path(g), class: 'btn btn-default btn-sm' %></td>
-      <td><%= link_to_if if_owner(g), 'Destroy', game_path(g), { method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn btn-default btn-sm' } %></td>
-    </tr>
+  <h3>No <%= title %></h3>
+
+<% else %>
+
+  <h3><%= title %></h3>
+
+  <ul class="list-group game-list">
+    <% games.each do |game| %>
+
+      <li class="list-group-item">
+        <h4 class="list-group-item-heading"><%= link_to game.name, game_path(game) %> <span class="created pull-right"><span class="fa fa-clock-o"></span> <%= game.created_at.localtime.strftime("%m/%d/%y %H:%M") %></span></h4>
+        <p class="list-group-item-text">
+          <%= link_to initiative_game_path(game), class: 'btn btn-default btn-sm' do %>
+            <span class="fa fa-hourglass"></span>
+          <% end %>
+          <%= if_owner(game) do %>
+            <%= link_to edit_game_path(game), class: 'btn btn-default btn-sm' do %>
+              <span class="fa fa-edit"></span>
+            <% end %>
+            <%= link_to game_path(game), { method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn btn-danger btn-sm' } do %>
+              <span class="glyphicon glyphicon-remove"></span>
+            <% end %>
+          <% end %>
+        </p>
+      </li>
+
     <% end %>
-  </table>
+  </ul>
 
 <% end %>
+
+

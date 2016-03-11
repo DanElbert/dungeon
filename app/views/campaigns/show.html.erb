@@ -1,34 +1,36 @@
 
-<h2><%= "#{@campaign.name} (#{@campaign.user_name})" %></h2>
-
-
-<div class="col-xs-4">
-  <%= render :partial => 'game_table', :locals => {:games => @campaign.active_games, :title => 'Active Games'} %>
-  <% if @campaign.active_games.empty? %>
-    <h4>No Active Games</h4>
-  <% end %>
+<div class="row">
+  <div class="col-xs-12">
+    <h2><%= "#{@campaign.name} (#{@campaign.user_name})" %></h2>
+  </div>
 </div>
 
-<div class="col-xs-4">
-  <%= render :partial => 'game_table', :locals => {:games => @campaign.archived_games, :title => 'Old Games'} %>
-  <% if @campaign.archived_games.empty? %>
-    <h4>No Old Games</h4>
-  <% end %>
+<div class="row">
+  <div class="col-xs-12">
+    <%= render :partial => 'game_table', :locals => {:games => @campaign.active_games, :title => 'Active Games'} %>
+  </div>
 </div>
 
 <%= if_owner(@campaign) do %>
-  <div class="col-xs-4">
-    <%= render :partial => 'game_table', :locals => {:games => @campaign.hidden_games, :title => 'Hidden Games'} %>
-    <% if @campaign.hidden_games.empty? %>
-      <h4>No Hidden Games</h4>
-    <% end %>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= render :partial => 'game_table', :locals => {:games => @campaign.hidden_games, :title => 'Hidden Games'} %>
+    </div>
   </div>
 <% end %>
 
-<div class="col-xs-12">
-  <% if if_owner(@campaign) %>
-    <%= link_to 'Edit', edit_campaign_path(@campaign), class: 'btn btn-primary' %>
-    <%= link_to 'Create New Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
-  <% end %>
-  <%= link_to 'Back to Lobby', campaigns_path, class: 'btn btn-primary' %>
+<div class="row">
+  <div class="col-xs-12">
+    <%= render :partial => 'game_table', :locals => {:games => @campaign.archived_games, :title => 'Old Games'} %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <% if if_owner(@campaign) %>
+      <%= link_to 'Edit', edit_campaign_path(@campaign), class: 'btn btn-primary' %>
+      <%= link_to 'Create New Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
+    <% end %>
+    <%= link_to 'Back to Lobby', campaigns_path, class: 'btn btn-primary' %>
+  </div>
 </div>

@@ -15,6 +15,7 @@ Dungeon::Application.routes.draw do
     resources :users
     resources :games, :except => [:new, :create]
     resources :campaigns, :except => [:new, :create]
+    resources :background_images
   end
 
   resources :games, :only => [:show, :edit, :update, :destroy] do

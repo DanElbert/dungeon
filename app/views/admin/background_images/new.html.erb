@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h1>Create Backgorund Image</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+
+    <%= form_for [:admin, @background_image] do |f| %>
+
+      <div class="form-group">
+        <%= f.label :filename, 'Select Image', class: '' %>
+        <%= f.file_field :filename %>
+      </div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+
+    <% end %>
+
+  </div>
+</div>

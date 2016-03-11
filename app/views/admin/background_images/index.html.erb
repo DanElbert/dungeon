@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-xs-12">
+
+    <table class="table">
+      <tr>
+        <th>Filename</th>
+        <th>Image</th>
+      </tr>
+
+      <% @background_images.each do |i| %>
+
+        <tr>
+          <td><%= i.filename %></td>
+          <td><%= image_tag(i.url) %></td>
+        </tr>
+
+      <% end %>
+
+    </table>
+
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <%= link_to 'Create Image', new_admin_background_image_path, class: 'btn btn-primary' %>
+  </div>
+</div>
