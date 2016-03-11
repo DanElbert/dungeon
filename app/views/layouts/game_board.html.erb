@@ -6,6 +6,9 @@
   <meta name="author" content="Dan Elbert">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
+  <link rel="apple-touch-icon" href="<%= asset_path("favicon/md.png") %>">
+  <link rel="icon" href="<%= asset_path("favicon/lrg.png") %>">
+
   <title><%= content_for?(:title) ? yield(:title) : "Dungeon" %></title>
 
   <%= stylesheet_link_tag    "application", :media => "all" %>
