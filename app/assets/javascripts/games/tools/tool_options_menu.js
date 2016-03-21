@@ -57,6 +57,12 @@
           case "copiedImage":
             $widget = privateMethods.buildImageOption(to);
             break;
+          case "boolean" :
+            $widget = privateMethods.buildBoolean(to);
+            break;
+          case "creatureSize":
+            $widget = privateMethods.buildCreatureSize(to);
+            break;
           default:
             $widget = $("<span>" + to.name + "</span>");
         }
@@ -66,6 +72,54 @@
         $widget.tooltip({});
 
       }, this);
+    },
+
+    buildBoolean: function(toolOption) {
+      var $widget = $('<div></div>').addClass('option_menu');
+      var $check = $("<input />").attr("type", "checkbox")
+          .on("change", function() {
+            toolOption.value = this.checked;
+          })
+          .appendTo($widget);
+
+      return $widget;
+    },
+
+    buildCreatureSize: function(toolOption) {
+      var creatureSizes = [
+        {name: "Small", size: "small"},
+        {name: "Medium", size: "medium"},
+        {name: "Large", size: "large_tall"},
+        {name: "Large Long", size: "large_long"},
+        {name: "Huge", size: "huge_tall"},
+        {name: "Huge Long", size: "huge_long"},
+        {name: "Gargantuan", size: "gargantuan_tall"},
+        {name: "Gargantuan Long", size: "gargantuan_long"},
+        {name: "Colossal", size: "colossal_tall"},
+        {name: "Colossal Long", size: "colossal_long"}
+      ];
+
+      var $widget = $('<div></div>')
+          .addClass('option_menu');
+
+      var $dropdown = $("<select />")
+          .appendTo($widget);
+
+      _.each(creatureSizes, function(s) {
+        $dropdown.append($("<option />").attr("value", s.size).text(s.name));
+      }, this);
+
+      $dropdown
+          .change(function() {
+            toolOption.value = $(this).val();
+            this.blur();
+          })
+          .mouseleave(function() {
+            //this.blur();
+          })
+          .val(toolOption.value || "medium");
+
+      return $widget;
     },
 
     buildColorOption: function(toolOption) {

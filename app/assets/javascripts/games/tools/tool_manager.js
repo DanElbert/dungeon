@@ -25,6 +25,7 @@ function ToolManager(board) {
     "rectangle_template": new RectangleTemplate(this),
     "radius_template": new RadiusTemplate(this),
     "cone_template": new ConeTemplate(this),
+    "reach_template": new ReachTemplateTool(this),
     "ping": new PingTool(this),
     "add_fog": new AddFogPen(this),
     "remove_fog": new RemoveFogPen(this),
@@ -139,6 +140,13 @@ function ToolManager(board) {
         tooltip: "Creates a cone template",
         glyph: "glyphicon glyphicon-triangle-bottom",
         handler: function() { self.setTool("cone_template"); }
+      }),
+
+      new ToolMenuItem("reach_template", {
+        label: "Reach",
+        tooltip: "Creates creature reach template",
+        glyph: "fa fa-sun-o",
+        handler: function() { self.setTool("reach_template"); }
       })
     ]),
 

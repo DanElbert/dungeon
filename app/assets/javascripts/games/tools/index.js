@@ -14,4 +14,5 @@
 //= require ./label
 //= require ./copy_paste
 //= require ./fog
+//= require ./reach_templates
 //= require ./tool_renderer

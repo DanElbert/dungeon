@@ -334,6 +334,20 @@ _.extend(actionTypes, {
     }
   }),
 
+  reachTemplateAction: createActionType("ReachTemplateAction", TemplateAction, {
+    internalTranslateData: function(action, dx, dy, cellSize){
+      action.properties.anchor = [this.properties.anchor[0] + dx, this.properties.anchor[1] + dy];
+    },
+    calculateCells: function(board) {
+      var template = Geometry.getReachCells(this.properties.anchor, this.properties.size, this.properties.reach, board.drawing.cellSize);
+      return template.threat;
+    },
+
+    validateData: function() {
+      this.ensureFields(["anchor", "size", "reach", "color", "uid"]);
+    }
+  }),
+
   pingAction: createActionType("PingAction", Action, {
     apply: function(board) {
       board.pingLayer.add(this.properties.point, this.properties.color);

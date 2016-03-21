@@ -1,6 +1,8 @@
 
 var Geometry = {
 
+  REACH_CACHE: null,
+
   // Given coordinates, returns the containing cell
   getCell: function(point, cellSize) {
     var x = Math.floor(point[0] / (cellSize));
@@ -83,6 +85,150 @@ var Geometry = {
 
   inRange: function(value, min, max) {
     return (value <= max) && (value >= min);
+  },
+
+  // Given a map point, creature size (such as huge_tall), and whether to use reach rules,
+  // returns an object with 2 properties, each an array of cells: creature and threat
+  getReachCells: function(point, size, isReach, cellSize) {
+    if (Geometry.REACH_CACHE == null) {
+      Geometry.REACH_CACHE = {
+        medium: Geometry.buildReachCells(
+            "0RR",
+            "RTT",
+            "RTC",
+            5
+        ),
+
+        large_long: Geometry.buildReachCells(
+            "0RR",
+            "RTT",
+            "RTC",
+            6
+        ),
+
+        large_tall: Geometry.buildReachCells(
+            "000RR",
+            "0RRRR",
+            "0RTTT",
+            "RRTTT",
+            "RRTTC",
+            10
+        ),
+
+        huge_long: Geometry.buildReachCells(
+            "000RRR",
+            "0RRRRR",
+            "0RTTTT",
+            "RRTTTT",
+            "RRTTCC",
+            "RRTTCC",
+            11
+        ),
+
+        huge_tall: Geometry.buildReachCells(
+            "00000RRR",
+            "000RRRRR",
+            "00RRRRRR",
+            "0RRRRTTT",
+            "0RRRTTTT",
+            "RRRTTTTT",
+            "RRRTTTCC",
+            "RRRTTTCC",
+            15
+        ),
+
+        gargantuan_long: Geometry.buildReachCells(
+            "0RR",
+            "RTC",
+            "RTC",
+            5
+        ),
+
+        gargantuan_tall: Geometry.buildReachCells(
+            "0RR",
+            "RTC",
+            "RTC",
+            5
+        ),
+
+        colossal_long: Geometry.buildReachCells(
+            "0RR",
+            "RTC",
+            "RTC",
+            5
+        ),
+
+        colossal_tall: Geometry.buildReachCells(
+            "0RR",
+            "RTC",
+            "RTC",
+            5
+        )
+      };
+    }
+
+    if (size == "small") {
+      size = "medium";
+    }
+
+    var data = Geometry.REACH_CACHE[size];
+    var cell = Geometry.getCell(point, cellSize);
+    var cellAnchor = [cell[0] - Math.floor(data.size / 2), cell[1] - Math.floor(data.size / 2)];
+
+    var mapper = function(p) {
+      return [p[0] + cellAnchor[0], p[1] + cellAnchor[1]];
+    };
+
+    return {
+      creature: _.map(data.creature, mapper),
+      threat: _.map(isReach ? data.reach : data.threat, mapper)
+    };
+  },
+
+  buildReachCells: function() {
+    var data = {
+      creature: [],
+      threat: [],
+      reach: []
+    };
+
+    var x, y;
+
+    var size = arguments[arguments.length - 1];
+    var patternSize = arguments.length - 1;
+
+    var pattern = [];
+
+    var makeRow = function(p) {
+      return p.split("").concat(p.slice(0, Math.floor(size / 2)).split("").reverse());
+    };
+
+    for (y = 0; y < patternSize; y++) {
+      pattern.push(makeRow(arguments[y]));
+    }
+
+    for (y = Math.floor(size / 2) - 1; y >= 0; y--) {
+      pattern.push(makeRow(arguments[y]));
+    }
+
+    for (x = 0; x < size; x++) {
+      for (y = 0; y < size; y++) {
+        switch (pattern[y][x]) {
+          case "C":
+            data.creature.push([x, y]);
+            break;
+          case "T":
+            data.threat.push([x, y]);
+            break;
+          case "R":
+            data.reach.push([x, y]);
+        }
+      }
+    }
+
+    data.size = size;
+
+    return data;
   },
 
   // Gets a movement path from start to end using Bresenham's Line Algorithm
