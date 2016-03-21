@@ -345,14 +345,23 @@ var Geometry = {
   getCellsOnLine: function(p1, p2, cellSize) {
     // Determine the search space by calculating the enclosing rectangle of cells
     var minX, maxX, minY, maxY;
+
+    p1 = p1.slice(0);
+    p2 = p2.slice(0);
+
+    // For straight lines, the following algorithm will produce no cells.  This shows a preference to returns cells
+    // towards the positive axis
+    if (p1[0] == p2[0]) { p2[0] = p2[0] + cellSize; }
+    if (p1[1] == p2[1]) { p2[1] = p2[1] + cellSize; }
+
     var bounds = Geometry.getBoundingCellBox([p1, p2], cellSize);
     minX = bounds[0][0];
     maxX = bounds[1][0];
     minY = bounds[0][1];
     maxY = bounds[1][1];
 
-    // For each cell in the search space, check the position of each cell vertex against the line.  If any points lie
-    // on the line or if any two points have a different val for isLeft, the cell is included
+    // For each cell in the search space, check the position of each cell vertex against the line.  If
+    // any two points have a different non-zero val for isLeft, the cell is included
     var cells = [];
 
     for (var x = minX; x <= maxX; x++) {

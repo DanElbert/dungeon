@@ -158,12 +158,20 @@ function BoardEvents(board) {
     });
   };
 
-  this.scrollHandler = function(deltaX, deltaY) {
+  this.scrollHandler = function(evt) {
+
+    var deltaX = evt.deltaX;
+    var deltaY = evt.deltaY;
+
+    // Page at a time mode.
+    if (evt.deltaMode == 2) {
+      deltaX = deltaX * 40;
+      deltaY = deltaY * 40;
+    }
+
     jqThis.trigger('scroll', {
       deltaX: deltaX,
       deltaY: deltaY,
-      mapScaledDeltaX: deltaX / self.board.getZoom(),
-      mapScaledDeltaY: deltaY / self.board.getZoom(),
       mapPoint: self.getMapCoordinates(self.mouseCanvasPoint[0], self.mouseCanvasPoint[1])
     });
   };
@@ -248,7 +256,7 @@ function BoardEvents(board) {
   // Special event handling for mouse wheel events.
   // jQuery doesn't handle this well; see javascripts/mouse_wheel_events
   addWheelListener(board.canvas, function(evt) {
-    self.scrollHandler(evt.deltaX, evt.deltaY);
+    self.scrollHandler(evt);
     evt.preventDefault();
   });
 
