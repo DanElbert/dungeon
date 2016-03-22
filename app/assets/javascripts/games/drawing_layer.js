@@ -3,9 +3,22 @@ function DrawingLayer(imageCache) {
   this.tileList = [];
   this.tileLookup = {};
   this.isOwner = false;
+  this.fogCover = false;
   this.imageCache = imageCache;
 }
 _.extend(DrawingLayer.prototype, {
+
+  // Sets fogCover.  When true, all tiles fully fogged by default
+  setFogCover: function(shouldCover) {
+    shouldCover = !!shouldCover;
+    if (this.fogCover != shouldCover) {
+      this.fogCover = shouldCover;
+      _.each(this.tileList, function(tile) {
+        tile.setFogCover(shouldCover);
+      }, this);
+    }
+  },
+
   addAction: function(a) {
     var actionBounds = a.bounds();
     var tiles = this.getTilesForRectangle(actionBounds[0], actionBounds[1]);
@@ -59,7 +72,7 @@ _.extend(DrawingLayer.prototype, {
         var tile = this.tileLookup[key];
 
         if (tile == null) {
-          tile = new Tile(this.tileSize, x, y, this.isOwner, this.imageCache);
+          tile = new Tile(this.tileSize, x, y, this.isOwner, this.imageCache, this.fogCover);
           this.tileLookup[key] = tile;
           this.tileList.push(tile);
         }
@@ -76,7 +89,7 @@ _.extend(DrawingLayer.prototype, {
   }
 });
 
-function Tile(size, x, y, isOwner, imageCache) {
+function Tile(size, x, y, isOwner, imageCache, fogCover) {
   this.size = size;
   this.isOwner = isOwner;
   this.x = x;
@@ -91,6 +104,7 @@ function Tile(size, x, y, isOwner, imageCache) {
   this.drawing = null;
   this.imageCache = imageCache;
   this.isFogDisabled = false;
+  this.fogCover = fogCover;
 
   this.fogCanvas = null;
   this.fogContext = null;
@@ -99,6 +113,15 @@ function Tile(size, x, y, isOwner, imageCache) {
 _.extend(Tile.prototype, {
   is: function(x, y) {
     return x == this.x && y == this.y;
+  },
+
+  setFogCover: function(fogCover) {
+    fogCover = !!fogCover;
+    if (fogCover != this.fogCover) {
+      this.clear();
+      this.fogActions = [];
+      this.fogCover = fogCover;
+    }
   },
 
   addAction: function(a) {
@@ -149,7 +172,13 @@ _.extend(Tile.prototype, {
     this.ensureCanvas();
 
     this.context.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
-    this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+
+    if (this.fogCover) {
+      this.fogContext.fillStyle = "rgba(1, 1, 1, 1)";
+      this.fogContext.fillRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    } else {
+      this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    }
 
     var d = this.drawing;
     var fd = this.fogDrawing;

@@ -161,6 +161,17 @@ function ToolManager(board) {
         label: "Remove Fog",
         glyph: "glyphicon glyphicon-eye-open",
         handler: function() { self.setTool("remove_fog"); }
+      }),
+
+      new ToolMenuItem("fog_all", {
+        label: "Fog Everything",
+        glyph: "",
+        handler: function() {
+          if (confirm("Are you sure?  This cannot be undone")) {
+            var action = {actionType: "fogEverythingAction", uid: generateActionId()};
+            self.board.addAction(action, null, true);
+          }
+        }
       })
     ]),
 

@@ -136,6 +136,16 @@ _.extend(actionTypes, {
     }
   }),
 
+  fogEverythingAction: createActionType("FogEverythingAction", Action, {
+    isPersistent: function() { return true; },
+    apply: function(board) {
+      board.resetFog(true);
+    },
+    validateData: function() {
+      this.ensureFields(["uid"]);
+    }
+  }),
+
   // Draws a square.  Requires topLeft, bottomRight, color, and width
   squarePenAction: createActionType("SquarePenAction", DrawingAction, {
     initialize: function(actionData) {

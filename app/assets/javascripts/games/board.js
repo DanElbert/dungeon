@@ -162,6 +162,10 @@ function Board(canvas, cameraApi) {
     }
   };
 
+  this.resetFog = function(fillFog) {
+    this.drawingLayer.setFogCover(fillFog);
+  };
+
   this.refresh = function(data) {
 
     if (!data) {
