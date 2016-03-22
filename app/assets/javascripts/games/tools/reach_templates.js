@@ -40,7 +40,6 @@ ReachTemplateTool.prototype = _.extend(ReachTemplateTool.prototype, Tool.prototy
   },
 
   disable: function () {
-    this.saveAction();
     $(this.board.event_manager).off('.' + this.eventNamespace());
   },
 
@@ -58,7 +57,7 @@ ReachTemplateTool.prototype = _.extend(ReachTemplateTool.prototype, Tool.prototy
     }
 
     var template = Geometry.getReachCells(this.cursor, this.size, this.reach, this.board.drawing.cellSize);
-    var creature_border = Geometry.getBorder(template.creature, this.board.drawing.cellSize);
+    var creature_border = Geometry.getBorder(template.threat, this.board.drawing.cellSize);
 
     this.board.drawing.drawTemplate(template.threat, creature_border, this.color);
   }

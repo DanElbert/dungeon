@@ -336,7 +336,7 @@ _.extend(actionTypes, {
 
   reachTemplateAction: createActionType("ReachTemplateAction", TemplateAction, {
     internalTranslateData: function(action, dx, dy, cellSize){
-      action.properties.anchor = [this.properties.anchor[0] + dx, this.properties.anchor[1] + dy];
+      action.properties.anchor = [this.properties.anchor[0] + (dx * cellSize), this.properties.anchor[1] + (dy * cellSize)];
     },
     calculateCells: function(board) {
       var template = Geometry.getReachCells(this.properties.anchor, this.properties.size, this.properties.reach, board.drawing.cellSize);

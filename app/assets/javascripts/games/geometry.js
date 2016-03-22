@@ -138,31 +138,63 @@ var Geometry = {
         ),
 
         gargantuan_long: Geometry.buildReachCells(
-            "0RR",
-            "RTC",
-            "RTC",
-            5
+            "00000RRR",
+            "000RRRRR",
+            "00RRRRRR",
+            "0RRRRTTT",
+            "0RRRTTTT",
+            "RRRTTTTT",
+            "RRRTTTCC",
+            "RRRTTTCC",
+            16
         ),
 
         gargantuan_tall: Geometry.buildReachCells(
-            "0RR",
-            "RTC",
-            "RTC",
-            5
+            "0000000RRR",
+            "00000RRRRR",
+            "0000RRRRRR",
+            "000RRRRRRR",
+            "00RRRRRTTT",
+            "0RRRRTTTTT",
+            "0RRRRTTTTT",
+            "RRRRTTTTTT",
+            "RRRRTTTTCC",
+            "RRRRTTTTCC",
+            20
         ),
 
         colossal_long: Geometry.buildReachCells(
-            "0RR",
-            "RTC",
-            "RTC",
-            5
+            "0000000RRRR",
+            "00000RRRRRR",
+            "0000RRRRRRR",
+            "000RRRRRRRR",
+            "00RRRRRTTTT",
+            "0RRRRTTTTTT",
+            "0RRRRTTTTTT",
+            "RRRRTTTTTTT",
+            "RRRRTTTTCCC",
+            "RRRRTTTTCCC",
+            "RRRRTTTTCCC",
+            22
         ),
 
         colossal_tall: Geometry.buildReachCells(
-            "0RR",
-            "RTC",
-            "RTC",
-            5
+            "00000000000RRRR",
+            "000000000RRRRRR",
+            "0000000RRRRRRRR",
+            "00000RRRRRRRRRR",
+            "0000RRRRRRRRRRR",
+            "000RRRRRRRRRRRR",
+            "000RRRRRRRRRTTT",
+            "00RRRRRRRRTTTTT",
+            "00RRRRRRTTTTTTT",
+            "0RRRRRRRTTTTTTT",
+            "0RRRRRRTTTTTTTT",
+            "RRRRRRRTTTTTTTT",
+            "RRRRRRTTTTTTCCC",
+            "RRRRRRTTTTTTCCC",
+            "RRRRRRTTTTTTCCC",
+            30
         )
       };
     }
