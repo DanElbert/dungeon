@@ -38,13 +38,13 @@ function ToolManager(board) {
     new ToolMenuGroup("pointer_group", [
       new ToolMenuItem("pointer", {
         label: "Pointer",
-        glyph: "glyphicon glyphicon-move",
+        glyph: "fa fa-mouse-pointer",
         handler: function() { self.setTool("pointer"); }
       }),
 
       new ToolMenuItem("ping", {
         label: "Ping",
-        glyph: "glyphicon glyphicon-screenshot",
+        glyph: "fa fa-bullseye",
         handler: function() { self.setTool("ping"); }
       })
     ]),
@@ -153,22 +153,37 @@ function ToolManager(board) {
     new ToolMenuGroup("fog_group", [
       new ToolMenuItem("add_fog", {
         label: "Add Fog",
+        tooltip: "Draw to add fog",
         glyph: "glyphicon glyphicon-cloud",
         handler: function() { self.setTool("add_fog"); }
       }),
 
       new ToolMenuItem("remove_fog", {
         label: "Remove Fog",
+        tooltip: "Draw to remove fog",
         glyph: "glyphicon glyphicon-eye-open",
         handler: function() { self.setTool("remove_fog"); }
       }),
 
       new ToolMenuItem("fog_all", {
         label: "Fog Everything",
-        glyph: "",
+        tooltip: "Covers entire map in fog",
+        glyph: "fa fa-square",
         handler: function() {
           if (confirm("Are you sure?  This cannot be undone")) {
             var action = {actionType: "fogEverythingAction", uid: generateActionId()};
+            self.board.addAction(action, null, true);
+          }
+        }
+      }),
+
+      new ToolMenuItem("fog_none", {
+        label: "Clear Fog",
+        tooltip: "Removes fog from entire map",
+        glyph: "fa fa-lightbulb-o",
+        handler: function() {
+          if (confirm("Are you sure?  This cannot be undone")) {
+            var action = {actionType: "fogNothingAction", uid: generateActionId()};
             self.board.addAction(action, null, true);
           }
         }

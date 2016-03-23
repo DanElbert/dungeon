@@ -9,14 +9,12 @@ function DrawingLayer(imageCache) {
 _.extend(DrawingLayer.prototype, {
 
   // Sets fogCover.  When true, all tiles fully fogged by default
-  setFogCover: function(shouldCover) {
+  resetFog: function(shouldCover) {
     shouldCover = !!shouldCover;
-    if (this.fogCover != shouldCover) {
-      this.fogCover = shouldCover;
-      _.each(this.tileList, function(tile) {
-        tile.setFogCover(shouldCover);
-      }, this);
-    }
+    this.fogCover = shouldCover;
+    _.each(this.tileList, function(tile) {
+      tile.resetFog(shouldCover);
+    }, this);
   },
 
   addAction: function(a) {
@@ -115,13 +113,11 @@ _.extend(Tile.prototype, {
     return x == this.x && y == this.y;
   },
 
-  setFogCover: function(fogCover) {
+  resetFog: function(fogCover) {
     fogCover = !!fogCover;
-    if (fogCover != this.fogCover) {
-      this.clear();
-      this.fogActions = [];
-      this.fogCover = fogCover;
-    }
+    this.clear();
+    this.fogActions = [];
+    this.fogCover = fogCover;
   },
 
   addAction: function(a) {
