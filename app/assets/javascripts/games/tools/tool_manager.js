@@ -56,6 +56,14 @@ function ToolManager(board) {
         handler: function(zoom) { self.changeZoom(zoom); }
       }),
 
+      new ToolMenuItem("fullscreen", {
+        label: "Fullscreen",
+        glyph: "fa fa-television",
+        handler: function() {
+          self.board.toggleFullscreen();
+        }
+      }),
+
       new ToolMenuItem("add_viewport_savepoint", {
         label: "Add View Savepoint",
         glyph: "glyphicon glyphicon-plus",

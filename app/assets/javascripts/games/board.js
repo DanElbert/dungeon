@@ -166,6 +166,11 @@ function Board(canvas, cameraApi) {
     this.drawingLayer.resetFog(fillFog);
   };
 
+  this.toggleFullscreen = function() {
+
+    window.toggleDungeonFullscreen();
+  };
+
   this.refresh = function(data) {
 
     if (!data) {

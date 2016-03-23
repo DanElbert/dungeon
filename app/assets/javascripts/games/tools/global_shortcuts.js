@@ -40,6 +40,10 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
         // s key
         self.stickyViewPort = {zoom: self.board.getZoom(), coordinates: self.board.getViewPortCoordinates()};
       }
+
+      if (mapEvt.key == 70) {
+        self.board.toggleFullscreen();
+      }
     });
 
     $(this.board.event_manager).on('keyup.GlobalShortCuts', function(evt, mapEvt) {

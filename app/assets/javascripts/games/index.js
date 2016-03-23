@@ -1,4 +1,5 @@
 //= require ./geometry
+//= require ./fullscreen
 //= require ./initiative
 //= require ./initiative_manager
 //= require ./animation
