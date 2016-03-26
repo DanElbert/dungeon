@@ -69,6 +69,27 @@ input[type=number] {
   -moz-appearance:textfield;
 }
 
+ul.game-list {
+
+  .game-label {
+    display: inline-block;
+  }
+
+  .name {
+    font-size: 150%;
+  }
+
+  .timestamp {
+    font-size: 90%;
+    color: $gray-light;
+  }
+
+  .controls {
+    padding-top: 5px;
+    display: inline-block;
+    float: right;
+  }
+}
 
 //input[type="number"] {
 //    border: 1px solid #ccc;

@@ -11,20 +11,27 @@
     <% games.each do |game| %>
 
       <li class="list-group-item">
-        <h4 class="list-group-item-heading"><%= link_to game.name, game_path(game) %> <span class="created pull-right"><span class="fa fa-clock-o"></span> <%= game.created_at.localtime.strftime("%m/%d/%y %H:%M") %></span></h4>
-        <p class="list-group-item-text">
-          <%= link_to initiative_game_path(game), class: 'btn btn-default btn-sm' do %>
+        <div class="game-label">
+          <%= link_to game.name, game_path(game), class: 'name' %>
+          <br />
+          <span class="timestamp">
+            <span class="fa fa-clock-o"></span> <%= game.created_at.localtime.strftime("%m/%d/%y %H:%M") %>
+          </span>
+        </div>
+
+        <div class="controls">
+          <%= link_to initiative_game_path(game), class: 'btn btn-default', data: {toggle: 'tooltip'}, title: 'Initiative' do %>
             <span class="fa fa-hourglass"></span>
           <% end %>
           <%= if_owner(game) do %>
-            <%= link_to edit_game_path(game), class: 'btn btn-default btn-sm' do %>
+            <%= link_to edit_game_path(game), class: 'btn btn-default', data: {toggle: 'tooltip'}, title: 'Edit' do %>
               <span class="fa fa-edit"></span>
             <% end %>
-            <%= link_to game_path(game), { method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn btn-danger btn-sm' } do %>
+            <%= link_to game_path(game), { method: :delete, data: {confirm: 'Are you sure?', toggle: 'tooltip'}, class: 'btn btn-danger', title: 'Delete' } do %>
               <span class="glyphicon glyphicon-remove"></span>
             <% end %>
           <% end %>
-        </p>
+        </div>
       </li>
 
     <% end %>
@@ -33,3 +40,8 @@
 <% end %>
 
 
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+</script>
