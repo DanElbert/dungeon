@@ -33,12 +33,13 @@
 
     <div class="collapse navbar-collapse navbar-right" id="nav-collapse">
       <ul class="nav navbar-nav">
-        <% if current_user %>
-          <li><%= link_to "Logout", logout_path %></li>
-          <li><%= link_to "Profile", edit_user_path %></li>
-        <% end %>
         <%= if_admin do %>
           <li><%= link_to "Admin", admin_path %></li>
+        <% end %>
+        <% if current_user %>
+          <li><%= link_to "About", about_path %></li>
+          <li><%= link_to "Profile", edit_user_path %></li>
+          <li><%= link_to "Logout", logout_path %></li>
         <% end %>
       </ul>
     </div>

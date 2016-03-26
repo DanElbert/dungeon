@@ -2,7 +2,6 @@ Dungeon::Application.routes.draw do
 
   resources :campaigns do
     resources :games, :only => [:new, :create]
-    #resources :images, :only => [:destroy]
     resources :images, :only => [:new, :create]
   end
 
@@ -33,6 +32,8 @@ Dungeon::Application.routes.draw do
   match '/login' => 'users#login', :via => :get, :as => :login
   match '/login' => 'users#verify_login', :via => :post
   match '/logout' => 'users#logout', :via => :get, :as => :logout
+
+  match '/about' => 'campaigns#about', via: :get, as: :about
 
   root :to => 'campaigns#index'
 end

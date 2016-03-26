@@ -27,7 +27,7 @@
             <%= link_to edit_game_path(game), class: 'btn btn-default', data: {toggle: 'tooltip'}, title: 'Edit' do %>
               <span class="fa fa-edit"></span>
             <% end %>
-            <%= link_to game_path(game), { method: :delete, data: {confirm: 'Are you sure?', toggle: 'tooltip'}, class: 'btn btn-danger', title: 'Delete' } do %>
+            <%= link_to game_path(game), { method: :delete, class: 'btn btn-danger', title: 'Delete', data: {confirm: 'Are you sure?', toggle: 'tooltip'}} do %>
               <span class="glyphicon glyphicon-remove"></span>
             <% end %>
           <% end %>

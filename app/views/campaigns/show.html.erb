@@ -13,6 +13,14 @@
 
 <div class="row">
   <div class="col-xs-12">
+    <% if if_owner(@campaign) %>
+      <%= link_to 'Add Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
     <%= render :partial => 'game_table', :locals => {:games => @campaign.active_games, :title => 'Active Games'} %>
   </div>
 </div>
@@ -34,8 +42,8 @@
 <div class="row">
   <div class="col-xs-12">
     <% if if_owner(@campaign) %>
-      <%= link_to 'Edit', edit_campaign_path(@campaign), class: 'btn btn-primary' %>
-      <%= link_to 'Create New Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
+      <%= link_to 'Change Campaign Name', edit_campaign_path(@campaign), class: 'btn btn-primary' %>
+      <%= link_to 'Add Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
     <% end %>
     <%= link_to 'Back to Lobby', campaigns_path, class: 'btn btn-primary' %>
   </div>
