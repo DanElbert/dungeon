@@ -262,73 +262,85 @@ function BoardEvents(board) {
 
   this.draggingFingers = 0;
 
-  jqCanvas.hammer({
-    drag_max_touches: 2,
-    correct_for_drag_min_distance: true,
-    hold_threshold: 2000,
-    prevent_mouseevents: true,
-    swipe: false,
-    transform: false
+  var hammer = new Hammer.Manager(jqCanvas[0], {
+    inputClass: Hammer.TouchInput,
+    recognizers: [
+      // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
+      [Hammer.Tap, {taps: 1, event: "tap"}],
+      [Hammer.Press, {time: 500}],
+      [Hammer.Pan, {event: "drag"}],
+      [Hammer.Pan, {event: "twofingerdrag", pointers: 2}],
+      [Hammer.Pinch, { }, ["twofingerdrag"]]
+    ]
   });
 
-  jqCanvas.on('tap.BoardEvents', function(evt) {
-    var coords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+  //jqCanvas.hammer({
+  //  drag_max_touches: 2,
+  //  correct_for_drag_min_distance: true,
+  //  hold_threshold: 2000,
+  //  prevent_mouseevents: true,
+  //  swipe: false,
+  //  transform: false
+  //});
+
+  hammer.on('tap', function(evt) {
+    var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     self.cursorDownHandler(coords, self.leftMouseState);
     self.cursorUpHandler(self.leftMouseState);
   });
 
-  jqCanvas.on('dragstart.BoardEvents', function(evt) {
-    var coords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
-    self.draggingFingers = evt.gesture.touches.length;
-    if (evt.gesture.touches.length == 1) {
+  hammer.on('dragstart twofingerdragstart', function(evt) {
+    var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
+    self.draggingFingers = evt.pointers.length;
+    if (self.draggingFingers == 1) {
       self.cursorDownHandler(coords, self.leftMouseState);
-    } else if (evt.gesture.touches.length == 2) {
+    } else if (self.draggingFingers == 2) {
       self.cursorDownHandler(coords, self.rightMouseState);
     }
   });
 
-  jqCanvas.on('drag.BoardEvents', function(evt) {
-    if (self.draggingFingers != evt.gesture.touches.length) {
+  hammer.on('drag twofingerdrag', function(evt) {
+    if (self.draggingFingers != evt.pointers.length) {
       self.cursorUpHandler(self.leftMouseState);
       self.cursorUpHandler(self.rightMouseState);
       return;
     }
-    var coords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
-    if (evt.gesture.touches.length == 1) {
+    var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
+    if (evt.pointers.length == 1) {
       self.cursorMoveHandler(coords, self.leftMouseState);
-    } else if (evt.gesture.touches.length == 2) {
+    } else if (evt.pointers.length == 2) {
       self.cursorMoveHandler(coords, self.rightMouseState);
     }
   });
 
-  jqCanvas.on('dragend.BoardEvents', function(evt) {
-    if (evt.gesture.touches.length == 1) {
+  hammer.on('dragend twofingerdragend', function(evt) {
+    if (evt.pointers.length == 1) {
       self.cursorUpHandler(self.leftMouseState);
-    } else if (evt.gesture.touches.length == 2) {
+    } else if (evt.pointers.length == 2) {
       self.cursorUpHandler(self.rightMouseState);
     }
   });
 
-  jqCanvas.on('pinchstart.BoardEvents', function(evt) {
-    var canvasCoords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+  hammer.on('pinchstart', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     jqThis.trigger('pinchstart', {
-      scale: evt.gesture.scale,
+      scale: evt.scale,
       center: mapCoords
     });
   });
 
-  jqCanvas.on('pinch.BoardEvents', function(evt) {
-    var canvasCoords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+  hammer.on('pinch', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     jqThis.trigger('pinch', {
-      scale: evt.gesture.scale,
+      scale: evt.scale,
       center: mapCoords
     });
   });
 
-  jqCanvas.on('hold.BoardEvents', function(evt) {
-    var canvasCoords = self.getCanvasCoordinates(evt.gesture.center.pageX, evt.gesture.center.pageY);
+  hammer.on('press', function(evt) {
+    var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     jqThis.trigger('hold', {
       mapPoint: mapCoords,

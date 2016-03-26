@@ -165,7 +165,16 @@
           .append($popup)
           .appendTo($button.parent());
 
+        var namespace = "." + pluginName + "_popupMouseTracker_" + privateMethods.generateId();
+
+        $button.data(pluginName + "_mouseHandler", namespace);
         $button.data(pluginName + "_popup", $wrapper);
+
+        $("body").on("mousedown" + namespace + " touchstart" + namespace, function(e) {
+          if (!$.contains($wrapper[0], e.target)) {
+            privateMethods.closePopup($button);
+          }
+        });
 
         _.each(tool.children, function(c) {
           if (!c.visible) {
@@ -223,8 +232,7 @@
         var $popup = $button.data(pluginName + "_popup");
 
         if ($popup) {
-          var namespace = "." + pluginName + "_popupMouseTracker_" + privateMethods.generateId();
-          $button.data(pluginName + "_mouseHandler", namespace);
+          var namespace = $button.data(pluginName + "_mouseHandler");
 
           var moveHandler = function(evt) {
             var buttonBox = privateMethods.getElementBox($button);

@@ -16,7 +16,7 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   background-color: $brand-primary;
   border: none;
   color: $btn-default-color;
-  font-size: 20px;
+  font-size: 22px;
 
   &:hover {
     background-color: lighten($brand-primary, 15%);
@@ -43,7 +43,7 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   white-space: pre;
   text-align: left;
   color: $text-color;
-  width: 175px;
+  width: 180px;
 
   .glyphicon, .fa {
     padding-right: 10px;
@@ -58,8 +58,8 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   padding: 0 4px;
   margin: 4px;
   text-align: left;
-  width: 160px;
-  font-size: 18px;
+  width: 175px;
+  font-size: 20px;
 
   &:hover {
     border: solid 2px $gray-lighter;
