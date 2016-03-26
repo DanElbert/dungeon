@@ -269,19 +269,10 @@ function BoardEvents(board) {
       [Hammer.Tap, {taps: 1, event: "tap"}],
       [Hammer.Press, {time: 500}],
       [Hammer.Pan, {event: "drag"}],
-      [Hammer.Pan, {event: "twofingerdrag", pointers: 2}],
-      [Hammer.Pinch, { }, ["twofingerdrag"]]
+      [Hammer.Pan, {event: "twofingerdrag", pointers: 2, threshold: 10}],
+      [Hammer.Pinch, {threshold: 0 }, ["twofingerdrag"]]
     ]
   });
-
-  //jqCanvas.hammer({
-  //  drag_max_touches: 2,
-  //  correct_for_drag_min_distance: true,
-  //  hold_threshold: 2000,
-  //  prevent_mouseevents: true,
-  //  swipe: false,
-  //  transform: false
-  //});
 
   hammer.on('tap', function(evt) {
     var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
@@ -330,7 +321,7 @@ function BoardEvents(board) {
     });
   });
 
-  hammer.on('pinch', function(evt) {
+  hammer.on('pinchmove', function(evt) {
     var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     jqThis.trigger('pinch', {

@@ -93,7 +93,7 @@ var Geometry = {
     if (Geometry.REACH_CACHE == null) {
       Geometry.REACH_CACHE = {
         medium: Geometry.buildReachCells(
-            "0RR",
+            "RRR",
             "RTT",
             "RTC",
             5
@@ -185,12 +185,12 @@ var Geometry = {
             "00000RRRRRRRRRR",
             "0000RRRRRRRRRRR",
             "000RRRRRRRRRRRR",
-            "000RRRRRRRRRTTT",
-            "00RRRRRRRRTTTTT",
+            "000RRRRRRRRTTTT",
+            "00RRRRRRRTTTTTT",
             "00RRRRRRTTTTTTT",
-            "0RRRRRRRTTTTTTT",
             "0RRRRRRTTTTTTTT",
-            "RRRRRRRTTTTTTTT",
+            "0RRRRRRTTTTTTTT",
+            "RRRRRRTTTTTTTTT",
             "RRRRRRTTTTTTCCC",
             "RRRRRRTTTTTTCCC",
             "RRRRRRTTTTTTCCC",
