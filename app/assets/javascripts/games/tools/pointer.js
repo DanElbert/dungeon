@@ -93,6 +93,10 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
       var dy = this.template_current_cell[1] - this.template_start_cell[1];
       var cellSize = this.board.drawing.cellSize;
 
+      if (dx != 0 || dy != 0) {
+        this.board.drawing.drawMovementLine(this.template_start_cell, this.template_current_cell);
+      }
+
       border = _.map(this.selected_template.getBorder(this.board), function(line) {
         return {
           start: [line.start[0] + dx * cellSize, line.start[1] + dy * cellSize],
