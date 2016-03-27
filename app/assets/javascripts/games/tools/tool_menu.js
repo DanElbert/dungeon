@@ -80,7 +80,7 @@
 
         if (tool.tooltip) {
           item.attr('title', tool.tooltip);
-          item.tooltip({placement: 'right'});
+          item.tooltip({placement: 'right', trigger: 'hover'});
         }
 
         var evtData = {menu: $this, tool: tool};

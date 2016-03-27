@@ -90,7 +90,13 @@ var TemplateAction = createActionType("TemplateAction", Action, {
 _.extend(actionTypes, {
   labelAction: createActionType("LabelAction", DrawingAction, {
     draw: function(drawing) {
-      drawing.drawLabel(this.properties.point, this.properties.text, this.properties.color, "rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255, 0.25");
+      drawing.drawLabel(
+        this.properties.point,
+        this.properties.text,
+        this.properties.color,
+        "rgba(0, 0, 0, 0.5)",
+        this.properties.backgroundColor || "rgba(255, 255, 255, 0.25",
+        this.properties.fontSize);
     },
     calculateBounds: function() {
       return this.properties.bound;

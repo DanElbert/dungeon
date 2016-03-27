@@ -11,16 +11,6 @@ var game_data = null;
 
 function startGameBoard() {
 
-//  // Disable mobile device scrolling
-//  function stopScrolling( touchEvent ) { touchEvent.preventDefault(); }
-//  document.addEventListener( 'touchmove' , stopScrolling , false );
-
-  $('body').delegate('#game_container','touchmove',function(e){
-    e.preventDefault();
-  }).delegate('.scroll','touchmove',function(){
-    e.stopPropagation();
-  });
-
   $(document).ready(function () {
     var camera = InitializeCameraApi();
 

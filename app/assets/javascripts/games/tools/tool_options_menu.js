@@ -63,13 +63,16 @@
           case "creatureSize":
             $widget = privateMethods.buildCreatureSize(to);
             break;
+          case "text":
+            $widget = privateMethods.buildTextOption(to);
+            break;
           default:
             $widget = $("<span>" + to.name + "</span>");
         }
 
         $this.append($widget);
         $widget.attr("title", to.label || to.name);
-        $widget.tooltip({});
+        $widget.tooltip({trigger: "hover"});
 
       }, this);
     },
@@ -236,6 +239,20 @@
       }
 
       return $wrapper;
+    },
+
+    buildTextOption: function(toolOption) {
+      var $widget = $('<div></div>')
+        .addClass('option_menu');
+
+      var $input = $("<input />")
+        .attr("type", "text")
+        .appendTo($widget)
+        .on("keyup change blur", function() {
+          toolOption.value = $input.val();
+        });
+
+      return $widget;
     }
   };
 

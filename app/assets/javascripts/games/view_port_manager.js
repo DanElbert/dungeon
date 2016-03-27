@@ -120,7 +120,7 @@ _.extend(ViewPortManager.prototype, {
   normalizeZoom: function(zoom) {
     var zoomMax = 2.5;
     var zoomMin = 0.3;
-    var newZoom = Math.round(zoom * 100) / 100;
+    var newZoom = zoom;
     newZoom = Math.min(zoomMax, newZoom);
     newZoom = Math.max(zoomMin, newZoom);
     return newZoom;

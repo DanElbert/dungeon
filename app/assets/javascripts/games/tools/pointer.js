@@ -75,7 +75,7 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
 
   removeTemplate: function(template) {
     var removeAction = {actionType: "removeTemplateAction", actionId: template.uid, uid: generateActionId()};
-    var restoreAction = template.clone();
+    var restoreAction = template.clone().properties;
     this.board.addAction(removeAction, restoreAction, true);
   },
 

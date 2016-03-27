@@ -1,11 +1,11 @@
 // Cross browser mouse wheel event normalizing code
-// Taken from MDN: https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/wheel
+// Taken from MDN: https://developer.mozilla.org/en-US/docs/Web/Events/wheel
 
-// creates a global "addwheelListener" method
+// creates a global "addWheelListener" method
 // example: addWheelListener( elem, function( e ) { console.log( e.deltaY ); e.preventDefault(); } );
 (function(window,document) {
 
-  var prefix = "", _addEventListener, onwheel, support;
+  var prefix = "", _addEventListener, support;
 
   // detect event model
   if ( window.addEventListener ) {
@@ -17,8 +17,8 @@
 
   // detect available wheel event
   support = "onwheel" in document.createElement("div") ? "wheel" : // Modern browsers support "wheel"
-      document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
-          "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
+    document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
+      "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
 
   window.addWheelListener = function( elem, callback, useCapture ) {
     _addWheelListener( elem, support, callback, useCapture );
@@ -41,21 +41,19 @@
         type: "wheel",
         deltaMode: originalEvent.type == "MozMousePixelScroll" ? 0 : 1,
         deltaX: 0,
-        delatZ: 0,
+        deltaZ: 0,
         preventDefault: function() {
           originalEvent.preventDefault ?
-              originalEvent.preventDefault() :
-              originalEvent.returnValue = false;
+            originalEvent.preventDefault() :
+            originalEvent.returnValue = false;
         }
       };
 
-      var webKitScaleFactor = -1/5;
-
       // calculate deltaY (and deltaX) according to the event
       if ( support == "mousewheel" ) {
-        event.deltaY = webKitScaleFactor * originalEvent.wheelDelta;
+        event.deltaY = - 1/40 * originalEvent.wheelDelta;
         // Webkit also support wheelDeltaX
-        originalEvent.wheelDeltaX && ( event.deltaX = webKitScaleFactor * originalEvent.wheelDeltaX );
+        originalEvent.wheelDeltaX && ( event.deltaX = - 1/40 * originalEvent.wheelDeltaX );
       } else {
         event.deltaY = originalEvent.detail;
       }
