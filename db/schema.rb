@@ -14,11 +14,11 @@
 ActiveRecord::Schema.define(version: 20160416184158) do
 
   create_table "board_actions", force: :cascade do |t|
-    t.string   "action_type", limit: 255
-    t.string   "uid",         limit: 255
+    t.string   "action_type"
+    t.string   "uid"
     t.text     "properties"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "board_id"
   end
 
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20160416184158) do
     t.integer  "detect_width"
     t.integer  "detect_height"
     t.integer  "image_orientation"
-    t.string   "state",             limit: 255
+    t.string   "state"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "detect_origin_x"
@@ -39,41 +39,41 @@ ActiveRecord::Schema.define(version: 20160416184158) do
 
   create_table "boards", force: :cascade do |t|
     t.integer  "game_id"
-    t.string   "name",                limit: 255
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "background_image_id"
     t.string   "grid_color"
   end
 
   create_table "campaigns", force: :cascade do |t|
-    t.string   "name",       limit: 255
+    t.string   "name"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "games", force: :cascade do |t|
-    t.string   "status",      limit: 255
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.string   "name",        limit: 255
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
     t.integer  "user_id"
     t.integer  "campaign_id"
   end
 
   create_table "images", force: :cascade do |t|
     t.integer  "campaign_id"
-    t.string   "filename",    limit: 255
+    t.string   "filename"
     t.binary   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "type",        limit: 255
+    t.string   "type"
   end
 
   create_table "initiative_histories", force: :cascade do |t|
     t.integer  "game_id"
-    t.string   "name",       limit: 255
+    t.string   "name"
     t.integer  "use_count"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -84,21 +84,21 @@ ActiveRecord::Schema.define(version: 20160416184158) do
 
   create_table "initiatives", force: :cascade do |t|
     t.integer  "game_id"
-    t.string   "name",       limit: 255
+    t.string   "name"
     t.integer  "value"
     t.integer  "sort_order"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",           limit: 255
-    t.string   "name",            limit: 255
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.string   "password_digest", limit: 255
+    t.string   "email"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "password_digest"
     t.boolean  "is_admin"
-    t.string   "auth_token",      limit: 255
+    t.string   "auth_token"
     t.string   "username"
   end
 

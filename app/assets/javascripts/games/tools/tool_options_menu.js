@@ -134,7 +134,8 @@
         {name: "Orange", color: "#FF7538"},
         {name: "Red", color: "#EE204D"},
         {name: "Purple", color: "#926EAE"},
-        {name: "Yellow", color: "#FCE883"}
+        {name: "Yellow", color: "#FCE883"},
+        {name: "White", color: "#FFFFFF"}
       ];
 
       var clear = {name: "Clear", color: null};

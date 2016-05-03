@@ -60,7 +60,7 @@ LabelTool.prototype = _.extend(LabelTool.prototype, Tool.prototype, {
       this.textBounds = this.board.drawing.drawLabel(this.cursor, this.text, this.color, "rgba(0, 0, 0, 1.0)", this.backgroundColor, this.fontSize);
     }
 
-    if (this.cursor) {
+    if (this.cursor && (this.text == null || this.text.length == 0)) {
       this.drawCross(this.cursor);
     }
   },
