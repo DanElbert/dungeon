@@ -136,10 +136,10 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
   },
 
-  drawSquare: function(topLeft, bottomRight, color, bgColor, width) {
+  drawSquare: function(topLeft, bottomRight, color, bgColor, width, lineCap) {
     this.context.lineWidth = width;
     this.context.strokeStyle = color;
-    this.context.lineCap = 'round';
+    this.context.lineCap = lineCap || "round";
 
     this.context.beginPath();
     this.context.moveTo(topLeft[0], topLeft[1]);

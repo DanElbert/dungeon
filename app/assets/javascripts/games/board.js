@@ -269,8 +269,15 @@ function Board(canvas, cameraApi) {
       this.context.save();
       this.context.setTransform(1, 0, 0, 1, 0, 0);
 
-      this.context.setLineDash([20, 40]);
-      this.drawing.drawSquare([width / 2, width / 2], [this.canvas.width - (width / 2), this.canvas.height - (width / 2)], 'rgb(0,0,0)', null, width);
+      if (Math.floor(Date.now() / 1000) % 2 == 0) {
+        this.context.lineDashOffset = 0;
+        this.context.setLineDash([40, 20]);
+      } else {
+        this.context.lineDashOffset = 20;
+        this.context.setLineDash([20, 40]);
+      }
+
+      this.drawing.drawSquare([width / 2, width / 2], [this.canvas.width - (width / 2), this.canvas.height - (width / 2)], 'rgb(0,0,0)', null, width, "butt");
 
       this.context.restore();
 
