@@ -101,7 +101,6 @@ function Board(canvas, cameraApi) {
 
   this.setZoom = function(val, mapCenter, noAnimate) {
     this.viewPortManager.setZoom(val, mapCenter, noAnimate);
-    this.toolManager.updateZoom(this.viewPortManager.normalizeZoom(val));
   };
 
   this.getZoom = function(targetZoom) {
@@ -122,6 +121,14 @@ function Board(canvas, cameraApi) {
 
   this.getViewPortSize = function() {
     return this.viewPortManager.getSize();
+  };
+  
+  this.saveViewPort = function() {
+    this.viewPortManager.saveViewPort();
+  };
+  
+  this.restoreViewPort = function() {
+    this.viewPortManager.restoreViewPort();
   };
 
   this.handleAddActionMessage = function(message) {

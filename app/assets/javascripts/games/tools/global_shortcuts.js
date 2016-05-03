@@ -43,8 +43,8 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
         if (self.stickyViewPort && self.stickyKeyReleased === true) {
           self.revertViewport();
         } else if (!self.stickyViewPort) {
-          self.board.drawBorder = true;
-          self.stickyViewPort = {zoom: self.board.getZoom(), coordinates: self.board.getViewPortCoordinates()};
+          self.stickyViewPort = true;
+          self.board.saveViewPort();
           self.stickyStart = new Date();
           self.stickyKeyReleased = false;
         }
@@ -57,7 +57,7 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
 
     $(this.board.event_manager).on('keyup.GlobalShortCuts', function(evt, mapEvt) {
       // s key
-      if (mapEvt.key == 83 && self.stickyViewPort != null) {
+      if (mapEvt.key == 83 && self.stickyViewPort) {
         if ((new Date() - self.stickyStart) > 1000) {
           self.revertViewport();
         } else {
@@ -78,12 +78,10 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
 
   revertViewport: function() {
     if (this.stickyViewPort) {
-      this.board.setZoom(this.stickyViewPort.zoom);
-      this.board.setViewPortCoordinates(this.stickyViewPort.coordinates);
+      this.board.restoreViewPort();
       this.stickyViewPort = null;
       this.stickyStart = null;
       this.stickyKeyReleased = null;
-      this.board.drawBorder = false;
     }
   }
 });

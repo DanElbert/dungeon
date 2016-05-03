@@ -7,7 +7,7 @@ function ViewPortManager(board) {
   this.zoomAnimation = null;
   this.verticalAnimation = null;
   this.horizontalAnimation = null;
-
+  this.savedViewPort = null;
 }
 
 _.extend(ViewPortManager.prototype, {
@@ -38,6 +38,24 @@ _.extend(ViewPortManager.prototype, {
     this.applyGeometry();
   },
 
+  saveViewPort: function() {
+    this.savedViewPort = {zoom: this.getZoom(), coordinates: this.getCoordinates()};
+    this.board.drawBorder = true;
+    this.board.toolManager.hideSaveViewPort();
+    this.board.toolManager.showRestoreViewPort();
+  },
+
+  restoreViewPort: function() {
+    if (this.savedViewPort) {
+      this.setZoom(this.savedViewPort.zoom);
+      this.setCoordinates(this.savedViewPort.coordinates);
+    }
+    this.board.drawBorder = false;
+    this.savedViewPort = null;
+    this.board.toolManager.showSaveViewPort();
+    this.board.toolManager.hideRestoreViewPort();
+  },
+
   getTargetZoom: function() {
     if (this.zoomAnimation) {
       return this.zoomAnimation.max;
@@ -53,6 +71,7 @@ _.extend(ViewPortManager.prototype, {
   setZoom: function(newZoom, mapCenter, noAnimate) {
 
     var val = this.normalizeZoom(newZoom);
+    this.board.toolManager.updateZoom(val);
 
     if (!mapCenter) mapCenter = [this.coordinates[0] + this.size[0] / 2, this.coordinates[1] + this.size[1] / 2];
     var canvasCenter = [(mapCenter[0] - this.coordinates[0]) * this.zoom, (mapCenter[1] - this.coordinates[1]) * this.zoom];

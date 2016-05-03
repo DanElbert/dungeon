@@ -64,10 +64,21 @@ function ToolManager(board) {
         }
       }),
 
-      new ToolMenuItem("add_viewport_savepoint", {
-        label: "Add View Savepoint",
+      new ToolMenuItem("save_viewport", {
+        label: "Save View",
         glyph: "glyphicon glyphicon-plus",
-        visible: false
+        handler: function() {
+          self.board.saveViewPort();
+        }
+      }),
+
+      new ToolMenuItem("restore_viewport", {
+        label: "Restore View",
+        glyph: "glyphicon glyphicon-minus",
+        visible: false,
+        handler: function() {
+          self.board.restoreViewPort();
+        }
       })
     ]),
 
@@ -313,6 +324,26 @@ _.extend(ToolManager.prototype, {
 
   showCameraButton: function() {
 
+  },
+
+  showSaveViewPort: function() {
+    this.getMenuItem("save_viewport").visible = true;
+    this.render();
+  },
+
+  hideSaveViewPort: function() {
+    this.getMenuItem("save_viewport").visible = false;
+    this.render();
+  },
+
+  showRestoreViewPort: function() {
+    this.getMenuItem("restore_viewport").visible = true;
+    this.render();
+  },
+
+  hideRestoreViewPort: function() {
+    this.getMenuItem("restore_viewport").visible = false;
+    this.render();
   },
 
   getMenuItem: function(name) {
