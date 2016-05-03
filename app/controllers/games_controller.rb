@@ -88,7 +88,7 @@ class GamesController < ApplicationController
   end
 
   def game_params
-    params.require(:game).permit(:name, :status, {:board_attributes => [:background_image_id]})
+    params.require(:game).permit(:name, :status, {:board_attributes => [:background_image_id, :grid_color]})
   end
 
 end

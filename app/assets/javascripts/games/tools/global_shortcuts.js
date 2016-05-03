@@ -3,6 +3,8 @@ function GlobalShortCuts(manager) {
   this.super = Tool.prototype;
   this.viewPortDragging = new ViewPortDragging(this, this.board, 'rightdrag');
   this.stickyViewPort = null;
+  this.stickyStart = null;
+  this.stickyKeyReleased = null;
 }
 
 GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, {
@@ -36,9 +38,16 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
         self.board.undo();
       }
 
-      if (mapEvt.key == 83 && self.stickyViewPort == null) {
+      if (mapEvt.key == 83) {
         // s key
-        self.stickyViewPort = {zoom: self.board.getZoom(), coordinates: self.board.getViewPortCoordinates()};
+        if (self.stickyViewPort && self.stickyKeyReleased === true) {
+          self.revertViewport();
+        } else if (!self.stickyViewPort) {
+          self.board.drawBorder = true;
+          self.stickyViewPort = {zoom: self.board.getZoom(), coordinates: self.board.getViewPortCoordinates()};
+          self.stickyStart = new Date();
+          self.stickyKeyReleased = false;
+        }
       }
 
       if (mapEvt.key == 70) {
@@ -47,11 +56,13 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
     });
 
     $(this.board.event_manager).on('keyup.GlobalShortCuts', function(evt, mapEvt) {
+      // s key
       if (mapEvt.key == 83 && self.stickyViewPort != null) {
-        // s key
-        self.board.setZoom(self.stickyViewPort.zoom);
-        self.board.setViewPortCoordinates(self.stickyViewPort.coordinates);
-        self.stickyViewPort = null;
+        if ((new Date() - self.stickyStart) > 1000) {
+          self.revertViewport();
+        } else {
+          self.stickyKeyReleased = true;
+        }
       }
     });
 
@@ -63,5 +74,16 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
   disable: function() {
     this.viewPortDragging.disable();
     $(this.board.event_manager).off(".GlobalShortCuts");
+  },
+
+  revertViewport: function() {
+    if (this.stickyViewPort) {
+      this.board.setZoom(this.stickyViewPort.zoom);
+      this.board.setViewPortCoordinates(this.stickyViewPort.coordinates);
+      this.stickyViewPort = null;
+      this.stickyStart = null;
+      this.stickyKeyReleased = null;
+      this.board.drawBorder = false;
+    }
   }
 });

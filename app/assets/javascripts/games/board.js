@@ -181,6 +181,7 @@ function Board(canvas, cameraApi) {
     this.board_data = data.board;
     this.isOwner = data.is_owner;
     this.drawingLayer.isOwner = this.isOwner;
+    this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
 
     if (!this.isOwner) {
       this.toolManager.hideFogTools();
@@ -203,7 +204,7 @@ function Board(canvas, cameraApi) {
   };
 
   this.renderBoardGrid = function() {
-    this.drawing.drawGrid(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], "rgba(0, 0, 0, 1.0)");
+    this.drawing.drawGrid(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], this.gridColor);
   };
 
   this.renderDrawing = function() {
@@ -253,6 +254,22 @@ function Board(canvas, cameraApi) {
     this.drawing.drawChessBoard(extent_x - gutter - size, extent_y - gutter - size, size, pattern_size);
   };
 
+  this.renderBorder = function() {
+    if (this.drawBorder) {
+
+      var width = 10;
+
+      this.context.save();
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
+
+      this.context.setLineDash([20, 40]);
+      this.drawing.drawSquare([width / 2, width / 2], [this.canvas.width - (width / 2), this.canvas.height - (width / 2)], 'rgb(0,0,0)', null, width);
+
+      this.context.restore();
+
+    }
+  };
+
   this.executeActions = function() {
     _.each(this.pending_action_queue, function(action) {
       action.apply(this);
@@ -286,6 +303,7 @@ function Board(canvas, cameraApi) {
       this.renderTokens();
       this.renderPings();
       this.labelLayer.draw();
+      this.renderBorder();
       this.renderCursor();
     }
   };
