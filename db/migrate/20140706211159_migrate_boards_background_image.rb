@@ -4,8 +4,13 @@ class MigrateBoardsBackgroundImage < ActiveRecord::Migration
     self.inheritance_column = nil
   end
 
+  class Board < ActiveRecord::Base
+
+  end
+
   def up
     Image.reset_column_information
+    Board.reset_column_information
 
     Dir[Rails.root.join('db', 'seed_data', 'background_images', '*')].each do |file|
       name = File.basename file

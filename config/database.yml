@@ -10,11 +10,12 @@ development:
   timeout: 5000
 
 docker:
-  adapter: mysql2
-  host: mysql
+  adapter: postgresql
+  encoding: unicode
+  host: postgres
   database: dungeon
-  username: root
-  password: mysupersecret
+  username: dungeon
+  password: mysecretpassword
   pool: 5
   timeout: 5000
 
@@ -29,10 +30,10 @@ test:
   timeout: 5000
 
 production:
-  adapter: mysql2
-  host: <%= ENV['DUNGEON_DB_HOST'] || 'mysql' %>
-  username: <%= ENV['DUNGEON_DB_USER'] || 'dungeon_user' %>
-  password: <%= ENV['DUNGEON_DB_PASSWORD'] || 'dungeon_password' %>
+  adapter: postgresql
+  host: <%= ENV['DUNGEON_PG_HOST'] || 'mysql' %>
+  username: <%= ENV['DUNGEON_PG_USER'] || 'dungeon_user' %>
+  password: <%= ENV['DUNGEON_PG_PASSWORD'] || 'dungeon_password' %>
   database: dungeon
   pool: 5
   timeout: 5000

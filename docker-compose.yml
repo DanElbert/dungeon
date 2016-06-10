@@ -1,7 +1,15 @@
-mysql:
-  image: mysql:5.6
+#mysql:
+#  image: mysql:5.6
+#  environment:
+#    - MYSQL_ROOT_PASSWORD=mysupersecret
+#  volumes_from:
+#    - dungeon_db_data
+
+postgres:
+  image: postgres:9.3
   environment:
-    - MYSQL_ROOT_PASSWORD=mysupersecret
+    - POSTGRES_PASSWORD=mysecretpassword
+    - POSTGRES_USER=dungeon
   volumes_from:
     - dungeon_db_data
 
@@ -18,4 +26,4 @@ web1:
     - RAILS_ENV=docker
   links:
     - redis
-    - mysql
+    - postgres

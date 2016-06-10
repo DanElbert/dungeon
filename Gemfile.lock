@@ -110,10 +110,10 @@ GEM
       minitest (>= 5.0)
       ruby-progressbar
     multi_json (1.11.3)
-    mysql2 (0.3.20)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     oj (2.12.14)
+    pg (0.18.4)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -209,8 +209,8 @@ DEPENDENCIES
   jquery-rails (~> 4.0.5)
   jquery-ui-rails (~> 5.0.5)
   minitest-reporters
-  mysql2 (~> 0.3.20)
   oj (~> 2.12.14)
+  pg (~> 0.18.4)
   rails (= 4.2.6)
   redis-rails (~> 4.0.0)
   sass-rails (~> 5.0.4)
