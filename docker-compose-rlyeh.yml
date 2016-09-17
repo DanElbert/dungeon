@@ -1,3 +1,64 @@
+version: '2'
+
+services:
+  redis:
+    image: redis:latest
+
+  proxy:
+    image: 'nginx:latest'
+    ports:
+      - "3000:80"
+    volumes:
+      - ./docker/nginx/:/etc/nginx/conf.d/
+      - assets:/dungeon/public/assets/
+    links:
+      - web1
+      - web2
+      - web3
+      - web4
+
+  web1:
+    image: 'danelbert/dungeon:production'
+    env_file: /etc/default/dungeon
+    environment:
+      - COPY_ASSETS=true
+    volumes:
+      - assets:/dungeon_assets/
+    links:
+      - redis
+      - postgres
+
+  web2: &web
+    image: 'danelbert/dungeon:production'
+    env_file: /etc/default/dungeon
+    links:
+      - redis
+      - postgres
+
+  web3:
+    <<: *web
+
+  web4:
+    <<: *web
+
+volumes:
+  assets:
+    driver: local
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 redis:
   image: 'redis:latest'

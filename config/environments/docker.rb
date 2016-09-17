@@ -14,14 +14,14 @@ Dungeon::Application.configure do
                                  ping: 30,
                                  engine: {
                                      type: Faye::Redis,
-                                     uri: "redis://redis:#{ENV['REDIS_PORT_6379_TCP_PORT']}/0/faye"
+                                     uri: "redis://redis:6379/0/faye"
                                  }
 
   # Code is not reloaded between requests.
   config.cache_classes = true
 
   # Use a different cache store in production.
-  config.cache_store = :redis_store, "redis://redis:#{ENV['REDIS_PORT_6379_TCP_PORT']}/0/cache_store", { expires_in: 90.minutes }
+  config.cache_store = :redis_store, "redis://redis:6379/0/cache_store", { expires_in: 90.minutes }
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both thread web servers

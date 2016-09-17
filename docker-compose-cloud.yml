@@ -1,60 +1,62 @@
+version: '2'
 
-redis:
-  image: 'redis:latest'
+services:
+  postgres:
+    image: postgres:9.5
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_USER=dungeon
+    volumes:
+      - sql-data:/var/lib/postgresql/data
 
-mysql:
-  image: 'mysql:5.6'
-  environment:
-    - MYSQL_ROOT_PASSWORD=mysupersecret
-    - MYSQL_DATABASE=dungeon
-    - MYSQL_USER=dungeon_user
-    - MYSQL_PASSWORD=dungeon_password
-  volumes_from:
-    - dungeon_db_data
-  volumes:
-    - docker/mysql-small-conf.d/:/etc/mysql/conf.d/
+  redis:
+    image: redis:latest
 
-proxy:
-  image: 'danelbert/nginx:latest'
-  ports:
-    - "80:80"
-  volumes_from:
-    - web1
-  volumes:
-    - docker/nginx_proxy.conf:/etc/nginx/conf.d/default.conf
-  links:
-    - web1
-    - web2
-    - web3
-    - web4
+  proxy:
+    image: 'nginx:latest'
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/:/etc/nginx/conf.d/
+      - assets:/dungeon/public/assets/
+    links:
+      - web1
+      - web2
+      - web3
+      - web4
+
+  web1:
+    build: .
+    image: 'danelbert/dungeon:beta'
+    environment:
+      - RAILS_ENV=production
+      - COPY_ASSETS=true
+    volumes:
+      - assets:/dungeon_assets/
+    links:
+      - redis
+      - postgres
+
+  web2: &web
+    build: .
+    image: 'danelbert/dungeon:beta'
+    environment:
+      - RAILS_ENV=production
+    links:
+      - redis
+      - postgres
+
+  web3:
+    <<: *web
+
+  web4:
+    <<: *web
+
+volumes:
+  sql-data:
+    driver: local
+
+  assets:
+    driver: local
 
 
-web1:
-  image: 'danelbert/dungeon:beta'
-  environment:
-    - RAILS_ENV=production
-    - SHARE_ASSETS=true
-  volumes:
-    - /dungeon/public
-    - log:/dungeon/log
-  links:
-    - redis
-    - mysql
-
-
-web2: &web
-  image: 'danelbert/dungeon:beta'
-  environment:
-    - RAILS_ENV=production
-  volumes_from:
-    - web1
-  links:
-    - redis
-    - mysql
-
-
-web3:
-  <<: *web
-
-web4:
-  <<: *web

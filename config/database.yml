@@ -31,9 +31,9 @@ test:
 
 production:
   adapter: postgresql
-  host: <%= ENV['DUNGEON_PG_HOST'] || 'mysql' %>
-  username: <%= ENV['DUNGEON_PG_USER'] || 'dungeon_user' %>
-  password: <%= ENV['DUNGEON_PG_PASSWORD'] || 'dungeon_password' %>
+  host: <%= ENV['DUNGEON_PG_HOST'] || 'postgres' %>
+  username: <%= ENV['DUNGEON_PG_USER'] || 'dungeon' %>
+  password: <%= ENV['DUNGEON_PG_PASSWORD'] || 'mysecretpassword' %>
   database: dungeon
   pool: 5
   timeout: 5000
