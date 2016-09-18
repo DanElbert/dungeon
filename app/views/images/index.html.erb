@@ -1,0 +1,23 @@
+<h2>Campaign Images</h2>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @images.each do |image| %>
+      <tr>
+        <td><%= link_to image.name, image.url %></td>
+        <td></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Image', new_campaign_image_path, class: 'btn btn-primary' %>
+<%= link_to 'Back to Campaign', campaign_path(@campaign), class: 'btn btn-primary' %>

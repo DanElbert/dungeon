@@ -2,11 +2,11 @@ Dungeon::Application.routes.draw do
 
   resources :campaigns do
     resources :games, :only => [:new, :create]
-    resources :images, :only => [:new, :create]
+    resources :images, except: [:show], type: 'CampaignImage'
   end
 
   resources :images, :only => [:show], constraints: { format: /\w+/ }
-  resources :copied_images, only: [:new, :create], controller: 'images', type: 'CopiedImage'
+  resources :copied_images, only: [:create], controller: 'images', type: 'CopiedImage'
 
   match '/admin' => 'admin/users#index', :via => :get
 

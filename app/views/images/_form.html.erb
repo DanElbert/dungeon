@@ -1,25 +1,17 @@
-<%= form_for(@image) do |f| %>
-  <% if @image.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:</h2>
+<%= form_for(@image, as: :image) do |f| %>
+    <%= render partial: 'shared/error_list', locals: {model: @image} %>
 
-      <ul>
-      <% @image.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+    <div class="form-group">
+      <%= f.label :name %>
+      <%= f.text_field :name, class: 'form-control', autofocus: true %>
     </div>
-  <% end %>
 
-  <div class="field">
-    <%= f.label :filename %><br>
-    <%= f.text_field :filename %>
-  </div>
-  <div class="field">
-    <%= f.label :data %><br>
-    <%= f.text_field :data %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+    <div class="form-group">
+      <%= f.label :filename, 'Select File' %>
+      <%= f.file_field :filename %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit class: 'btn btn-primary' %>
+    </div>
 <% end %>

@@ -46,4 +46,6 @@ services:
 volumes:
   assets:
     driver: local
+  images:
+    driver: local
 

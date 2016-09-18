@@ -1,7 +1,12 @@
 class ImagesController < ApplicationController
   before_action :set_image, only: [:show, :destroy]
-  before_action :set_campaign, only: [:create]
+  before_action :set_campaign, only: [:new, :create, :index]
   before_action :set_type, only: [:new, :create]
+
+  # GET /campaigns/1/images
+  def index
+    @images = @campaign.campaign_images
+  end
 
   # GET /images/1
   def show
@@ -18,15 +23,21 @@ class ImagesController < ApplicationController
 
   # POST /images
   def create
-    if params[:image] && params[:image][:data]
-      params[:image][:data] = Base64.decode64(params[:image][:data])
-    end
     @image = type_class.new(image_params)
     @image.campaign = @campaign
 
+    if params[:image] && params[:image][:data]
+      @image.data = Base64.decode64(params[:image][:data])
+      @image.filename = params[:image][:filename]
+    elsif params[:image] && params[:image][:filename].is_a?(ActionDispatch::Http::UploadedFile)
+      io = params[:image][:filename]
+      @image.filename = io.original_filename
+      @image.data = io.read
+    end
+
     respond_to do |format|
       if @image.save
-        format.html { redirect_to image_page(@image), notice: 'Image was successfully created.' }
+        format.html { redirect_to campaign_images_path(@campaign), notice: 'Image was successfully created.' }
         format.json { render json: @image, status: :created }
       else
         format.html { render action: "new" }
@@ -65,6 +76,6 @@ class ImagesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def image_params
-    params.require(:image).permit(:filename, :data)
+    params.require(:image).permit(:name)
   end
 end

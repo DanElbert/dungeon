@@ -135,9 +135,10 @@
           tool.handler(val);
         });
 
-      for (var z = 50; z <= 250; z += 50) {
+
+      _.each([50, 75, 100, 150, 200, 250], function(z) {
         $select.append(optionFunc(z));
-      }
+      });
 
       return $("<div />")
         .append($select);

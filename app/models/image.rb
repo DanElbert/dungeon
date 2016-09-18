@@ -1,7 +1,7 @@
 class Image < ActiveRecord::Base
 
   def self.types
-    ['Image', 'CopiedImage', 'BackgroundImage']
+    ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage']
   end
 
   def as_json(opts = {})

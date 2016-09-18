@@ -19,6 +19,7 @@ services:
     volumes:
       - ./docker/nginx/:/etc/nginx/conf.d/
       - assets:/dungeon/public/assets/
+      - images:/dungeon/public/images/
     links:
       - web1
       - web2
@@ -33,6 +34,7 @@ services:
       - COPY_ASSETS=true
     volumes:
       - assets:/dungeon_assets/
+      - images:/dungeon/public/images/
     links:
       - redis
       - postgres
@@ -42,6 +44,8 @@ services:
     image: 'danelbert/dungeon:beta'
     environment:
       - RAILS_ENV=production
+    volumes:
+      - images:/dungeon/public/images/
     links:
       - redis
       - postgres
@@ -57,6 +61,9 @@ volumes:
     driver: local
 
   assets:
+    driver: local
+
+  images:
     driver: local
 
 

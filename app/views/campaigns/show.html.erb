@@ -15,6 +15,7 @@
   <div class="col-xs-12">
     <% if if_owner(@campaign) %>
       <%= link_to 'Add Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
+      <%= link_to 'Manage Images', campaign_images_path(@campaign), class: 'btn btn-primary' %>
     <% end %>
   </div>
 </div>

@@ -292,6 +292,9 @@ function Board(canvas, cameraApi) {
     this.pending_action_queue = [];
   };
 
+  // ==============================
+  // The main render loop
+  // ==============================
   this.update = function() {
 
     if (!this.board_data) {
