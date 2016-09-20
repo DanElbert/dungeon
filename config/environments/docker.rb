@@ -1,6 +1,6 @@
 require 'faye/redis'
 
-Dungeon::Application.configure do
+Rails.application.configure do
 
   RELATIVE_ROOT = "/"
 

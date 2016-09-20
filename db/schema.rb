@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -34,7 +33,7 @@ ActiveRecord::Schema.define(version: 20160918172943) do
     t.integer  "detect_origin_y"
     t.integer  "pattern_size"
     t.integer  "pattern_dimension"
-    t.binary   "image"
+    t.binary   "image",             limit: 16777216
   end
 
   create_table "boards", force: :cascade do |t|
@@ -65,7 +64,7 @@ ActiveRecord::Schema.define(version: 20160918172943) do
   create_table "images", force: :cascade do |t|
     t.integer  "campaign_id"
     t.string   "filename"
-    t.binary   "data"
+    t.binary   "data",        limit: 16777216
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "type"
@@ -78,10 +77,9 @@ ActiveRecord::Schema.define(version: 20160918172943) do
     t.integer  "use_count"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["game_id"], name: "index_initiative_histories_on_game_id"
+    t.index ["name"], name: "index_initiative_histories_on_name"
   end
-
-  add_index "initiative_histories", ["game_id"], name: "index_initiative_histories_on_game_id"
-  add_index "initiative_histories", ["name"], name: "index_initiative_histories_on_name"
 
   create_table "initiatives", force: :cascade do |t|
     t.integer  "game_id"
@@ -101,8 +99,7 @@ ActiveRecord::Schema.define(version: 20160918172943) do
     t.boolean  "is_admin"
     t.string   "auth_token"
     t.string   "username"
+    t.index ["email"], name: "index_users_on_email"
   end
-
-  add_index "users", ["email"], name: "index_users_on_email"
 
 end

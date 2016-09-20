@@ -1,6 +1,6 @@
 class CampaignsController < ApplicationController
   before_action :set_campaign, only: [:show, :edit, :update, :destroy]
-  before_filter :ensure_valid_user
+  before_action :ensure_valid_user
 
   # GET /campaigns
   def index

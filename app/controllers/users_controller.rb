@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :ensure_valid_user, except: [:login, :verify_login, :new, :create]
+  before_action :ensure_valid_user, except: [:login, :verify_login, :new, :create]
 
   def login
 

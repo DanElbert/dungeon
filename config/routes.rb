@@ -1,4 +1,4 @@
-Dungeon::Application.routes.draw do
+Rails.application.routes.draw do
 
   resources :campaigns do
     resources :games, :only => [:new, :create]
