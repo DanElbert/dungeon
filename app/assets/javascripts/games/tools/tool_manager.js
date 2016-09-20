@@ -31,7 +31,8 @@ function ToolManager(board) {
     "remove_fog": new RemoveFogPen(this),
     "label": new LabelTool(this),
     "copy": new CopyTool(this),
-    "paste": new PasteTool(this)
+    "paste": new PasteTool(this),
+    "insert_image": new InsertImageTool(this)
   };
 
   this.toolSet = [
@@ -107,6 +108,13 @@ function ToolManager(board) {
         tooltip: "Create a text label",
         glyph: "glyphicon glyphicon-text-color",
         handler: function() { self.setTool("label"); }
+      }),
+
+      new ToolMenuItem("insert_image", {
+        label: "Image",
+        tooltip: "Insert an image",
+        glyph: "glyphicon glyphicon-picture",
+        handler: function() { self.setTool("insert_image"); }
       }),
 
       new ToolMenuItem("copy", {

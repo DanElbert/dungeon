@@ -8,6 +8,7 @@
 //= require ./global_shortcuts
 //= require ./pointer
 //= require ./shape.js
+//= require ./insert_image
 //= require ./drawing
 //= require ./templates
 //= require ./ping

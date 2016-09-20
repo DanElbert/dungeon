@@ -15,6 +15,7 @@ function Board(canvas, cameraApi) {
   this.camera = cameraApi;
 
   this.imageCache = new ImageCache();
+  this.campaign_images = null;
 
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
@@ -187,6 +188,7 @@ function Board(canvas, cameraApi) {
     this.initiative.update(data.initiative);
     this.board_data = data.board;
     this.isOwner = data.is_owner;
+    this.campaign_images = data.campaign_images;
     this.drawingLayer.isOwner = this.isOwner;
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
 

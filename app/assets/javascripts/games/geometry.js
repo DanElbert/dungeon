@@ -53,6 +53,17 @@ var Geometry = {
     return value < 0 ? valueAbs * -1 : valueAbs;
   },
 
+  // If value is within `snapDistance` of a multiple of snapMultiple, that multiple is returned, otherwise returns `value`
+  snapNear: function(value, snapDistance, snapMultiple) {
+    var mod = Math.abs(value % snapMultiple);
+    mod = Math.min(mod, snapMultiple - mod);
+    if (mod <= snapDistance) {
+      return Geometry.roundToNearest(value, snapMultiple);
+    } else {
+      return value;
+    }
+  },
+
   // returns the distance between two points
   getDistance: function(p1, p2) {
     var x_side = Math.pow((p1[0] - p2[0]), 2);

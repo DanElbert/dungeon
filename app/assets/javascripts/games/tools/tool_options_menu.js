@@ -63,6 +63,9 @@
           case "creatureSize":
             $widget = privateMethods.buildCreatureSize(to);
             break;
+          case "images":
+            $widget = privateMethods.buildImageSelect(to);
+            break;
           case "text":
             $widget = privateMethods.buildTextOption(to);
             break;
@@ -121,6 +124,39 @@
             //this.blur();
           })
           .val(toolOption.value || "medium");
+
+      return $widget;
+    },
+
+    buildImageSelect: function(toolOption) {
+      var images = [
+        {name: '-- Select --', value: ""}
+      ];
+
+      _.each(toolOption.images, function(i) { images.push(i); });
+
+      var $widget = $('<div></div>')
+        .addClass('option_menu');
+
+      var $dropdown = $("<select />")
+        .appendTo($widget);
+
+      _.each(images, function(s) {
+        $dropdown.append($("<option />").attr("value", s.value).text(s.name));
+      }, this);
+
+      $dropdown
+        .change(function() {
+          var v = $(this).val();
+          if (v === "") {
+            v = null;
+          }
+          toolOption.value = v;
+          this.blur();
+        })
+        .mouseleave(function() {
+          //this.blur();
+        });
 
       return $widget;
     },

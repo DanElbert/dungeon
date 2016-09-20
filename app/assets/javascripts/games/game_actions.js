@@ -236,6 +236,25 @@ _.extend(actionTypes, {
     }
   }),
 
+  insertImageAction: createActionType("InsertImageAction", DrawingAction, {
+    draw: function(drawing) {
+      drawing.drawImageFromCenter(this.properties.center[0], this.properties.center[1], this.properties.url, this.properties.scale, this.properties.angle);
+    },
+
+    calculateBounds: function() {
+      // assume width and height are unscaled image dimensions
+      var height = this.properties.height * this.properties.scale;
+      var width = this.properties.width * this.properties.scale;
+      var radius = Math.sqrt((width * width) + (height * height));
+      var topLeft = [this.properties.center[0] - radius / 2, this.properties.center[1] - radius / 2];
+      return [topLeft, [topLeft[0] + width, topLeft[1] + height]];
+    },
+
+    validateData: function() {
+      this.ensureFields(["uid", "url", "center", "width", "height", "scale", "angle"]);
+    }
+  }),
+
   // An erase action consists of a width and a collection of lines
   eraseAction: createActionType("EraseAction", LineCollectionAction, {
     draw: function(drawing) {

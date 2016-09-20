@@ -324,6 +324,24 @@ _.extend(Drawing.prototype, {
     this.context.restore();
   },
 
+  drawImageFromCenter: function(x, y, imageUrl, scale, rotation) {
+    var imgObj = this.imageCache.getImage(imageUrl);
+    if (imgObj) {
+      scale = scale || 1.0;
+      rotation = rotation || 0.0;
+
+      this.context.save();
+
+      this.context.translate(x, y);
+      this.context.rotate(rotation * Math.PI / 180);
+      this.context.scale(scale, scale);
+      this.context.translate(-(imgObj.width / 2), -(imgObj.height / 2));
+
+      this.context.drawImage(imgObj, 0, 0);
+      this.context.restore();
+    }
+  },
+
   drawImage: function(x, y, imageUrl) {
     var imgObj = this.imageCache.getImage(imageUrl);
     if (imgObj) {
