@@ -8,7 +8,7 @@ Rails.application.configure do
 
   # Add Faye to the middleware stack
   # Note that by referencing the Static middleware, serve_static_assets needs to be left on
-  config.middleware.insert_after 'ActionDispatch::Static', 'GameServerMiddleware',
+  config.middleware.insert_before Rails::Rack::Logger, GameServerMiddleware,
                                  mount: '/game_server',
                                  timeout: 35,
                                  ping: 30,
@@ -39,7 +39,7 @@ Rails.application.configure do
   # config.action_dispatch.rack_cache = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this).
-  config.serve_static_files = true
+  config.public_file_server.enabled = false
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor  = :uglifier
