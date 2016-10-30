@@ -1,4 +1,4 @@
-class Campaign < ActiveRecord::Base
+class Campaign < ApplicationRecord
   has_many :games
   belongs_to :user
   has_many :campaign_images, dependent: :delete_all

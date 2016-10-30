@@ -1,4 +1,4 @@
-class BoardAction < ActiveRecord::Base
+class BoardAction < ApplicationRecord
   include HasSerializedProperties
 
   belongs_to :board

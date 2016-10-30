@@ -1,4 +1,4 @@
-class Game < ActiveRecord::Base
+class Game < ApplicationRecord
 
   STATUS = {:active => 'active', :hidden => 'hidden', :archived => 'archived', :deleted => 'deleted'}
 

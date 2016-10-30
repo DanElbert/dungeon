@@ -7,7 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 unless User.where(:email => 'dan.elbert@gmail.com').exists?
-  dan = User.new({:email => "dan.elbert@gmail.com", :name => "Dan", :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true})
+  dan = User.new({:email => "dan.elbert@gmail.com", :name => "Dan", :username => 'dan', :password => "qwerty", :password_confirmation => "qwerty", :is_admin => true})
   dan.save!
 end
 

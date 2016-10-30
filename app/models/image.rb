@@ -1,4 +1,4 @@
-class Image < ActiveRecord::Base
+class Image < ApplicationRecord
 
   def self.types
     ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage']

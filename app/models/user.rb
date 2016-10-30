@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
 
   SYSTEM_USER_EMAIL = 'dungeon@system.com'
 

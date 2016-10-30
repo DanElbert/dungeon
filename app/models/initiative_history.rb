@@ -1,4 +1,4 @@
-class InitiativeHistory < ActiveRecord::Base
+class InitiativeHistory < ApplicationRecord
 
   belongs_to :game
 

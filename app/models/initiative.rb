@@ -1,4 +1,4 @@
-class Initiative < ActiveRecord::Base
+class Initiative < ApplicationRecord
   belongs_to :game
 
   def self.from_message(json, index)

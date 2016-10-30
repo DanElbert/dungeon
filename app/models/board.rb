@@ -1,4 +1,4 @@
-class Board < ActiveRecord::Base
+class Board < ApplicationRecord
   belongs_to :game
   belongs_to :background_image
   has_many :board_actions, -> { order(:created_at) }, :dependent => :destroy
