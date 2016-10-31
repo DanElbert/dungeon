@@ -5,6 +5,7 @@
 //= require ./animation
 //= require ./drawing
 //= require ./board_events
+//= require ./background_layer
 //= require ./board
 //= require ./game_actions
 //= require ./drawing_layer

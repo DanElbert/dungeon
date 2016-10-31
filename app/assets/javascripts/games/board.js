@@ -11,11 +11,14 @@ function Board(canvas, cameraApi) {
         }
       });
 
+  this.invalid = true;
   this.networkDown = false;
   this.camera = cameraApi;
 
   this.imageCache = new ImageCache();
   this.campaign_images = null;
+
+  this.animations = new AnimationManager();
 
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
@@ -35,9 +38,10 @@ function Board(canvas, cameraApi) {
   this.undo_stack = [];
 
   this.drawingLayer = new DrawingLayer(this.imageCache);
-  this.pingLayer = new PingLayer();
+  this.pingLayer = new PingLayer(this);
   this.tokenLayer = new TokenLayer();
   this.labelLayer = new ViewPortLabels(this);
+  this.backgroundLayer = new BackgroundLayer(this);
 
   this.board_data = null;
 
@@ -90,6 +94,7 @@ function Board(canvas, cameraApi) {
 
   $(this.imageCache).on("imageloaded", function(evt) {
     self.drawingLayer.clear();
+    self.invalidate();
   });
 
   this.setCanvasSize = function(width, height) {
@@ -98,6 +103,7 @@ function Board(canvas, cameraApi) {
     this.canvas.height = height;
 
     this.viewPortManager.setCanvasSize([width, height]);
+    this.backgroundLayer.setCanvasSize(width, height);
   };
 
   this.setZoom = function(val, mapCenter, noAnimate) {
@@ -207,9 +213,10 @@ function Board(canvas, cameraApi) {
   };
 
   this.renderBoardBackground = function() {
-    var data = this.board_data;
-    var drawing = this.drawing;
-    drawing.tileBackground(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], data.background_image);
+    this.backgroundLayer.draw();
+    // var data = this.board_data;
+    // var drawing = this.drawing;
+    //drawing.tileBackground(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], data.background_image);
   };
 
   this.renderBoardGrid = function() {
@@ -287,11 +294,27 @@ function Board(canvas, cameraApi) {
   };
 
   this.executeActions = function() {
+    if (this.pending_action_queue.length > 0) {
+      this.invalidate();
+    }
     _.each(this.pending_action_queue, function(action) {
       action.apply(this);
     }, this);
 
     this.pending_action_queue = [];
+  };
+
+  this.invalidate = function() {
+    this.invalid = true;
+  };
+
+  this.validate = function() {
+    this.invalid = false;
+  };
+
+  // Whether the drawing is invalid and needs to be re-drawn
+  this.isInvalid = function() {
+    return this.invalid || this.drawBorder || this.animations.isAnimating();
   };
 
   // ==============================
@@ -308,22 +331,25 @@ function Board(canvas, cameraApi) {
     this.executeActions();
     this.viewPortManager.update();
 
-    //context.clearRect(this.viewPortCoord[0], this.viewPortCoord[1], this.getViewPortSize()[0], this.getViewPortSize()[1]);
-
     if (this.displayCapturePattern) {
       this.renderCapturePattern();
       this.renderPings();
     } else {
-      this.renderBoardBackground();
-      this.renderDrawing();
-      this.renderTool();
-      this.renderBoardGrid();
-      this.renderTemplates();
-      this.renderTokens();
-      this.renderPings();
-      this.labelLayer.draw();
-      this.renderBorder();
-      this.renderCursor();
+      if (this.isInvalid()) {
+        context.clearRect(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1]);
+        this.renderBoardBackground();
+        this.renderDrawing();
+        this.renderTool();
+        this.renderBoardGrid();
+        this.renderTemplates();
+        this.renderTokens();
+        this.renderPings();
+        this.labelLayer.draw();
+        this.renderBorder();
+        this.renderCursor();
+
+        this.validate();
+      }
     }
   };
 

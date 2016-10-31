@@ -2,20 +2,22 @@ function Animation(duration, easing, min, max) {
   this.duration = duration;
   this.easing = easing;
   this.startTime = new Date();
-  this.finished = null;
+  this.finished = false;
   this.min = min == null ? 0 : min;
   this.max = max == null ? 1 : max;
+  this.finalValue = null;
 }
 
 _.extend(Animation.prototype, {
   calculateEasing: function() {
-    if (this.finished != null) {
-      return this.finished;
+    if (this.finished) {
+      return this.finalValue;
     }
 
     if (this.duration == 0) {
-      this.finished = this.max;
-      return this.finished;
+      this.finalValue = this.max;
+      this.finished = true;
+      return this.finalValue;
     }
 
     var durationPercent = Math.min(1, (new Date() - this.startTime) / (this.duration * 1000));
@@ -30,7 +32,8 @@ _.extend(Animation.prototype, {
 
 
     if (durationPercent >= 1) {
-      this.finished = scaledValue;
+      this.finalValue = scaledValue;
+      this.finished = true;
     }
 
     return scaledValue;
@@ -73,3 +76,27 @@ var EasingFactory = {
     }
   }
 };
+
+function AnimationManager() {
+  this.maxDuration = 10000;
+  this.animations = {};
+}
+
+_.extend(AnimationManager.prototype, {
+  begin: function(id) {
+    this.animations[id] = new Date();
+  },
+
+  end: function(id) {
+    this.animations = _.omit(this.animations, id);
+  },
+
+  isAnimating: function() {
+    var cur = new Date();
+    this.animations = _.pick(this.animations, function(value, key, obj) {
+      return (cur - value) <= this.maxDuration;
+    }, this);
+
+    return _.keys(this.animations).length > 0;
+  }
+});

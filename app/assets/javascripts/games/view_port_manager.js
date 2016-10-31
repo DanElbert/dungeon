@@ -146,10 +146,12 @@ _.extend(ViewPortManager.prototype, {
   },
 
   applyCoordinates: function(coordinates) {
+    this.board.invalidate();
     this.coordinates = coordinates;
   },
 
   applyZoom: function(val, mapCenter) {
+    this.board.invalidate();
     val = this.normalizeZoom(val);
 
     this.zoom = val;

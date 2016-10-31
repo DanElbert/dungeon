@@ -1,15 +1,20 @@
-function PingLayer() {
+function PingLayer(board) {
+  this.board = board;
   // In seconds
   this.defaultDuration = 7;
   // radius
   this.defaultSize = 50;
   this.defaultPulseCount = 5;
 
+  this.nextPingId = 1;
+
   this.pings = [];
 }
 _.extend(PingLayer.prototype, {
   add: function(point, color) {
-    this.pings.push(new Ping(point, color, this.defaultSize, this.defaultPulseCount, this.defaultDuration));
+    this.pings.push(new Ping(point, color, this.nextPingId, this.defaultSize, this.defaultPulseCount, this.defaultDuration));
+    this.board.animations.begin("ping_" + this.nextPingId);
+    this.nextPingId = this.nextPingId + 1;
   },
 
   draw: function(drawing) {
@@ -17,16 +22,21 @@ _.extend(PingLayer.prototype, {
 
     _.each(this.pings, function(ping) {
       ping.draw(drawing);
-      if (!ping.finished) {
+
+      if (ping.finished) {
+        this.board.animations.end("ping_" + ping.id);
+      } else {
         livingPings.push(ping);
       }
+
     }, this);
 
     this.pings = livingPings;
   }
 });
 
-function Ping(point, color, maxSize, pulseCount, duration) {
+function Ping(point, color, id, maxSize, pulseCount, duration) {
+  this.id = id;
   this.maxSize = maxSize;
   this.color = color;
   this.point = point;

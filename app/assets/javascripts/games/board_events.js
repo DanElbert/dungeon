@@ -177,6 +177,7 @@ function BoardEvents(board) {
   };
 
   $(document).on('keydown.BoardEvents', function(evt) {
+    self.board.invalidate();
     // Process all keystrokes, but only those not obviously intended for something else
     var tag = evt.target.tagName.toLowerCase();
     if (tag == "input" || tag == "textarea") {
@@ -195,6 +196,7 @@ function BoardEvents(board) {
   });
 
   $(document).on('keyup.BoardEvents', function(evt) {
+    self.board.invalidate();
     // Process all keystrokes, but only those not obviously intended for something else
     var tag = evt.target.tagName.toLowerCase();
     if (tag == "input" || tag == "textarea") {
@@ -215,6 +217,7 @@ function BoardEvents(board) {
   });
 
   jqCanvas.on('mousedown.BoardEvents', function(evt) {
+    self.board.invalidate();
     var canvasCoords;
     if (evt.which == 1) { // left button
       canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
@@ -228,10 +231,12 @@ function BoardEvents(board) {
 
   // Disable browser context menu
   jqCanvas.on('contextmenu.BoardEvents', function(evt) {
+    self.board.invalidate();
     evt.preventDefault();
   });
 
   jqCanvas.on('mouseup.BoardEvents', function(evt) {
+    self.board.invalidate();
     if (evt.which == 1) { // left button
       self.cursorUpHandler(self.leftMouseState);
     } else if (evt.which == 3) { // right button
@@ -241,6 +246,7 @@ function BoardEvents(board) {
   });
 
   jqCanvas.on('mousemove.BoardEvents', function(evt) {
+    self.board.invalidate();
     self.mouseCanvasPoint = self.getCanvasCoordinates(evt.pageX, evt.pageY);
     self.cursorMoveHandler(self.mouseCanvasPoint, self.leftMouseState);
     self.cursorMoveHandler(self.mouseCanvasPoint, self.rightMouseState);
@@ -248,6 +254,7 @@ function BoardEvents(board) {
   });
 
   jqCanvas.on('mouseout.BoardEvents', function(evt) {
+    self.board.invalidate();
     self.mouseCanvasPoint = null;
     self.cursorUpHandler(self.leftMouseState);
     self.cursorUpHandler(self.rightMouseState);
@@ -256,6 +263,7 @@ function BoardEvents(board) {
   // Special event handling for mouse wheel events.
   // jQuery doesn't handle this well; see javascripts/mouse_wheel_events
   addWheelListener(board.canvas, function(evt) {
+    self.board.invalidate();
     self.scrollHandler(evt);
     evt.preventDefault();
   });
@@ -275,12 +283,14 @@ function BoardEvents(board) {
   });
 
   hammer.on('tap', function(evt) {
+    self.board.invalidate();
     var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     self.cursorDownHandler(coords, self.leftMouseState);
     self.cursorUpHandler(self.leftMouseState);
   });
 
   hammer.on('dragstart twofingerdragstart', function(evt) {
+    self.board.invalidate();
     var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     self.draggingFingers = evt.pointers.length;
     if (self.draggingFingers == 1) {
@@ -291,6 +301,7 @@ function BoardEvents(board) {
   });
 
   hammer.on('drag twofingerdrag', function(evt) {
+    self.board.invalidate();
     if (self.draggingFingers != evt.pointers.length) {
       self.cursorUpHandler(self.leftMouseState);
       self.cursorUpHandler(self.rightMouseState);
@@ -305,6 +316,7 @@ function BoardEvents(board) {
   });
 
   hammer.on('dragend twofingerdragend', function(evt) {
+    self.board.invalidate();
     if (evt.pointers.length == 1) {
       self.cursorUpHandler(self.leftMouseState);
     } else if (evt.pointers.length == 2) {
@@ -313,6 +325,7 @@ function BoardEvents(board) {
   });
 
   hammer.on('pinchstart', function(evt) {
+    self.board.invalidate();
     var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     jqThis.trigger('pinchstart', {
@@ -322,6 +335,7 @@ function BoardEvents(board) {
   });
 
   hammer.on('pinchmove', function(evt) {
+    self.board.invalidate();
     var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     jqThis.trigger('pinch', {
@@ -331,6 +345,7 @@ function BoardEvents(board) {
   });
 
   hammer.on('press', function(evt) {
+    self.board.invalidate();
     var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
     var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     jqThis.trigger('hold', {

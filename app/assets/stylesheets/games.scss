@@ -5,16 +5,26 @@
 
 #game_board_container {
   position: relative;
+
+  canvas {
+    position: absolute;
+    z-index: 1;
+  }
+
+  canvas.background {
+    z-index: 0;
+  }
 }
 
 #game_board {
 }
 
 #main_menu {
-  position: absolute;
+  position: fixed;
   right: 0;
   bottom: 15px;
   text-align: right;
+  z-index: 3;
 
   button {
     opacity: 0.7;
