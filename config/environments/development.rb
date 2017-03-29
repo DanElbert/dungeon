@@ -5,7 +5,7 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Add Faye to the middleware stack
-  config.middleware.insert_before Rails::Rack::Logger, GameServerMiddleware, mount: '/game_server', timeout: 35, ping: 30
+  config.middleware.insert_before ActionDispatch::Executor, GameServerMiddleware, mount: '/game_server', timeout: 35, ping: 30
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development

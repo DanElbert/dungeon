@@ -8,7 +8,7 @@ Rails.application.configure do
 
   # Add Faye to the middleware stack
   # Note that by referencing the Static middleware, serve_static_assets needs to be left on
-  config.middleware.insert_before Rails::Rack::Logger, GameServerMiddleware,
+  config.middleware.insert_before ActionDispatch::Executor, GameServerMiddleware,
                                  mount: '/game_server',
                                  timeout: 35,
                                  ping: 30,
@@ -72,14 +72,6 @@ Rails.application.configure do
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = "http://assets.example.com"
-
-  # Precompile additional assets.
-  # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
-  #config.assets.precompile += %w( games/index.js games.js )
-  #config.assets.precompile << Proc.new { |path| $stderr.puts "----- [#{path}]"; `touch ~/proof.txt`; false }
-  config.assets.precompile << /(?:\/|\\|\A)games(?:\/index)?\.js$/
-  config.assets.precompile << 'initiative_screen.js'
-  config.assets.precompile << 'camera.js'
 
 
   # Ignore bad email addresses and do not raise email delivery errors.

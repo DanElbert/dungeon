@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   postgres:
@@ -20,7 +20,7 @@ services:
       - ./docker/nginx/:/etc/nginx/conf.d/
       - assets:/dungeon/public/assets/
       - images:/dungeon/public/images/
-    links:
+    depends_on:
       - web1
       - web2
       - web3
@@ -31,24 +31,27 @@ services:
     image: 'danelbert/dungeon:beta'
     environment:
       - RAILS_ENV=production
+      - SECRET_KEY_BASE=1c0fb1f70630f29ccc573c6c8438bba76f93423f4dc2aa3f1d2de7a53734e6ae8e88defb36c2f802c023b994355ad1c4b9775154d65fcfdd7ab41d82f211763d
       - COPY_ASSETS=true
+      - LOGLEVEL=debug
     volumes:
       - assets:/dungeon_assets/
       - images:/dungeon/public/images/
       - logs:/dungeon/log
-    links:
+    depends_on:
       - redis
       - postgres
 
   web2: &web
-    build: .
     image: 'danelbert/dungeon:beta'
     environment:
       - RAILS_ENV=production
+      - SECRET_KEY_BASE=1c0fb1f70630f29ccc573c6c8438bba76f93423f4dc2aa3f1d2de7a53734e6ae8e88defb36c2f802c023b994355ad1c4b9775154d65fcfdd7ab41d82f211763d
+      - LOGLEVEL=debug
     volumes:
       - images:/dungeon/public/images/
       - logs:/dungeon/log
-    links:
+    depends_on:
       - redis
       - postgres
 
