@@ -6,7 +6,7 @@ class GameServerMiddleware
   def initialize(app, options = {})
     raise "No GameServer mount point specified" unless options.key? :mount
 
-    Faye.logger = Rails.logger
+    #Faye.logger = Rails.logger
 
     @faye_rack_adapter = Faye::RackAdapter.new(app, options)
     @router = GameServer::Router.new(@faye_rack_adapter)

@@ -3,13 +3,15 @@ version: '2'
 services:
   redis:
     image: redis:latest
+    restart: unless-stopped
 
   proxy:
     image: 'nginx:latest'
+    restart: unless-stopped
     ports:
       - "3000:80"
     volumes:
-      - ./docker/nginx/:/etc/nginx/conf.d/
+      - ./dungeon_nginx:/etc/nginx/conf.d/
       - assets:/dungeon/public/assets/
       - images:/dungeon/public/images/
     links:
@@ -20,20 +22,24 @@ services:
 
   web1:
     image: 'danelbert/dungeon:production'
+    restart: unless-stopped
     env_file: /etc/default/dungeon
     environment:
       - COPY_ASSETS=true
     volumes:
       - assets:/dungeon_assets/
       - images:/dungeon/public/images/
+      - /var/log/dungeon:/dungeon/log/
     links:
       - redis
 
   web2: &web
     image: 'danelbert/dungeon:production'
+    restart: unless-stopped
     env_file: /etc/default/dungeon
     volumes:
       - images:/dungeon/public/images/
+      - /var/log/dungeon:/dungeon/log/
     links:
       - redis
 
@@ -46,6 +52,9 @@ services:
 volumes:
   assets:
     driver: local
+
   images:
     driver: local
+
+
 

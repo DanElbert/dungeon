@@ -4,6 +4,8 @@ function ViewPortLabels(board) {
   this.drawing = board.drawing;
   this.context = board.context;
 
+  this.labelCache = new ViewPortLabelCache(500, 100);
+
 }
 _.extend(ViewPortLabels.prototype, {
   draw: function() {
@@ -74,7 +76,14 @@ _.extend(ViewPortLabels.prototype, {
   },
 
   drawLabel: function(point, text, highlight) {
-    this.drawing.drawText(text, point, 20, (highlight ? "grey" : "white"), "black", 1);
+    var image = this.labelCache.get(text);
+    if (image == null) {
+      image = new ViewPortLabel(text, this.board.imageCache);
+      this.labelCache.set(text, image);
+    }
+    var width = image.width;
+    var height = image.height;
+    this.context.drawImage(image.getImage(), point[0] - (width / 2), point[1] - (height / 2), width, height);
   },
 
   numberToLetters: function(value) {
@@ -93,5 +102,62 @@ _.extend(ViewPortLabels.prototype, {
     }
 
     return result;
+  }
+});
+
+function ViewPortLabel(label, imageCache) {
+  this.label = label;
+  this.canvas = null;
+  this.context = null;
+  this.drawing = null;
+  this.imageCache = imageCache;
+  this.width = 40;
+  this.height = 24;
+}
+
+_.extend(ViewPortLabel.prototype, {
+  getImage: function() {
+    if (this.canvas == null) {
+      this.canvas = document.createElement("canvas");
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+      this.context = this.canvas.getContext("2d");
+      this.drawing = new Drawing(this.context, this.imageCache);
+      this.drawing.drawText(this.label, [this.width / 2, this.height / 2], 20, "white", "black", 1);
+    }
+
+    return this.canvas;
+  }
+});
+
+function ViewPortLabelCache(cutoff, prune) {
+  this.cache = {};
+  this.cutoff = cutoff || 550;
+  this.pruneCount = prune || 100;
+}
+
+_.extend(ViewPortLabelCache.prototype, {
+  get: function(id) {
+    var item = this.cache[id];
+    if (item) {
+      item.access = new Date();
+      return item.value;
+    } else {
+      return null;
+    }
+  },
+
+  set: function(id, value) {
+    this.cache[id] = {access: new Date(), id: id, value: value};
+    this.prune();
+  },
+
+  prune: function() {
+    if (_.keys(this.cache).length > this.cutoff) {
+      var values = _.values(this.cache);
+      values = _.sortBy(values, "access");
+      values = _.last(values, (this.cutoff - this.pruneCount));
+      this.cache = _.reduce(values, function(h, v) { h[v.id] = v; return h; }, {}, this);
+    }
   }
 });

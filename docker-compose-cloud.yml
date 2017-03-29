@@ -35,6 +35,7 @@ services:
     volumes:
       - assets:/dungeon_assets/
       - images:/dungeon/public/images/
+      - logs:/dungeon/log
     links:
       - redis
       - postgres
@@ -46,6 +47,7 @@ services:
       - RAILS_ENV=production
     volumes:
       - images:/dungeon/public/images/
+      - logs:/dungeon/log
     links:
       - redis
       - postgres
@@ -64,6 +66,9 @@ volumes:
     driver: local
 
   images:
+    driver: local
+
+  logs:
     driver: local
 
 
