@@ -64,7 +64,7 @@ Rails.application.configure do
   if ENV['LOGLEVEL']
     config.log_level = ENV['LOGLEVEL'].to_sym
   else
-    config.log_level = :debug
+    config.log_level = :info
   end
 
   # Prepend all log lines with the following tags.
