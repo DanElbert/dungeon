@@ -26,6 +26,7 @@ services:
     env_file: /etc/default/dungeon
     environment:
       - COPY_ASSETS=true
+      - DB_MIGRATE=true
     volumes:
       - assets:/dungeon_assets/
       - images:/dungeon/public/images/

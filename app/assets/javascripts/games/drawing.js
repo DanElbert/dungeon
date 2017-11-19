@@ -3,8 +3,13 @@ function Drawing(context, imageCache) {
   this.imageCache = imageCache;
   if (this.imageCache == null) throw "imageCache cannot be null";
   this.cellSize = 50;
+  this.minWidth = 1;
 }
 _.extend(Drawing.prototype, {
+
+  checkWidth: function(width) {
+    return Math.max(width, this.minWidth);
+  },
 
   clear: function (columns, rows) {
     this.context.clearRect(0, 0, columns * this.cellSize, rows * this.cellSize);
@@ -20,7 +25,7 @@ _.extend(Drawing.prototype, {
   },
 
   drawMeasureLine: function(start, end, label, color, width) {
-    this.context.lineWidth = width || 5;
+    this.context.lineWidth = this.checkWidth(width || 5);
     this.context.strokeStyle = color || "#000000";
     this.context.lineCap = 'round';
 
@@ -44,7 +49,7 @@ _.extend(Drawing.prototype, {
 
     this.context.fillStyle = fillColor || "white";
     this.context.strokeStyle = outlineColor || "black";
-    this.context.lineWidth = 2;
+    this.context.lineWidth = this.checkWidth(2);
     this.context.lineCap = 'round';
 
     var fontWidth = this.measureText(text, fontSize);
@@ -120,7 +125,7 @@ _.extend(Drawing.prototype, {
 
   drawLines: function (color, width, lines) {
     this.context.beginPath();
-    this.context.lineWidth = width;
+    this.context.lineWidth = this.checkWidth(width);
     this.context.strokeStyle = color;
     this.context.lineCap = 'round';
 
@@ -137,7 +142,7 @@ _.extend(Drawing.prototype, {
   },
 
   drawSquare: function(topLeft, bottomRight, color, bgColor, width, lineCap) {
-    this.context.lineWidth = width;
+    this.context.lineWidth = this.checkWidth(width);
     this.context.strokeStyle = color;
     this.context.lineCap = lineCap || "round";
 
@@ -185,7 +190,7 @@ _.extend(Drawing.prototype, {
   },
 
   drawCircle: function(x, y, radius, width, color, fill) {
-    this.context.lineWidth = width;
+    this.context.lineWidth = this.checkWidth(width);
     this.context.strokeStyle = color;
     this.context.beginPath();
     // For some reason, some browsers draw filled squares when the angle is 2.0 * PI; this fixes it without visual issues

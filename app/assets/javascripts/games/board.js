@@ -23,6 +23,10 @@ function Board(canvas, cameraApi) {
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
   this.drawing = new Drawing(this.context, this.imageCache);
+  // To account for device pixel ratios that are not 1:1, we transform the identity matrix to match
+  this.pixelRatio = 1;
+  this.identityTransform = function() { this.context.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0) };
+
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
@@ -40,7 +44,7 @@ function Board(canvas, cameraApi) {
   this.drawingLayer = new DrawingLayer(this.imageCache);
   this.pingLayer = new PingLayer(this);
   this.tokenLayer = new TokenLayer();
-  this.labelLayer = new ViewPortLabels(this);
+  this.labelLayer = new ViewPortLabels(this, true);
   this.backgroundLayer = new BackgroundLayer(this);
 
   this.board_data = null;
@@ -97,10 +101,13 @@ function Board(canvas, cameraApi) {
     self.invalidate();
   });
 
-  this.setCanvasSize = function(width, height) {
+  this.setCanvasSize = function(width, height, pixelRatio) {
 
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.canvas.width = width * pixelRatio;
+    this.canvas.height = height * pixelRatio;
+    this.canvas.style.width = width.toString() + "px";
+    this.canvas.style.height = height.toString() + "px";
+    this.pixelRatio = pixelRatio;
 
     this.viewPortManager.setCanvasSize([width, height]);
     this.backgroundLayer.setCanvasSize(width, height);
@@ -197,6 +204,7 @@ function Board(canvas, cameraApi) {
     this.campaign_images = data.campaign_images;
     this.drawingLayer.isOwner = this.isOwner;
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
+    this.labelLayer.useXLetters = data.useXLetters;
 
     if (!this.isOwner) {
       this.toolManager.hideFogTools();
@@ -224,7 +232,7 @@ function Board(canvas, cameraApi) {
   };
 
   this.renderDrawing = function() {
-    this.drawingLayer.draw(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], this.drawing, false);
+    this.drawingLayer.draw(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], this.drawing, this.viewPortManager.getZoom() < 0.3, false);
   };
 
   this.renderCursor = function() {
@@ -276,7 +284,7 @@ function Board(canvas, cameraApi) {
       var width = 10;
 
       this.context.save();
-      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.identityTransform();
 
       if (Math.floor(Date.now() / 1000) % 2 == 0) {
         this.context.lineDashOffset = 0;

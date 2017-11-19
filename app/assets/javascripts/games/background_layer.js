@@ -33,10 +33,15 @@ _.extend(BackgroundLayer.prototype, {
 
     if (this.isDifferent(newVp)) {
       this.viewPort = newVp;
+      this.context.save();
       this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.scale(zoom, zoom);
       this.context.translate(-1 * this.viewPort.coords[0], -1 * this.viewPort.coords[1]);
+      if (zoom <= 0.4) {
+        this.context.filter = "blur(" + Math.floor(1 / zoom) + "px)";
+      }
       this.drawing.tileBackground(this.viewPort.coords[0], this.viewPort.coords[1], this.viewPort.size[0], this.viewPort.size[1], this.viewPort.image);
+      this.context.restore();
     }
   },
 

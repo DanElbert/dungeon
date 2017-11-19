@@ -164,16 +164,18 @@ function BoardEvents(board) {
     var deltaY = evt.deltaY;
 
     // Page at a time mode.
-    if (evt.deltaMode == 2) {
-      deltaX = deltaX * 40;
-      deltaY = deltaY * 40;
+    if (evt.deltaMode === 1) {
+      deltaX = deltaX * 25;
+      deltaY = deltaY * 25;
     }
 
-    jqThis.trigger('scroll', {
-      deltaX: deltaX,
-      deltaY: deltaY,
-      mapPoint: self.getMapCoordinates(self.mouseCanvasPoint[0], self.mouseCanvasPoint[1])
-    });
+    if (self.mouseCanvasPoint !== null) {
+      jqThis.trigger('scroll', {
+        deltaX: deltaX,
+        deltaY: deltaY,
+        mapPoint: self.getMapCoordinates(self.mouseCanvasPoint[0], self.mouseCanvasPoint[1])
+      });
+    }
   };
 
   $(document).on('keydown.BoardEvents', function(evt) {

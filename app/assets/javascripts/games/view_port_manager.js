@@ -138,7 +138,7 @@ _.extend(ViewPortManager.prototype, {
   // Rounds the zoom and ensures it's within the min and max zoom values
   normalizeZoom: function(zoom) {
     var zoomMax = 2.5;
-    var zoomMin = 0.3;
+    var zoomMin = 0.05;
     var newZoom = zoom;
     newZoom = Math.min(zoomMax, newZoom);
     newZoom = Math.max(zoomMin, newZoom);
@@ -159,7 +159,7 @@ _.extend(ViewPortManager.prototype, {
   },
 
   applyGeometry: function() {
-    this.board.context.setTransform(1, 0, 0, 1, 0, 0);
+    this.board.identityTransform();
     this.board.context.scale(this.zoom, this.zoom);
     this.board.context.translate(-1 * this.coordinates[0], -1 * this.coordinates[1]);
   }

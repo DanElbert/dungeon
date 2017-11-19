@@ -6,6 +6,12 @@
     <%= f.text_field :name, class: 'form-control', autofocus: true %>
   </div>
 
+  <div class="checkbox">
+    <label>
+      <%= f.check_box :use_x_letters %> Use Letters on X Axis
+    </label>
+  </div>
+
   <div class="actions">
     <%= f.submit class: 'btn btn-primary' %>
   </div>

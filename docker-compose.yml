@@ -19,6 +19,7 @@ services:
       - "3000:3000"
     environment:
       - RAILS_ENV=docker
+      - DB_MIGRATE=true
     links:
       - redis
       - postgres

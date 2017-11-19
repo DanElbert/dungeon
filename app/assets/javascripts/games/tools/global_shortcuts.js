@@ -28,7 +28,7 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
 
     $(this.board.event_manager).on('scroll.GlobalShortCuts', function(evt, mapEvt) {
       var currentZoom = self.board.getZoom(true);
-      var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor);
+      var newZoom = currentZoom + (mapEvt.deltaY * scrollZoomFactor * currentZoom);
       self.board.setZoom(newZoom, mapEvt.mapPoint, true);
     });
 

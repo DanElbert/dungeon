@@ -49,7 +49,8 @@ class Game < ApplicationRecord
         :is_owner => is_owner(options[:current_user_id]),
         :board => board.as_json(),
         :initiative => initiatives.to_a.map { |i| {:name => i.name, :value => i.value} },
-        :campaign_images => campaign.campaign_images.to_a.map { |i| {name: i.name, value: i.url } }
+        :campaign_images => campaign.campaign_images.to_a.map { |i| {name: i.name, value: i.url } },
+        :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters
     }
   end
 

@@ -1,10 +1,13 @@
 
-function ViewPortLabels(board) {
+function ViewPortLabels(board, useXLetters) {
   this.board = board;
   this.drawing = board.drawing;
   this.context = board.context;
+  this.useXLetters = !!useXLetters;
 
-  this.labelCache = new ViewPortLabelCache(500, 100);
+  this.labelCache = new ViewPortLabelCache();
+  this.labelWidth = 40;
+  this.labelHeight = 24;
 
 }
 _.extend(ViewPortLabels.prototype, {
@@ -25,16 +28,7 @@ _.extend(ViewPortLabels.prototype, {
     var firstVerticalTile = mapTileOrigin[1] + ((originY > mapTileOriginCenter[1]) ? 2 : 1);
 
     // If zoomed out, reduce the number of labels
-    if (tilePixelSize < 25) {
-      labelStep = 2;
-      if (firstHorizontalTile % 2 != 0) {
-        firstHorizontalTile += 1;
-      }
-
-      if (firstVerticalTile % 2 != 0) {
-        firstVerticalTile += 1;
-      }
-    }
+    labelStep = tilePixelSize >= this.labelWidth ? 1 : Math.ceil(this.labelWidth / tilePixelSize);
 
     var horizontalPixelOrigin = (((firstHorizontalTile * this.drawing.cellSize) - originX) * this.board.getZoom()) + (tilePixelSize / 2);
     var verticalPixelOrigin = (((firstVerticalTile * this.drawing.cellSize) - originY) * this.board.getZoom()) + (tilePixelSize / 2);
@@ -42,7 +36,7 @@ _.extend(ViewPortLabels.prototype, {
     var cursor = this.board.hovered_cell;
 
     this.context.save();
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
+    this.board.identityTransform();
     this.context.translate(0.5, 0.5);
 
     this.context.beginPath();
@@ -58,32 +52,44 @@ _.extend(ViewPortLabels.prototype, {
     var cur = firstHorizontalTile;
 
     while (labeled < pixelWidth) {
-      this.drawLabel([labeled, 15], this.numberToLetters(cur), (cursor && cur == cursor[0]));
-      labeled += (tilePixelSize * labelStep);
-      cur += labelStep;
+      if (this.shouldLabel(cur, cursor ? cursor[0] : null, labelStep)) {
+        var txt = this.useXLetters ? this.numberToLetters(cur) : cur;
+        this.drawLabel([labeled, 15], txt, (cursor && cur === cursor[0]));
+      }
+      labeled += tilePixelSize;
+      cur += 1;
     }
 
     labeled = verticalPixelOrigin;
     cur = firstVerticalTile;
 
     while (labeled < pixelHeight) {
-      this.drawLabel([14, labeled], cur, (cursor && cur == cursor[1]));
-      labeled += (tilePixelSize * labelStep);
-      cur += labelStep;
+      if (this.shouldLabel(cur, cursor ? cursor[1] : null, labelStep)) {
+        this.drawLabel([14, labeled], cur, (cursor && cur === cursor[1]));
+      }
+      labeled += tilePixelSize;
+      cur += 1;
     }
 
     this.board.context.restore();
   },
 
+  shouldLabel: function(index, highlightIndex, labelStep) {
+    if (highlightIndex && Math.abs(highlightIndex - index) < labelStep) {
+      return index === highlightIndex;
+    }
+    return ((index % labelStep) === 0);
+  },
+
   drawLabel: function(point, text, highlight) {
     var image = this.labelCache.get(text);
     if (image == null) {
-      image = new ViewPortLabel(text, this.board.imageCache);
+      image = new ViewPortLabel(text, this.labelWidth, this.labelHeight, this.board.imageCache);
       this.labelCache.set(text, image);
     }
     var width = image.width;
     var height = image.height;
-    this.context.drawImage(image.getImage(), point[0] - (width / 2), point[1] - (height / 2), width, height);
+    this.context.drawImage(image.getImage(highlight), point[0] - (width / 2), point[1] - (height / 2), width, height);
   },
 
   numberToLetters: function(value) {
@@ -105,25 +111,60 @@ _.extend(ViewPortLabels.prototype, {
   }
 });
 
-function ViewPortLabel(label, imageCache) {
+function ViewPortLabel(label, width, height, imageCache) {
   this.label = label;
   this.canvas = null;
+  this.highlightCanvas = null;
   this.context = null;
   this.drawing = null;
   this.imageCache = imageCache;
-  this.width = 40;
-  this.height = 24;
+  this.width = width;
+  this.height = height;
 }
 
 _.extend(ViewPortLabel.prototype, {
-  getImage: function() {
-    if (this.canvas == null) {
+  getImage: function(highlight) {
+    var found = true;
+    if (this.canvas === null) {
       this.canvas = document.createElement("canvas");
       this.canvas.width = this.width;
       this.canvas.height = this.height;
       this.context = this.canvas.getContext("2d");
       this.drawing = new Drawing(this.context, this.imageCache);
       this.drawing.drawText(this.label, [this.width / 2, this.height / 2], 20, "white", "black", 1);
+      var raw = this.context.getImageData(0, 0, this.width, this.height);
+      found = (_.find(raw.data, function(i) { return i !== 0; }) !== undefined);
+    }
+
+    if (highlight) {
+      if (this.highlightCanvas === null ) {
+        this.highlightCanvas = document.createElement("canvas");
+        this.highlightCanvas.width = this.width;
+        this.highlightCanvas.height = this.height;
+        var hCtx = this.highlightCanvas.getContext("2d");
+
+        hCtx.save();
+
+        hCtx.fillStyle = 'white';
+        hCtx.fillRect(0, 0, this.width, this.height);
+
+        hCtx.drawImage(this.canvas, 0, 0);
+        hCtx.save();
+        hCtx.globalCompositeOperation = 'destination-in';
+        hCtx.drawImage(this.canvas, 0, 0);
+        hCtx.globalCompositeOperation = 'difference';
+        hCtx.drawImage(this.canvas, 0, 0);
+        hCtx.restore();
+      }
+
+      return this.highlightCanvas;
+    }
+
+    if (!found) {
+      var r = this.canvas;
+      this.canvas = null;
+      this.highlightCanvas = null;
+      return r;
     }
 
     return this.canvas;
@@ -132,8 +173,8 @@ _.extend(ViewPortLabel.prototype, {
 
 function ViewPortLabelCache(cutoff, prune) {
   this.cache = {};
-  this.cutoff = cutoff || 550;
-  this.pruneCount = prune || 100;
+  this.cutoff = cutoff || 1024;
+  this.pruneCount = prune || 512;
 }
 
 _.extend(ViewPortLabelCache.prototype, {
@@ -156,7 +197,7 @@ _.extend(ViewPortLabelCache.prototype, {
     if (_.keys(this.cache).length > this.cutoff) {
       var values = _.values(this.cache);
       values = _.sortBy(values, "access");
-      values = _.last(values, (this.cutoff - this.pruneCount));
+      values = _.last(values, (this.pruneCount));
       this.cache = _.reduce(values, function(h, v) { h[v.id] = v; return h; }, {}, this);
     }
   }

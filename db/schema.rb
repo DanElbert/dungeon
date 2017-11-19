@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160918172943) do
+ActiveRecord::Schema.define(version: 20171119200936) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string   "action_type"
@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20160918172943) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "use_x_letters"
   end
 
   create_table "games", force: :cascade do |t|

@@ -45,12 +45,12 @@ _.extend(DrawingLayer.prototype, {
     }, this);
   },
 
-  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, disableFogDisplay) {
+  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, isFarZoom, disableFogDisplay) {
     var tiles = this.getTilesForRectangle([viewPortX, viewPortY], [viewPortX + viewPortWidth, viewPortY + viewPortHeight]);
     var context = drawing.context;
 
     _.each(tiles, function(tile) {
-      tile.draw(disableFogDisplay);
+      tile.draw(disableFogDisplay, isFarZoom);
       var tileCanvas = tile.canvas;
       if (tileCanvas != null) {
         context.drawImage(tileCanvas, tile.topLeft[0], tile.topLeft[1]);
@@ -102,6 +102,7 @@ function Tile(size, x, y, isOwner, imageCache, fogCover) {
   this.drawing = null;
   this.imageCache = imageCache;
   this.isFogDisabled = false;
+  this.isDistantMode = false;
   this.fogCover = fogCover;
 
   this.fogCanvas = null;
@@ -157,13 +158,15 @@ _.extend(Tile.prototype, {
     this.clear();
   },
 
-  draw: function(disableFogDisplay) {
+  draw: function(disableFogDisplay, useDistantMode) {
     disableFogDisplay = !!disableFogDisplay;
+    useDistantMode = !!useDistantMode;
 
-    if ((this.actions.length == 0 && this.fogActions.length == 0) || (this.isDrawn && this.isFogDisabled == disableFogDisplay))
+    if ((this.actions.length == 0 && this.fogActions.length == 0) || (this.isDrawn && this.isFogDisabled == disableFogDisplay && this.isDistantMode == useDistantMode))
       return;
 
     this.isFogDisabled = disableFogDisplay;
+    this.isDistantMode = useDistantMode;
 
     this.ensureCanvas();
 
@@ -177,6 +180,11 @@ _.extend(Tile.prototype, {
     }
 
     var d = this.drawing;
+
+    if (this.isDistantMode) {
+      d.minWidth = 10;
+    }
+
     var fd = this.fogDrawing;
 
     // Show squares around tiles for debugging
