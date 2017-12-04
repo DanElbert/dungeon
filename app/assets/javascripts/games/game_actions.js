@@ -421,6 +421,15 @@ _.extend(actionTypes, {
     validateData: function() {
       this.ensureFields(["uid"]);
     }
+  }),
+
+  viewPortSyncAction: createActionType("ViewPortSyncAction", Action, {
+    apply: function(board) {
+      board.viewPortManager.handleViewPortAction(this);
+    },
+    validateData: function() {
+      this.ensureFields(["uid", "zoom", "x", "y"]);
+    }
   })
 });
 

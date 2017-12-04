@@ -144,6 +144,22 @@
         .append($select);
     },
 
+    buildCheckboxWidget: function(tool) {
+      var $label = $("<label />")
+        .append($("<span />").addClass(tool.glyph))
+        .append($("<span />").addClass(tool.value ? "fa fa-check-square-o" : "fa fa-square-o"))
+        .append($("<span />").text(tool.label || tool.name))
+        .on('click.' + pluginName, tool.handler)
+        .onFastTap(pluginName, tool.handler);
+
+      if (tool.tooltip) {
+        $label.attr('title', tool.tooltip);
+        $label.tooltip({placement: 'right'});
+      }
+
+      return $label;
+    },
+
     isPopupOpen: function($button) {
       return !!$button.data(pluginName + "_popup");
     },
@@ -190,6 +206,9 @@
               break;
             case "zoom":
               $widget = privateMethods.buildZoomWidget(c);
+              break;
+            case "checkbox":
+              $widget = privateMethods.buildCheckboxWidget(c);
               break;
             default:
               throw "Unknown widget type: [" + c.type + "]";

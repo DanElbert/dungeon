@@ -8,6 +8,7 @@ function ViewPortManager(board) {
   this.verticalAnimation = null;
   this.horizontalAnimation = null;
   this.savedViewPort = null;
+  this.synced = false;
 }
 
 _.extend(ViewPortManager.prototype, {
@@ -56,6 +57,27 @@ _.extend(ViewPortManager.prototype, {
     this.board.toolManager.hideRestoreViewPort();
   },
 
+  handleViewPortAction: function(action) {
+    if (this.synced) {
+      this.setZoom(action.properties.zoom, null, false, true);
+      this.setCoordinates([action.properties.x, action.properties.y], false, true);
+    }
+  },
+
+  syncViewPort: _.debounce(function() {
+    if (this.synced) {
+      var zoom = this.getTargetZoom();
+      var coords = this.getTargetCoordinates();
+      var action = attachActionMethods({actionType: "viewPortSyncAction", zoom: zoom, x: coords[0], y: coords[1], uid: generateActionId()});
+      this.board.sendActionMessage(action.serialize());
+    }
+  }, 250),
+
+  toggleSynced: function() {
+    this.synced = !this.synced;
+    this.board.toolManager.updateViewPortSync(this.synced);
+  },
+
   getTargetZoom: function() {
     if (this.zoomAnimation) {
       return this.zoomAnimation.max;
@@ -68,7 +90,7 @@ _.extend(ViewPortManager.prototype, {
     return this.zoom;
   },
 
-  setZoom: function(newZoom, mapCenter, noAnimate) {
+  setZoom: function(newZoom, mapCenter, noAnimate, noSync) {
 
     var val = this.normalizeZoom(newZoom);
     this.board.toolManager.updateZoom(val);
@@ -79,11 +101,11 @@ _.extend(ViewPortManager.prototype, {
 
     if (noAnimate) {
       this.applyZoom(val);
-      this.setCoordinates(newCoordinates, true);
+      this.setCoordinates(newCoordinates, true, noSync);
       this.zoomAnimation = null;
     } else {
 
-      this.setCoordinates(newCoordinates);
+      this.setCoordinates(newCoordinates, false, noSync);
 
       var deltaConst = 1.5;
       var maxTime = 1.0;
@@ -91,13 +113,35 @@ _.extend(ViewPortManager.prototype, {
 
       this.zoomAnimation = new Animation(maxTime * ratio, EasingFactory.linear(), this.zoom, val);
     }
+
+    if (noSync !== true) {
+      this.syncViewPort();
+    }
+  },
+
+  getTargetCoordinates: function() {
+    var x, y;
+
+    if (this.horizontalAnimation) {
+      x = this.horizontalAnimation.max;
+    } else {
+      x = this.coordinates[0];
+    }
+
+    if (this.verticalAnimation) {
+      y = this.verticalAnimation.max;
+    } else {
+      y = this.coordinates[1];
+    }
+
+    return [x, y];
   },
 
   getCoordinates: function() {
     return this.coordinates;
   },
 
-  setCoordinates: function(newCoords, noAnimate) {
+  setCoordinates: function(newCoords, noAnimate, noSync) {
     if (noAnimate) {
       this.applyCoordinates(newCoords);
       this.verticalAnimation = null;
@@ -110,6 +154,10 @@ _.extend(ViewPortManager.prototype, {
       var ratioY = this.getDeltaRatio(current[1], newCoords[1], deltaConst);
       this.verticalAnimation = new Animation(maxTime * ratioY, EasingFactory.linear(), current[1], newCoords[1]);
       this.horizontalAnimation = new Animation(maxTime * ratioX, EasingFactory.linear(), current[0], newCoords[0]);
+    }
+
+    if (noSync !== true) {
+      this.syncViewPort();
     }
   },
 

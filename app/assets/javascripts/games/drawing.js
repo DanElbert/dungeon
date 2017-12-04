@@ -237,7 +237,13 @@ _.extend(Drawing.prototype, {
 
   tileBackground: function(vpX, vpY, vpW, vpH, imageUrl) {
 
-    var imageObj = this.imageCache.getImage(imageUrl);
+    var imageObj;
+
+    if (typeof imageUrl === 'string' || imageUrl instanceof String) {
+      imageObj = this.imageCache.getImage(imageUrl);
+    } else {
+      imageObj = imageUrl;
+    }
 
     if (imageObj == null) return;
 

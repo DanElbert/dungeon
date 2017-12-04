@@ -80,6 +80,14 @@ function ToolManager(board) {
         handler: function() {
           self.board.restoreViewPort();
         }
+      }),
+
+      new CheckMenuItem("view_port_sync", {
+        label: "Sync View",
+        glyph: "fa fa-refresh",
+        handler: function() {
+          self.board.viewPortManager.toggleSynced();
+        }
       })
     ]),
 
@@ -299,6 +307,11 @@ _.extend(ToolManager.prototype, {
     this.render();
   },
 
+  updateViewPortSync: function(vpSync) {
+    this.getMenuItem("view_port_sync").value = vpSync;
+    this.render();
+  },
+
   toggleDisplay: function() {
     this.renderer.toggleDisplay();
   },
@@ -428,6 +441,18 @@ function ZoomMenuItem(name, options) {
 }
 
 _.extend(ZoomMenuItem.prototype, ToolMenuItem.prototype, {
+  displayName: function() {
+    return this.value;
+  }
+});
+
+function CheckMenuItem(name, options) {
+  ToolMenuItem.call(this, name, options);
+  this.type = "checkbox";
+  this.value = options.value || false;
+}
+
+_.extend(CheckMenuItem.prototype, ToolMenuItem.prototype, {
   displayName: function() {
     return this.value;
   }
