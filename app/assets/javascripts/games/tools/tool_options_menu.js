@@ -289,6 +289,10 @@
           toolOption.value = $input.val();
         });
 
+      if (toolOption.width == "narrow") {
+        $widget.css({width: })
+      }
+
       return $widget;
     }
   };

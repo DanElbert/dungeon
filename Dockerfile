@@ -1,4 +1,4 @@
-FROM ruby:2.4.2-stretch
+FROM ruby:2.5.0-stretch
 
 RUN apt-get update && apt-get install -y \
         rsync \

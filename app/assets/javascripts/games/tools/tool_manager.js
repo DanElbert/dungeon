@@ -32,7 +32,8 @@ function ToolManager(board) {
     "label": new LabelTool(this),
     "copy": new CopyTool(this),
     "paste": new PasteTool(this),
-    "insert_image": new InsertImageTool(this)
+    "insert_image": new InsertImageTool(this),
+    "tokens": new TokenTool(this)
   };
 
   this.toolSet = [
@@ -47,6 +48,12 @@ function ToolManager(board) {
         label: "Ping",
         glyph: "fa fa-bullseye",
         handler: function() { self.setTool("ping"); }
+      }),
+
+      new ToolMenuItem("tokens", {
+        label: "Tokens",
+        glyph: "fa fa-user-circle",
+        handler: function() { self.setTool("tokens"); }
       })
     ]),
 

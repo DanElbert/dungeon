@@ -215,6 +215,11 @@ _.extend(Drawing.prototype, {
     this.context.fill();
   },
 
+  drawToken: function(col, row, width, height, color, text, fontColor, fontSize) {
+    this.drawCircleTiles(col, row, width, height, color);
+    this.drawText(text, Geometry.getCellMidpoint([col, row], this.cellSize), fontSize, fontColor);
+  },
+
   // Low level drawing function; places an ellipse in the context path
   // but does not stroke or fill
   drawEllipse: function(x, y, w, h) {

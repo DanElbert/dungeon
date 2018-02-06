@@ -11,6 +11,7 @@
 //= require ./insert_image
 //= require ./drawing
 //= require ./templates
+//= require ./tokens
 //= require ./ping
 //= require ./label
 //= require ./copy_paste
