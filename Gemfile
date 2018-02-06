@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '5.1.4'
 
 gem 'sqlite3', '~> 1.3.13'
-gem 'pg', '~> 1.0.0'
+gem 'pg', '~> 0.21.0'
 
 gem 'uuid', '~> 2.3.8'
 gem 'oj', '~> 3.4.0'
