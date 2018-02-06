@@ -19,6 +19,13 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
 
     $(board.event_manager).on('click.Pointer', function(evt, mapEvt) {
 
+      var t = board.tokenLayer.tokenAtCell(mapEvt.mapPointCell);
+
+      if (t !== null) {
+        var tool = self.toolManager.setTool("tokens");
+        tool.editToken(t);
+      }
+
       self.selected_template = null;
 
       for (var x = board.template_actions.length - 1; x >= 0; x--) {

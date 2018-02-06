@@ -31,7 +31,9 @@
   var privateMethods = {
     rebuild: function($this) {
       var data = $this.data(pluginName);
-      var toolOptions = data.options.toolOptions;
+      var toolOptions = _.filter(data.options.toolOptions, function(to) {
+        return to.visible !== false;
+      });
 
       $this.empty();
 
@@ -68,6 +70,12 @@
             break;
           case "text":
             $widget = privateMethods.buildTextOption(to);
+            break;
+          case "command":
+            $widget = privateMethods.buildCommandOption(to);
+            break;
+          case "tokenSize":
+            $widget = privateMethods.buildTokenSizeOption(to);
             break;
           default:
             $widget = $("<span>" + to.name + "</span>");
@@ -285,15 +293,67 @@
       var $input = $("<input />")
         .attr("type", "text")
         .appendTo($widget)
+        .val(toolOption.value)
         .on("keyup change blur", function() {
           toolOption.value = $input.val();
         });
 
       if (toolOption.width == "narrow") {
-        $widget.css({width: })
+        $input.css({width: '100px'})
       }
 
       return $widget;
+    },
+
+    buildCommandOption: function(toolOption) {
+      var $widget = $("<div/>")
+        .addClass('option_menu');
+
+      var $btn = $("<button/>")
+        .attr({type: 'button'})
+        .addClass('button')
+        .text(toolOption.label)
+        .click(function() { toolOption.command() })
+        .appendTo($widget);
+
+      return $widget;
+    },
+
+    buildTokenSizeOption: function(toolOption) {
+      var $widget = $("<div/>")
+        .addClass('option_menu');
+
+      var $dropdown = privateMethods.buildSimpleDropdown(toolOption, {
+        "1x1": "1",
+        "2x2": "2",
+        "3x3": "3"
+      });
+
+      $dropdown.val(toolOption.value || "1");
+      $widget.append($dropdown);
+
+      return $widget;
+    },
+
+    buildSimpleDropdown: function(toolOption, opts) {
+      var optionFunc = function(value, txt) {
+        return $("<option />").attr("value", value).text(txt);
+      };
+
+      var $dropdown = $("<select />")
+        .change(function() {
+          toolOption.value = $(this).val();
+          this.blur();
+        })
+        .mouseleave(function() {
+          //this.blur();
+        });
+
+      _.each(_.pairs(opts), function(pair) {
+        $dropdown.append(optionFunc(pair[1], pair[0]));
+      }, this);
+
+      return $dropdown;
     }
   };
 

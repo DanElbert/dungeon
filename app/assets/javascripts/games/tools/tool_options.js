@@ -55,15 +55,6 @@ _.extend(ToolOptions.prototype, {
     this.indexed = {};
   },
 
-  // Given a map (such as {property1: 'value', property2: 'value'}),
-  // returns an object that responds to the same properties, but also raises
-  // events if any of them change
-  buildOption: function(map) {
-    var opt = new EventingOption(map);
-    this.attachHandler(opt);
-    return opt;
-  },
-
   attachHandler: function(opt) {
     var self = this;
     $(opt).on('changed.ToolOption', function(e) { self.optionChanged(e, this); });
@@ -80,7 +71,7 @@ _.extend(ToolOptions.prototype, {
 });
 
 function EventingOption(map) {
-  this.__values = _.omit(map, _.functions(map).concat(['__values']));
+  this.__values = _.omit(map, ['__values']);
 
   _.each(_.keys(this.__values), function(key) {
     Object.defineProperty(

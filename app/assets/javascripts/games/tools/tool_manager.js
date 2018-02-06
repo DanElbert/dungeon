@@ -48,12 +48,6 @@ function ToolManager(board) {
         label: "Ping",
         glyph: "fa fa-bullseye",
         handler: function() { self.setTool("ping"); }
-      }),
-
-      new ToolMenuItem("tokens", {
-        label: "Tokens",
-        glyph: "fa fa-user-circle",
-        handler: function() { self.setTool("tokens"); }
       })
     ]),
 
@@ -62,6 +56,12 @@ function ToolManager(board) {
         label: "Zoom",
         glyph: "glyphicon glyphicon-zoom-in",
         handler: function(zoom) { self.changeZoom(zoom); }
+      }),
+
+      new ToolMenuItem("tokens", {
+        label: "Tokens",
+        glyph: "fa fa-user-circle",
+        handler: function() { self.setTool("tokens"); }
       }),
 
       new ToolMenuItem("fullscreen", {
@@ -296,6 +296,8 @@ _.extend(ToolManager.prototype, {
       }
 
       this.render();
+
+      return tool;
 
     } else {
       throw "No such tool";

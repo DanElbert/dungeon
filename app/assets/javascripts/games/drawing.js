@@ -205,19 +205,28 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
   },
 
-  drawCircleTiles: function(col, row, width, height, color) {
-    var width_delta = Math.floor(width / 2);
-    var height_delta = Math.floor(height / 2);
-    var center = Geometry.getCellMidpoint([col, row], this.cellSize);
-
+  drawCircleTiles: function(col, row, width, height, color, border) {
+    this.context.save();
     this.context.fillStyle = color;
     this.drawEllipse(col * this.cellSize, row * this.cellSize, width * this.cellSize, height * this.cellSize);
     this.context.fill();
+
+    if (border) {
+      this.context.lineWidth = 5;
+      this.context.setLineDash([4, 2]);
+      //this.context.lineDashOffset = (Date.now() / 100) % 16;
+      this.context.strokeStyle = border;
+      this.context.stroke();
+    }
+    this.context.restore();
   },
 
-  drawToken: function(col, row, width, height, color, text, fontColor, fontSize) {
-    this.drawCircleTiles(col, row, width, height, color);
-    this.drawText(text, Geometry.getCellMidpoint([col, row], this.cellSize), fontSize, fontColor);
+  drawToken: function(col, row, width, height, color, text, fontColor, fontSize, highlight) {
+    this.drawCircleTiles(col, row, width, height, color, highlight);
+    var fontPoint = [col * this.cellSize, row * this.cellSize];
+    fontPoint[0] += (width * this.cellSize) / 2;
+    fontPoint[1] += (height * this.cellSize) / 2;
+    this.drawText(text, fontPoint, fontSize, fontColor);
   },
 
   // Low level drawing function; places an ellipse in the context path

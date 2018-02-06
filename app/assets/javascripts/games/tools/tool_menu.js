@@ -149,6 +149,7 @@
         .append($("<span />").addClass(tool.glyph))
         .append($("<span />").addClass(tool.value ? "fa fa-check-square-o" : "fa fa-square-o"))
         .append($("<span />").text(tool.label || tool.name))
+        .css({"font-weight": "normal"})
         .on('click.' + pluginName, tool.handler)
         .onFastTap(pluginName, tool.handler);
 

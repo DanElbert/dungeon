@@ -402,26 +402,43 @@ _.extend(actionTypes, {
     }
   }),
 
-  setTokensAction: createActionType("SetTokensAction", Action, {
+  addTokenAction: createActionType("AddTokenAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.tokenLayer.setTokens(this.properties.tokens);
+      board.tokenLayer.addToken(this.serialize());
     },
     validateData: function() {
-      this.ensureFields(["uid", "tokens"]);
+      this.ensureFields(["uid", "cell", "height", "width", "color", "text", "fontSize", "fontColor"]);
     }
   }),
 
-  clearTokensAction: createActionType("ClearTokensAction", Action, {
-    isPersistent: function() { return true; },
+  // References a drawing action to remove
+  removeTokenAction: createActionType("RemoveTokenAction", RemovalAction, {
     apply: function(board) {
-      board.tokenLayer.clearTokens();
-      //board.toolBars.hideClearTokensButton();
-    },
-    validateData: function() {
-      this.ensureFields(["uid"]);
+      board.tokenLayer.removeToken(this.properties.actionId);
     }
   }),
+
+  // setTokensAction: createActionType("SetTokensAction", Action, {
+  //   isPersistent: function() { return true; },
+  //   apply: function(board) {
+  //     board.tokenLayer.setTokens(this.properties.tokens);
+  //   },
+  //   validateData: function() {
+  //     this.ensureFields(["uid", "tokens"]);
+  //   }
+  // }),
+  //
+  // clearTokensAction: createActionType("ClearTokensAction", Action, {
+  //   isPersistent: function() { return true; },
+  //   apply: function(board) {
+  //     board.tokenLayer.clearTokens();
+  //     //board.toolBars.hideClearTokensButton();
+  //   },
+  //   validateData: function() {
+  //     this.ensureFields(["uid"]);
+  //   }
+  // }),
 
   viewPortSyncAction: createActionType("ViewPortSyncAction", Action, {
     apply: function(board) {
