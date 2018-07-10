@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   redis:
@@ -8,8 +8,6 @@ services:
   proxy:
     image: 'nginx:latest'
     restart: unless-stopped
-    ports:
-      - "3000:80"
     volumes:
       - ./dungeon_nginx:/etc/nginx/conf.d/
       - assets:/dungeon/public/assets/
@@ -19,6 +17,13 @@ services:
       - web2
       - web3
       - web4
+    networks:
+      - default
+      - traefik
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: traefik
+      traefik.frontend.rule: 'Host:dungeon.elbert.us'
 
   web1:
     image: 'danelbert/dungeon:production'
@@ -57,5 +62,7 @@ volumes:
   images:
     driver: local
 
-
+networks:
+  traefik:
+    external: true
 
