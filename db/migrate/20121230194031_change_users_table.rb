@@ -1,4 +1,4 @@
-class ChangeUsersTable < ActiveRecord::Migration
+class ChangeUsersTable < ActiveRecord::Migration[4.2]
   def change
     change_table :users do |t|
       t.remove :password_hash

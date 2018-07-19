@@ -1,4 +1,4 @@
-class DropBoardDrawing < ActiveRecord::Migration
+class DropBoardDrawing < ActiveRecord::Migration[4.2]
   def up
     drop_table :board_drawing_data
     drop_table :board_drawings

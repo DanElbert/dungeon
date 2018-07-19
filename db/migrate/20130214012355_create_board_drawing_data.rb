@@ -1,4 +1,4 @@
-class CreateBoardDrawingData < ActiveRecord::Migration
+class CreateBoardDrawingData < ActiveRecord::Migration[4.2]
   def change
     create_table :board_drawing_data do |t|
       t.integer :board_drawing_id

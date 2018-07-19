@@ -1,4 +1,4 @@
-class MigrateBoardsBackgroundImage < ActiveRecord::Migration
+class MigrateBoardsBackgroundImage < ActiveRecord::Migration[4.2]
 
   class Image < ActiveRecord::Base
     self.inheritance_column = nil

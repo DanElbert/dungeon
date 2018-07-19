@@ -228,7 +228,7 @@
             this.blur();
           })
           .mouseleave(function() {
-            this.blur();
+            //this.blur();
           })
           .val(toolOption.value || "rectangle")
           .appendTo($widget);

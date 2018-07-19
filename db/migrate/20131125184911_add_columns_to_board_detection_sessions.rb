@@ -1,4 +1,4 @@
-class AddColumnsToBoardDetectionSessions < ActiveRecord::Migration
+class AddColumnsToBoardDetectionSessions < ActiveRecord::Migration[4.2]
   def change
     change_table :board_detection_sessions do |t|
       t.remove :detect_origin

@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.1.5'
+gem 'rails', '5.1.6'
 
 gem 'sqlite3', '~> 1.3.13'
 gem 'pg', '~> 0.21.0'
 
 gem 'uuid', '~> 2.3.8'
-gem 'oj', '~> 3.4.0'
+gem 'oj', '~> 3.6.4'
 
 gem 'thin', '~> 1.7.2'
 gem 'faye', '1.2.4', :require => false #, path: '/Users/delbert/Development/faye'

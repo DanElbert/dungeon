@@ -1,4 +1,4 @@
-class CreateInitiativeHistories < ActiveRecord::Migration
+class CreateInitiativeHistories < ActiveRecord::Migration[4.2]
   def change
     create_table :initiative_histories do |t|
       t.integer :game_id

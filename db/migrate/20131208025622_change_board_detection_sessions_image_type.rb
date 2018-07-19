@@ -1,4 +1,4 @@
-class ChangeBoardDetectionSessionsImageType < ActiveRecord::Migration
+class ChangeBoardDetectionSessionsImageType < ActiveRecord::Migration[4.2]
   def change
     change_table :board_detection_sessions do |t|
       t.remove :image

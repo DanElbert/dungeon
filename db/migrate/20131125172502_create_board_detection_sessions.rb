@@ -1,4 +1,4 @@
-class CreateBoardDetectionSessions < ActiveRecord::Migration
+class CreateBoardDetectionSessions < ActiveRecord::Migration[4.2]
   def change
     create_table :board_detection_sessions do |t|
       t.integer :game_id

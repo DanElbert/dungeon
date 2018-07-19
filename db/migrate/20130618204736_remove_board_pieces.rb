@@ -1,4 +1,4 @@
-class RemoveBoardPieces < ActiveRecord::Migration
+class RemoveBoardPieces < ActiveRecord::Migration[4.2]
   def up
     drop_table :board_pieces
   end

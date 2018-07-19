@@ -1,4 +1,4 @@
-class SeedArchiveCampaign < ActiveRecord::Migration
+class SeedArchiveCampaign < ActiveRecord::Migration[4.2]
   class Campaign < ActiveRecord::Base
   end
 
