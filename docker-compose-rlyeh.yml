@@ -26,7 +26,7 @@ services:
       traefik.frontend.rule: 'Host:dungeon.elbert.us'
 
   web1:
-    image: 'danelbert/dungeon:production'
+    image: 'registry.elbert.us/dungeon:production'
     restart: unless-stopped
     env_file: /etc/default/dungeon
     environment:
@@ -40,7 +40,7 @@ services:
       - redis
 
   web2: &web
-    image: 'danelbert/dungeon:production'
+    image: 'registry.elbert.us/dungeon:production'
     restart: unless-stopped
     env_file: /etc/default/dungeon
     volumes:
