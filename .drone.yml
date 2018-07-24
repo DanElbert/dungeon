@@ -16,3 +16,4 @@ pipeline:
     compose_file: 'docker-compose-rlyeh.yml'
     when:
       branch: production
+
