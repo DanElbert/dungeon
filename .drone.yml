@@ -12,6 +12,7 @@ pipeline:
 
   deploy:
     image: registry.elbert.us/drone_rlyeh_deploy
+    pull: true
     secrets: [ rlyeh_deploy_key ]
     user: fig
     deploy_name: dungeon
