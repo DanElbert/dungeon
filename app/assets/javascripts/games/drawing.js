@@ -349,7 +349,7 @@ _.extend(Drawing.prototype, {
     this.context.restore();
   },
 
-  drawImageFromCenter: function(x, y, imageUrl, scale, rotation) {
+  drawImageFromCenter: function(x, y, imageUrl, scale, rotation, topLeft, bottomRight) {
     var imgObj = this.imageCache.getImage(imageUrl);
     if (imgObj) {
       scale = scale || 1.0;
@@ -358,13 +358,19 @@ _.extend(Drawing.prototype, {
       this.context.save();
 
       this.context.translate(x, y);
-      this.context.rotate(rotation * Math.PI / 180);
       this.context.scale(scale, scale);
+      this.context.rotate(rotation * Math.PI / 180);
       this.context.translate(-(imgObj.width / 2), -(imgObj.height / 2));
 
-      this.context.drawImage(imgObj, 0, 0);
+      var sx = 0;
+      var sy = 0;
+      var sWidth = imgObj.width;
+      var sHeight = imgObj.height;
+
+      this.context.drawImage(imgObj, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight);
       this.context.restore();
     }
+    //this.drawCircle(x, y, 10, 3, "red", null);
   },
 
   drawImage: function(x, y, imageUrl) {

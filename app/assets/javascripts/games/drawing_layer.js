@@ -1,5 +1,5 @@
 function DrawingLayer(imageCache) {
-  this.tileSize = 500;
+  this.tileSize = 1500;
   this.tileList = [];
   this.tileLookup = {};
   this.isOwner = false;
@@ -188,11 +188,11 @@ _.extend(Tile.prototype, {
     var fd = this.fogDrawing;
 
     // Show squares around tiles for debugging
-    //d.drawSquare(this.topLeft, this.bottomRight, '#000000', null, 3);
+    d.drawSquare(this.topLeft, this.bottomRight, '#000000', null, 3);
 
     _.each(this.actions, function(a) {
-      a.draw(d);
-    });
+      a.draw(d, this.topLeft, this.bottomRight);
+    }, this);
 
     _.each(this.fogActions, function(a) {
       a.draw(fd)

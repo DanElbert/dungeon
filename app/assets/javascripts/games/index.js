@@ -1,3 +1,4 @@
+//= require ./matrix
 //= require ./geometry
 //= require ./fullscreen
 //= require ./initiative

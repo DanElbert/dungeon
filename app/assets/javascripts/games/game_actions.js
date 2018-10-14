@@ -237,17 +237,17 @@ _.extend(actionTypes, {
   }),
 
   insertImageAction: createActionType("InsertImageAction", DrawingAction, {
-    draw: function(drawing) {
-      drawing.drawImageFromCenter(this.properties.center[0], this.properties.center[1], this.properties.url, this.properties.scale, this.properties.angle);
+    draw: function(drawing, topLeft, bottomRight) {
+      drawing.drawImageFromCenter(this.properties.center[0], this.properties.center[1], this.properties.url, this.properties.scale, this.properties.angle, topLeft, bottomRight);
     },
 
     calculateBounds: function() {
       // assume width and height are unscaled image dimensions
       var height = this.properties.height * this.properties.scale;
       var width = this.properties.width * this.properties.scale;
-      var radius = Math.sqrt((width * width) + (height * height));
-      var topLeft = [this.properties.center[0] - radius / 2, this.properties.center[1] - radius / 2];
-      return [topLeft, [topLeft[0] + width, topLeft[1] + height]];
+      var radius = Math.sqrt((width * width) + (height * height)) / 2;
+      var topLeft = [this.properties.center[0] - radius, this.properties.center[1] - radius];
+      return [topLeft, [topLeft[0] + (radius * 2), topLeft[1] + (radius * 2)]];
     },
 
     validateData: function() {
@@ -417,6 +417,12 @@ _.extend(actionTypes, {
     apply: function(board) {
       board.tokenLayer.removeToken(this.properties.actionId);
     }
+  }),
+
+  setTokensAction: createActionType("SetTokensAction", Action, {
+  }),
+
+  clearTokensAction: createActionType("SetTokensAction", Action, {
   }),
 
   // setTokensAction: createActionType("SetTokensAction", Action, {
