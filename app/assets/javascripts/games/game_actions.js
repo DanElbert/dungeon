@@ -107,9 +107,10 @@ _.extend(actionTypes, {
   }),
 
   // A pen action consists of a color, a width, and a collection of lines that are to be drawn on the drawing layer
-  penAction: createActionType("PenAction", LineCollectionAction, {
-    draw: function(drawing) {
-      drawing.drawLines(this.properties.color, this.properties.width, this.properties.lines);
+  penAction: createActionType("PenAction", Action, {
+    isPersistent: function() { return true; },
+    apply: function(board) {
+      board.drawingLayer.addAction(new PenDrawing(this.uid, this.properties.lines, this.properties.width, this.properties.color));
     },
 
     validateData: function() {
@@ -236,18 +237,18 @@ _.extend(actionTypes, {
     }
   }),
 
-  insertImageAction: createActionType("InsertImageAction", DrawingAction, {
-    draw: function(drawing, topLeft, bottomRight) {
-      drawing.drawImageFromCenter(this.properties.center[0], this.properties.center[1], this.properties.url, this.properties.scale, this.properties.angle, topLeft, bottomRight);
-    },
-
-    calculateBounds: function() {
-      // assume width and height are unscaled image dimensions
-      var height = this.properties.height * this.properties.scale;
-      var width = this.properties.width * this.properties.scale;
-      var radius = Math.sqrt((width * width) + (height * height)) / 2;
-      var topLeft = [this.properties.center[0] - radius, this.properties.center[1] - radius];
-      return [topLeft, [topLeft[0] + (radius * 2), topLeft[1] + (radius * 2)]];
+  insertImageAction: createActionType("InsertImageAction", Action, {
+    isPersistent: function() { return true; },
+    apply: function(board) {
+      board.drawingLayer.addAction(
+        new ImageDrawing(
+          this.uid,
+          this.properties.url,
+          new Vector2(this.properties.width, this.properties.height),
+          new Vector2(this.properties.center[0], this.properties.center[1]),
+          this.properties.scale,
+          this.properties.angle)
+      );
     },
 
     validateData: function() {

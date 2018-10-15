@@ -191,7 +191,7 @@ _.extend(Tile.prototype, {
     d.drawSquare(this.topLeft, this.bottomRight, '#000000', null, 3);
 
     _.each(this.actions, function(a) {
-      a.draw(d, this.topLeft, this.bottomRight);
+      a.draw(d, new Rectangle(new Vector2(this.topLeft[0], this.topLeft[1]), new Vector2(this.bottomRight[0], this.bottomRight[1])));
     }, this);
 
     _.each(this.fogActions, function(a) {

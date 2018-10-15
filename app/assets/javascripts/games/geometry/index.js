@@ -1,5 +1,8 @@
+//= require ./vector2
+//= require ./matrix
+//= require ./rectangle
 
-var Geometry = {
+window.Geometry = {
 
   REACH_CACHE: null,
 
@@ -86,10 +89,10 @@ var Geometry = {
   // Given the corners of 2 rectangles, return whether they overlap
   rectanglesOverlap: function(leftTopA, rightBottomA, leftTopB, rightBottomB) {
     var xOverlap = Geometry.inRange(leftTopA[0], leftTopB[0], rightBottomB[0]) ||
-        Geometry.inRange(leftTopB[0], leftTopA[0], rightBottomA[0]);
+      Geometry.inRange(leftTopB[0], leftTopA[0], rightBottomA[0]);
 
     var yOverlap = Geometry.inRange(leftTopA[1], leftTopB[1], rightBottomB[1]) ||
-        Geometry.inRange(leftTopB[1], leftTopA[1], rightBottomA[1]);
+      Geometry.inRange(leftTopB[1], leftTopA[1], rightBottomA[1]);
 
     return xOverlap && yOverlap;
   },
@@ -104,108 +107,108 @@ var Geometry = {
     if (Geometry.REACH_CACHE == null) {
       Geometry.REACH_CACHE = {
         medium: Geometry.buildReachCells(
-            "RRR",
-            "RTT",
-            "RTC",
-            5
+          "RRR",
+          "RTT",
+          "RTC",
+          5
         ),
 
         large_long: Geometry.buildReachCells(
-            "0RR",
-            "RTT",
-            "RTC",
-            6
+          "0RR",
+          "RTT",
+          "RTC",
+          6
         ),
 
         large_tall: Geometry.buildReachCells(
-            "000RR",
-            "0RRRR",
-            "0RTTT",
-            "RRTTT",
-            "RRTTC",
-            10
+          "000RR",
+          "0RRRR",
+          "0RTTT",
+          "RRTTT",
+          "RRTTC",
+          10
         ),
 
         huge_long: Geometry.buildReachCells(
-            "000RRR",
-            "0RRRRR",
-            "0RTTTT",
-            "RRTTTT",
-            "RRTTCC",
-            "RRTTCC",
-            11
+          "000RRR",
+          "0RRRRR",
+          "0RTTTT",
+          "RRTTTT",
+          "RRTTCC",
+          "RRTTCC",
+          11
         ),
 
         huge_tall: Geometry.buildReachCells(
-            "00000RRR",
-            "000RRRRR",
-            "00RRRRRR",
-            "0RRRRTTT",
-            "0RRRTTTT",
-            "RRRTTTTT",
-            "RRRTTTCC",
-            "RRRTTTCC",
-            15
+          "00000RRR",
+          "000RRRRR",
+          "00RRRRRR",
+          "0RRRRTTT",
+          "0RRRTTTT",
+          "RRRTTTTT",
+          "RRRTTTCC",
+          "RRRTTTCC",
+          15
         ),
 
         gargantuan_long: Geometry.buildReachCells(
-            "00000RRR",
-            "000RRRRR",
-            "00RRRRRR",
-            "0RRRRTTT",
-            "0RRRTTTT",
-            "RRRTTTTT",
-            "RRRTTTCC",
-            "RRRTTTCC",
-            16
+          "00000RRR",
+          "000RRRRR",
+          "00RRRRRR",
+          "0RRRRTTT",
+          "0RRRTTTT",
+          "RRRTTTTT",
+          "RRRTTTCC",
+          "RRRTTTCC",
+          16
         ),
 
         gargantuan_tall: Geometry.buildReachCells(
-            "0000000RRR",
-            "00000RRRRR",
-            "0000RRRRRR",
-            "000RRRRRRR",
-            "00RRRRRTTT",
-            "0RRRRTTTTT",
-            "0RRRRTTTTT",
-            "RRRRTTTTTT",
-            "RRRRTTTTCC",
-            "RRRRTTTTCC",
-            20
+          "0000000RRR",
+          "00000RRRRR",
+          "0000RRRRRR",
+          "000RRRRRRR",
+          "00RRRRRTTT",
+          "0RRRRTTTTT",
+          "0RRRRTTTTT",
+          "RRRRTTTTTT",
+          "RRRRTTTTCC",
+          "RRRRTTTTCC",
+          20
         ),
 
         colossal_long: Geometry.buildReachCells(
-            "0000000RRRR",
-            "00000RRRRRR",
-            "0000RRRRRRR",
-            "000RRRRRRRR",
-            "00RRRRRTTTT",
-            "0RRRRTTTTTT",
-            "0RRRRTTTTTT",
-            "RRRRTTTTTTT",
-            "RRRRTTTTCCC",
-            "RRRRTTTTCCC",
-            "RRRRTTTTCCC",
-            22
+          "0000000RRRR",
+          "00000RRRRRR",
+          "0000RRRRRRR",
+          "000RRRRRRRR",
+          "00RRRRRTTTT",
+          "0RRRRTTTTTT",
+          "0RRRRTTTTTT",
+          "RRRRTTTTTTT",
+          "RRRRTTTTCCC",
+          "RRRRTTTTCCC",
+          "RRRRTTTTCCC",
+          22
         ),
 
         colossal_tall: Geometry.buildReachCells(
-            "00000000000RRRR",
-            "000000000RRRRRR",
-            "0000000RRRRRRRR",
-            "00000RRRRRRRRRR",
-            "0000RRRRRRRRRRR",
-            "000RRRRRRRRRRRR",
-            "000RRRRRRRRTTTT",
-            "00RRRRRRRTTTTTT",
-            "00RRRRRRTTTTTTT",
-            "0RRRRRRTTTTTTTT",
-            "0RRRRRRTTTTTTTT",
-            "RRRRRRTTTTTTTTT",
-            "RRRRRRTTTTTTCCC",
-            "RRRRRRTTTTTTCCC",
-            "RRRRRRTTTTTTCCC",
-            30
+          "00000000000RRRR",
+          "000000000RRRRRR",
+          "0000000RRRRRRRR",
+          "00000RRRRRRRRRR",
+          "0000RRRRRRRRRRR",
+          "000RRRRRRRRRRRR",
+          "000RRRRRRRRTTTT",
+          "00RRRRRRRTTTTTT",
+          "00RRRRRRTTTTTTT",
+          "0RRRRRRTTTTTTTT",
+          "0RRRRRRTTTTTTTT",
+          "RRRRRRTTTTTTTTT",
+          "RRRRRRTTTTTTCCC",
+          "RRRRRRTTTTTTCCC",
+          "RRRRRRTTTTTTCCC",
+          30
         )
       };
     }
@@ -469,12 +472,12 @@ var Geometry = {
         return Geometry.mirrorY(Geometry.getOctant1(center, radius), center[0]);
       case 5:
         return Geometry.mirrorX(
-            Geometry.mirrorY(Geometry.getOctant1(center, radius), center[0]),
-            center[1]);
+          Geometry.mirrorY(Geometry.getOctant1(center, radius), center[0]),
+          center[1]);
       case 6:
         return Geometry.mirrorX(
-            Geometry.mirrorY(Geometry.getOctant2(center, radius), center[0]),
-            center[1]);
+          Geometry.mirrorY(Geometry.getOctant2(center, radius), center[0]),
+          center[1]);
       case 7:
         return Geometry.mirrorX(Geometry.getOctant2(center, radius), center[1]);
       case 8:

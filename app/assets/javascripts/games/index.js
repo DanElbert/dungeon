@@ -1,9 +1,9 @@
-//= require ./matrix
-//= require ./geometry
 //= require ./fullscreen
 //= require ./initiative
 //= require ./initiative_manager
 //= require ./animation
+//= require ./geometry
+//= require ./drawing_objects
 //= require ./drawing
 //= require ./board_events
 //= require ./background_layer
