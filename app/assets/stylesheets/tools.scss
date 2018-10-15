@@ -13,18 +13,18 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   width: 40px;
   height: 40px;
   display: block;
-  background-color: $brand-primary;
+  background-color: $primary;
   border: none;
-  color: $btn-default-color;
+  color: $white;
   font-size: 22px;
 
   &:hover {
-    background-color: lighten($brand-primary, 15%);
+    background-color: lighten($primary, 15%);
   }
 
   &.selected {
-    color: $brand-primary;
-    background-color: $btn-default-color;
+    color: $primary;
+    background-color: $white;
   }
 }
 
@@ -42,10 +42,14 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   background: white;
   white-space: pre;
   text-align: left;
-  color: $text-color;
+  color: $body-color;
   width: 180px;
 
-  .glyphicon, .fa {
+  button {
+    color: $body-color;
+  }
+
+  .glyph {
     padding-right: 10px;
     width: 1.5em;
   }
@@ -62,12 +66,13 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
   font-size: 20px;
 
   &:hover {
-    border: solid 2px $gray-lighter;
+    border: solid 2px $gray-200;
   }
 }
 
 #tool_option_menu {
   position: absolute;
+  display: flex;
   top: 32px;
   left: 150px;
   z-index: 100;

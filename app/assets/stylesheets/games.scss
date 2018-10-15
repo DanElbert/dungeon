@@ -6,12 +6,12 @@
 #game_board_container {
   position: relative;
 
-  canvas {
+  canvas, div.background {
     position: absolute;
     z-index: 1;
   }
 
-  canvas.background {
+  canvas.background, div.background {
     z-index: 0;
   }
 }

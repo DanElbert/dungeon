@@ -31,7 +31,7 @@ class User < ApplicationRecord
   end
 
   def set_auth_token
-    self.auth_token = UUID.new.generate :compact
+    self.auth_token = SecureRandom.uuid
   end
 
 end

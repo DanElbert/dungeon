@@ -2,10 +2,8 @@ source 'https://rubygems.org'
 
 gem 'rails', '5.2.1'
 
-gem 'sqlite3', '~> 1.3.13'
 gem 'pg', '~> 1.1.3'
 
-gem 'uuid', '~> 2.3.9'
 gem 'oj', '~> 3.6.11'
 
 gem 'thin', '~> 1.7.2'
@@ -15,13 +13,17 @@ gem 'redis-rails', '~> 5.0.2'
 
 gem 'jquery-rails', '~> 4.3.3'
 gem 'jquery-ui-rails', '~> 6.0.1'
-gem 'bootstrap-sass', '~> 3.3.7'
-gem 'font-awesome-sass', '~> 4.7.0'
+gem 'bootstrap', '~> 4.1.3'
+gem 'font-awesome-sass', '~> 5.3.1'
 gem 'bcrypt', '~> 3.1.12'
 
-gem 'sass-rails',   '~> 5.0.7'
-gem 'therubyracer', platforms: :ruby
+gem 'sassc-rails',   '~> 1.3.0'
+#gem 'therubyracer', platforms: :ruby
 gem 'uglifier', '>= 1.0.3'
+
+group :development, :test do
+  gem 'sqlite3', '~> 1.3.13'
+end
 
 group :development do
   gem 'listen', '~> 3.1.5'

@@ -24,7 +24,7 @@ _.extend(MainMenu.prototype, {
 
     _.each(this.buttons, function(b) {
       $("<button />")
-          .addClass("btn btn-default btn-sm")
+          .addClass("btn btn-secondary btn-sm")
           .text(b.name)
           .click(function() { b.handler.call(self); })
           .appendTo(this.container);

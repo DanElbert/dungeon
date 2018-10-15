@@ -1,5 +1,5 @@
 function DrawingLayer(imageCache) {
-  this.tileSize = 1500;
+  this.tileSize = 500;
   this.tileList = [];
   this.tileLookup = {};
   this.isOwner = false;

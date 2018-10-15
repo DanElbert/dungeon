@@ -12,7 +12,7 @@ unless User.where(:email => 'dan.elbert@gmail.com').exists?
 end
 
 unless User.where(:email => 'dungeon@system.com').exists?
-  system = User.new({:email => "dungeon@system.com", :name => "System", password_digest: 'totally invalid', :is_admin => true, auth_token: UUID.new.generate(:compact)})
+  system = User.new({:email => "dungeon@system.com", :name => "System", password_digest: 'totally invalid', :is_admin => true, auth_token: SecureRandom.uuid})
   system.save!(validate: false)
 end
 

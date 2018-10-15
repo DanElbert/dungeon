@@ -40,13 +40,13 @@ function ToolManager(board) {
     new ToolMenuGroup("pointer_group", [
       new ToolMenuItem("pointer", {
         label: "Pointer",
-        glyph: "fa fa-mouse-pointer",
+        glyph: "fas fa-mouse-pointer",
         handler: function() { self.setTool("pointer"); }
       }),
 
       new ToolMenuItem("ping", {
         label: "Ping",
-        glyph: "fa fa-bullseye",
+        glyph: "fas fa-bullseye",
         handler: function() { self.setTool("ping"); }
       })
     ]),
@@ -54,19 +54,19 @@ function ToolManager(board) {
     new ToolMenuGroup("view_group", {noClickthrough: true}, [
       new ZoomMenuItem("zoom", {
         label: "Zoom",
-        glyph: "glyphicon glyphicon-zoom-in",
+        glyph: "fas fa-search-plus",
         handler: function(zoom) { self.changeZoom(zoom); }
       }),
 
       new ToolMenuItem("tokens", {
         label: "Tokens",
-        glyph: "fa fa-user-circle",
+        glyph: "fas fa-user-circle",
         handler: function() { self.setTool("tokens"); }
       }),
 
       new ToolMenuItem("fullscreen", {
         label: "Fullscreen",
-        glyph: "fa fa-television",
+        glyph: "fas fa-tv",
         handler: function() {
           self.board.toggleFullscreen();
         }
@@ -74,7 +74,7 @@ function ToolManager(board) {
 
       new ToolMenuItem("save_viewport", {
         label: "Save View",
-        glyph: "glyphicon glyphicon-plus",
+        glyph: "fas fa-plus",
         handler: function() {
           self.board.saveViewPort();
         }
@@ -82,7 +82,7 @@ function ToolManager(board) {
 
       new ToolMenuItem("restore_viewport", {
         label: "Restore View",
-        glyph: "glyphicon glyphicon-minus",
+        glyph: "fas fa-minus",
         visible: false,
         handler: function() {
           self.board.restoreViewPort();
@@ -91,7 +91,7 @@ function ToolManager(board) {
 
       new CheckMenuItem("view_port_sync", {
         label: "Sync View",
-        glyph: "fa fa-refresh",
+        glyph: "fas fa-sync-alt",
         handler: function() {
           self.board.viewPortManager.toggleSynced();
         }
@@ -101,48 +101,48 @@ function ToolManager(board) {
     new ToolMenuGroup("draw_group", [
       new ToolMenuItem("pen", {
         label: "Pen",
-        glyph: 'glyphicon glyphicon-pencil',
+        glyph: 'fas fa-pen',
         handler: function() { self.setTool("pen"); }
       }),
 
       new ToolMenuItem("eraser", {
         label: "Eraser",
-        glyph: "glyphicon glyphicon-erase",
+        glyph: "fas fa-eraser",
         handler: function() { self.setTool("eraser"); }
       }),
 
       new ToolMenuItem("shape", {
         label: "Shapes",
         tooltip: "Draw lines, circles, and rectangles",
-        glyph: "glyphicon glyphicon-triangle-top",
+        glyph: "fas fa-shapes",
         handler: function() { self.setTool("shape"); }
       }),
 
       new ToolMenuItem("label", {
         label: "Label",
         tooltip: "Create a text label",
-        glyph: "glyphicon glyphicon-text-color",
+        glyph: "fas fa-font",
         handler: function() { self.setTool("label"); }
       }),
 
       new ToolMenuItem("insert_image", {
         label: "Image",
         tooltip: "Insert an image",
-        glyph: "glyphicon glyphicon-picture",
+        glyph: "far fa-image",
         handler: function() { self.setTool("insert_image"); }
       }),
 
       new ToolMenuItem("copy", {
         label: "Copy",
         tooltip: "Copy a section of the drawing layer",
-        glyph: "glyphicon glyphicon-copy",
+        glyph: "fas fa-copy",
         handler: function() { self.setTool("copy"); }
       }),
 
       new ToolMenuItem("paste", {
         label: "Paste",
         tooltip: "Paste copied region",
-        glyph: "glyphicon glyphicon-paste",
+        glyph: "fas fa-paste",
         visible: false,
         handler: function() { self.setTool("paste"); }
       })
@@ -152,42 +152,42 @@ function ToolManager(board) {
       new ToolMenuItem("measure_template", {
         label: "Measure",
         tooltip: "Measures movement distance in a straight line",
-        glyph: "glyphicon glyphicon-option-vertical",
+        glyph: "fas fa-ruler",
         handler: function() { self.setTool("measure_template"); }
       }),
 
       new ToolMenuItem("line_template", {
         label: "Line",
         tooltip: "Creates a line template (ie: Lightning Bolt)",
-        glyph: "fa fa-bolt",
+        glyph: "fas fa-bolt",
         handler: function() { self.setTool("line_template"); }
       }),
 
       new ToolMenuItem("rectangle_template", {
         label: "Rectangle",
         tooltip: "Creates a rectangle template",
-        glyph: "fa fa-square-o",
+        glyph: "far fa-square",
         handler: function() { self.setTool("rectangle_template"); }
       }),
 
       new ToolMenuItem("radius_template", {
         label: "Radius",
         tooltip: "Creates a circular radius template",
-        glyph: "glyphicon glyphicon-record",
+        glyph: "far fa-circle",
         handler: function() { self.setTool("radius_template"); }
       }),
 
       new ToolMenuItem("cone_template", {
         label: "Cone",
         tooltip: "Creates a cone template",
-        glyph: "glyphicon glyphicon-triangle-bottom",
+        glyph: "fas fa-play",
         handler: function() { self.setTool("cone_template"); }
       }),
 
       new ToolMenuItem("reach_template", {
         label: "Reach",
         tooltip: "Creates creature reach template",
-        glyph: "fa fa-sun-o",
+        glyph: "fas fa-dharmachakra",
         handler: function() { self.setTool("reach_template"); }
       })
     ]),
@@ -196,21 +196,21 @@ function ToolManager(board) {
       new ToolMenuItem("add_fog", {
         label: "Add Fog",
         tooltip: "Draw to add fog",
-        glyph: "glyphicon glyphicon-cloud",
+        glyph: "fas fa-cloud",
         handler: function() { self.setTool("add_fog"); }
       }),
 
       new ToolMenuItem("remove_fog", {
         label: "Remove Fog",
         tooltip: "Draw to remove fog",
-        glyph: "glyphicon glyphicon-eye-open",
+        glyph: "fas fa-eye",
         handler: function() { self.setTool("remove_fog"); }
       }),
 
       new ToolMenuItem("fog_all", {
         label: "Fog Everything",
         tooltip: "Covers entire map in fog",
-        glyph: "fa fa-square",
+        glyph: "fas fa-square",
         handler: function() {
           if (confirm("Are you sure?  This cannot be undone")) {
             var action = {actionType: "fogEverythingAction", uid: generateActionId()};
@@ -222,7 +222,7 @@ function ToolManager(board) {
       new ToolMenuItem("fog_none", {
         label: "Clear Fog",
         tooltip: "Removes fog from entire map",
-        glyph: "fa fa-lightbulb-o",
+        glyph: "far fa-lightbulb",
         handler: function() {
           if (confirm("Are you sure?  This cannot be undone")) {
             var action = {actionType: "fogNothingAction", uid: generateActionId()};

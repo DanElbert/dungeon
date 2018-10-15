@@ -52,6 +52,8 @@
       var data = $this.data(pluginName);
       var options = data.options;
 
+      privateMethods.closeAllPopups($this);
+
       // unbind first to ensure there's only ever 1 handler bound
       $this.off('.' + pluginName);
       $this.empty();
@@ -75,7 +77,7 @@
         }
 
         var item = $("<button />")
-          .append($("<span />").addClass("glyphicon").addClass(glyph))
+          .append($("<span />").addClass("fa-fw glyph").addClass(glyph))
           .appendTo($this);
 
         if (tool.tooltip) {
@@ -104,7 +106,7 @@
 
     buildButtonWidget: function(tool) {
       var button = $("<button />")
-        .append($("<span />").addClass(tool.glyph))
+        .append($("<span />").addClass("fa-fw glyph").addClass(tool.glyph))
         .append($("<span />").text(tool.label || tool.name))
         .on('click.' + pluginName, tool.handler)
         .onFastTap(pluginName, tool.handler);
@@ -146,8 +148,8 @@
 
     buildCheckboxWidget: function(tool) {
       var $label = $("<label />")
-        .append($("<span />").addClass(tool.glyph))
-        .append($("<span />").addClass(tool.value ? "fa fa-check-square-o" : "fa fa-square-o"))
+        .append($("<span />").addClass("fa-fw glyph").addClass(tool.glyph))
+        .append($("<span />").addClass(tool.value ? "far fa-check-square" : "far fa-square"))
         .append($("<span />").text(tool.label || tool.name))
         .css({"font-weight": "normal"})
         .on('click.' + pluginName, tool.handler)
@@ -168,9 +170,7 @@
     openPopup: function($button, tool) {
       if (tool.children && tool.children.length) {
 
-        $button.parent().children().each(function() {
-          privateMethods.closePopup($(this));
-        });
+        privateMethods.closeAllPopups($button.parent());
 
         var $popup = $("<div />")
           .addClass("tool_menu_popup")
@@ -233,6 +233,9 @@
       var $popup = $button.data(pluginName + "_popup");
       var handlerNamespace = $button.data(pluginName + "_mouseHandler");
       if ($popup) {
+
+        $popup.find("[data-original-title]").tooltip('hide');
+
         $popup.remove();
 
         if (handlerNamespace) {
@@ -242,6 +245,15 @@
         $button.data(pluginName + "_popup", null);
         $button.data(pluginName + "_mouseHandler", null);
       }
+    },
+
+    closeAllPopups: function($this) {
+      $this.children("button").each(function() {
+        var $otherBtn = $(this);
+        if (privateMethods.isPopupOpen($otherBtn)) {
+          privateMethods.closePopup($otherBtn);
+        }
+      });
     },
 
     handleItemMouseIn: function(evt) {

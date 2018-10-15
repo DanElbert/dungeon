@@ -1,9 +1,9 @@
 
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
     <h2>
       <%= @campaign.name %><br/>
-      <small>
+      <small class="text-muted">
         <span class="fa fa-user"></span>
         <%= @campaign.user_name %>
       </small>
@@ -12,7 +12,7 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
     <% if if_owner(@campaign) %>
       <%= link_to 'Add Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>
       <%= link_to 'Manage Images', campaign_images_path(@campaign), class: 'btn btn-primary' %>
@@ -21,27 +21,27 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
     <%= render :partial => 'game_table', :locals => {:games => @campaign.active_games, :title => 'Active Games'} %>
   </div>
 </div>
 
 <%= if_owner(@campaign) do %>
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       <%= render :partial => 'game_table', :locals => {:games => @campaign.hidden_games, :title => 'Hidden Games'} %>
     </div>
   </div>
 <% end %>
 
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
     <%= render :partial => 'game_table', :locals => {:games => @campaign.archived_games, :title => 'Old Games'} %>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-xs-12">
+<div class="row mt-3">
+  <div class="col-12">
     <% if if_owner(@campaign) %>
       <%= link_to 'Change Campaign Name', edit_campaign_path(@campaign), class: 'btn btn-primary' %>
       <%= link_to 'Add Game', new_campaign_game_path(@campaign), class: 'btn btn-primary' %>

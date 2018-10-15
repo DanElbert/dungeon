@@ -14,8 +14,12 @@
  *= require spectrum
  */
 
-@import "bootstrap-sprockets";
+//@import "bootstrap-sprockets";
 @import "spacelab_variables";
+
+$secondary: $gray-700;
+$font-size-base: 0.9rem;
+
 @import "bootstrap";
 @import "spacelab_bootswatch";
 @import "jquery.ui.overrides";
@@ -26,6 +30,13 @@
 @import "initiative";
 @import "flash_messages";
 @import "typeahead-bootstrap";
+
+
+h1, h2, h3 {
+  small {
+    font-size: 65%;
+  }
+}
 
 
 div.thumbnail {
@@ -72,17 +83,19 @@ input[type=number] {
 
 ul.game-list {
 
+  line-height: 1.2;
+
   .game-label {
     display: inline-block;
   }
 
   .name {
-    font-size: 150%;
+    font-size: 1.3rem;
   }
 
   .timestamp {
-    font-size: 90%;
-    color: $gray-light;
+    font-size: 0.75rem;
+    color: $gray-500;
   }
 
   .controls {

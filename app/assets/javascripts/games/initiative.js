@@ -65,7 +65,7 @@
 
       var $nameInput = $("<input />").attr({type: "text"});
       var $valueInput = $("<input />").attr({type: "number"});
-      var $addButton = $("<input />").addClass("btn btn-default btn-xs").attr({type: "button"}).val("Add");
+      var $addButton = $("<input />").addClass("btn btn-secondary btn-xs").attr({type: "button"}).val("Add");
 
       var $editorTable =
           $("<table />")
@@ -93,17 +93,17 @@
           .appendTo($container);
 
       var $sortButton = $("<button />")
-          .addClass("btn btn-default btn-sm edit_only")
+          .addClass("btn btn-secondary btn-sm edit_only")
           .text("Sort")
           .appendTo($buttonContainer);
 
       var $clearButton = $("<button />")
-          .addClass("btn btn-default btn-sm edit_only")
+          .addClass("btn btn-secondary btn-sm edit_only")
           .text("Clear")
           .appendTo($buttonContainer);
 
       var $viewModeButton = $("<button />")
-          .addClass("btn btn-default btn-sm")
+          .addClass("btn btn-secondary btn-sm")
           .text("View Mode")
           .appendTo($buttonContainer);
 
