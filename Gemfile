@@ -23,6 +23,7 @@ gem 'uglifier', '>= 1.0.3'
 
 gem 'resque', '~> 1.27.4'
 gem 'rmagick', '~> 2.16.0'
+gem 'exception_notification', '~> 4.2.2'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.13'

@@ -1,5 +1,7 @@
 class Image < ApplicationRecord
 
+  Layer = Struct.new(:scale, :width, :height, :x_tiles, :y_tiles)
+
   STATUS = {
     unprocessed: 'unprocessed',
     queued: 'queued',
@@ -8,18 +10,21 @@ class Image < ApplicationRecord
     error: 'error'
   }
 
+  TILE_SIZE = 512
+
   def self.types
     ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage']
   end
 
   def as_json(opts = {})
     {
-        id: self.id,
-        name: self.filename,
-        url: self.url,
-        is_tiled: self.is_tiled,
-        levels: self.levels,
-        tile_size: self.tile_size
+      id: self.id,
+      name: self.filename,
+      url: self.url,
+      is_tiled: self.is_tiled,
+      tile_size: self.tile_size,
+      levels: self.levels,
+      level_data: self.level_data.map(:as_json)
     }
   end
 
@@ -29,6 +34,42 @@ class Image < ApplicationRecord
 
   def extension
     File.extname(self.filename).sub('.', '')
+  end
+
+  def data=(val)
+    @imi = nil
+    super
+  end
+
+  def image_magick
+    @imi ||= Magick::Image.from_blob(self.data).first
+  end
+
+  def level_data
+    if self.is_tiled && [self.levels, self.width, self.height, self.tile_size].all? { |a| a.present? }
+      @level_data ||= self.levels.times.map do |l|
+        scale = 2 ** l
+        w = self.width / scale
+        h = self.height / scale
+        Layer.new(1.0 / scale, w, h, (w.to_f / self.tile_size).ceil, (h.to_f / tile_size).ceil)
+      end
+    else
+      []
+    end
+  end
+
+  def calculate_size!
+    @level_data = nil
+    self.width = image_magick.columns
+    self.height = image_magick.rows
+    self.is_tiled = height > 1800 && width > 1800
+    if self.is_tiled
+      self.tile_size = TILE_SIZE
+      self.levels = (Math.log2([height, width].max) - Math.log2(TILE_SIZE)).floor
+    else
+      self.levels = 1
+    end
+
   end
 
   def process!

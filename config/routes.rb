@@ -5,7 +5,8 @@ Rails.application.routes.draw do
     resources :images, except: [:show], type: 'CampaignImage'
   end
 
-  resources :images, :only => [:show], constraints: { format: /\w+/ }
+  get '/images/:id(/:level/:tile).:format', to: 'images#show', constraints: { format: /\w+/ }, as: :image
+
   resources :copied_images, only: [:create], controller: 'images', type: 'CopiedImage'
 
   match '/admin' => 'admin/users#index', :via => :get

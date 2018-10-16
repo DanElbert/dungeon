@@ -10,10 +10,25 @@ class ImagesController < ApplicationController
 
   # GET /images/1
   def show
+    if params[:format] == 'json'
+      if @image.is_tiled
+        render json: @image && return
+      else
+        not_found
+      end
+    end
+
     not_found unless params[:format].to_s == @image.extension
-    FileUtils.mkdir_p Rails.root.join('public', 'images')
-    File.binwrite(Rails.root.join('public', 'images', "#{@image.id}.#{@image.extension}").to_s, @image.data)
-    send_data @image.data, filename: @image.filename, disposition: 'inline'
+
+    if params[:level].present? && !@image.is_tiled
+      not_found
+    end
+
+    render :nothing => true, :status => 420
+
+    # FileUtils.mkdir_p Rails.root.join('public', 'images')
+    # File.binwrite(Rails.root.join('public', 'images', "#{@image.id}.#{@image.extension}").to_s, @image.data)
+    # send_data @image.data, filename: @image.filename, disposition: 'inline'
   end
 
   # GET /images/new
@@ -36,9 +51,11 @@ class ImagesController < ApplicationController
       @image.data = io.read
     end
 
+    @image.calculate_size!
+
     respond_to do |format|
       if @image.save
-        
+
         @image.process!
 
         format.html { redirect_to campaign_images_path(@campaign), notice: 'Image was successfully created.' }

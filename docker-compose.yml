@@ -14,12 +14,28 @@ services:
 
   web1:
     build: .
-    image: 'danelbert/dungeon'
+    image: 'registry.elbert.us/dungeon'
     ports:
       - "3000:3000"
     environment:
       - RAILS_ENV=docker
       - DB_MIGRATE=true
+    volumes:
+      - images:/dungeon/public/images/
+    links:
+      - redis
+      - postgres
+
+  resque_worker:
+    build: .
+    image: 'registry.elbert.us/dungeon'
+    environment:
+      - RAILS_ENV=docker
+      - QUEUE=*
+      - INTERVAL=1.0
+    volumes:
+      - images:/dungeon/public/images/
+    command: 'bundle exec rake resque:work'
     links:
       - redis
       - postgres
@@ -28,3 +44,5 @@ volumes:
   sql-data:
     driver: local
 
+  images:
+    driver: local

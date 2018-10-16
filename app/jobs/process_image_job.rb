@@ -1,8 +1,6 @@
 class ProcessImageJob < ApplicationJob
   queue_as :default
 
-  TILE_SIZE = 512
-
   def perform(id)
 
     # Put image onto disk
@@ -41,56 +39,43 @@ class ProcessImageJob < ApplicationJob
     i = Image.find(id)
 
     begin
-      im = Magick::Image.from_blob(i.data).first
+      i.calculate_size!
 
-      height = im.rows
-      width = im.columns
-
-      if height < 1800 || width < 1800
-        i.status = Image::STATUS[:processed]
-        i.is_tiled = false
+      if !i.is_tiled
         File.binwrite(Rails.root.join('public', 'images', "#{i.id}.#{i.extension}").to_s, i.data)
+        i.status = Image::STATUS[:processed]
         i.save!
         return
       end
 
       root_path = Rails.root.join('public', 'images', i.id.to_s).to_s
 
-      i.levels = (Math.log2([height, width].max) - Math.log2(TILE_SIZE)).floor
-      i.is_tiled = true
-      i.tile_size = TILE_SIZE
-
-      i.levels.times do |x|
-        level_path = root_path + "/#{x + 1}"
+      i.level_data.each_with_index do |level, idx|
+        level_path = root_path + "/#{idx + 1}"
         `mkdir -p #{level_path}`
-        build_tiles(im, 2 ** x, level_path, i.extension, TILE_SIZE)
+        build_tiles(i, level, level_path)
       end
 
       i.status = Image::STATUS[:processed]
       i.save!
-
 
     rescue
       i.status = Image::STATUS[:error]
       i.save
       raise
     end
-
-
   end
 
-  def build_tiles(image, scale, path, format, tile_size)
-    width = image.columns / scale
-    height = image.rows / scale
-    x_tiles = (width.to_f / tile_size).ceil
-    y_tiles = (height.to_f / tile_size).ceil
-    scaled_tile = tile_size * scale
+  def build_tiles(image, level, path)
 
-    0.upto(x_tiles - 1) do |x|
-      0.upto(y_tiles - 1) do |y|
-        crop = image.crop(x * scaled_tile, y * scaled_tile, scaled_tile, scaled_tile)
-        resized = crop.resize(1.0 / scale)
-        resized.write(path + "/#{x}_#{y}.#{format}")
+    scaled_tile = image.tile_size / level.scale
+
+    0.upto(level.x_tiles - 1) do |x|
+      0.upto(level.y_tiles - 1) do |y|
+        image.image_magick.
+          crop(x * scaled_tile, y * scaled_tile, scaled_tile, scaled_tile).
+          resize(level.scale).
+          write(path + "/#{x}_#{y}.#{image.extension}")
       end
     end
   end

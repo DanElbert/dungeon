@@ -74,6 +74,8 @@ ActiveRecord::Schema.define(version: 2018_10_16_044418) do
     t.integer "tile_size"
     t.integer "levels"
     t.string "status"
+    t.integer "width"
+    t.integer "height"
   end
 
   create_table "initiative_histories", force: :cascade do |t|
