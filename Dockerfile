@@ -5,11 +5,14 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     rsync \
     cmake \
     libopencv-dev \
+    libmagickwand-dev \
     nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem update --system && gem install bundler
+
+COPY docker/image_magic_policy.xml /etc/ImageMagick-6/policy.xml
 
 RUN mkdir -p /dungeon_assets/
 RUN mkdir -p /dungeon/

@@ -6,6 +6,8 @@ Rails.application.configure do
   GAME_SERVER_HOST = "localhost"
   GAME_SERVER_URL = "http://#{GAME_SERVER_HOST}:#{GAME_SERVER_PORT}/games"
 
+  config.active_job.queue_adapter = :inline
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # The test environment is used exclusively to run your application's

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171119200936) do
+ActiveRecord::Schema.define(version: 2018_10_16_044418) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -70,6 +70,10 @@ ActiveRecord::Schema.define(version: 20171119200936) do
     t.datetime "updated_at"
     t.string "type"
     t.string "name"
+    t.boolean "is_tiled"
+    t.integer "tile_size"
+    t.integer "levels"
+    t.string "status"
   end
 
   create_table "initiative_histories", force: :cascade do |t|

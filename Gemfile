@@ -21,6 +21,9 @@ gem 'sassc-rails',   '~> 1.3.0'
 #gem 'therubyracer', platforms: :ruby
 gem 'uglifier', '>= 1.0.3'
 
+gem 'resque', '~> 1.27.4'
+gem 'rmagick', '~> 2.16.0'
+
 group :development, :test do
   gem 'sqlite3', '~> 1.3.13'
 end

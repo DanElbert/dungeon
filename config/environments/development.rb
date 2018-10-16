@@ -7,6 +7,8 @@ Rails.application.configure do
   # Add Faye to the middleware stack
   config.middleware.insert_before ActionDispatch::Executor, GameServerMiddleware, mount: '/game_server', timeout: 35, ping: 30
 
+  config.active_job.queue_adapter = :inline
+
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.

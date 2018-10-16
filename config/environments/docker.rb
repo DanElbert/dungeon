@@ -23,6 +23,8 @@ Rails.application.configure do
   # Use a different cache store in production.
   config.cache_store = :redis_store, "redis://redis:6379/0/cache_store", { expires_in: 90.minutes }
 
+  config.active_job.queue_adapter = :resque
+
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both thread web servers
   # and those relying on copy on write to perform better.

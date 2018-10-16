@@ -25,6 +25,7 @@ class ImagesController < ApplicationController
   def create
     @image = type_class.new(image_params)
     @image.campaign = @campaign
+    @image.status = Image::STATUS[:unprocessed]
 
     if params[:image] && params[:image][:data]
       @image.data = Base64.decode64(params[:image][:data])
@@ -37,6 +38,9 @@ class ImagesController < ApplicationController
 
     respond_to do |format|
       if @image.save
+        
+        @image.process!
+
         format.html { redirect_to campaign_images_path(@campaign), notice: 'Image was successfully created.' }
         format.json { render json: @image, status: :created }
       else
