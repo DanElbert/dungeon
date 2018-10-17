@@ -14,7 +14,6 @@ function ImageDrawing(uid, board, url, size, position, scale, angle) {
 ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype, {
   calculateBounds: function() {
     this.transformedImage = null;
-    console.log('.');
     var height = this.size.y * this.scale;
     var width = this.size.x * this.scale;
 

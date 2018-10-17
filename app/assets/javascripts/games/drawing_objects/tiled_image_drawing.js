@@ -34,6 +34,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
   update() {
     if (this.currentLevel && this.previousZoom !== this.board.getZoom()) {
       var level = this.calculateCurrentLevel();
+      console.log("zoom: " + this.board.getZoom() + ", level: " + level.number);
       if (level.number !== this.currentLevel.number) {
         this.invalidate();
       }
