@@ -1,29 +1,37 @@
-function ImageDrawing(uid, url, size, position, scale, angle) {
+function ImageDrawing(uid, board, url, size, position, scale, angle) {
   BaseDrawing.call(this, uid);
 
   this.url = url;
+  this.board = board;
   this.size = size;
   this.position = position;
   this.scale = scale;
   this.angle = angle;
 
   this.transformedImage = null;
-
-  console.log(this);
 }
 
 ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype, {
   calculateBounds: function() {
+    this.transformedImage = null;
+    console.log('.');
     var height = this.size.y * this.scale;
     var width = this.size.x * this.scale;
-    var radius = Math.sqrt((width * width) + (height * height)) / 2;
-    var topLeft = new Vector2(this.position.x - radius, this.position.y - radius);
-    return new Rectangle(
-      topLeft,
-      new Vector2(topLeft.x + (radius * 2), topLeft.y + (radius * 2)));
+
+    var rec = new Rectangle(
+      new Vector2(this.position.x - width / 2, this.position.y - height / 2),
+      width,
+      height
+    );
+
+    return this.getRotatedRecBounds(rec, this.angle);
   },
 
   executeDraw: function(drawing, drawBounds) {
+    if (!this.boundsRect().overlaps(drawBounds)) {
+      return;
+    }
+
     var ctx;
 
     if (this.transformedImage === null) {
@@ -43,7 +51,7 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
           ctx.save();
 
           ctx.translate(targetSize.x / 2, targetSize.y / 2);
-          ctx.rotate(this.angle * Math.PI / 180);
+          ctx.rotate(this.angle);
           ctx.scale(this.scale, this.scale);
           ctx.translate(sourceSize.x / -2, sourceSize.y / -2);
           ctx.drawImage(imgObj, 0, 0);
@@ -54,14 +62,13 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
     if (this.transformedImage !== null) {
       ctx = drawing.context;
 
-
-
       var dWidth = this.transformedImage.width;
       var dHeight = this.transformedImage.height;
 
       var imgBox = new Rectangle(
         this.position.translate(-dWidth / 2, -dHeight / 2),
-        this.position.translate(dWidth / 2, dHeight / 2)
+        dWidth,
+        dHeight
       );
 
       var sx = drawBounds.left() - imgBox.left();
@@ -77,5 +84,15 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
 
       ctx.restore();
     }
+
   },
 });
+
+ImageDrawing.getImageDrawing = function(uid, board, url, size, position, scale, angle) {
+  if (/\.json($|\?|#)/.test(url)) {
+    return new TiledImageDrawing(uid, board, url, size, position, scale, angle *  Math.PI / 180);
+  } else {
+    return new ImageDrawing(uid, board, url, size, position, scale, angle *  Math.PI / 180);
+  }
+
+};

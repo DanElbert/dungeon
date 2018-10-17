@@ -12,7 +12,8 @@ class ImagesController < ApplicationController
   def show
     if params[:format] == 'json'
       if @image.is_tiled
-        render json: @image && return
+        render json: @image.to_json
+        return
       else
         not_found
       end

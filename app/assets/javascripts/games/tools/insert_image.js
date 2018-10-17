@@ -21,6 +21,18 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
   optionsChanged: function() {
     this.editing = this.options.get("editing").value;
     this.image = this.options.get("image").value;
+    if (this.image) {
+      this.imageDrawing = ImageDrawing.getImageDrawing(
+        generateActionId(),
+        this.board,
+        this.image.url,
+        new Vector2(this.image.width, this.image.height),
+        new Vector2(0,0),
+        this.scale,
+        this.angle);
+    } else {
+      this.imageDrawing = null;
+    }
   },
 
   eventNamespace: function() {
@@ -120,16 +132,16 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
   },
 
   saveAction: function() {
-    var img = this.board.imageCache.getImage(this.image);
+    var img = this.imageDrawing;
     if (img) {
       var action = {
         actionType: "insertImageAction",
-        url: this.image,
+        url: this.image.url,
         center: this.cursor,
         scale: this.scale,
         angle: this.angle,
-        width: img.width,
-        height: img.height,
+        width: img.size.x,
+        height: img.size.y,
         uid: generateActionId()};
 
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
@@ -139,7 +151,7 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
   },
 
   draw: function() {
-    if (this.image) {
+    if (this.imageDrawing) {
       this.drawImage();
     }
 
@@ -154,10 +166,12 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
 
   drawImage: function() {
     var place = this.editPoint || this.cursor;
-    var imageObj = this.board.imageCache.getImage(this.image);
-    if (place && imageObj) {
-
-      this.board.drawing.drawImageFromCenter(place[0], place[1], this.image, this.scale, this.angle);
+    if (place) {
+      this.imageDrawing.position = new Vector2(place[0], place[1]);
+      this.imageDrawing.scale = this.scale;
+      this.imageDrawing.angle = this.angle * Math.PI / 180;
+      this.imageDrawing.clearBounds();
+      this.imageDrawing.draw(this.board.drawing, this.board.getViewPortRectangle());
     }
   },
 

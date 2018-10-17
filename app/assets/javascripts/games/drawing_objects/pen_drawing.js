@@ -16,7 +16,9 @@ PenDrawing.prototype = _.extend(PenDrawing.prototype, BaseDrawing.prototype, {
       if (r == null || p[0] > r) r = p[0];
       if (b == null || p[1] > b) b = p[1];
     });
-    return new Rectangle(new Vector2(l - margin, t - margin), new Vector2(r + margin, b + margin));
+    return new Rectangle(new Vector2(l - margin, t - margin),
+      r - l + margin,
+      b - t + margin);
   },
 
   executeDraw: function(drawing, drawBounds) {

@@ -1,6 +1,6 @@
 class Image < ApplicationRecord
 
-  Layer = Struct.new(:scale, :width, :height, :x_tiles, :y_tiles)
+  Layer = Struct.new(:number, :scale, :width, :height, :x_tiles, :y_tiles)
 
   STATUS = {
     unprocessed: 'unprocessed',
@@ -19,12 +19,16 @@ class Image < ApplicationRecord
   def as_json(opts = {})
     {
       id: self.id,
-      name: self.filename,
+      name: self.name || self.filename,
+      height: self.height,
+      width: self.width,
       url: self.url,
+      value: self.url,
+      extension: self.extension,
       is_tiled: self.is_tiled,
       tile_size: self.tile_size,
       levels: self.levels,
-      level_data: self.level_data.map(:as_json)
+      level_data: self.level_data.map(&:as_json)
     }
   end
 
@@ -51,7 +55,7 @@ class Image < ApplicationRecord
         scale = 2 ** l
         w = self.width / scale
         h = self.height / scale
-        Layer.new(1.0 / scale, w, h, (w.to_f / self.tile_size).ceil, (h.to_f / tile_size).ceil)
+        Layer.new(l + 1, 1.0 / scale, w, h, (w.to_f / self.tile_size).ceil, (h.to_f / tile_size).ceil)
       end
     else
       []
@@ -65,7 +69,7 @@ class Image < ApplicationRecord
     self.is_tiled = height > 1800 && width > 1800
     if self.is_tiled
       self.tile_size = TILE_SIZE
-      self.levels = (Math.log2([height, width].max) - Math.log2(TILE_SIZE)).floor
+      self.levels = (Math.log2([height, width].max) - Math.log2(TILE_SIZE)).ceil
     else
       self.levels = 1
     end

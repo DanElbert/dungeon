@@ -145,6 +145,16 @@ function Board(canvas, cameraApi) {
     this.viewPortManager.restoreViewPort();
   };
 
+  this.getViewPortRectangle = function() {
+    var coords = this.getViewPortCoordinates();
+    var size = this.getViewPortSize();
+    return new Rectangle(
+      new Vector2(coords[0], coords[1]),
+      size[0],
+      size[1]
+    );
+  };
+
   this.handleAddActionMessage = function(message) {
     this.addAction(message, null, false);
   };

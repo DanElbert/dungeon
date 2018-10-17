@@ -240,15 +240,17 @@ _.extend(actionTypes, {
   insertImageAction: createActionType("InsertImageAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addAction(
-        new ImageDrawing(
-          this.uid,
-          this.properties.url,
-          new Vector2(this.properties.width, this.properties.height),
-          new Vector2(this.properties.center[0], this.properties.center[1]),
-          this.properties.scale,
-          this.properties.angle)
+      var drawing = ImageDrawing.getImageDrawing(
+        this.uid,
+        board,
+        this.properties.url,
+        new Vector2(this.properties.width, this.properties.height),
+        new Vector2(this.properties.center[0], this.properties.center[1]),
+        this.properties.scale,
+        this.properties.angle
       );
+
+      board.drawingLayer.addAction(drawing);
     },
 
     validateData: function() {

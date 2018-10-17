@@ -5,6 +5,7 @@ function DrawingLayer(imageCache) {
   this.isOwner = false;
   this.fogCover = false;
   this.imageCache = imageCache;
+  this.drawingActions = new Map();
 }
 _.extend(DrawingLayer.prototype, {
 
@@ -18,6 +19,7 @@ _.extend(DrawingLayer.prototype, {
   },
 
   addAction: function(a) {
+    this.drawingActions.set(a.uid, a);
     var actionBounds = a.bounds();
     var tiles = this.getTilesForRectangle(actionBounds[0], actionBounds[1]);
     _.each(tiles, function(tile) {
@@ -34,6 +36,7 @@ _.extend(DrawingLayer.prototype, {
   },
 
   removeAction: function(id) {
+    this.drawingActions.delete(id);
     _.each(this.tileList, function(tile) {
       tile.removeAction(id);
     }, this);
@@ -48,6 +51,12 @@ _.extend(DrawingLayer.prototype, {
   draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, isFarZoom, disableFogDisplay) {
     var tiles = this.getTilesForRectangle([viewPortX, viewPortY], [viewPortX + viewPortWidth, viewPortY + viewPortHeight]);
     var context = drawing.context;
+
+    for (let a of this.drawingActions.values()) {
+      if (a.update) {
+        a.update();
+      }
+    }
 
     _.each(tiles, function(tile) {
       tile.draw(disableFogDisplay, isFarZoom);
@@ -94,6 +103,8 @@ function Tile(size, x, y, isOwner, imageCache, fogCover) {
   this.y = y;
   this.topLeft = [x * size, y * size];
   this.bottomRight = [(x + 1) * size, (y + 1) * size];
+  this.width = this.bottomRight[0] - this.topLeft[0];
+  this.height = this.bottomRight[1] - this.topLeft[1];
   this.actions = [];
   this.fogActions = [];
   this.isDrawn = false;
@@ -123,6 +134,9 @@ _.extend(Tile.prototype, {
 
   addAction: function(a) {
     this.actions.push(a);
+    if (a.parentTiles) {
+      a.parentTiles.push(this);
+    }
     this.reDraw();
   },
 
@@ -139,8 +153,18 @@ _.extend(Tile.prototype, {
     }
 
     if (index != null) {
+      var a = this.actions[index];
       this.actions.splice(index, 1);
       this.clear();
+      if (a.parentTiles) {
+        index = null;
+        for (x = 0; x < a.parentTiles.length; x++) {
+          if (a.parentTiles[x] === this) index = x;
+        }
+        if (index !== null) {
+          a.parentTiles.split(index, 1);
+        }
+      }
       return;
     }
 
@@ -170,13 +194,13 @@ _.extend(Tile.prototype, {
 
     this.ensureCanvas();
 
-    this.context.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    this.context.clearRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
 
     if (this.fogCover) {
       this.fogContext.fillStyle = "rgba(1, 1, 1, 1)";
-      this.fogContext.fillRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+      this.fogContext.fillRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
     } else {
-      this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+      this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
     }
 
     var d = this.drawing;
@@ -188,10 +212,10 @@ _.extend(Tile.prototype, {
     var fd = this.fogDrawing;
 
     // Show squares around tiles for debugging
-    d.drawSquare(this.topLeft, this.bottomRight, '#000000', null, 3);
+    //d.drawSquare(this.topLeft, this.bottomRight, '#000000', null, 3);
 
     _.each(this.actions, function(a) {
-      a.draw(d, new Rectangle(new Vector2(this.topLeft[0], this.topLeft[1]), new Vector2(this.bottomRight[0], this.bottomRight[1])));
+      a.draw(d, new Rectangle(new Vector2(this.topLeft[0], this.topLeft[1]), this.width, this.height));
     }, this);
 
     _.each(this.fogActions, function(a) {

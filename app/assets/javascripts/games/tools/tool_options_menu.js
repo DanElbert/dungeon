@@ -141,7 +141,9 @@
         {name: '-- Select --', value: ""}
       ];
 
-      _.each(toolOption.images, function(i) { images.push(i); });
+      var map = new Map();
+
+      _.each(toolOption.images, function(i) { images.push(i); map.set(i.value, i); });
 
       var $widget = $('<div></div>')
         .addClass('option_menu');
@@ -158,6 +160,8 @@
           var v = $(this).val();
           if (v === "") {
             v = null;
+          } else {
+            v = map.get(v);
           }
           toolOption.value = v;
           this.blur();
