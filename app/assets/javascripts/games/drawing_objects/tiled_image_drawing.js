@@ -34,7 +34,6 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
   update() {
     if (this.currentLevel && this.previousZoom !== this.board.getZoom()) {
       var level = this.calculateCurrentLevel();
-      console.log("zoom: " + this.board.getZoom() + ", level: " + level.number);
       if (level.number !== this.currentLevel.number) {
         this.invalidate();
       }
@@ -68,6 +67,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
       return;
     }
 
+    this.boundsRect();
     var level = this.calculateCurrentLevel();
     this.currentLevel = level;
 
@@ -79,39 +79,51 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
       .rotate(this.angle)
       .scale(this.scale, this.scale);
 
-    for (var x = 0; x < level.x_tiles; x++) {
-      for (var y = 0; y < level.y_tiles; y++) {
-        var key = [level.number, x, y].join("::");
-        var updateThisGeometry = this.updateGeometry;
+    var x, y, key, updateThisGeometry, imgDrwEntry, imgDrw;
 
-        var imgDrw = this.imageDrawings.get(key);
+    for (x = 0; x < level.x_tiles; x++) {
+      for (y = 0; y < level.y_tiles; y++) {
+        key = [level.number, x, y].join("::");
+        updateThisGeometry = this.updateGeometry;
 
-        if (!imgDrw) {
+        imgDrwEntry = this.imageDrawings.get(key);
+
+        if (!imgDrwEntry) {
           updateThisGeometry = true;
           var newUrl = "/images/" + this.imageJson.id + "/" + level.number + "/" + x + "_" + y + "." + this.imageJson.extension;
+
+          // 0,0 = center of image
+          var topLeft = new Vector2(-this.size.x / 2, -this.size.y / 2);
+          var tileTopLeft = topLeft.translate(scaledTileSize * x, scaledTileSize * y);
+          var tileCenter = tileTopLeft.translate(scaledTileSize / 2, scaledTileSize / 2);
+          var tileWidth = tileSize;
+          var tileHeight = tileSize;
+
+          if (x == level.x_tiles - 1 || y == level.y_tiles - 1) {
+            tileWidth = Math.min(tileSize, level.width - (x * tileSize));
+            tileHeight = Math.min(tileSize, level.height - (y * tileSize));
+            tileCenter = tileTopLeft.translate(tileWidth / level.scale / 2, tileHeight / level.scale / 2);
+          }
 
           imgDrw = new ImageDrawing(
             this.uid,
             this.board,
             newUrl,
-            new Vector2(tileSize, tileSize),
-            new Vector2(0,0),
+            new Vector2(tileWidth, tileHeight),
+            tileCenter,
             1 / level.scale,
             0
           );
 
-          this.imageDrawings.set(key, imgDrw);
+          imgDrwEntry = { imageDrawing: imgDrw, innerPosition: tileCenter };
+          this.imageDrawings.set(key, imgDrwEntry);
         }
 
+        imgDrw = imgDrwEntry.imageDrawing;
+
         if (updateThisGeometry) {
-          // 0,0 = center of image
-          var topLeft = new Vector2(-this.size.x / 2, -this.size.y / 2);
-          var tileTopLeft = topLeft.translate(scaledTileSize * x, scaledTileSize * y);
-          var tileCenter = tileTopLeft.translate(scaledTileSize / 2, scaledTileSize / 2);
 
-          var tilePosition = tileCenter.matrixMultiply(centerpointMatrix);
-
-          imgDrw.position = tilePosition;
+          imgDrw.position = imgDrwEntry.innerPosition.matrixMultiply(centerpointMatrix);
           imgDrw.scale = this.scale / level.scale;
           imgDrw.angle = this.angle;
           imgDrw.clearBounds();
@@ -119,7 +131,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
 
         imgDrw.draw(drawing, drawBounds);
       }
-      this.updateGeometry = false;
     }
+    this.updateGeometry = false;
   }
 });

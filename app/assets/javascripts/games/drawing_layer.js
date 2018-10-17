@@ -1,5 +1,5 @@
 function DrawingLayer(imageCache) {
-  this.tileSize = 500;
+  this.tileSize = 1024;
   this.tileList = [];
   this.tileLookup = {};
   this.isOwner = false;
@@ -71,12 +71,13 @@ _.extend(DrawingLayer.prototype, {
     var topLeftTile = Geometry.getCell(topLeft, this.tileSize);
     var bottomRightTile = Geometry.getCell(bottomRight, this.tileSize);
 
+    var x, y, key, tile;
     var tiles = [];
 
-    for (var x = topLeftTile[0]; x <= bottomRightTile[0]; x++) {
-      for (var y = topLeftTile[1]; y <= bottomRightTile[1]; y++) {
-        var key = this.tileHashKey(x, y);
-        var tile = this.tileLookup[key];
+    for (x = topLeftTile[0]; x <= bottomRightTile[0]; x++) {
+      for (y = topLeftTile[1]; y <= bottomRightTile[1]; y++) {
+        key = this.tileHashKey(x, y);
+        tile = this.tileLookup[key];
 
         if (tile == null) {
           tile = new Tile(this.tileSize, x, y, this.isOwner, this.imageCache, this.fogCover);
@@ -130,6 +131,7 @@ _.extend(Tile.prototype, {
     this.clear();
     this.fogActions = [];
     this.fogCover = fogCover;
+    this.reDrawFog();
   },
 
   addAction: function(a) {
@@ -143,6 +145,7 @@ _.extend(Tile.prototype, {
   addFogAction: function(a) {
     this.fogActions.push(a);
     this.reDraw();
+    this.reDrawFog();
   },
 
   removeAction: function(uid) {
@@ -174,12 +177,17 @@ _.extend(Tile.prototype, {
 
     if (index != null) {
       this.fogActions.splice(index, 1);
-      this.clear();
+      this.reDrawFog();
+      this.reDraw();
     }
   },
 
   reDraw: function() {
     this.clear();
+  },
+
+  reDrawFog: function() {
+    this.staleFog = true;
   },
 
   draw: function(disableFogDisplay, useDistantMode) {
@@ -196,31 +204,36 @@ _.extend(Tile.prototype, {
 
     this.context.clearRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
 
-    if (this.fogCover) {
-      this.fogContext.fillStyle = "rgba(1, 1, 1, 1)";
-      this.fogContext.fillRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
-    } else {
-      this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
-    }
-
     var d = this.drawing;
 
     if (this.isDistantMode) {
       d.minWidth = 10;
     }
 
-    var fd = this.fogDrawing;
-
     // Show squares around tiles for debugging
     //d.drawSquare(this.topLeft, this.bottomRight, '#000000', null, 3);
 
+    var tileBounds = new Rectangle(new Vector2(this.topLeft[0], this.topLeft[1]), this.width, this.height);
+
     _.each(this.actions, function(a) {
-      a.draw(d, new Rectangle(new Vector2(this.topLeft[0], this.topLeft[1]), this.width, this.height));
+      a.draw(d, tileBounds);
     }, this);
 
-    _.each(this.fogActions, function(a) {
-      a.draw(fd)
-    });
+
+    if (this.staleFog) {
+      if (this.fogCover) {
+        this.fogContext.fillStyle = "rgba(1, 1, 1, 1)";
+        this.fogContext.fillRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
+      } else {
+        this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
+      }
+
+      var fd = this.fogDrawing;
+
+      _.each(this.fogActions, function(a) {
+        a.draw(fd)
+      });
+    }
 
     this.context.save();
 

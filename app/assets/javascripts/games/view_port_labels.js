@@ -127,11 +127,11 @@ _.extend(ViewPortLabel.prototype, {
     var found = true;
     if (this.canvas === null) {
       this.canvas = document.createElement("canvas");
-      this.canvas.width = this.width;
-      this.canvas.height = this.height;
+      this.canvas.width = this.width * 2;
+      this.canvas.height = this.height * 2;
       this.context = this.canvas.getContext("2d");
       this.drawing = new Drawing(this.context, this.imageCache);
-      this.drawing.drawText(this.label, [this.width / 2, this.height / 2], 20, "white", "black", 1);
+      this.drawing.drawText(this.label, [this.width, this.height], 40, "white", "black", 2);
       var raw = this.context.getImageData(0, 0, this.width, this.height);
       found = (_.find(raw.data, function(i) { return i !== 0; }) !== undefined);
     }
@@ -139,14 +139,14 @@ _.extend(ViewPortLabel.prototype, {
     if (highlight) {
       if (this.highlightCanvas === null ) {
         this.highlightCanvas = document.createElement("canvas");
-        this.highlightCanvas.width = this.width;
-        this.highlightCanvas.height = this.height;
+        this.highlightCanvas.width = this.width * 2;
+        this.highlightCanvas.height = this.height * 2;
         var hCtx = this.highlightCanvas.getContext("2d");
 
         hCtx.save();
 
         hCtx.fillStyle = 'white';
-        hCtx.fillRect(0, 0, this.width, this.height);
+        hCtx.fillRect(0, 0, this.width * 2, this.height * 2);
 
         hCtx.drawImage(this.canvas, 0, 0);
         hCtx.save();

@@ -305,13 +305,18 @@ _.extend(Drawing.prototype, {
     }
   },
 
-  drawGrid: function (x, y, viewPortWidth, viewPortHeight, color) {
+  drawGrid: function (x, y, viewPortWidth, viewPortHeight, color, zoom) {
 
-    var firstColumn = Math.floor(x / this.cellSize);
-    var lastColumn = firstColumn + Math.floor(viewPortWidth / this.cellSize) + 1;
+    var gridSize = this.cellSize;
+    if (zoom < 0.3) {
+      return;
+    }
+    
+    var firstColumn = Math.floor(x / gridSize);
+    var lastColumn = firstColumn + Math.floor(viewPortWidth / gridSize) + 1;
 
-    var firstRow = Math.floor(y / this.cellSize);
-    var lastRow = firstRow + Math.floor(viewPortHeight / this.cellSize) + 1;
+    var firstRow = Math.floor(y / gridSize);
+    var lastRow = firstRow + Math.floor(viewPortHeight / gridSize) + 1;
 
     this.context.save();
     this.context.globalAlpha = 0.5;
@@ -325,9 +330,9 @@ _.extend(Drawing.prototype, {
     for (var row = firstRow; row <= lastRow; row++) {
 
       x1 = x;
-      y1 = (this.cellSize * row) + 0.5;
+      y1 = (gridSize * row) + 0.5;
       x2 = x + viewPortWidth;
-      y2 = (this.cellSize * row) + 0.5;
+      y2 = (gridSize * row) + 0.5;
 
       this.context.moveTo(x1, y1);
       this.context.lineTo(x2, y2);
@@ -336,9 +341,9 @@ _.extend(Drawing.prototype, {
     // Draw vertical grid lines
     for (var col = firstColumn; col <= lastColumn; col++) {
 
-      x1 = (this.cellSize * col) + 0.5;
+      x1 = (gridSize * col) + 0.5;
       y1 = y;
-      x2 = (this.cellSize * col) + 0.5;
+      x2 = (gridSize * col) + 0.5;
       y2 = y + viewPortHeight;
 
       this.context.moveTo(x1, y1);

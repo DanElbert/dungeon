@@ -237,8 +237,8 @@ function Board(canvas, cameraApi) {
     //drawing.tileBackground(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], data.background_image);
   };
 
-  this.renderBoardGrid = function() {
-    this.drawing.drawGrid(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], this.gridColor);
+  this.renderBoardGrid = function(colorOverride) {
+    this.drawing.drawGrid(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], colorOverride || this.gridColor, this.getZoom());
   };
 
   this.renderDrawing = function() {
@@ -273,7 +273,7 @@ function Board(canvas, cameraApi) {
 
   this.renderCapturePattern = function() {
     this.drawing.colorBackground(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], "rgba(255, 255, 255, 1.0)");
-    this.drawing.drawGrid(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], "rgba(0, 0, 0, 0.05)");
+    this.renderBoardGrid("rgba(0, 0, 0, 0.05)");
     var pattern_size = this.boardDetectionManager.getPatternSize();
     var size = this.boardDetectionManager.getPatternDimension();
     var gutter = (size / pattern_size);

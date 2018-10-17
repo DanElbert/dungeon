@@ -37,23 +37,24 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
       var imgObj = drawing.imageCache.getImage(this.url);
 
       if (imgObj) {
-        if (this.angle === 0 && this.scale === 1) {
+        if (this.angle === 0) {
           this.transformedImage = imgObj;
         } else {
 
-          var targetSize = this.boundsRect().size();
-          var sourceSize = this.size;
+          var sizeRec = new Rectangle(new Vector2(0, 0), this.size.x, this.size.y);
+          var targetSize = this.getRotatedRecBounds(sizeRec, this.angle).size();
+
           this.transformedImage = document.createElement("canvas");
           this.transformedImage.width = targetSize.x;
           this.transformedImage.height = targetSize.y;
           ctx = this.transformedImage.getContext("2d");
-          ctx.save();
 
+          ctx.save();
           ctx.translate(targetSize.x / 2, targetSize.y / 2);
           ctx.rotate(this.angle);
-          ctx.scale(this.scale, this.scale);
-          ctx.translate(sourceSize.x / -2, sourceSize.y / -2);
+          ctx.translate(-this.size.x / 2, -this.size.y / 2);
           ctx.drawImage(imgObj, 0, 0);
+          ctx.restore();
         }
       }
     }
@@ -61,26 +62,41 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
     if (this.transformedImage !== null) {
       ctx = drawing.context;
 
-      var dWidth = this.transformedImage.width;
-      var dHeight = this.transformedImage.height;
+      var sWidth = this.transformedImage.width;
+      var sHeight = this.transformedImage.height;
+      var dWidth = sWidth * this.scale;
+      var dHeight = sHeight * this.scale;
 
-      var imgBox = new Rectangle(
-        this.position.translate(-dWidth / 2, -dHeight / 2),
-        dWidth,
-        dHeight
-      );
+      // determine portion of image to draw
+      // clip image to drawBounds
+      var sourceBox = new Rectangle(
+        new Vector2(0, 0),
+        sWidth,
+        sHeight
+      ).clipTo(drawBounds.translate(-this.position.x + (dWidth / 2), -this.position.y + (dHeight / 2)).scale(1 / this.scale, 1 / this.scale));
 
-      var sx = drawBounds.left() - imgBox.left();
-      var sy = drawBounds.top() - imgBox.top();
-      var sWidth = drawBounds.width();
-      var sHeight = drawBounds.height();
+      var destBox = sourceBox.scale(this.scale, this.scale).translate(this.position.x - (dWidth / 2), this.position.y - (dHeight / 2));
+
+
+      ctx.drawImage(
+        this.transformedImage,
+        Math.floor(sourceBox.left()),
+        Math.floor(sourceBox.top()),
+        Math.floor(sourceBox.width()),
+        Math.floor(sourceBox.height()),
+        Math.floor(destBox.left()),
+        Math.floor(destBox.top()),
+        Math.floor(destBox.width()),
+        Math.floor(destBox.height()));
 
       ctx.save();
-
-      ctx.translate(this.position.x - imgBox.width() / 2, this.position.y - imgBox.height() / 2);
-
-      ctx.drawImage(this.transformedImage, sx, sy, sWidth, sHeight, sx, sy, sWidth, sHeight);
-
+      ctx.strokeStyle = 'red';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
+      //
+      // ctx.lineWidth = 5;
+      // ctx.strokeStyle = 'green';
+      // ctx.strokeRect(sourceBox.left(), sourceBox.top(), sourceBox.width(), sourceBox.height());
       ctx.restore();
     }
 

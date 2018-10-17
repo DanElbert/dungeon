@@ -18,6 +18,36 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
     return true;
   },
 
+  // Returns the portion of this rectangle inside the given rec
+  clipTo: function(otherRec) {
+    var left = Math.max(this.left(), otherRec.left());
+    var top = Math.max(this.top(), otherRec.top());
+    var right = Math.min(this.right(), otherRec.right());
+    var bottom = Math.min(this.bottom(), otherRec.bottom());
+
+    return new Rectangle(
+      new Vector2(left, top),
+      right - left,
+      bottom - top
+    )
+  },
+
+  translate: function(x, y) {
+    return new Rectangle(
+      this.topLeft().translate(x, y),
+      this.width(),
+      this.height()
+    )
+  },
+
+  scale: function(x, y) {
+    return new Rectangle(
+      this.topLeft().scale(x, y),
+      this.width() * x,
+      this.height() * y
+    );
+  },
+
   toArray: function() {
     return [
       [this.topLeft().x, this.topLeft().y],

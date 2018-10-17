@@ -24,6 +24,12 @@ Vector2.prototype = _.extend(Vector2.prototype, {
     return this.matrixMultiply(m);
   },
 
+  scale: function(x, y) {
+    var m = TransformMatrix.Identity.scale(x, y);
+
+    return this.matrixMultiply(m);
+  },
+
   matrixMultiply: function(m) {
     var out = m.pointMultiply([this.x, this.y, 1]);
     return new Vector2(out[0], out[1]);

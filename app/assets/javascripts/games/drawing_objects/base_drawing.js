@@ -49,6 +49,7 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
 
   invalidate: function() {
     this.board.invalidate();
+    this.clearBounds();
     for (let t of this.parentTiles) {
       t.reDraw();
     }

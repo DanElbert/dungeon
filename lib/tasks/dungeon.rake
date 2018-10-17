@@ -3,6 +3,10 @@ task :compile do |t|
   Rake::Task['board_detector:build'].invoke
 end
 
+task :update_images => :environment do
+  Image.process_all
+end
+
 task :fix_line_actions => :environment do |t|
   BoardAction.where(action_type: ['penAction', 'addFogPenAction', 'removeFogPenAction', 'eraseAction']).find_in_batches do |batch|
     BoardAction.transaction do
