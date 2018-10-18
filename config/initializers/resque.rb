@@ -2,7 +2,7 @@
 rails_env = ENV['RAILS_ENV'] || 'development'
 
 case rails_env
-  when 'docker', 'live'
+  when 'docker', 'production'
     Resque.redis = 'redis:6379'
   else
     #noop
