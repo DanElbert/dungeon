@@ -212,7 +212,7 @@ function Board(canvas, cameraApi) {
     this.board_data = data.board;
     this.isOwner = data.is_owner;
     this.campaign_images = data.campaign_images;
-    this.drawingLayer.isOwner = this.isOwner;
+    this.drawingLayer.setOwner(this.isOwner);
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
     this.labelLayer.useXLetters = data.useXLetters;
 
@@ -242,7 +242,7 @@ function Board(canvas, cameraApi) {
   };
 
   this.renderDrawing = function() {
-    this.drawingLayer.draw(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], this.drawing, this.viewPortManager.getZoom() < 0.3, false);
+    this.drawingLayer.draw(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1], this.drawing, this.viewPortManager.getZoom());
   };
 
   this.renderCursor = function() {

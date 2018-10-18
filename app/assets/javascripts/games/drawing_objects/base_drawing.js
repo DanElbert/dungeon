@@ -55,8 +55,8 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     }
   },
 
-  draw: function(drawing, drawBounds) {
-    this.executeDraw(drawing, drawBounds);
+  draw: function(drawing, drawBounds, level) {
+    this.executeDraw(drawing, drawBounds, level);
   },
 
   executeDraw(drawing, drawBounds) {

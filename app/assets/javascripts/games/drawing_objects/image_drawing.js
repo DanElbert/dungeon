@@ -75,29 +75,30 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
         sHeight
       ).clipTo(drawBounds.translate(-this.position.x + (dWidth / 2), -this.position.y + (dHeight / 2)).scale(1 / this.scale, 1 / this.scale));
 
-      var destBox = sourceBox.scale(this.scale, this.scale).translate(this.position.x - (dWidth / 2), this.position.y - (dHeight / 2));
+      var destBox = sourceBox.scale(this.scale, this.scale).translate(this.position.x - (dWidth / 2), this.position.y - (dHeight / 2)).roundValues();
+      sourceBox = sourceBox.roundValues();
 
 
       ctx.drawImage(
         this.transformedImage,
-        Math.floor(sourceBox.left()),
-        Math.floor(sourceBox.top()),
-        Math.floor(sourceBox.width()),
-        Math.floor(sourceBox.height()),
-        Math.floor(destBox.left()),
-        Math.floor(destBox.top()),
-        Math.floor(destBox.width()),
-        Math.floor(destBox.height()));
+        sourceBox.left(),
+        sourceBox.top(),
+        sourceBox.width(),
+        sourceBox.height(),
+        destBox.left(),
+        destBox.top(),
+        destBox.width(),
+        destBox.height());
 
-      ctx.save();
-      ctx.strokeStyle = 'red';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
+      // ctx.save();
+      // ctx.strokeStyle = 'red';
+      // ctx.lineWidth = 10;
+      // ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
       //
       // ctx.lineWidth = 5;
       // ctx.strokeStyle = 'green';
       // ctx.strokeRect(sourceBox.left(), sourceBox.top(), sourceBox.width(), sourceBox.height());
-      ctx.restore();
+      // ctx.restore();
     }
 
   },

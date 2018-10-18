@@ -32,13 +32,13 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
   },
 
   update() {
-    if (this.currentLevel && this.previousZoom !== this.board.getZoom()) {
-      var level = this.calculateCurrentLevel();
-      if (level.number !== this.currentLevel.number) {
-        this.invalidate();
-      }
-      this.previousZoom = this.board.getZoom();
-    }
+    // if (this.currentLevel && this.previousZoom !== this.board.getZoom()) {
+    //   var level = this.calculateCurrentLevel();
+    //   if (level.number !== this.currentLevel.number) {
+    //     this.invalidate();
+    //   }
+    //   this.previousZoom = this.board.getZoom();
+    // }
   },
 
   calculateCurrentLevel() {
@@ -47,7 +47,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
     return _.min(this.imageJson.level_data, function(l) { return Math.abs(displayWidth - l.width) }, this);
   },
 
-  executeDraw: function(drawing, drawBounds) {
+  executeDraw: function(drawing, drawBounds, levelIdx) {
     // 1. get image json
     // 2. determine level
     // 3. ensure ImageDrawing objects
@@ -68,7 +68,13 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
     }
 
     this.boundsRect();
-    var level = this.calculateCurrentLevel();
+
+    var level = _.find(this.imageJson.level_data, function(l) { return l.number === levelIdx });
+    if (!level) {
+      level = this.imageJson.level_data[this.imageJson.level_data.length - 1];
+    }
+
+    //var level = level; this.calculateCurrentLevel();
     this.currentLevel = level;
 
     var tileSize = this.imageJson.tile_size;

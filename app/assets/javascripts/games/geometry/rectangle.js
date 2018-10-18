@@ -48,6 +48,14 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
     );
   },
 
+  roundValues: function() {
+    return new Rectangle(
+      new Vector2(Math.floor(this.left()), Math.floor(this.top())),
+      Math.floor(this.width()),
+      Math.floor(this.height())
+    );
+  },
+
   toArray: function() {
     return [
       [this.topLeft().x, this.topLeft().y],
