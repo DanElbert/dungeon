@@ -68,6 +68,8 @@ class ProcessImageJob < ApplicationJob
 
   def build_tiles(image, level, path)
 
+    image.image_magick.write(path + "." + image.extension)
+
     scaled_tile = image.tile_size / level.scale
 
     0.upto(level.x_tiles - 1) do |x|
