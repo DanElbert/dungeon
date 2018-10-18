@@ -60,8 +60,12 @@ services:
     restart: unless-stopped
     env_file: /etc/default/dungeon
     volumes:
-    - images:/dungeon/public/images/
-    - /var/log/dungeon:/dungeon/log/
+      - images:/dungeon/public/images/
+      - /var/log/dungeon:/dungeon/log/
+    environment:
+      - QUEUE=*
+      - INTERVAL=1.0
+    command: 'bundle exec rake resque:work'
     links:
     - redis
 
