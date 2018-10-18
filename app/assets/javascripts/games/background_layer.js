@@ -58,7 +58,7 @@ _.extend(BackgroundLayer.prototype, {
     var size = this.board.getViewPortSize();
     var zoom = this.board.getZoom();
     var image = this.board.board_data.background_image;
-    var imageObj = this.imageCache.getImage(image);
+    var imageObj = this.imageCache.getImage(image.raw_url);
 
     if (imageObj === null) {
       this.viewPort = {};
@@ -69,7 +69,7 @@ _.extend(BackgroundLayer.prototype, {
       coords: coords,
       size: size,
       zoom: zoom,
-      image: image
+      image: image.raw_url
     };
 
     if (this.isDifferent(newVp)) {

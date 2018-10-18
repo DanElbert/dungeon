@@ -28,7 +28,7 @@ class Board < ApplicationRecord
         cell_size: cell_size,
         grid_color: grid_color,
         id: id,
-        background_image: background_image.url
+        background_image: background_image.as_json
     }
   end
 

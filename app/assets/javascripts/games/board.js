@@ -208,6 +208,8 @@ function Board(canvas, cameraApi) {
       return;
     }
 
+    console.log(data);
+
     this.initiative.update(data.initiative);
     this.board_data = data.board;
     this.isOwner = data.is_owner;

@@ -23,7 +23,8 @@ class Image < ApplicationRecord
       height: self.height,
       width: self.width,
       url: self.url,
-      value: self.url,
+      value: self.url(true),
+      raw_url: self.url(true),
       extension: self.extension,
       is_tiled: self.is_tiled,
       tile_size: self.tile_size,
@@ -32,8 +33,8 @@ class Image < ApplicationRecord
     }
   end
 
-  def url
-    Rails.application.routes.url_helpers.image_path(id: self.id, format: self.is_tiled ? 'json' : self.extension)
+  def url(force_image = false)
+    Rails.application.routes.url_helpers.image_path(id: self.id, format: (self.is_tiled && !force_image) ? 'json' : self.extension)
   end
 
   def extension
