@@ -55,6 +55,16 @@ services:
   web4:
     <<: *web
 
+  worker:
+    image: 'registry.elbert.us/dungeon:production'
+    restart: unless-stopped
+    env_file: /etc/default/dungeon
+    volumes:
+    - images:/dungeon/public/images/
+    - /var/log/dungeon:/dungeon/log/
+    links:
+    - redis
+
 volumes:
   assets:
     driver: local
