@@ -16,7 +16,12 @@ class UsersController < ApplicationController
     if user = User.authenticate(params[:email], params[:password])
       set_current_user(user)
       flash[:notice] = "Welcome, #{user.name}"
-      redirect_to lobby_path
+      target = lobby_path
+      if session[:return_to]
+        target = session[:return_to]
+        session[:return_to] = nil
+      end
+      redirect_to target
     else
       flash[:error] = "Invalid credentials"
       render :login
