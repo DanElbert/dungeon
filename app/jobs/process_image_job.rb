@@ -41,16 +41,15 @@ class ProcessImageJob < ApplicationJob
     begin
       i.calculate_size!
 
+      File.binwrite(Rails.root.join('public', 'images', "#{i.id}.#{i.extension}").to_s, i.data)
+
       if !i.is_tiled
-        File.binwrite(Rails.root.join('public', 'images', "#{i.id}.#{i.extension}").to_s, i.data)
         i.status = Image::STATUS[:processed]
         i.save!
         return
       end
 
       root_path = Rails.root.join('public', 'images', i.id.to_s).to_s
-
-      i.image_magick.write(root_path + "." + image.extension)
 
       i.level_data.each_with_index do |level, idx|
         level_path = root_path + "/#{idx + 1}"

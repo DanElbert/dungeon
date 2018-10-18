@@ -62,6 +62,11 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
+  config.logger = ActiveSupport::Logger.new(
+      Rails.root.join('log', "#{Rails.env}.log"),
+      15,
+      20*1024*1024)
+
   # Set to :debug to see everything in the log.
   if ENV['LOGLEVEL']
     config.log_level = ENV['LOGLEVEL'].to_sym
