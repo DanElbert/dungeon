@@ -50,6 +50,8 @@ class ProcessImageJob < ApplicationJob
 
       root_path = Rails.root.join('public', 'images', i.id.to_s).to_s
 
+      i.image_magick.write(root_path + "." + image.extension)
+
       i.level_data.each_with_index do |level, idx|
         level_path = root_path + "/#{idx + 1}"
         `mkdir -p #{level_path}`
@@ -67,8 +69,6 @@ class ProcessImageJob < ApplicationJob
   end
 
   def build_tiles(image, level, path)
-
-    image.image_magick.write(path + "." + image.extension)
 
     scaled_tile = image.tile_size / level.scale
 
