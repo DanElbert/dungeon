@@ -58,7 +58,10 @@ _.extend(BackgroundLayer.prototype, {
     var size = this.board.getViewPortSize();
     var zoom = this.board.getZoom();
     var image = this.board.board_data.background_image;
-    var imageObj = this.imageCache.getImage(image.raw_url);
+    var self = this;
+    var imageObj = this.imageCache.getImage(image.raw_url, function() {
+      self.board.invalidate();
+    });
 
     if (imageObj === null) {
       this.viewPort = {};

@@ -47,6 +47,13 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
     return _.min(this.imageJson.level_data, function(l) { return Math.abs(displayWidth - l.width) }, this);
   },
 
+  removeParentTile: function(t) {
+    BaseDrawing.removeParentTile.call(this, t);
+    for (let d of this.imageDrawings.values()) {
+      this.board.drawingLayer.removeAction(d.uid);
+    }
+  },
+
   executeDraw: function(drawing, drawBounds, levelIdx) {
     // 1. get image json
     // 2. determine level
@@ -59,6 +66,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
       $.getJSON(this.url, function(data) {
         self.imageJsonFetching = false;
         self.imageJson = data;
+        self.invalidate();
         console.log(data);
       });
     }
@@ -112,7 +120,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
           }
 
           imgDrw = new ImageDrawing(
-            this.uid,
+            generateActionId(),
             this.board,
             newUrl,
             new Vector2(tileWidth, tileHeight),
@@ -120,6 +128,8 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
             1 / level.scale,
             0
           );
+
+          imgDrw.level = levelIdx;
 
           imgDrwEntry = { imageDrawing: imgDrw, innerPosition: tileCenter };
           this.imageDrawings.set(key, imgDrwEntry);
@@ -133,9 +143,11 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
           imgDrw.scale = this.scale / level.scale;
           imgDrw.angle = this.angle;
           imgDrw.clearBounds();
+          this.board.drawingLayer.removeAction(imgDrw.uid);
+          this.board.drawingLayer.addAction(imgDrw);
         }
 
-        imgDrw.draw(drawing, drawBounds);
+        //imgDrw.draw(drawing, drawBounds);
       }
     }
     this.updateGeometry = false;

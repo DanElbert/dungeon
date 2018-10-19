@@ -47,19 +47,39 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     );
   },
 
-  invalidate: function() {
-    this.board.invalidate();
-    this.clearBounds();
-    for (let t of this.parentTiles) {
-      t.reDraw();
+  addParentTile: function(t) {
+    this.parentTiles.push(t);
+  },
+
+  removeParentTile: function(t) {
+    var index = null;
+    for (var x = 0; x < this.parentTiles.length; x++) {
+      if (this.parentTiles[x] === t) {
+        index = x;
+        break;
+      }
     }
+    if (index !== null) {
+      this.parentTiles.splice(index, 1);
+    }
+  },
+
+  invalidate: function() {
+    var self = this;
+    setTimeout(function() {
+      self.board.invalidate();
+      self.clearBounds();
+      for (let t of self.parentTiles) {
+        t.reDraw();
+      }
+    });
   },
 
   draw: function(drawing, drawBounds, level) {
     this.executeDraw(drawing, drawBounds, level);
   },
 
-  executeDraw(drawing, drawBounds) {
+  executeDraw: function(drawing, drawBounds) {
   },
 
   update: function() {

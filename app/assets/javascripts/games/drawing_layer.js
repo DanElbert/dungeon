@@ -62,16 +62,16 @@ _.extend(DrawingLayer.prototype, {
     }
   },
 
-  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, currentZoom) {
+  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, currentZoom, disableFog) {
     for (let a of this.drawingActions.values()) {
       if (a.update) {
         a.update();
       }
     }
 
-    var levelIdx = Math.floor(Math.max(0, Math.log2(1 / currentZoom))); // this.levels[0];
+    var levelIdx = Math.floor(Math.max(0, Math.log2(1 / currentZoom)));
     var level = this.levels[levelIdx];
-    level.draw(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing);
+    level.draw(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, !!disableFog);
   },
 
 
@@ -135,12 +135,12 @@ _.extend(DrawingLevel.prototype, {
     }
   },
 
-  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing) {
+  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, disableFog) {
     var tiles = this.getTilesForRectangle([viewPortX, viewPortY], [viewPortX + viewPortWidth, viewPortY + viewPortHeight]);
     var context = drawing.context;
 
     for (let tile of tiles) {
-      tile.draw(this.number, this.scale);
+      tile.draw(this.number, this.scale, disableFog);
       var tileCanvas = tile.canvas;
       if (tileCanvas != null) {
         context.drawImage(tileCanvas, tile.topLeft[0], tile.topLeft[1], this.tileSize / this.scale, this.tileSize / this.scale);
@@ -217,8 +217,8 @@ _.extend(Tile.prototype, {
 
   addAction: function(a) {
     this.actions.set(a.uid, a);
-    if (a.parentTiles) {
-      a.parentTiles.push(this);
+    if (a.addParentTile) {
+      a.addParentTile(this);
     }
     this.reDraw();
   },
@@ -236,14 +236,8 @@ _.extend(Tile.prototype, {
       this.actions.delete(uid);
       this.clear();
 
-      if (a.parentTiles) {
-        index = null;
-        for (x = 0; x < a.parentTiles.length; x++) {
-          if (a.parentTiles[x] === this) index = x;
-        }
-        if (index !== null) {
-          a.parentTiles.split(index, 1);
-        }
+      if (a.removeParentTile) {
+        a.removeParentTile(this);
       }
       return;
     }
@@ -272,7 +266,7 @@ _.extend(Tile.prototype, {
     this.staleFog = true;
   },
 
-  draw: function(level, scale) {
+  draw: function(level, scale, disableFog) {
 
     if ((this.actions.size == 0 && this.fogActions.size == 0) || (this.isDrawn))
       return;
@@ -317,12 +311,16 @@ _.extend(Tile.prototype, {
       this.context.globalCompositeOperation = 'destination-out';
     }
 
-    this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    if (this.isOwner && disableFog) {
+      // skip fog (for copy/paste)
+    } else {
+      this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+    }
 
     this.context.restore();
 
     // Show squares around tiles for debugging
-    //d.drawSquare(this.topLeft, this.bottomRight, 'red', null, 3);
+    //d.drawSquare(this.topLeft, this.bottomRight, 'green', null, 3);
 
     this.isDrawn = true;
   },

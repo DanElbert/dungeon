@@ -97,8 +97,8 @@ function Board(canvas, cameraApi) {
   });
 
   $(this.imageCache).on("imageloaded", function(evt) {
-    self.drawingLayer.clear();
-    self.invalidate();
+    //self.drawingLayer.clear();
+    //self.invalidate();
   });
 
   this.setCanvasSize = function(width, height, pixelRatio) {
@@ -385,7 +385,7 @@ function Board(canvas, cameraApi) {
     var drawing = new Drawing(context, this.imageCache);
     context.save();
     context.translate(-1 * x, -1 * y);
-    this.drawingLayer.draw(x, y, width, height, drawing, this.isOwner, true);
+    this.drawingLayer.draw(x, y, width, height, drawing, 1, true);
     context.restore();
     return canvas.toDataURL().slice("data:image/png;base64,".length)
   };

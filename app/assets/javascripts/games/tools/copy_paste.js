@@ -6,6 +6,7 @@ function CopyTool(manager) {
   this.ctrlDown = false;
   this.drag_start = null;
   this.drag_current = null;
+  this.max_size = 1024;
 }
 CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
   buildOptions: function() {
@@ -78,8 +79,10 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
       return;
     }
 
-    var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
-    var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
+    var restrainedDragCurrent = this.clampedDragCurrent();
+
+    var topLeft = [Math.min(this.drag_start[0], restrainedDragCurrent[0]), Math.min(this.drag_start[1], restrainedDragCurrent[1])];
+    var bottomRight = [Math.max(this.drag_start[0], restrainedDragCurrent[0]), Math.max(this.drag_start[1], restrainedDragCurrent[1])];
 
     var height = bottomRight[1] - topLeft[1];
     var width = bottomRight[0] - topLeft[0];
@@ -103,6 +106,16 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
       }
     });
   },
+  
+  clampedDragCurrent: function() {
+    var deltaX = this.drag_start[0] - this.drag_current[0];
+    var deltaY = this.drag_start[1] - this.drag_current[1];
+
+    return [
+      this.drag_start[0] - Math.min(Math.abs(deltaX), this.max_size) * (deltaX / Math.abs(deltaX)),
+      this.drag_start[1] - Math.min(Math.abs(deltaY), this.max_size) * (deltaY / Math.abs(deltaY)),
+    ];
+  },
 
   drawCross: function(point) {
     var crossSize = 10;
@@ -115,8 +128,10 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
 
   drawShape: function() {
     if (this.drag_start && this.drag_current) {
-      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
-      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
+      var restrainedDragCurrent = this.clampedDragCurrent();
+      
+      var topLeft = [Math.min(this.drag_start[0], restrainedDragCurrent[0]), Math.min(this.drag_start[1], restrainedDragCurrent[1])];
+      var bottomRight = [Math.max(this.drag_start[0], restrainedDragCurrent[0]), Math.max(this.drag_start[1], restrainedDragCurrent[1])];
 
       this.board.drawing.drawSquare(topLeft, bottomRight, 'black', null, 5);
 

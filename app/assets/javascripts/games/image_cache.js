@@ -15,14 +15,21 @@ _.extend(ImageCache.prototype, {
     }
   },
 
-  addImage: function(url) {
+  addImage: function(url, callback) {
     var self = this;
     if (!this.images[url]) {
 
-      var imageData = {image: new Image(), loaded: false};
+      var imageData = {image: new Image(), loaded: false, callbacks: []};
+      
+      if (callback) {
+        imageData.callbacks.push(callback);
+      }
 
       imageData.image.onload = function() {
         imageData.loaded = true;
+        for (let c of imageData.callbacks) {
+          c(imageData.image);
+        }
         $(self).trigger("imageloaded");
       };
 
@@ -31,15 +38,19 @@ _.extend(ImageCache.prototype, {
     }
   },
 
-  getImage: function(url) {
+  // callback will only be called if image not immidiately available
+  getImage: function(url, callback) {
     var imageData = this.images[url];
 
     if (imageData && imageData.loaded) {
       return imageData.image;
     } else if (!imageData) {
-      this.addImage(url);
+      this.addImage(url, callback);
       return null;
     } else {
+      if (callback) {
+       imageData.callbacks.push(callback); 
+      }
       return null;
     }
   }

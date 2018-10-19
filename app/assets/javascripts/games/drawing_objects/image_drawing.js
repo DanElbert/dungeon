@@ -7,6 +7,8 @@ function ImageDrawing(uid, board, url, size, position, scale, angle) {
   this.position = position;
   this.scale = scale;
   this.angle = angle;
+  this.loading = false;
+  this.level = null;
 
   this.transformedImage = null;
 }
@@ -26,15 +28,19 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
     return this.getRotatedRecBounds(rec, this.angle);
   },
 
-  executeDraw: function(drawing, drawBounds) {
-    if (!this.boundsRect().overlaps(drawBounds)) {
+  executeDraw: function(drawing, drawBounds, level) {
+    if (this.loading || !this.boundsRect().overlaps(drawBounds) || (this.level !== null && this.level !== level)) {
       return;
     }
 
     var ctx;
 
     if (this.transformedImage === null) {
-      var imgObj = drawing.imageCache.getImage(this.url);
+      var self = this;
+      var imgObj = drawing.imageCache.getImage(this.url, function() {
+        self.loading = false;
+        self.invalidate();
+      });
 
       if (imgObj) {
         if (this.angle === 0) {
@@ -56,6 +62,8 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
           ctx.drawImage(imgObj, 0, 0);
           ctx.restore();
         }
+      } else {
+        this.loading = true;
       }
     }
 
@@ -90,15 +98,15 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
         destBox.width(),
         destBox.height());
 
-      // ctx.save();
-      // ctx.strokeStyle = 'red';
-      // ctx.lineWidth = 10;
-      // ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
+       // ctx.save();
+       // ctx.strokeStyle = 'red';
+       // ctx.lineWidth = 10;
+       // ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
       //
       // ctx.lineWidth = 5;
       // ctx.strokeStyle = 'green';
       // ctx.strokeRect(sourceBox.left(), sourceBox.top(), sourceBox.width(), sourceBox.height());
-      // ctx.restore();
+       //ctx.restore();
     }
 
   },
