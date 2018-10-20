@@ -100,9 +100,9 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
 
        // ctx.save();
        // ctx.strokeStyle = 'red';
-       // ctx.lineWidth = 10;
+       // ctx.lineWidth = 1;
        // ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
-      //
+
       // ctx.lineWidth = 5;
       // ctx.strokeStyle = 'green';
       // ctx.strokeRect(sourceBox.left(), sourceBox.top(), sourceBox.width(), sourceBox.height());

@@ -51,8 +51,8 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
   roundValues: function() {
     return new Rectangle(
       new Vector2(Math.floor(this.left()), Math.floor(this.top())),
-      Math.floor(this.width()),
-      Math.floor(this.height())
+      Math.ceil(this.width()),
+      Math.ceil(this.height())
     );
   },
 

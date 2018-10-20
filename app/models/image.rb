@@ -10,6 +10,7 @@ class Image < ApplicationRecord
     error: 'error'
   }
 
+  OVERLAP = 5
   TILE_SIZE = 512
 
   def self.types
@@ -28,6 +29,7 @@ class Image < ApplicationRecord
       extension: self.extension,
       is_tiled: self.is_tiled,
       tile_size: self.tile_size,
+      overlap: OVERLAP,
       levels: self.levels,
       level_data: self.level_data.map(&:as_json)
     }
@@ -70,7 +72,7 @@ class Image < ApplicationRecord
     self.is_tiled = height > 1800 && width > 1800
     if self.is_tiled
       self.tile_size = TILE_SIZE
-      self.levels = (Math.log2([height, width].max) - Math.log2(TILE_SIZE)).ceil
+      self.levels = (Math.log2([height, width].max)).floor
     else
       self.levels = 1
     end

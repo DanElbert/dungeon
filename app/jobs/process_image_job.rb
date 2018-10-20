@@ -73,10 +73,18 @@ class ProcessImageJob < ApplicationJob
 
     0.upto(level.x_tiles - 1) do |x|
       0.upto(level.y_tiles - 1) do |y|
+
+        top_margin = y == 0 ? 0 : Image::OVERLAP
+        left_margin = x == 0 ? 0 : Image::OVERLAP
+        right_margin = x == (level.x_tiles - 1) ? 0 : Image::OVERLAP
+        bottom_margin = y == (level.y_tiles - 1) ? 0 : Image::OVERLAP
+
         image.image_magick.
-          crop(x * scaled_tile, y * scaled_tile, scaled_tile, scaled_tile).
+          crop((x * scaled_tile) - left_margin, (y * scaled_tile) - top_margin, scaled_tile + right_margin + left_margin, scaled_tile + top_margin + bottom_margin).
           resize(level.scale).
           write(path + "/#{x}_#{y}.#{image.extension}")
+
+        GC.start
       end
     end
   end

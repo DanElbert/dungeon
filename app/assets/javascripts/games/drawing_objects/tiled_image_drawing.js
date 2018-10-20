@@ -86,6 +86,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
     this.currentLevel = level;
 
     var tileSize = this.imageJson.tile_size;
+    var overlap = this.imageJson.overlap;
     var scaledTileSize = tileSize / level.scale;
 
     var centerpointMatrix = TransformMatrix.Identity
@@ -107,17 +108,16 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
           var newUrl = "/images/" + this.imageJson.id + "/" + level.number + "/" + x + "_" + y + "." + this.imageJson.extension;
 
           // 0,0 = center of image
-          var topLeft = new Vector2(-this.size.x / 2, -this.size.y / 2);
-          var tileTopLeft = topLeft.translate(scaledTileSize * x, scaledTileSize * y);
-          var tileCenter = tileTopLeft.translate(scaledTileSize / 2, scaledTileSize / 2);
-          var tileWidth = tileSize;
-          var tileHeight = tileSize;
+          var marginLeft = x === 0 ? 0 : overlap;
+          var marginTop = y === 0 ? 0 : overlap;
+          var marginRight = x === (level.x_tiles - 1) ? 0 : overlap;
+          var marginBottom = y === (level.y_tiles - 1) ? 0 : overlap;
 
-          if (x == level.x_tiles - 1 || y == level.y_tiles - 1) {
-            tileWidth = Math.min(tileSize, level.width - (x * tileSize));
-            tileHeight = Math.min(tileSize, level.height - (y * tileSize));
-            tileCenter = tileTopLeft.translate(tileWidth / level.scale / 2, tileHeight / level.scale / 2);
-          }
+          var topLeft = new Vector2(-this.size.x / 2, -this.size.y / 2);
+          var tileTopLeft = topLeft.translate(scaledTileSize * x - marginLeft / level.scale, scaledTileSize * y - marginTop / level.scale);
+          var tileWidth = Math.min(tileSize, level.width - (x * tileSize)) + marginLeft + marginRight;
+          var tileHeight = Math.min(tileSize, level.height - (y * tileSize)) + marginTop + marginBottom;
+          var tileCenter = tileTopLeft.translate(tileWidth / level.scale / 2, tileHeight / level.scale / 2);
 
           imgDrw = new ImageDrawing(
             generateActionId(),

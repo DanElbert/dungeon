@@ -143,7 +143,7 @@ _.extend(DrawingLevel.prototype, {
       tile.draw(this.number, this.scale, disableFog);
       var tileCanvas = tile.canvas;
       if (tileCanvas != null) {
-        context.drawImage(tileCanvas, tile.topLeft[0], tile.topLeft[1], this.tileSize / this.scale, this.tileSize / this.scale);
+        context.drawImage(tileCanvas, tile.topLeft[0], tile.topLeft[1], (this.tileSize) / this.scale, (this.tileSize) / this.scale);
       }
     }
   },
@@ -184,9 +184,8 @@ function Tile(size, x, y, scale, isOwner, imageCache, fogCover) {
   this.y = y;
   this.scale = scale;
   this.topLeft = [x * size, y * size];
-  this.bottomRight = [(x + 1) * size, (y + 1) * size];
-  this.width = this.bottomRight[0] - this.topLeft[0];
-  this.height = this.bottomRight[1] - this.topLeft[1];
+  this.width = size;
+  this.height = size;
   this.actions = new Map();
   this.fogActions = new Map();
   this.isDrawn = false;
@@ -195,7 +194,6 @@ function Tile(size, x, y, scale, isOwner, imageCache, fogCover) {
   this.drawing = null;
   this.imageCache = imageCache;
   this.isFogDisabled = false;
-  this.isDistantMode = false;
   this.fogCover = fogCover;
 
   this.fogCanvas = null;
@@ -314,7 +312,7 @@ _.extend(Tile.prototype, {
     if (this.isOwner && disableFog) {
       // skip fog (for copy/paste)
     } else {
-      this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.bottomRight[0] - this.topLeft[0], this.bottomRight[1] - this.topLeft[1]);
+      this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.width, this.height);
     }
 
     this.context.restore();
