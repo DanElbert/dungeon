@@ -29,7 +29,7 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
   },
 
   executeDraw: function(drawing, drawBounds, level) {
-    if (this.loading || !this.boundsRect().overlaps(drawBounds) || (this.level !== null && this.level !== level)) {
+    if (!this.boundsRect().overlaps(drawBounds) || (this.level !== null && this.level !== level)) {
       return;
     }
 
@@ -39,32 +39,40 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
       var self = this;
       var imgObj = drawing.imageCache.getImage(this.url, function() {
         self.loading = false;
+        this.transformedImage = null;
         self.invalidate();
       });
 
-      if (imgObj) {
-        if (this.angle === 0) {
-          this.transformedImage = imgObj;
-        } else {
+      this.loading = imgObj === null;
 
-          var sizeRec = new Rectangle(new Vector2(0, 0), this.size.x, this.size.y);
-          var targetSize = this.getRotatedRecBounds(sizeRec, this.angle).size();
-
-          this.transformedImage = document.createElement("canvas");
-          this.transformedImage.width = targetSize.x;
-          this.transformedImage.height = targetSize.y;
-          ctx = this.transformedImage.getContext("2d");
-
-          ctx.save();
-          ctx.translate(targetSize.x / 2, targetSize.y / 2);
-          ctx.rotate(this.angle);
-          ctx.translate(-this.size.x / 2, -this.size.y / 2);
-          ctx.drawImage(imgObj, 0, 0);
-          ctx.restore();
-        }
+      if (imgObj && this.angle === 0) {
+        this.transformedImage = imgObj;
       } else {
-        this.loading = true;
+        var sizeRec = new Rectangle(new Vector2(0, 0), this.size.x, this.size.y);
+        var targetSize = this.getRotatedRecBounds(sizeRec, this.angle).size();
+
+        this.transformedImage = document.createElement("canvas");
+        this.transformedImage.width = targetSize.x;
+        this.transformedImage.height = targetSize.y;
+        ctx = this.transformedImage.getContext("2d");
+
+        ctx.save();
+        ctx.translate(targetSize.x / 2, targetSize.y / 2);
+        ctx.rotate(this.angle);
+        ctx.translate(-this.size.x / 2, -this.size.y / 2);
+        if (this.loading) {
+          ctx.fillStyle = "#AAAAAA";
+          ctx.fillRect(0, 0, this.size.x, this.size.y);
+        } else {
+          ctx.drawImage(imgObj, 0, 0);
+        }
+        ctx.restore();
       }
+
+    }
+
+    if (this.loading) {
+
     }
 
     if (this.transformedImage !== null) {

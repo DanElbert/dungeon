@@ -99,6 +99,10 @@ _.extend(DrawingLevel.prototype, {
   },
 
   addAction(a) {
+    if (a.level !== undefined && a.level !== null && a.level !== this.number) {
+      return;
+    }
+
     var actionBounds = a.bounds();
     var tiles = this.getTilesForRectangle(actionBounds[0], actionBounds[1]);
 
@@ -318,7 +322,8 @@ _.extend(Tile.prototype, {
     this.context.restore();
 
     // Show squares around tiles for debugging
-    //d.drawSquare(this.topLeft, this.bottomRight, 'green', null, 3);
+    // d.drawSquare(this.topLeft, [this.topLeft[0] + this.width, this.topLeft[1] + this.height], 'green', null, 5);
+    // d.drawText(this.x + ', ' + this.y, [this.topLeft[0] + 50, this.topLeft[1] + 15], 13, 'white');
 
     this.isDrawn = true;
   },

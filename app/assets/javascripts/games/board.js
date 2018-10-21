@@ -109,7 +109,7 @@ function Board(canvas, cameraApi) {
     this.canvas.style.height = height.toString() + "px";
     this.pixelRatio = pixelRatio;
 
-    this.viewPortManager.setCanvasSize([width, height]);
+    this.viewPortManager.setCanvasSize([width, height], pixelRatio);
     this.backgroundLayer.setCanvasSize(width, height);
   };
 
@@ -207,8 +207,6 @@ function Board(canvas, cameraApi) {
     if (!data) {
       return;
     }
-
-    console.log(data);
 
     this.initiative.update(data.initiative);
     this.board_data = data.board;

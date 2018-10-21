@@ -174,8 +174,9 @@ _.extend(ViewPortManager.prototype, {
     return this.canvasSize;
   },
 
-  setCanvasSize: function(newSize) {
+  setCanvasSize: function(newSize, pixelRatio) {
     this.canvasSize = newSize;
+    this.pixelRatio = pixelRatio;
     this.applyZoom(this.zoom);
   },
 
@@ -203,7 +204,7 @@ _.extend(ViewPortManager.prototype, {
     val = this.normalizeZoom(val);
 
     this.zoom = val;
-    this.size = [this.board.canvas.width / val, this.board.canvas.height / val];
+    this.size = [this.board.canvas.width / val / this.pixelRatio, this.board.canvas.height / val / this.pixelRatio];
   },
 
   applyGeometry: function() {
