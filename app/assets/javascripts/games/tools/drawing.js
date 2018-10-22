@@ -3,6 +3,7 @@ function DrawTool(manager) {
   this.super = Tool.prototype;
 
   this.lineBuffer = [];
+  this.drawingObject = null;
   this.previous_point = null;
   this.cursor = null;
 }
@@ -10,6 +11,8 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
   eventNamespace: function() { return "Drawing"; },
   minimumLineDistance: function() { return 0; },
   saveAction: function() { },
+  isFog: function() { return false; },
+  createDrawingObject: function() { },
   handleMouseMove: function(location) {
     location = this.roundPoint(location);
     if (this.previous_point == null) {
@@ -20,6 +23,7 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
 
     if (distance >= this.minimumLineDistance()) {
       this.lineBuffer.push({start: this.previous_point, end: location});
+      this.drawingObject.setLines(this.lineBuffer);
       this.previous_point = location;
     }
   },
@@ -27,6 +31,12 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
     var self = this;
     $(this.board.event_manager).on('dragstart.' + this.eventNamespace(), function(evt, mapEvt) {
       self.previous_point = null;
+      self.drawingObject = self.createDrawingObject();
+      if (self.isFog()) {
+        self.board.drawingLayer.addFogAction(self.drawingObject);
+      } else {
+        self.board.drawingLayer.addAction(self.drawingObject);
+      }
       self.handleMouseMove(mapEvt.mapPoint);
     });
 
@@ -41,13 +51,22 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
     $(this.board.event_manager).on('dragstop.' + this.eventNamespace(), function(evt, mapEvt) {
       self.saveAction();
       self.lineBuffer = [];
+      self.removeDrawingObject();
     });
   },
 
   disable: function() {
     this.saveAction();
+    this.removeDrawingObject();
     this.lineBuffer = [];
     $(this.board.event_manager).off("." + this.eventNamespace());
+  },
+
+  removeDrawingObject: function() {
+    if (this.drawingObject) {
+      this.board.drawingLayer.removeAction(this.drawingObject.uid);
+      this.drawingObject = null;
+    }
   }
 });
 
@@ -71,9 +90,10 @@ Pen.prototype = _.extend(Pen.prototype, DrawTool.prototype, {
   },
   minimumLineDistance: function() { return this.width / 2; },
   eventNamespace: function() { return "Pen"; },
+  createDrawingObject: function() {
+    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, this.color);
+  },
   draw: function() {
-    this.board.drawing.drawLines(this.color, this.width, this.lineBuffer);
-
     if (this.cursor) {
       this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, this.color, this.color)
     }
@@ -103,6 +123,9 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
   },
   minimumLineDistance: function() { return 0; },
   eventNamespace: function() { return "Eraser"; },
+  createDrawingObject: function() {
+    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, -1);
+  },
   enable: function() {
     this.super.enable.apply(this);
     this.setCursor('none');
@@ -123,7 +146,6 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
     var cursorColor = "#FFFFFF";
 
     if (this.lineBuffer.length > 0) {
-      this.board.drawing.eraseLines(this.width, this.lineBuffer);
       cursorColor = "#000000";
     }
 

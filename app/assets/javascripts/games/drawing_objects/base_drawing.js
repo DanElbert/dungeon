@@ -1,27 +1,46 @@
-function BaseDrawing(uid) {
+function BaseDrawing(uid, board, position, scale, angle) {
+  if (!uid) throw "Invalid UID";
+  if (!board) throw "board cannot be null";
   this.uid = uid;
+  this.board = board;
+  this.position = position;
+  this.scale = scale;
+  this.angle = angle;
+
+  this._dirty = false;
   this._bounds = null;
-  this.parentTiles = [];
+  this.drawingLayer = null;
 }
 
 BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
-  boundsRect: function() {
+  bounds: function() {
     if (this._bounds === null) {
       this._bounds = this.calculateBounds();
     }
     return this._bounds;
   },
 
-  bounds: function() {
-    return this.boundsRect().toArray();
-  },
-
   calculateBounds: function() {
-    return new Rectangle(new Vector2(0,0), 0, 0);
+    return new Rectangle(new Vector2(0, 0), 0, 0);
   },
 
   clearBounds: function() {
     this._bounds = null;
+  },
+
+  setPosition: function(newPosition) {
+    this.position = newPosition;
+    this.invalidate();
+  },
+
+  setScale: function(newScale) {
+    this.scale = newScale;
+    this.invalidate();
+  },
+
+  setAngle: function(newAngle) {
+    this.angle = newAngle;
+    this.invalidate();
   },
 
   // Given a rectangle and an angle, returns a non-rotated containing rectangle
@@ -47,32 +66,22 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     );
   },
 
-  addParentTile: function(t) {
-    this.parentTiles.push(t);
-  },
-
-  removeParentTile: function(t) {
-    var index = null;
-    for (var x = 0; x < this.parentTiles.length; x++) {
-      if (this.parentTiles[x] === t) {
-        index = x;
-        break;
-      }
-    }
-    if (index !== null) {
-      this.parentTiles.splice(index, 1);
-    }
+  setDrawingLayer: function(dl) {
+    this.drawingLayer = dl;
   },
 
   invalidate: function() {
-    var self = this;
-    setTimeout(function() {
-      self.board.invalidate();
-      self.clearBounds();
-      for (let t of self.parentTiles) {
-        t.reDraw();
-      }
-    });
+    this._dirty = true;
+    this.clearBounds();
+    this.board.invalidate();
+    // var self = this;
+    // setTimeout(function() {
+    //   self.clearBounds();
+    //   if (self.drawingLayer) {
+    //     self.drawingLayer.actionChanged(self.uid);
+    //   }
+    //   self.board.invalidate();
+    // });
   },
 
   draw: function(drawing, drawBounds, level) {
@@ -83,8 +92,10 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
   },
 
   update: function() {
+    var wasDirty = this._dirty;
+    this._dirty = false;
+    return wasDirty;
   },
 
-  destroy: function() {
-  }
+
 });

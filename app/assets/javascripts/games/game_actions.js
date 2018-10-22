@@ -16,7 +16,12 @@ var DrawingAction = createActionType("DrawingAction", Action, {
   // Returns the bounding box of the drawing action as an array of arrays as: [[LEFT, TOP], [RIGHT, BOTTOM]]
   bounds: function() {
     if (this.boundData == null) {
-      this.boundData = this.calculateBounds();
+      var boundsArr = this.calculateBounds();
+      this.boundData = new Rectangle(
+        new Vector2(boundsArr[0][0], boundsArr[0][1]),
+        boundsArr[1][0] - boundsArr[0][0],
+        boundsArr[1][1] - boundsArr[0][1]
+      )
     }
     return this.boundData;
   },
@@ -110,7 +115,7 @@ _.extend(actionTypes, {
   penAction: createActionType("PenAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addAction(new PenDrawing(this.uid, this.properties.lines, this.properties.width, this.properties.color));
+      board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, this.properties.color));
     },
 
     validateData: function() {
@@ -118,12 +123,10 @@ _.extend(actionTypes, {
     }
   }),
 
-  addFogPenAction: createActionType("AddFogPenAction", LineCollectionAction, {
+  addFogPenAction: createActionType("AddFogPenAction", Action, {
+    isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addFogAction(this);
-    },
-    draw: function(drawing) {
-      drawing.drawLines('rgba(1, 1, 1, 1)', this.properties.width, this.properties.lines);
+      board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, "black"));
     },
     validateData: function() {
       this.ensureFields(["width", "lines", "uid"]);
@@ -131,12 +134,10 @@ _.extend(actionTypes, {
   }),
 
   // An remove fog action consists of a width, and a collection of lines that are to be drawn on the fog layer
-  removeFogPenAction: createActionType("RemoveFogPenAction", LineCollectionAction, {
+  removeFogPenAction: createActionType("RemoveFogPenAction", Action, {
+    isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addFogAction(this);
-    },
-    draw: function(drawing) {
-      drawing.eraseLines(this.properties.width, this.properties.lines);
+      board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1));
     },
     validateData: function() {
       this.ensureFields(["width", "lines", "uid"]);
@@ -259,9 +260,10 @@ _.extend(actionTypes, {
   }),
 
   // An erase action consists of a width and a collection of lines
-  eraseAction: createActionType("EraseAction", LineCollectionAction, {
-    draw: function(drawing) {
-      drawing.eraseLines(this.properties.width, this.properties.lines);
+  eraseAction: createActionType("EraseAction", Action, {
+    isPersistent: function() { return true; },
+    apply: function(board) {
+      board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1));
     },
 
     validateData: function() {

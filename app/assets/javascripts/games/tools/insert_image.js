@@ -21,6 +21,7 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
   optionsChanged: function() {
     this.editing = this.options.get("editing").value;
     this.image = this.options.get("image").value;
+    this.cleanImage();
     if (this.image) {
       this.imageDrawing = ImageDrawing.getImageDrawing(
         generateActionId(),
@@ -30,8 +31,7 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
         new Vector2(0,0),
         this.scale,
         this.angle);
-    } else {
-      this.imageDrawing = null;
+      this.board.drawingLayer.addAction(this.imageDrawing);
     }
   },
 
@@ -49,6 +49,13 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
     } else {
       return mapPoint;
     }
+  },
+
+  cleanImage: function() {
+    if (this.imageDrawing) {
+      this.board.drawingLayer.removeAction(this.imageDrawing.uid);
+    }
+    this.imageDrawing = null;
   },
 
   enable: function() {
@@ -90,6 +97,7 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
 
   disable: function() {
     $(this.board.event_manager).off('.' + this.eventNamespace());
+    this.cleanImage();
   },
 
   applyCursorDelta: function(startPoint, currentPoint) {
@@ -167,11 +175,10 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
   drawImage: function() {
     var place = this.editPoint || this.cursor;
     if (place) {
-      this.imageDrawing.position = new Vector2(place[0], place[1]);
-      this.imageDrawing.scale = this.scale;
-      this.imageDrawing.angle = this.angle * Math.PI / 180;
-      this.imageDrawing.clearBounds();
-      this.imageDrawing.draw(this.board.drawing, this.board.getViewPortRectangle());
+      this.imageDrawing.setPosition(new Vector2(place[0], place[1]));
+      this.imageDrawing.setScale(this.scale);
+      this.imageDrawing.setAngle(this.angle * Math.PI / 180);
+      //this.imageDrawing.draw(this.board.drawing, this.board.getViewPortRectangle());
     }
   },
 

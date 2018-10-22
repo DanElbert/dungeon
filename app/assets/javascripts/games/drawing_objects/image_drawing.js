@@ -1,12 +1,8 @@
 function ImageDrawing(uid, board, url, size, position, scale, angle) {
-  BaseDrawing.call(this, uid);
+  BaseDrawing.call(this, uid, board, position, scale, angle);
 
   this.url = url;
-  this.board = board;
   this.size = size;
-  this.position = position;
-  this.scale = scale;
-  this.angle = angle;
   this.loading = false;
   this.level = null;
 
@@ -29,7 +25,7 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
   },
 
   executeDraw: function(drawing, drawBounds, level) {
-    if (!this.boundsRect().overlaps(drawBounds) || (this.level !== null && this.level !== level)) {
+    if (!this.bounds().overlaps(drawBounds) || (this.level !== null && this.level !== level)) {
       return;
     }
 
@@ -39,7 +35,7 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
       var self = this;
       var imgObj = drawing.imageCache.getImage(this.url, function() {
         self.loading = false;
-        this.transformedImage = null;
+        self.transformedImage = null;
         self.invalidate();
       });
 
@@ -71,10 +67,6 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
 
     }
 
-    if (this.loading) {
-
-    }
-
     if (this.transformedImage !== null) {
       ctx = drawing.context;
 
@@ -94,6 +86,14 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
       var destBox = sourceBox.scale(this.scale, this.scale).translate(this.position.x - (dWidth / 2), this.position.y - (dHeight / 2)).roundValues();
       sourceBox = sourceBox.roundValues();
 
+      // console.log(sourceBox.left(),
+      //   sourceBox.top(),
+      //   sourceBox.width(),
+      //   sourceBox.height(),
+      //   destBox.left(),
+      //   destBox.top(),
+      //   destBox.width(),
+      //   destBox.height());
 
       ctx.drawImage(
         this.transformedImage,

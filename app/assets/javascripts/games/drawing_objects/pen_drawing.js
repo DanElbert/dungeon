@@ -1,5 +1,5 @@
-function PenDrawing(uid, lines, width, color) {
-  BaseDrawing.call(this, uid);
+function PenDrawing(uid, board, lines, width, color) {
+  BaseDrawing.call(this, uid, board);
   this.lines = lines;
   this.width = width;
   this.color = color;
@@ -21,7 +21,16 @@ PenDrawing.prototype = _.extend(PenDrawing.prototype, BaseDrawing.prototype, {
       b - t + margin);
   },
 
+  setLines: function(newLines) {
+    this.lines = newLines;
+    this.invalidate();
+  },
+
   executeDraw: function(drawing, drawBounds) {
-    drawing.drawLines(this.color, this.width, this.lines);
+    if (this.color === -1) {
+      drawing.eraseLines(this.width, this.lines);
+    } else {
+      drawing.drawLines(this.color, this.width, this.lines);
+    }
   }
 });

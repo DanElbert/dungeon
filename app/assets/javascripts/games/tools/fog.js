@@ -14,6 +14,10 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
   },
   minimumLineDistance: function() { return Math.min(5, this.width / 2); },
   eventNamespace: function() { return "AddFog"; },
+  isFog: function() { return true; },
+  createDrawingObject: function() {
+    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, "black");
+  },
   enable: function() {
     this.super.enable.apply(this);
     this.setCursor('none');
@@ -34,7 +38,6 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
     var cursorColor = "#FFFFFF";
 
     if (this.lineBuffer.length > 0) {
-      this.board.drawing.eraseLines(this.width, this.lineBuffer);
       cursorColor = "#000000";
     }
 
@@ -68,6 +71,10 @@ RemoveFogPen.prototype = _.extend(RemoveFogPen.prototype, DrawTool.prototype, {
   },
   minimumLineDistance: function() { return Math.min(5, this.width / 2); },
   eventNamespace: function() { return "AddFog"; },
+  isFog: function() { return true; },
+  createDrawingObject: function() {
+    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, -1);
+  },
   enable: function() {
     this.super.enable.apply(this);
     this.setCursor('none');
@@ -88,7 +95,6 @@ RemoveFogPen.prototype = _.extend(RemoveFogPen.prototype, DrawTool.prototype, {
     var cursorColor = "#FFFFFF";
 
     if (this.lineBuffer.length > 0) {
-      this.board.drawing.eraseLines(this.width, this.lineBuffer);
       cursorColor = "#000000";
     }
 

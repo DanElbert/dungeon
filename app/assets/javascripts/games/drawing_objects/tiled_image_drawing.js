@@ -1,24 +1,18 @@
 function TiledImageDrawing(uid, board, url, size, position, scale, angle) {
-  BaseDrawing.call(this, uid);
+  BaseDrawing.call(this, uid, board, position, scale, angle);
 
   this.url = url;
   this.board = board;
-  this.previousZoom = board.getZoom();
   this.size = size;
-  this.position = position;
-  this.scale = scale;
-  this.angle = angle;
   this.imageJson = null;
   this.imageJsonFetching = false;
 
-  this.currentLevel = null;
-  this.updateGeometry = true;
   this.imageDrawings = new Map();
 }
 
 TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.prototype, {
   calculateBounds: function() {
-    this.updateGeometry = true;
+    this.updateGeometry();
     var height = this.size.y * this.scale;
     var width = this.size.x * this.scale;
 
@@ -31,41 +25,29 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
     return this.getRotatedRecBounds(rec, this.angle);
   },
 
-  update() {
-    // if (this.currentLevel && this.previousZoom !== this.board.getZoom()) {
-    //   var level = this.calculateCurrentLevel();
-    //   if (level.number !== this.currentLevel.number) {
-    //     this.invalidate();
-    //   }
-    //   this.previousZoom = this.board.getZoom();
-    // }
-  },
+  setDrawingLayer: function(dl) {
+    if (this.drawingLayer !== null) {
+      for (let entry of this.imageDrawings.values()) {
+        this.drawingLayer.removeAction(entry.imageDrawing.uid);
+      }
+    }
 
-  calculateCurrentLevel() {
-    var zoom = this.board.getZoom() * this.scale;
-    var displayWidth = zoom * this.size.x;
-    return _.min(this.imageJson.level_data, function(l) { return Math.abs(displayWidth - l.width) }, this);
-  },
+    if (dl !== null) {
+      for (let entry of this.imageDrawings.values()) {
+        dl.addAction(entry.imageDrawing);
+      }
+    }
 
-  removeParentTile: function(t) {
-    BaseDrawing.prototype.removeParentTile.call(this, t);
-    this.clearActions();
-  },
-
-  addParentTile: function(t) {
-    BaseDrawing.prototype.addParentTile.call(this, t);
-
-    this.ensureActions();
+    BaseDrawing.prototype.setDrawingLayer.call(this, dl);
   },
 
   ensureActions: function() {
     if (this.imageDrawings.size === 0) {
-      this.rebuildActions();
+      this.buildActions();
     }
   },
 
-  rebuildActions() {
-    this.clearActions();
+  buildActions() {
 
     if (this.imageJson === null && this.imageJsonFetching === false) {
       this.imageJsonFetching = true;
@@ -73,7 +55,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
       $.getJSON(this.url, function(data) {
         self.imageJsonFetching = false;
         self.imageJson = data;
-        self.rebuildActions();
+        self.buildActions();
         self.invalidate();
         //console.log(data);
       });
@@ -83,15 +65,10 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
       return;
     }
 
-    this.boundsRect();
+    this.bounds();
 
     var tileSize = this.imageJson.tile_size;
     var overlap = this.imageJson.overlap;
-
-    var centerpointMatrix = TransformMatrix.Identity
-      .translate(this.position.x, this.position.y)
-      .rotate(this.angle)
-      .scale(this.scale, this.scale);
 
     for (let level of this.imageJson.level_data) {
 
@@ -131,51 +108,40 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
 
             imgDrw.level = level.number;
 
-            imgDrwEntry = { imageDrawing: imgDrw, innerPosition: tileCenter };
+            imgDrwEntry = { level: level, imageDrawing: imgDrw, innerPosition: tileCenter };
             this.imageDrawings.set(key, imgDrwEntry);
+
+            if (this.drawingLayer) {
+              this.drawingLayer.addAction(imgDrw);
+            }
           }
-
-          imgDrw = imgDrwEntry.imageDrawing;
-
-          imgDrw.position = imgDrwEntry.innerPosition.matrixMultiply(centerpointMatrix);
-          imgDrw.scale = this.scale / level.scale;
-          imgDrw.angle = this.angle;
-          imgDrw.clearBounds();
-          this.board.drawingLayer.addAction(imgDrw);
 
         }
       }
-
     }
+
+    this.updateGeometry();
   },
 
-  clearActions() {
-    for (let d of this.imageDrawings.values()) {
-      this.board.drawingLayer.removeAction(d.uid);
+  updateGeometry: function() {
+    var centerpointMatrix = TransformMatrix.Identity
+      .translate(this.position.x, this.position.y)
+      .rotate(this.angle)
+      .scale(this.scale, this.scale);
+
+    for (let imgDrwEntry of this.imageDrawings.values()) {
+      var imgDrw = imgDrwEntry.imageDrawing;
+      var level = imgDrwEntry.level;
+
+      imgDrw.setPosition(imgDrwEntry.innerPosition.matrixMultiply(centerpointMatrix));
+      imgDrw.setScale(this.scale / level.scale);
+      imgDrw.setAngle(this.angle);
     }
-    this.imageDrawings = new Map();
   },
 
   executeDraw: function(drawing, drawBounds, levelIdx) {
 
     this.ensureActions();
-
-    // 1. get image json
-    // 2. determine level
-    // 3. ensure ImageDrawing objects
-    // 4. draw ImageDrawings
-
-
-    //
-    // this.boundsRect();
-    //
-    // var level = _.find(this.imageJson.level_data, function(l) { return l.number === levelIdx });
-    // if (!level) {
-    //   level = this.imageJson.level_data[this.imageJson.level_data.length - 1];
-    // }
-    //
-    // //var level = level; this.calculateCurrentLevel();
-    // this.currentLevel = level;
 
 
   }

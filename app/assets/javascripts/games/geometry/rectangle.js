@@ -29,7 +29,21 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
       new Vector2(left, top),
       right - left,
       bottom - top
-    )
+    );
+  },
+
+  // Returns a rectangle that covers this rec and otherRec
+  add: function(otherRec) {
+    var left = Math.min(this.left(), otherRec.left());
+    var top = Math.min(this.top(), otherRec.top());
+    var right = Math.max(this.right(), otherRec.right());
+    var bottom = Math.max(this.bottom(), otherRec.bottom());
+
+    return new Rectangle(
+      new Vector2(left, top),
+      right - left,
+      bottom - top
+    );
   },
 
   translate: function(x, y) {
