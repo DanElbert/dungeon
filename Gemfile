@@ -22,7 +22,7 @@ gem 'sassc-rails',   '~> 1.3.0'
 gem 'uglifier', '>= 1.0.3'
 
 gem 'resque', '~> 1.27.4'
-gem 'rmagick', '~> 2.16.0'
+gem 'ruby-vips', '~> 2.0.13'
 gem 'exception_notification', '~> 4.2.2'
 
 group :development, :test do

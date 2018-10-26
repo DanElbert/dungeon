@@ -348,6 +348,11 @@ _.extend(ToolManager.prototype, {
     this.render();
   },
 
+  hideImageTool: function() {
+    this.getMenuItem("insert_image").visible = false;
+    this.render();
+  },
+
   hideCameraButton: function() {
 
   },

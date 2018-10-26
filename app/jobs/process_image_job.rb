@@ -41,7 +41,9 @@ class ProcessImageJob < ApplicationJob
     begin
       i.calculate_size!
 
-      File.binwrite(Rails.root.join('public', 'images', "#{i.id}.#{i.extension}").to_s, i.data)
+      root_path = Rails.root.join('public', 'images', i.id.to_s).to_s
+
+      File.binwrite("#{root_path}.#{i.extension}", i.data)
 
       if !i.is_tiled
         i.status = Image::STATUS[:processed]
@@ -49,13 +51,26 @@ class ProcessImageJob < ApplicationJob
         return
       end
 
-      root_path = Rails.root.join('public', 'images', i.id.to_s).to_s
+      i.image_vips.dzsave(root_path, {
+          suffix: ".#{i.extension}",
+          overlap: Image::OVERLAP,
+          tile_size: Image::TILE_SIZE
+      })
 
-      i.level_data.each_with_index do |level, idx|
-        level_path = root_path + "/#{idx + 1}"
-        `mkdir -p #{level_path}`
-        build_tiles(i, level, level_path)
+      `mkdir -p #{root_path}`
+
+      dzi_dirs = Dir["#{root_path}_files/*"]
+      dzi_dirs.sort_by { |d| File.basename(d).to_i }.each_with_index do |dir, idx|
+        FileUtils.mv dir, "#{root_path}/#{dzi_dirs.length - idx}"
       end
+
+      `rm -rf #{root_path}.dzi #{root_path}_files`
+
+      # i.level_data.each_with_index do |level, idx|
+      #   level_path = root_path + "/#{idx + 1}"
+      #   `mkdir -p #{level_path}`
+      #   build_tiles(i, level, level_path)
+      # end
 
       i.status = Image::STATUS[:processed]
       i.save!
@@ -71,22 +86,36 @@ class ProcessImageJob < ApplicationJob
 
     scaled_tile = image.tile_size / level.scale
 
-    0.upto(level.x_tiles - 1) do |x|
-      0.upto(level.y_tiles - 1) do |y|
-
+    0.upto(level.y_tiles - 1) do |y|
+      0.upto(level.x_tiles - 1) do |x|
         top_margin = y == 0 ? 0 : Image::OVERLAP
         left_margin = x == 0 ? 0 : Image::OVERLAP
         right_margin = x == (level.x_tiles - 1) ? 0 : Image::OVERLAP
         bottom_margin = y == (level.y_tiles - 1) ? 0 : Image::OVERLAP
 
-        image.image_magick.
-          crop((x * scaled_tile) - left_margin, (y * scaled_tile) - top_margin, scaled_tile + right_margin + left_margin, scaled_tile + top_margin + bottom_margin).
-          resize(level.scale).
-          write(path + "/#{x}_#{y}.#{image.extension}")
+        tile_width = scaled_tile + left_margin + right_margin
+        tile_height = scaled_tile + top_margin + bottom_margin
 
-        GC.start
+        tile_x = (x * scaled_tile) - left_margin
+        tile_y = (y * scaled_tile) - top_margin
+
+        tile_width = [tile_width, image.width - tile_x].min
+        tile_height = [tile_height, image.height - tile_y].min
+
+        # puts "#{top_margin} | #{bottom_margin} (#{tile_x}, #{tile_y}): #{tile_width}x#{tile_height}"
+
+        image.image_vips.
+                            extract_area(tile_x, tile_y, tile_width, tile_height).
+                            resize(level.scale).
+                            write_to_file(path + "/#{x}_#{y}.#{image.extension}")
+
+        # image.image_magick.
+        #   crop((x * scaled_tile) - left_margin, (y * scaled_tile) - top_margin, scaled_tile + right_margin + left_margin, scaled_tile + top_margin + bottom_margin).
+        #   resize(level.scale).
+        #   write(path + "/#{x}_#{y}.#{image.extension}")
       end
     end
+    GC.start
   end
 
 end

@@ -218,6 +218,7 @@ function Board(canvas, cameraApi) {
 
     if (!this.isOwner) {
       this.toolManager.hideFogTools();
+      this.toolManager.hideImageTool();
     }
 
     _.each(data.board.actions, function(action) {

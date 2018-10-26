@@ -5,7 +5,8 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     rsync \
     cmake \
     libopencv-dev \
-    libmagickwand-dev \
+    libvips-dev \
+    libvips-tools \
     nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

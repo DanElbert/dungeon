@@ -10,7 +10,7 @@ class Image < ApplicationRecord
     error: 'error'
   }
 
-  OVERLAP = 5
+  OVERLAP = 2
   TILE_SIZE = 512
 
   def self.types
@@ -48,8 +48,8 @@ class Image < ApplicationRecord
     super
   end
 
-  def image_magick
-    @imi ||= Magick::Image.from_blob(self.data).first
+  def image_vips
+    @imi ||= Vips::Image.new_from_buffer(self.data, "")
   end
 
   def level_data
@@ -67,8 +67,8 @@ class Image < ApplicationRecord
 
   def calculate_size!
     @level_data = nil
-    self.width = image_magick.columns
-    self.height = image_magick.rows
+    self.width = image_vips.width
+    self.height = image_vips.height
     self.is_tiled = height > 1800 && width > 1800
     if self.is_tiled
       self.tile_size = TILE_SIZE
@@ -86,7 +86,7 @@ class Image < ApplicationRecord
   end
 
   def self.process_all
-    images = Rails.root.join('public', 'images', '*.*')
+    images = Rails.root.join('public', 'images', '*')
     `rm -rf #{images}`
 
     Image.select(:id, :status, :type, :campaign_id, :name).all.each do |i|
