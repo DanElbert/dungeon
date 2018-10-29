@@ -1,16 +1,19 @@
 function TiledImageDrawing(uid, board, url, size, position, scale, angle) {
-  BaseDrawing.call(this, uid, board, position, scale, angle);
+  DrawingCollection.call(this, uid, board, position, scale, angle);
 
   this.url = url;
   this.board = board;
   this.size = size;
   this.imageJson = null;
   this.imageJsonFetching = false;
+  this.fallbackImage = null;
 
   this.imageDrawings = new Map();
+
+  this.buildActions();
 }
 
-TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.prototype, {
+TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, DrawingCollection.prototype, {
   calculateBounds: function() {
     this.updateGeometry();
     var height = this.size.y * this.scale;
@@ -25,38 +28,37 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
     return this.getRotatedRecBounds(rec, this.angle);
   },
 
-  setDrawingLayer: function(dl) {
-    if (this.drawingLayer !== null) {
-      for (let entry of this.imageDrawings.values()) {
-        this.drawingLayer.removeAction(entry.imageDrawing.uid);
-      }
-    }
-
-    if (dl !== null) {
-      for (let entry of this.imageDrawings.values()) {
-        dl.addAction(entry.imageDrawing);
-      }
-    }
-
-    BaseDrawing.prototype.setDrawingLayer.call(this, dl);
-  },
-
-  ensureActions: function() {
-    if (this.imageDrawings.size === 0) {
-      this.buildActions();
-    }
-  },
-
   buildActions() {
 
     if (this.imageJson === null && this.imageJsonFetching === false) {
       this.imageJsonFetching = true;
       var self = this;
       $.getJSON(this.url, function(data) {
-        self.imageJsonFetching = false;
-        self.imageJson = data;
-        self.buildActions();
-        self.invalidate();
+
+        var calculateFallbackLevel = function(tileSize, width, height) {
+          var dim = Math.max(width, height);
+          var lvl = 1;
+          while (dim > tileSize) {
+            lvl += 1;
+            dim = dim / 2;
+          }
+          return lvl;
+        };
+
+        var hasFallbackImage = function(img) {
+          self.imageJsonFetching = false;
+          self.imageJson = data;
+          self.buildActions();
+          self.invalidate();
+        };
+
+        var fallbackLevel = calculateFallbackLevel(data.tile_size, self.size.x, self.size.y);
+        var fallbackUrl = "/images/" + data.id + "/" + fallbackLevel + "/0_0." + data.extension;
+        var fallback = self.board.imageCache.getImage(fallbackUrl, hasFallbackImage);
+        if (fallback !== null) {
+          hasFallbackImage(fallback);
+        }
+
         //console.log(data);
       });
     }
@@ -107,13 +109,12 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
             );
 
             imgDrw.level = level.number;
+            imgDrw.fallbackImage = this.fallbackImage;
 
             imgDrwEntry = { level: level, imageDrawing: imgDrw, innerPosition: tileCenter };
             this.imageDrawings.set(key, imgDrwEntry);
 
-            if (this.drawingLayer) {
-              this.drawingLayer.addAction(imgDrw);
-            }
+            this.children.push(imgDrw);
           }
 
         }
@@ -138,11 +139,4 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, BaseDrawing.
       imgDrw.setAngle(this.angle);
     }
   },
-
-  executeDraw: function(drawing, drawBounds, levelIdx) {
-
-    this.ensureActions();
-
-
-  }
 });

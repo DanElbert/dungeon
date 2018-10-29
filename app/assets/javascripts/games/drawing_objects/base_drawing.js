@@ -7,9 +7,7 @@ function BaseDrawing(uid, board, position, scale, angle) {
   this.scale = scale;
   this.angle = angle;
 
-  this._dirty = false;
   this._bounds = null;
-  this.drawingLayer = null;
 }
 
 BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
@@ -29,18 +27,21 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
   },
 
   setPosition: function(newPosition) {
-    this.position = newPosition;
-    this.invalidate();
+    this.invalidateHandler(() => {
+      this.position = newPosition;
+    });
   },
 
   setScale: function(newScale) {
-    this.scale = newScale;
-    this.invalidate();
+    this.invalidateHandler(() => {
+      this.scale = newScale;
+    });
   },
 
   setAngle: function(newAngle) {
-    this.angle = newAngle;
-    this.invalidate();
+    this.invalidateHandler(() => {
+      this.angle = newAngle;
+    });
   },
 
   // Given a rectangle and an angle, returns a non-rotated containing rectangle
@@ -66,14 +67,18 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     );
   },
 
-  setDrawingLayer: function(dl) {
-    this.drawingLayer = dl;
+  invalidateHandler: function(changeFn) {
+    var originalBounds = this.bounds();
+    changeFn();
+    this.clearBounds();
+    var newBounds = this.bounds();
+
+    this.board.invalidate(originalBounds.add(newBounds));
   },
 
   invalidate: function() {
-    this._dirty = true;
     this.clearBounds();
-    this.board.invalidate();
+    this.board.invalidate(this.bounds());
     // var self = this;
     // setTimeout(function() {
     //   self.clearBounds();
@@ -89,12 +94,6 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
   },
 
   executeDraw: function(drawing, drawBounds) {
-  },
-
-  update: function() {
-    var wasDirty = this._dirty;
-    this._dirty = false;
-    return wasDirty;
   },
 
 

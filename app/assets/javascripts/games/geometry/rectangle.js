@@ -18,6 +18,10 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
     return true;
   },
 
+  isEmpty: function() {
+    return this.width() === 0 || this.height() === 0;
+  },
+
   // Returns the portion of this rectangle inside the given rec
   clipTo: function(otherRec) {
     var left = Math.max(this.left(), otherRec.left());

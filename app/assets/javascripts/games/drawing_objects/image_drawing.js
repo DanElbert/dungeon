@@ -5,6 +5,7 @@ function ImageDrawing(uid, board, url, size, position, scale, angle) {
   this.size = size;
   this.loading = false;
   this.level = null;
+  this.fallbackImage = null;
 
   this.transformedImage = null;
 }

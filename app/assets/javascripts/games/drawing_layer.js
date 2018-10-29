@@ -8,6 +8,11 @@ function DrawingLayer(imageCache) {
 
   this.levels = [];
 
+  this.invalidRegions = {
+    drawing: null,
+    fog: false
+  };
+
   for (let x = 0; x < 5; x++) {
     this.levels.push(
       new DrawingLevel(this.tileSize, x + 1, 1 / 2 ** x, this.isOwner, this.imageCache, this.fogCover)
@@ -28,68 +33,44 @@ _.extend(DrawingLayer.prototype, {
   },
 
   addAction: function(a) {
-    if (a.setDrawingLayer) {
-      a.setDrawingLayer(this);
-    }
-    this.drawingActions.set(a.uid, { action: a, drawnBounds: a.bounds() });
+    this.drawingActions.set(a.uid, a);
     this.invalidateRectangle(a.bounds());
   },
 
   addFogAction: function(a) {
-    if (a.setDrawingLayer) {
-      a.setDrawingLayer(this);
-    }
-    this.fogActions.set(a.uid, { action: a, drawnBounds: a.bounds() });
+    this.fogActions.set(a.uid, a);
     this.invalidateRectangle(a.bounds(), true);
   },
 
   removeAction: function(id) {
     let a = this.drawingActions.get(id);
     if (a) {
-      if (a.action.setDrawingLayer) {
-        a.action.setDrawingLayer(null);
-      }
       this.drawingActions.delete(id);
-      this.invalidateRectangle(a.drawnBounds);
+      this.invalidateRectangle(a.bounds());
       return;
     }
 
     a = this.fogActions.get(id);
     if (a) {
-      if (a.action.setDrawingLayer) {
-        a.action.setDrawingLayer(null);
-      }
       this.fogActions.delete(id);
-      this.invalidateRectangle(a.drawnBounds, true);
+      this.invalidateRectangle(a.bounds(), true);
     }
   },
 
   invalidateRectangle: function(rect, includeFog) {
-    for (let l of this.levels) {
-      l.invalidateRectangle(rect, !!includeFog);
+    if (this.invalidRegions.drawing) {
+      this.invalidRegions.drawing = rect.add(this.invalidRegions.drawing);
+    } else {
+      this.invalidRegions.drawing = rect;
     }
+    this.invalidRegions.fog = this.invalidRegions.fog || includeFog;
   },
 
-  clear: function() {
-    for (let l of this.levels) {
-      l.clear();
-    }
-  },
-
-  actionChanged: function(id) {
-    let a = this.drawingActions.get(id);
-    let isFog = false;
-
-    if (!a) {
-      a = this.fogActions.get(id);
-      isFog = true;
-    }
-
-    if (a) {
-      this.invalidateRectangle(a.drawnBounds.add(a.action.bounds()), isFog);
-      a.drawnBounds = a.action.bounds();
-    }
-  },
+  // clear: function() {
+  //   for (let l of this.levels) {
+  //     l.clear();
+  //   }
+  // },
 
   setOwner: function(isOwner) {
     this.isOwner = isOwner;
@@ -99,36 +80,27 @@ _.extend(DrawingLayer.prototype, {
   },
 
   draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, currentZoom, disableFog) {
-    for (let a of this.drawingActions.values()) {
-      if (a.action.update) {
-        if (a.action.update()) {
-          this.actionChanged(a.action.uid);
-        }
-      }
-    }
-
-    for (let a of this.fogActions.values()) {
-      if (a.action.update) {
-        if (a.action.update()) {
-          this.actionChanged(a.action.uid);
-        }
-      }
-    }
-
     var levelIdx = Math.floor(Math.max(0, Math.log2(1 / currentZoom)));
     var level = this.levels[levelIdx];
     var actions = [],
       fogActions = [];
 
     for (let a of this.drawingActions.values()) {
-      actions.push(a.action);
+      actions.push(a);
     }
 
     for (let a of this.fogActions.values()) {
-      fogActions.push(a.action);
+      fogActions.push(a);
     }
 
-    level.draw(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, actions, fogActions, !!disableFog);
+    var viewPortRect = new Rectangle(new Vector2(viewPortX, viewPortY), viewPortWidth, viewPortHeight);
+    var dirtyRect = this.invalidRegions.drawing;
+    var includeFog = this.invalidRegions.fog;
+
+    level.draw(viewPortRect, drawing, actions, fogActions, dirtyRect, includeFog, !!disableFog);
+
+    this.invalidRegions.drawing = null;
+    this.invalidRegions.fog = false;
   },
 
 
@@ -155,11 +127,11 @@ _.extend(DrawingLevel.prototype, {
     }
   },
 
-  clear: function() {
-    for (let t of this.tiles.values()) {
-      t.clear();
-    }
-  },
+  // clear: function() {
+  //   for (let t of this.tiles.values()) {
+  //     t.clear();
+  //   }
+  // },
 
   setOwner: function(isOwner) {
     this.isOwner = isOwner;
@@ -178,20 +150,20 @@ _.extend(DrawingLevel.prototype, {
     }
   },
 
-  draw: function(viewPortX, viewPortY, viewPortWidth, viewPortHeight, drawing, actions, fogActions, disableFog) {
-    var tiles = this.getTilesForRectangle(new Rectangle(new Vector2(viewPortX, viewPortY), viewPortWidth, viewPortHeight));
+  draw: function(viewPortRect, drawing, actions, fogActions, dirtyRect, includeFog, disableFog) {
+    var tiles = this.getTilesForRectangle(viewPortRect);
     var context = drawing.context;
 
     for (let tile of tiles) {
-      var tileRect = new Rectangle(new Vector2(tile.topLeft), tile.width, tile.height);
+      var tileRect = tile.rectangle;
 
       var tileActions = _.filter(actions, function(a) { return tileRect.overlaps(a.bounds()) });
       var tileFogActions = _.filter(fogActions, function(a) { return tileRect.overlaps(a.bounds()) });
 
-      tile.draw(this.number, this.scale, tileActions, tileFogActions, disableFog);
+      tile.draw(this.number, this.scale, tileActions, tileFogActions, dirtyRect, includeFog, disableFog);
       var tileCanvas = tile.canvas;
       if (tileCanvas != null) {
-        context.drawImage(tileCanvas, tile.topLeft[0], tile.topLeft[1], (this.tileSize) / this.scale, (this.tileSize) / this.scale);
+        context.drawImage(tileCanvas, tile.rectangle.left(), tile.rectangle.top(), this.tileSize / this.scale, this.tileSize / this.scale);
       }
     }
   },
@@ -226,12 +198,12 @@ _.extend(DrawingLevel.prototype, {
 });
 
 function Tile(size, x, y, scale, isOwner, imageCache, fogCover) {
+  this.rectangle = new Rectangle(new Vector2(x * size, y * size), size, size);
   this.size = size;
   this.isOwner = isOwner;
   this.x = x;
   this.y = y;
   this.scale = scale;
-  this.topLeft = [x * size, y * size];
   this.width = size;
   this.height = size;
   this.isDrawn = false;
@@ -253,7 +225,6 @@ _.extend(Tile.prototype, {
 
   resetFog: function(fogCover) {
     fogCover = !!fogCover;
-    this.clear();
     this.fogCover = fogCover;
     this.reDrawFog();
   },
@@ -261,7 +232,6 @@ _.extend(Tile.prototype, {
   setOwner: function(isOwner) {
     if (this.isOwner !== isOwner) {
       this.isOwner = isOwner;
-      this.reDraw();
       this.reDrawFog();
     }
   },
@@ -271,17 +241,33 @@ _.extend(Tile.prototype, {
   },
 
   reDrawFog: function() {
+    this.reDraw();
     this.staleFog = true;
   },
 
-  draw: function(level, scale, actions, fogActions, disableFog) {
+  draw: function(level, scale, actions, fogActions, dirtyRect, includeFog, disableFog) {
+    if (actions.size === 0 && fogActions.size === 0) {
+      this.clear();
+      return;
+    }
 
-    if ((actions.size == 0 && fogActions.size == 0) || (this.isDrawn))
+    var drawBounds = null;
+    var reDrawFog = true;
+
+    if (!this.isDrawn) {
+      drawBounds = this.rectangle;
+      reDrawFog = true;
+    } else if (dirtyRect && this.rectangle.overlaps(dirtyRect)) {
+      drawBounds = dirtyRect.clipTo(this.rectangle);
+      reDrawFog = includeFog;
+    }
+
+    if (drawBounds === null)
       return;
 
     this.ensureCanvas();
 
-    this.context.clearRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
+    this.context.clearRect(drawBounds.left(), drawBounds.top(), drawBounds.width(), drawBounds.height());
 
     var d = this.drawing;
 
@@ -289,31 +275,27 @@ _.extend(Tile.prototype, {
       d.minWidth = 10;
     }
 
-    var tileBounds = new Rectangle(new Vector2(this.topLeft[0], this.topLeft[1]), this.width, this.height);
-
+    this.context.save();
+    this.context.beginPath();
+    this.context.rect(drawBounds.left(), drawBounds.top(), drawBounds.width(), drawBounds.height());
+    this.context.clip();
     for (let a of actions) {
-      a.draw(d, tileBounds, level);
+      a.draw(d, drawBounds, level);
     }
 
 
-    if (this.staleFog) {
+    if (reDrawFog) {
       if (this.fogCover) {
         this.fogContext.fillStyle = "rgba(1, 1, 1, 1)";
-        this.fogContext.fillRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
+        this.fogContext.fillRect(this.rectangle.left(), this.rectangle.top(), this.rectangle.width(), this.rectangle.height());
       } else {
-        this.fogContext.clearRect(this.topLeft[0], this.topLeft[1], this.width, this.height);
+        this.fogContext.clearRect(this.rectangle.left(), this.rectangle.top(), this.rectangle.width(), this.rectangle.height());
       }
 
       for (let a of fogActions) {
-        a.draw(this.fogDrawing);
+        a.draw(this.fogDrawing, this.rectangle);
       }
     }
-
-    for (let q of fogActions) {
-
-    }
-
-    this.context.save();
 
     if (this.isOwner) {
       this.context.globalAlpha = 0.5;
@@ -324,7 +306,7 @@ _.extend(Tile.prototype, {
     if (this.isOwner && disableFog) {
       // skip fog (for copy/paste)
     } else {
-      this.context.drawImage(this.fogCanvas, this.topLeft[0], this.topLeft[1], this.width, this.height);
+      this.context.drawImage(this.fogCanvas, this.rectangle.left(), this.rectangle.top(), this.rectangle.width(), this.rectangle.height());
     }
 
     this.context.restore();
@@ -339,17 +321,18 @@ _.extend(Tile.prototype, {
   clear: function() {
     this.isDrawn = false;
     // if (this.actions.length == 0) {
-    //   this.canvas = null;
-    //   this.fogCanvas = null;
-    //   this.context = null;
-    //   this.fogContext = null;
-    //   this.drawing = null;
-    //   this.fogDrawing = null;
+      this.canvas = null;
+      this.fogCanvas = null;
+      this.context = null;
+      this.fogContext = null;
+      this.drawing = null;
+      this.fogDrawing = null;
     // }
   },
 
   ensureCanvas: function() {
     if (this.canvas == null) {
+      //console.log(`${this.scale}: (${this.x}, ${this.y})`)
       this.canvas = document.createElement("canvas");
       this.fogCanvas = document.createElement("canvas");
       this.canvas.width = this.size * this.scale;
@@ -362,9 +345,9 @@ _.extend(Tile.prototype, {
       this.fogDrawing = new Drawing(this.fogContext, this.imageCache);
 
       this.context.scale(this.scale, this.scale);
-      this.context.translate(-1 * this.topLeft[0], -1 * this.topLeft[1]);
+      this.context.translate(-1 * this.rectangle.left(), -1 * this.rectangle.top());
       this.fogContext.scale(this.scale, this.scale);
-      this.fogContext.translate(-1 * this.topLeft[0], -1 * this.topLeft[1]);
+      this.fogContext.translate(-1 * this.rectangle.left(), -1 * this.rectangle.top());
     }
   }
 });

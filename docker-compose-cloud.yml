@@ -33,7 +33,7 @@ services:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=1c0fb1f70630f29ccc573c6c8438bba76f93423f4dc2aa3f1d2de7a53734e6ae8e88defb36c2f802c023b994355ad1c4b9775154d65fcfdd7ab41d82f211763d
       - COPY_ASSETS=true
-      - LOGLEVEL=debug
+      - LOGLEVEL=info
     volumes:
       - assets:/dungeon_assets/
       - images:/dungeon/public/images/
@@ -47,7 +47,7 @@ services:
     environment:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=1c0fb1f70630f29ccc573c6c8438bba76f93423f4dc2aa3f1d2de7a53734e6ae8e88defb36c2f802c023b994355ad1c4b9775154d65fcfdd7ab41d82f211763d
-      - LOGLEVEL=debug
+      - LOGLEVEL=info
     volumes:
       - images:/dungeon/public/images/
       - logs:/dungeon/log
@@ -60,6 +60,20 @@ services:
 
   web4:
     <<: *web
+
+  worker:
+    image: 'registry.elbert.us/dungeon:production'
+    restart: unless-stopped
+    volumes:
+    - images:/dungeon/public/images/
+    - logs:/dungeon/log/
+    environment:
+    - RAILS_ENV=production
+    - QUEUE=*
+    - INTERVAL=1.0
+    command: 'bundle exec rake resque:work'
+    links:
+    - redis
 
 volumes:
   sql-data:

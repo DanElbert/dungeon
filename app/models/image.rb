@@ -11,7 +11,7 @@ class Image < ApplicationRecord
   }
 
   OVERLAP = 2
-  TILE_SIZE = 512
+  TILE_SIZE = 256
 
   def self.types
     ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage']

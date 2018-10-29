@@ -323,8 +323,11 @@ function Board(canvas, cameraApi) {
     this.pending_action_queue = [];
   };
 
-  this.invalidate = function() {
+  this.invalidate = function(rect, includeFog) {
     this.invalid = true;
+    if (rect) {
+      this.drawingLayer.invalidateRectangle(rect, includeFog);
+    }
   };
 
   this.validate = function() {
