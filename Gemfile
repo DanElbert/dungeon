@@ -18,7 +18,6 @@ gem 'font-awesome-sass', '~> 5.3.1'
 gem 'bcrypt', '~> 3.1.12'
 
 gem 'sassc-rails',   '~> 1.3.0'
-#gem 'therubyracer', platforms: :ruby
 gem 'uglifier', '>= 1.0.3'
 
 gem 'resque', '~> 1.27.4'

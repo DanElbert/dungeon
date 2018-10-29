@@ -87,15 +87,6 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
       var destBox = sourceBox.scale(this.scale, this.scale).translate(this.position.x - (dWidth / 2), this.position.y - (dHeight / 2)).roundValues();
       sourceBox = sourceBox.roundValues();
 
-      // console.log(sourceBox.left(),
-      //   sourceBox.top(),
-      //   sourceBox.width(),
-      //   sourceBox.height(),
-      //   destBox.left(),
-      //   destBox.top(),
-      //   destBox.width(),
-      //   destBox.height());
-
       ctx.drawImage(
         this.transformedImage,
         sourceBox.left(),
