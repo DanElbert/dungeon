@@ -149,7 +149,6 @@ _.extend(ViewPortLabel.prototype, {
         hCtx.fillRect(0, 0, this.width * 2, this.height * 2);
 
         hCtx.drawImage(this.canvas, 0, 0);
-        hCtx.save();
         hCtx.globalCompositeOperation = 'destination-in';
         hCtx.drawImage(this.canvas, 0, 0);
         hCtx.globalCompositeOperation = 'difference';

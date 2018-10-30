@@ -140,6 +140,25 @@ _.extend(DrawingLevel.prototype, {
     }
   },
 
+  drawDebugLines: function(viewPortRect, drawing) {
+    var tiles = this.getTilesForRectangle(viewPortRect);
+    var context = drawing.context;
+
+    context.save();
+    context.strokeStyle = 'green';
+    context.strokeWidth = (1 / this.scale) * 4;
+    context.beginPath();
+
+    for (let tile of tiles) {
+      var tileRect = tile.rectangle;
+
+      context.rect(tileRect.left(), tileRect.top(), tileRect.width(), tileRect.height());
+    }
+
+    context.stroke();
+    context.restore();
+  },
+
   getTilesForRectangle: function(rect) {
     var topLeftTile = Geometry.getCell(rect.topLeft().toArray(), this.trueTileSize);
     var bottomRightTile = Geometry.getCell(rect.bottomRight().toArray(), this.trueTileSize);
@@ -230,8 +249,14 @@ _.extend(Tile.prototype, {
       this.isFogDirty = true;
     }
 
+    if (disableFog) {
+      this.dirtyRectangle = this.rectangle;
+    }
+
     if (this.dirtyRectangle === null || this.dirtyRectangle.isEmpty())
       return;
+
+    this.dirtyRectangle = this.dirtyRectangle.roundValues().snapTo(2 ** (level - 1), "enlarge").clipTo(this.rectangle);
 
     this.ensureCanvas();
 
@@ -254,7 +279,7 @@ _.extend(Tile.prototype, {
 
     if (this.isFogDirty) {
       if (this.fogCover) {
-        this.fogContext.fillStyle = "rgba(1, 1, 1, 1)";
+        this.fogContext.fillStyle = "rgba(0, 0, 0, 1.0)";
         this.fogContext.fillRect(this.rectangle.left(), this.rectangle.top(), this.rectangle.width(), this.rectangle.height());
       } else {
         this.fogContext.clearRect(this.rectangle.left(), this.rectangle.top(), this.rectangle.width(), this.rectangle.height());
@@ -286,6 +311,10 @@ _.extend(Tile.prototype, {
     this.isDrawn = true;
     this.dirtyRectangle = null;
     this.isFogDirty = false;
+
+    if (disableFog) {
+      this.invalidateRectangle(this.rectangle);
+    }
   },
 
   clear: function() {

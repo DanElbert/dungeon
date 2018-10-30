@@ -36,6 +36,34 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
     );
   },
 
+  // Snaps the rectangle to a multiple of the given param.
+  // mode can be one one of: "closest" (default), "enlarge", "shrink"
+  snapTo: function(multiple, mode) {
+    if (!mode || mode === "closest") {
+      return new Rectangle(
+        new Vector2(Geometry.roundToNearest(this.left(), multiple), Geometry.roundToNearest(this.top(), multiple)),
+        Geometry.roundToNearest(this.width(), multiple),
+        Geometry.roundToNearest(this.height(), multiple));
+    } else if (mode === "enlarge") {
+      const tl = new Vector2(this.left() - (this.left() % multiple), this.top() - (this.top() % multiple));
+      const delta = this.topLeft().subtract(tl);
+      let w = this.width() + delta.x;
+      if (w % multiple !== 0) {
+        w = w + (multiple - (w % multiple))
+      }
+
+      let h = this.height() + delta.y;
+      if (h % multiple !== 0) {
+        h = h + (multiple - (h % multiple))
+      }
+      return new Rectangle(tl, w, h);
+    } else if (mode === "shrink") {
+      throw "shrink not implemented";
+    } else {
+      throw "Invalid mode " + mode;
+    }
+  },
+
   // Returns a rectangle that covers this rec and otherRec
   add: function(otherRec) {
     var left = Math.min(this.left(), otherRec.left());
@@ -63,6 +91,14 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
       this.topLeft().scale(x, y),
       this.width() * x,
       this.height() * y
+    );
+  },
+
+  enlarge: function(v) {
+    return new Rectangle(
+      this.topLeft().translate(-v, -v),
+      this.width() + (v * 2),
+      this.height() + (v * 2)
     );
   },
 

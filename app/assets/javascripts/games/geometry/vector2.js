@@ -14,6 +14,14 @@ Vector2.prototype = _.extend(Vector2.prototype, {
     return [this.x, this.y]
   },
 
+  add: function(point) {
+    return new Vector2(this.x + point.x, this.y + point.y);
+  },
+
+  subtract: function(point) {
+    return new Vector2(this.x - point.x, this.y - point.y);
+  },
+
   translate: function(x, y) {
     return new Vector2(this.x + x, this.y + y);
   },

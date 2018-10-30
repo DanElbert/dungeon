@@ -3,12 +3,13 @@ function PenDrawing(uid, board, lines, width, color) {
   this.lines = lines;
   this.width = width;
   this.color = color;
+  this.isFog = true;
 }
 
 PenDrawing.prototype = _.extend(PenDrawing.prototype, BaseDrawing.prototype, {
   calculateBounds: function() {
     var l, t, r, b;
-    var margin = this.width / 2;
+    var margin = (this.width / 2) + 2;
     var points = _.reduce(this.lines, function(memo, line) { memo.push(line.start); memo.push(line.end); return memo; }, []);
     _.each(points, function(p) {
       if (l == null || p[0] < l) l = p[0];
@@ -17,13 +18,14 @@ PenDrawing.prototype = _.extend(PenDrawing.prototype, BaseDrawing.prototype, {
       if (b == null || p[1] > b) b = p[1];
     });
     return new Rectangle(new Vector2(l - margin, t - margin),
-      r - l + margin,
-      b - t + margin);
+      r - l + (margin * 2),
+      b - t + (margin * 2));
   },
 
   setLines: function(newLines) {
-    this.lines = newLines;
-    this.invalidate();
+    this.invalidateHandler(() => {
+      this.lines = newLines;
+    });
   },
 
   executeDraw: function(drawing, drawBounds) {

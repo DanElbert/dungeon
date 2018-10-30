@@ -307,10 +307,27 @@ _.extend(Drawing.prototype, {
 
   drawGrid: function (x, y, viewPortWidth, viewPortHeight, color, zoom) {
 
-    var gridSize = this.cellSize;
-    if (zoom < 0.3) {
-      return;
+    const zoomMap = [
+      {min: 0.6, size: this.cellSize, width: 1},
+      {min: 0.25, size: this.cellSize * 2, width: 2},
+      {min: 0.13, size: this.cellSize * 4, width: 4},
+      {min: -1, size: this.cellSize * 8, width: 8}
+    ];
+
+    var gridSize, lineWidth;
+
+    for (let map of zoomMap) {
+      if (map.min < zoom) {
+        gridSize = map.size;
+        lineWidth = map.width;
+        break;
+      }
     }
+
+    // var gridSize = this.cellSize;
+    // if (zoom < 0.3) {
+    //   return;
+    // }
     
     var firstColumn = Math.floor(x / gridSize);
     var lastColumn = firstColumn + Math.floor(viewPortWidth / gridSize) + 1;
@@ -321,7 +338,7 @@ _.extend(Drawing.prototype, {
     this.context.save();
     this.context.globalAlpha = 0.5;
     this.context.beginPath();
-    this.context.lineWidth = 1;
+    this.context.lineWidth = lineWidth;
     this.context.strokeStyle = color;
 
     var x1, y1, x2, y2;

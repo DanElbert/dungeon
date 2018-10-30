@@ -6,6 +6,7 @@ function BaseDrawing(uid, board, position, scale, angle) {
   this.position = position;
   this.scale = scale;
   this.angle = angle;
+  this.isFog = false;
 
   this._bounds = null;
 }
@@ -73,7 +74,7 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     this.clearBounds();
     var newBounds = this.bounds();
 
-    this.board.invalidate(originalBounds.add(newBounds));
+    this.board.invalidate(originalBounds.add(newBounds), this.isFog);
   },
 
   invalidate: function() {
