@@ -26,6 +26,11 @@ $toolpanel_shadow: 7px 3px 3px rgba(1, 1, 1, 0.5);
     color: $primary;
     background-color: $white;
   }
+
+  &.active {
+    color: $white;
+    background-color: $red;
+  }
 }
 
 #tool_menu button {

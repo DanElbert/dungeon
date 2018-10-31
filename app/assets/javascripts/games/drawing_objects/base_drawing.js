@@ -7,6 +7,7 @@ function BaseDrawing(uid, board, position, scale, angle) {
   this.scale = scale;
   this.angle = angle;
   this.isFog = false;
+  this.isPcLayer = false;
 
   this._bounds = null;
 }

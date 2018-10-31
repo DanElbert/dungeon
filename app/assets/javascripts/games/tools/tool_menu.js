@@ -23,6 +23,7 @@
 
   var defaultOptions = {
     selectedClass: 'selected',
+    activeClass: 'active',
     tools: []
   };
 
@@ -98,6 +99,10 @@
 
         if (tool.selected) {
           item.addClass(options.selectedClass);
+        }
+
+        if (tool.active) {
+          item.addClass(options.activeClass);
         }
 
       }, this);

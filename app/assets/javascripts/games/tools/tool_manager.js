@@ -232,6 +232,15 @@ function ToolManager(board) {
       })
     ]),
 
+    new ToolMenuItem("toggle_pc_mode", {
+      label: "Toggle Pc Mode",
+      tooltip: "Toggles GM Mode",
+      glyph: "fas fa-binoculars",
+      handler: function() {
+        self.board.setPcMode(!self.board.pcMode);
+      }
+    }),
+
     //new ToolMenuGroup("tokens_group", [
     //
     //]),
@@ -350,6 +359,16 @@ _.extend(ToolManager.prototype, {
 
   hideImageTool: function() {
     this.getMenuItem("insert_image").visible = false;
+    this.render();
+  },
+
+  hidePcModeTool: function() {
+    this.getMenuItem("toggle_pc_mode").visible = false;
+    this.render();
+  },
+
+  setPcModeActiveState: function(state) {
+    this.getMenuItem("toggle_pc_mode").active = state;
     this.render();
   },
 

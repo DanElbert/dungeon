@@ -34,6 +34,7 @@ function Board(canvas, cameraApi) {
   this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, this.gameServerClient);
 
   this.isOwner = false;
+  this.pcMode = false;
 
   this.copiedArea = null;
 
@@ -197,6 +198,13 @@ function Board(canvas, cameraApi) {
     this.drawingLayer.resetFog(fillFog);
   };
 
+  this.setPcMode = function(mode) {
+    this.pcMode = mode;
+    this.drawingLayer.setOwner(!mode);
+    this.toolManager.setPcModeActiveState(this.pcMode);
+    this.invalidate();
+  };
+
   this.toggleFullscreen = function() {
 
     window.toggleDungeonFullscreen();
@@ -212,6 +220,7 @@ function Board(canvas, cameraApi) {
     this.board_data = data.board;
     this.isOwner = data.is_owner;
     this.campaign_images = data.campaign_images;
+    this.setPcMode(!this.isOwner);
     this.drawingLayer.setOwner(this.isOwner);
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
     this.labelLayer.useXLetters = data.useXLetters;
@@ -219,6 +228,7 @@ function Board(canvas, cameraApi) {
     if (!this.isOwner) {
       this.toolManager.hideFogTools();
       this.toolManager.hideImageTool();
+      this.toolManager.hidePcModeTool();
     }
 
     _.each(data.board.actions, function(action) {

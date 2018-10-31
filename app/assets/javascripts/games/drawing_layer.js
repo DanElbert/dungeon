@@ -272,7 +272,7 @@ _.extend(Tile.prototype, {
     this.context.beginPath();
     this.context.rect(this.dirtyRectangle.left(), this.dirtyRectangle.top(), this.dirtyRectangle.width(), this.dirtyRectangle.height());
     this.context.clip();
-    for (let a of actions) {
+    for (let a of actions.filter(a => !a.isPcLayer)) {
       a.draw(d, this.dirtyRectangle, level);
     }
 
@@ -300,6 +300,10 @@ _.extend(Tile.prototype, {
       // skip fog (for copy/paste)
     } else {
       this.context.drawImage(this.fogCanvas, this.rectangle.left(), this.rectangle.top(), this.rectangle.width(), this.rectangle.height());
+    }
+
+    for (let a of actions.filter(a => !!a.isPcLayer)) {
+      a.draw(d, this.dirtyRectangle, level);
     }
 
     this.context.restore();
