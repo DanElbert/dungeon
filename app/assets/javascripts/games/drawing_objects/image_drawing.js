@@ -1,5 +1,5 @@
 function ImageDrawing(uid, board, url, size, position, scale, angle) {
-  BaseDrawing.call(this, uid, board, position, scale, angle);
+  BaseDrawing.call(this, uid, board, position, scale, angle, false);
 
   this.url = url;
   this.size = size;

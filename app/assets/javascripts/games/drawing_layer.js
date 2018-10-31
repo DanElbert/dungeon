@@ -290,6 +290,8 @@ _.extend(Tile.prototype, {
       }
     }
 
+    this.context.save();
+
     if (this.isOwner) {
       this.context.globalAlpha = 0.5;
     } else {
@@ -301,6 +303,8 @@ _.extend(Tile.prototype, {
     } else {
       this.context.drawImage(this.fogCanvas, this.rectangle.left(), this.rectangle.top(), this.rectangle.width(), this.rectangle.height());
     }
+
+    this.context.restore();
 
     for (let a of actions.filter(a => !!a.isPcLayer)) {
       a.draw(d, this.dirtyRectangle, level);

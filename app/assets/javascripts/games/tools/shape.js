@@ -178,7 +178,7 @@ ShapeTool.prototype = _.extend(ShapeTool.prototype, Tool.prototype, {
       var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]) >> 0, Math.min(this.drag_start[1], this.drag_current[1]) >> 0];
       var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]) >> 0, Math.max(this.drag_start[1], this.drag_current[1]) >> 0];
 
-      var action = {actionType: "squarePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
+      var action = {actionType: "squarePenAction", isPcLayer: this.board.pcMode, color: this.color, backgroundColor: this.backgroundColor, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -189,7 +189,7 @@ ShapeTool.prototype = _.extend(ShapeTool.prototype, Tool.prototype, {
       var center = this.roundPoint(this.drag_start);
       var radius = Geometry.getDistance(this.drag_start, this.drag_current)>>0;
 
-      var action = {actionType: "circlePenAction", color: this.color, backgroundColor: this.backgroundColor, width: this.width, center: center, radius: radius, uid: generateActionId()};
+      var action = {actionType: "circlePenAction", isPcLayer: this.board.pcMode, color: this.color, backgroundColor: this.backgroundColor, width: this.width, center: center, radius: radius, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -198,7 +198,7 @@ ShapeTool.prototype = _.extend(ShapeTool.prototype, Tool.prototype, {
   saveLine: function() {
     if (this.drag_start && this.drag_current) {
 
-      var action = {actionType: "linePenAction", color: this.color, width: this.width, start: this.drag_start, end: this.drag_current, uid: generateActionId()};
+      var action = {actionType: "linePenAction", isPcLayer: this.board.pcMode, color: this.color, width: this.width, start: this.drag_start, end: this.drag_current, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

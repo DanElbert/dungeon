@@ -1,4 +1,4 @@
-function BaseDrawing(uid, board, position, scale, angle) {
+function BaseDrawing(uid, board, position, scale, angle, isPcLayer) {
   if (!uid) throw "Invalid UID";
   if (!board) throw "board cannot be null";
   this.uid = uid;
@@ -7,7 +7,7 @@ function BaseDrawing(uid, board, position, scale, angle) {
   this.scale = scale;
   this.angle = angle;
   this.isFog = false;
-  this.isPcLayer = false;
+  this.isPcLayer = !!isPcLayer;
 
   this._bounds = null;
 }

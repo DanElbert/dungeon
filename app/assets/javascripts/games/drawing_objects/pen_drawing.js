@@ -1,5 +1,5 @@
-function PenDrawing(uid, board, lines, width, color) {
-  BaseDrawing.call(this, uid, board);
+function PenDrawing(uid, board, lines, width, color, isPcLayer) {
+  BaseDrawing.call(this, uid, board, new Vector2(0, 0), 1, 0, isPcLayer);
   this.lines = lines;
   this.width = width;
   this.color = color;

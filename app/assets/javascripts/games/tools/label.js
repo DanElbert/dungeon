@@ -70,6 +70,7 @@ LabelTool.prototype = _.extend(LabelTool.prototype, Tool.prototype, {
 
       var action = {
         actionType: "labelAction",
+        isPcLayer: this.board.pcMode,
         point: this.cursor,
         color: this.color,
         backgroundColor: this.backgroundColor,

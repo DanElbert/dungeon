@@ -8,6 +8,10 @@ var RemovalAction = createActionType("RemovalAction", Action, {
 
 // An action that is managed by the drawing layer.  Requires bounds and draw methods.
 var DrawingAction = createActionType("DrawingAction", Action, {
+  initialize: function(actionData) {
+    Action.prototype.initialize.call(this, actionData);
+    Object.defineProperty(this, "isPcLayer", { enumerable : true, get: function() { return this.properties.isPcLayer; }});
+  },
   isPersistent: function() { return true; },
   apply: function(board) {
     board.drawingLayer.addAction(this);
@@ -32,22 +36,6 @@ var DrawingAction = createActionType("DrawingAction", Action, {
 
   // Given a drawing object, applies the drawing action to it
   draw: function(drawing) { }
-});
-
-
-var LineCollectionAction = createActionType("LineCollectionAction", DrawingAction, {
-  calculateBounds: function() {
-    var l, t, r, b;
-    var margin = this.properties.width / 2;
-    var points = _.reduce(this.properties.lines, function(memo, line) { memo.push(line.start); memo.push(line.end); return memo; }, []);
-    _.each(points, function(p) {
-      if (l == null || p[0] < l) l = p[0];
-      if (t == null || p[1] < t) t = p[1];
-      if (r == null || p[0] > r) r = p[0];
-      if (b == null || p[1] > b) b = p[1];
-    });
-    return [[l - margin, t - margin], [r + margin, b + margin]];
-  }
 });
 
 
@@ -115,7 +103,7 @@ _.extend(actionTypes, {
   penAction: createActionType("PenAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, this.properties.color));
+      board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, this.properties.color, this.properties.isPcLayer));
     },
 
     validateData: function() {
@@ -126,7 +114,7 @@ _.extend(actionTypes, {
   addFogPenAction: createActionType("AddFogPenAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, "black"));
+      board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, "black", false));
     },
     validateData: function() {
       this.ensureFields(["width", "lines", "uid"]);
@@ -137,7 +125,7 @@ _.extend(actionTypes, {
   removeFogPenAction: createActionType("RemoveFogPenAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1));
+      board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1, false));
     },
     validateData: function() {
       this.ensureFields(["width", "lines", "uid"]);
@@ -263,7 +251,7 @@ _.extend(actionTypes, {
   eraseAction: createActionType("EraseAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1));
+      board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1, this.properties.isPcLayer));
     },
 
     validateData: function() {

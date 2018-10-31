@@ -91,7 +91,7 @@ Pen.prototype = _.extend(Pen.prototype, DrawTool.prototype, {
   minimumLineDistance: function() { return this.width / 2; },
   eventNamespace: function() { return "Pen"; },
   createDrawingObject: function() {
-    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, this.color);
+    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, this.color, this.board.pcMode);
   },
   draw: function() {
     if (this.cursor) {
@@ -100,7 +100,7 @@ Pen.prototype = _.extend(Pen.prototype, DrawTool.prototype, {
   },
   saveAction: function() {
     if (this.lineBuffer.length > 0) {
-      var action = {actionType: "penAction", color: this.color, width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+      var action = {actionType: "penAction", isPcLayer: this.board.pcMode, color: this.color, width: this.width, lines: this.lineBuffer, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -124,7 +124,7 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
   minimumLineDistance: function() { return 0; },
   eventNamespace: function() { return "Eraser"; },
   createDrawingObject: function() {
-    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, -1);
+    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, -1, this.board.pcMode);
   },
   enable: function() {
     this.super.enable.apply(this);
@@ -155,7 +155,7 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
   },
   saveAction: function() {
     if (this.lineBuffer.length > 0) {
-      var action = {actionType: "eraseAction", width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+      var action = {actionType: "eraseAction", isPcLayer: this.board.pcMode, width: this.width, lines: this.lineBuffer, uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

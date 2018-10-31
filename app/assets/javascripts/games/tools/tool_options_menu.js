@@ -30,6 +30,7 @@
 
   var privateMethods = {
     rebuild: function($this) {
+      $this.find("[data-original-title]").tooltip('hide');
       var data = $this.data(pluginName);
       var toolOptions = _.filter(data.options.toolOptions, function(to) {
         return to.visible !== false;

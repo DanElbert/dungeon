@@ -1,5 +1,5 @@
 function TiledImageDrawing(uid, board, url, size, position, scale, angle) {
-  DrawingCollection.call(this, uid, board, position, scale, angle);
+  DrawingCollection.call(this, uid, board, position, scale, angle, false);
 
   this.url = url;
   this.board = board;

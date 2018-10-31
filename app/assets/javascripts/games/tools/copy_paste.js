@@ -243,6 +243,7 @@ PasteTool.prototype = _.extend(PasteTool.prototype, Tool.prototype, {
 
         var action = {
           actionType: "pasteAction",
+          isPcLayer: this.board.pcMode,
           url: this.board.copiedArea,
           topLeft: this.cursor,
           width: width,

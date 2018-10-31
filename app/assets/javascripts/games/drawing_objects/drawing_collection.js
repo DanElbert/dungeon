@@ -1,5 +1,5 @@
-function DrawingCollection(uid, board, position, scale, angle) {
-  BaseDrawing.call(this, uid, board, position, scale, angle);
+function DrawingCollection(uid, board, position, scale, angle, isPcLayer) {
+  BaseDrawing.call(this, uid, board, position, scale, angle, isPcLayer);
 
   this.children = [];
 }

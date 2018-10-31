@@ -54,6 +54,7 @@
       var options = data.options;
 
       privateMethods.closeAllPopups($this);
+      $this.find("[data-original-title]").tooltip('hide');
 
       // unbind first to ensure there's only ever 1 handler bound
       $this.off('.' + pluginName);
