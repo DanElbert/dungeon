@@ -14,31 +14,16 @@
   <%= f.fields_for :board, include_id: false do |board_form| %>
     <div class="form-group">
       <%= board_form.label :grid_color %>
-      <%= board_form.text_field :grid_color, class: 'form-control' %>
+      <div data-color-picker data-attributes="<%= { inputName: 'game[board_attributes][grid_color]', selectedValue: board_form.object.grid_color }.to_json %>"></div>
     </div>
 
     <div class="form-group">
       <%= board_form.label :background_image %>
-      <%= board_form.select :background_image_id, get_background_image_options(board_form.object.background_image_id), {}, class: 'form-control' %>
+      <div data-image-picker data-attributes="<%= { inputName: 'game[board_attributes][background_image_id]', images: BackgroundImage.order(:filename), selectedId: board_form.object.background_image_id }.to_json %>"></div>
     </div>
   <% end %>
 
   <%= f.submit class: 'btn btn-primary' %>
 <% end %>
 
-<script type="text/javascript">
-  $(document).ready(function() {
-    var $select = $("#game_board_attributes_background_image_id");
-    var $color = $("#game_board_attributes_grid_color");
-    $select.imagepicker({
-      initialized: function() {
-      }
-    });
 
-    $color.spectrum({
-      showInput: true,
-      showAlpha: true,
-      preferredFormat: 'rgb'
-    });
-  });
-</script>

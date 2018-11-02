@@ -17,7 +17,7 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
 
     this.viewPortDragging.enable();
 
-    $(board.event_manager).on('click.Pointer', function(evt, mapEvt) {
+    board.event_manager.on('click.Pointer', function(mapEvt) {
 
       var t = board.tokenLayer.tokenAtCell(mapEvt.mapPointCell);
 
@@ -37,7 +37,7 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
       }
     });
 
-    $(board.event_manager).on('dragstart.Pointer', function(evt, mapEvt) {
+    board.event_manager.on('dragstart.Pointer', function(mapEvt) {
       if (self.selected_template && self.selected_template.containsCell(self.board, mapEvt.mapPointCell)) {
         self.dragging_template = true;
         self.template_start_cell = mapEvt.mapPointCell;
@@ -45,14 +45,14 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
       }
     });
 
-    $(board.event_manager).on('drag.Pointer', function(evt, mapEvt) {
+    board.event_manager.on('drag.Pointer', function(mapEvt) {
 
       if (self.dragging_template) {
         self.template_current_cell = mapEvt.mapPointCell;
       }
     });
 
-    $(board.event_manager).on('dragstop.Pointer', function(evt, mapEvt) {
+    board.event_manager.on('dragstop.Pointer', function(mapEvt) {
 
       self.saveAction();
 
@@ -65,14 +65,14 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
       self.template_current_cell = null;
     });
 
-    $(board.event_manager).on('keydown.Pointer', function(evt, mapEvt) {
+    board.event_manager.on('keydown.Pointer', function(mapEvt) {
       if (self.selected_template && (mapEvt.key == 8 || mapEvt.key == 46)) {
         self.removeTemplate(self.selected_template);
         self.selected_template = null;
       }
     });
 
-    $(board.event_manager).on('hold.Pointer', function(evt, mapEvt) {
+    board.event_manager.on('hold.Pointer', function(mapEvt) {
       if (self.selected_template && self.selected_template.containsCell(self.board, mapEvt.mapPointCell)) {
         self.removeTemplate(self.selected_template);
         self.selected_template = null;
@@ -88,7 +88,7 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
 
   disable: function() {
     this.viewPortDragging.disable();
-    $(this.board.event_manager).off(".Pointer");
+    this.board.event_manager.off(".Pointer");
   },
 
   draw: function() {

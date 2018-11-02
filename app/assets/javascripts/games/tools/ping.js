@@ -15,13 +15,13 @@ PingTool.prototype = _.extend(PingTool.prototype, Tool.prototype, {
     var self = this;
     var board = this.board;
 
-    $(board.event_manager).on('click.PingTool', function(evt, mapEvt) {
+    board.event_manager.on('click.PingTool', function(mapEvt) {
       var action = {actionType: "pingAction", point: mapEvt.mapPoint, color: self.color, uid: generateActionId()};
       self.board.addAction(action, null, true);
     });
   },
   disable: function() {
-    $(this.board.event_manager).off(".PingTool");
+    this.board.event_manager.off(".PingTool");
   },
   draw: function() {}
 });

@@ -64,19 +64,19 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
 
     this.options.get("image").images = this.board.campaign_images;
 
-    $(board.event_manager).on('keydown.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('keydown.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
       self.cursor = self.getPoint(self.cursor);
     });
 
-    $(board.event_manager).on('keyup.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('keyup.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
       self.cursor = self.getPoint(self.cursor);
     });
 
-    $(board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('mousemove.' + this.eventNamespace(), function(mapEvt) {
       self.cursor = self.getPoint(mapEvt.mapPoint);
 
       if (self.editPoint) {
@@ -84,7 +84,7 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
       }
     });
 
-    $(board.event_manager).on('click.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
       if (self.editing && self.cursor && !self.editPoint) {
         self.editPoint = self.cursor;
       } else if (self.editPoint) {
@@ -96,7 +96,7 @@ InsertImageTool.prototype = _.extend(InsertImageTool.prototype, Tool.prototype, 
   },
 
   disable: function() {
-    $(this.board.event_manager).off('.' + this.eventNamespace());
+    this.board.event_manager.off('.' + this.eventNamespace());
     this.cleanImage();
   },
 

@@ -34,31 +34,31 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
     var self = this;
     var board = this.board;
 
-    $(board.event_manager).on('keydown.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('keydown.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
       self.cursor = self.getPoint(self.cursor);
     });
 
-    $(board.event_manager).on('keyup.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('keyup.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
       self.cursor = self.getPoint(self.cursor);
     });
 
-    $(board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('mousemove.' + this.eventNamespace(), function(mapEvt) {
       self.cursor = self.getPoint(mapEvt.mapPoint);
     });
 
-    $(board.event_manager).on('dragstart.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('dragstart.' + this.eventNamespace(), function(mapEvt) {
       self.drag_start = self.roundPoint(self.getPoint(mapEvt.mapPoint));
     });
 
-    $(board.event_manager).on('drag.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('drag.' + this.eventNamespace(), function(mapEvt) {
       self.drag_current = self.roundPoint(self.getPoint(mapEvt.mapPoint));
     });
 
-    $(board.event_manager).on('dragstop.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('dragstop.' + this.eventNamespace(), function(mapEvt) {
       self.saveAction();
 
       self.drag_start = null;
@@ -68,7 +68,7 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
 
   disable: function() {
     this.saveAction();
-    $(this.board.event_manager).off('.' + this.eventNamespace());
+    this.board.event_manager.off('.' + this.eventNamespace());
   },
 
   saveAction: function() {
@@ -194,29 +194,29 @@ PasteTool.prototype = _.extend(PasteTool.prototype, Tool.prototype, {
     var self = this;
     var board = this.board;
 
-    $(board.event_manager).on('keydown.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('keydown.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
       self.cursor = self.getPoint(self.cursor);
     });
 
-    $(board.event_manager).on('keyup.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('keyup.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
       self.cursor = self.getPoint(self.cursor);
     });
 
-    $(board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('mousemove.' + this.eventNamespace(), function(mapEvt) {
       self.cursor = self.getPoint(mapEvt.mapPoint);
     });
 
-    $(board.event_manager).on('click.' + this.eventNamespace(), function(evt, mapEvt) {
+    board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
       self.saveAction();
     });
   },
 
   disable: function() {
-    $(this.board.event_manager).off('.' + this.eventNamespace());
+    this.board.event_manager.off('.' + this.eventNamespace());
   },
 
   draw: function() {

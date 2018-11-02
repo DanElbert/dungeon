@@ -89,17 +89,12 @@ function Board(canvas, cameraApi) {
   this.addActionManager.connect();
   this.initiativeActionManager.connect();
 
-  $(this.event_manager).on('mousemove', function(evt, mapEvt) {
+  this.event_manager.on('mousemove', function(mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
   });
 
   $(this.initiative).on('changed', function(e, evt) {
     self.addAction({actionType: "updateInitiativeAction", initiative: evt.initiative, uid: generateActionId()}, null, true);
-  });
-
-  $(this.imageCache).on("imageloaded", function(evt) {
-    //self.drawingLayer.clear();
-    //self.invalidate();
   });
 
   this.setCanvasSize = function(width, height, pixelRatio) {

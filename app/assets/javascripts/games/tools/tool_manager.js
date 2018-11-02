@@ -19,7 +19,6 @@ function ToolManager(board) {
     "pen": new Pen(this),
     "shape": new ShapeTool(this),
     "eraser": new Eraser(this),
-    "template": new TemplateTool(this),
     "measure_template": new Measure(this),
     "line_template": new LineTemplate(this),
     "rectangle_template": new RectangleTemplate(this),
@@ -422,71 +421,3 @@ _.extend(ToolManager.prototype, {
   }
 });
 
-function ToolMenuItem(name, options) {
-  this.name = name;
-  this.label = options.label;
-  this.tooltip = options.tooltip;
-  this.visible = _.has(options, "visible") ? options.visible : true;
-  this.selected = _.has(options, "selected") ? options.selected : false;
-  this.noClickthrough = _.has(options, "noClickthrough") ? options.noClickthrough : false;
-  this.glyph = options.glyph;
-  this.children = options.children;
-  this.handler = options.handler;
-  this.type = _.has(options, "type") ? options.type : "button";
-
-  _.each(this.children, function(c) {c.parent = this;}, this);
-}
-
-_.extend(ToolMenuItem.prototype, {
-  unselect: function() { this.selected = false; },
-
-  unselectOtherChildren: function(keep) {
-    _.each(this.children, function(c) {
-      if (c.name != keep) {c.unselect();}
-    }, this);
-  },
-
-  select: function() {
-    this.selected = true;
-    if (this.parent) {
-      this.parent.unselectOtherChildren(this.name);
-      this.parent.select();
-    }
-  }
-});
-
-function ToolMenuGroup(name, options, children) {
-  if (arguments.length == 2) {
-    children = options;
-    options = {};
-  }
-  _.extend(options, {children: children, type: "mainButton"});
-  ToolMenuItem.call(this, name, options);
-}
-
-_.extend(ToolMenuGroup.prototype, ToolMenuItem.prototype, {
-});
-
-function ZoomMenuItem(name, options) {
-  ToolMenuItem.call(this, name, options);
-  this.type = "zoom";
-  this.value = options.value || 1.0;
-}
-
-_.extend(ZoomMenuItem.prototype, ToolMenuItem.prototype, {
-  displayName: function() {
-    return this.value;
-  }
-});
-
-function CheckMenuItem(name, options) {
-  ToolMenuItem.call(this, name, options);
-  this.type = "checkbox";
-  this.value = options.value || false;
-}
-
-_.extend(CheckMenuItem.prototype, ToolMenuItem.prototype, {
-  displayName: function() {
-    return this.value;
-  }
-});

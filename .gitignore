@@ -28,3 +28,8 @@ docker-compose-production.env
 
 # Ignore fucking DS_Store files
 .DS_Store
+/public/packs
+/public/packs-test
+/node_modules
+yarn-debug.log*
+.yarn-integrity

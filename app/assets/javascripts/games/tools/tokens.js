@@ -38,7 +38,7 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
     var self = this;
     var board = this.board;
 
-    $(board.event_manager).on('click.TokenTool', function(evt, mapEvt) {
+    board.event_manager.on('click.TokenTool', function(mapEvt) {
 
       var t = board.tokenLayer.tokenAtCell(mapEvt.mapPointCell);
 
@@ -55,13 +55,13 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
       self.draw();
     });
 
-    $(board.event_manager).on('mousemove.TokenTool', function(evt, mapEvt) {
+    board.event_manager.on('mousemove.TokenTool', function(mapEvt) {
       if (self.editingToken === null) {
         self.cell = mapEvt.mapPointCell;
       }
     });
 
-    $(board.event_manager).on('dragstart.TokenTool', function(evt, mapEvt) {
+    board.event_manager.on('dragstart.TokenTool', function(mapEvt) {
       
       var t = null;
       
@@ -84,17 +84,17 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
       }
     });
 
-    $(board.event_manager).on('drag.TokenTool', function(evt, mapEvt) {
+    board.event_manager.on('drag.TokenTool', function(mapEvt) {
       self.dragEnd = mapEvt.mapPointCell;
     });
 
-    $(board.event_manager).on('dragstop.TokenTool', function(evt, mapEvt) {
+    board.event_manager.on('dragstop.TokenTool', function(mapEvt) {
       self.move();
       self.dragStart = null;
       self.dragEnd = null;
     });
 
-    $(this.board.event_manager).on('keydown.TokenTool', function(evt, mapEvt) {
+    this.board.event_manager.on('keydown.TokenTool', function(mapEvt) {
 
       if (self.editingToken && (mapEvt.key === 8 || mapEvt.key === 46)) {
         self.delete();
@@ -103,7 +103,7 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
     });
   },
   disable: function() {
-    $(this.board.event_manager).off(".TokenTool");
+    this.board.event_manager.off(".TokenTool");
     this.clear();
   },
   draw: function() {

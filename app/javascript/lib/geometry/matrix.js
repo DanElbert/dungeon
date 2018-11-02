@@ -79,3 +79,5 @@ TransformMatrix.prototype.pointMultiply = function(p) {
 
   return [resultX, resultY, resultZ];
 };
+
+export default TransformMatrix;

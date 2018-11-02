@@ -1,12 +1,12 @@
 
-function Rectangle(topLeft, width, height) {
-  this._topLeft = topLeft;
-  this._width = width;
-  this._height = height;
-}
+class Rectangle {
+  constructor(topLeft, width, height) {
+    this._topLeft = topLeft;
+    this._width = width;
+    this._height = height;
+  }
 
-Rectangle.prototype = _.extend(Rectangle.prototype, {
-  overlaps: function(otherRec) {
+  overlaps(otherRec) {
     // If one rectangle is on left side of other
     if (this.left() > otherRec.right() || otherRec.left() > this.right())
       return false;
@@ -16,14 +16,14 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
       return false;
 
     return true;
-  },
+  }
 
-  isEmpty: function() {
+  isEmpty() {
     return this.width() === 0 || this.height() === 0;
-  },
+  }
 
   // Returns the portion of this rectangle inside the given rec
-  clipTo: function(otherRec) {
+  clipTo(otherRec) {
     var left = Math.max(this.left(), otherRec.left());
     var top = Math.max(this.top(), otherRec.top());
     var right = Math.min(this.right(), otherRec.right());
@@ -34,11 +34,11 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
       right - left,
       bottom - top
     );
-  },
+  }
 
   // Snaps the rectangle to a multiple of the given param.
   // mode can be one one of: "closest" (default), "enlarge", "shrink"
-  snapTo: function(multiple, mode) {
+  snapTo(multiple, mode) {
     if (!mode || mode === "closest") {
       return new Rectangle(
         new Vector2(Geometry.roundToNearest(this.left(), multiple), Geometry.roundToNearest(this.top(), multiple)),
@@ -62,10 +62,10 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
     } else {
       throw "Invalid mode " + mode;
     }
-  },
+  }
 
   // Returns a rectangle that covers this rec and otherRec
-  add: function(otherRec) {
+  add(otherRec) {
     var left = Math.min(this.left(), otherRec.left());
     var top = Math.min(this.top(), otherRec.top());
     var right = Math.max(this.right(), otherRec.right());
@@ -76,107 +76,109 @@ Rectangle.prototype = _.extend(Rectangle.prototype, {
       right - left,
       bottom - top
     );
-  },
+  }
 
-  translate: function(x, y) {
+  translate(x, y) {
     return new Rectangle(
       this.topLeft().translate(x, y),
       this.width(),
       this.height()
     )
-  },
+  }
 
-  scale: function(x, y) {
+  scale(x, y) {
     return new Rectangle(
       this.topLeft().scale(x, y),
       this.width() * x,
       this.height() * y
     );
-  },
+  }
 
-  enlarge: function(v) {
+  enlarge(v) {
     return new Rectangle(
       this.topLeft().translate(-v, -v),
       this.width() + (v * 2),
       this.height() + (v * 2)
     );
-  },
+  }
 
-  roundValues: function() {
+  roundValues() {
     return new Rectangle(
       new Vector2(Math.floor(this.left()), Math.floor(this.top())),
       Math.ceil(this.width()),
       Math.ceil(this.height())
     );
-  },
+  }
 
-  toArray: function() {
+  toArray() {
     return [
       [this.topLeft().x, this.topLeft().y],
       [this.bottomRight().x, this.bottomRight().y]
     ];
-  },
+  }
 
-  size: function() {
+  size() {
     return new Vector2(
       this.width(),
       this.height()
     )
-  },
+  }
 
-  center: function() {
+  center() {
     return new Vector2(
       this.topLeft().x + this.width() / 2,
       this.topLeft().y + this.height() / 2
     )
-  },
+  }
 
-  topLeft: function() {
+  topLeft() {
     return this._topLeft;
-  },
+  }
 
-  bottomRight: function() {
+  bottomRight() {
     return new Vector2(
       this.topLeft().x + this.width(),
       this.topLeft().y + this.height()
     )
-  },
+  }
 
-  topRight: function() {
+  topRight() {
     return new Vector2(
       this.topLeft().x + this.width(),
       this.topLeft().y
     )
-  },
+  }
 
-  bottomLeft: function() {
+  bottomLeft() {
     return new Vector2(
       this.topLeft().x,
       this.topLeft().y + this.height()
     )
-  },
+  }
 
-  left: function() {
+  left() {
     return this.topLeft().x;
-  },
+  }
 
-  right: function() {
+  right() {
     return this.topLeft().x + this.width();
-  },
+  }
 
-  top: function() {
+  top() {
     return this.topLeft().y;
-  },
+  }
 
-  bottom: function() {
+  bottom() {
     return this.topLeft().y + this.height();
-  },
+  }
 
-  width: function() {
+  width() {
     return this._width;
-  },
+  }
 
-  height: function() {
+  height() {
     return this._height;
   }
-});
+}
+
+export default Rectangle;

@@ -29,7 +29,7 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
   },
   enable: function() {
     var self = this;
-    $(this.board.event_manager).on('dragstart.' + this.eventNamespace(), function(evt, mapEvt) {
+    this.board.event_manager.on('dragstart.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
       self.drawingObject = self.createDrawingObject();
       if (self.isFog()) {
@@ -40,15 +40,15 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
       self.handleMouseMove(mapEvt.mapPoint);
     });
 
-    $(this.board.event_manager).on('mousemove.' + this.eventNamespace(), function(evt, mapEvt) {
+    this.board.event_manager.on('mousemove.' + this.eventNamespace(), function(mapEvt) {
       self.cursor = mapEvt.mapPoint;
     });
 
-    $(this.board.event_manager).on('drag.' + this.eventNamespace(), function(evt, mapEvt) {
+    this.board.event_manager.on('drag.' + this.eventNamespace(), function(mapEvt) {
       self.handleMouseMove(mapEvt.mapPoint);
     });
 
-    $(this.board.event_manager).on('dragstop.' + this.eventNamespace(), function(evt, mapEvt) {
+    this.board.event_manager.on('dragstop.' + this.eventNamespace(), function(mapEvt) {
       self.saveAction();
       self.lineBuffer = [];
       self.removeDrawingObject();
@@ -59,7 +59,7 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
     this.saveAction();
     this.removeDrawingObject();
     this.lineBuffer = [];
-    $(this.board.event_manager).off("." + this.eventNamespace());
+    this.board.event_manager.off("." + this.eventNamespace());
   },
 
   removeDrawingObject: function() {
@@ -130,7 +130,7 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
     this.super.enable.apply(this);
     this.setCursor('none');
     var self = this;
-    $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(evt, mapEvt) {
+    this.board.event_manager.bind('click.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();

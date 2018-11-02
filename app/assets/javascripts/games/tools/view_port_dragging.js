@@ -15,12 +15,12 @@ _.extend(ViewPortDragging.prototype, {
     var self = this;
     var board = this.board;
     this.enabled = true;
-    $(board.event_manager).on(this.eventName('start'), function(evt, mapEvt) {
+    board.event_manager.on(this.eventName('start'), function(mapEvt) {
       self.drag_mouse_start = mapEvt.mousePoint;
       self.drag_viewport_start = board.getViewPortCoordinates();
     });
 
-    $(board.event_manager).on(this.eventName(''), function(evt, mapEvt) {
+    board.event_manager.on(this.eventName(''), function(mapEvt) {
       var deltaX = Math.floor((self.drag_mouse_start[0] - mapEvt.mousePoint[0]) / board.getZoom());
       var deltaY = Math.floor((self.drag_mouse_start[1] - mapEvt.mousePoint[1]) / board.getZoom());
 
@@ -29,6 +29,6 @@ _.extend(ViewPortDragging.prototype, {
   },
   disable: function() {
     this.enabled = false;
-    $(this.board.event_manager).off('.ViewPortDragging' + this.dragEventName);
+    this.board.event_manager.off('.ViewPortDragging' + this.dragEventName);
   }
 });

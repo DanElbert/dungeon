@@ -1,65 +1,3 @@
-function TemplateTool(manager) {
-  Tool.call(this, manager);
-  this.super = Tool.prototype;
-
-  this.toolMap = {
-    measure: new Measure(manager),
-    line: new LineTemplate(manager),
-    radius: new RadiusTemplate(manager),
-    cone: new ConeTemplate(manager)
-  };
-
-  this.enabled = false;
-  this.tooloption = {type: "templates", label: "Shape", name: "shape", value: "measure"};
-  this.subTool = "measure";
-}
-
-_.extend(TemplateTool.prototype, Tool.prototype, {
-
-  currentTool: function() {
-    if (this.toolMap && this.subTool) {
-      return this.toolMap[this.subTool];
-    } else {
-      return null;
-    }
-  },
-
-  enable: function() {
-    this.enabled = true;
-    this.currentTool().enable();
-  },
-
-  disable: function() {
-    this.enabled = false;
-    this.currentTool().disable();
-  },
-
-  draw: function() {
-    this.currentTool().draw();
-  },
-
-  optionsChanged: function() {
-
-    if (!this.currentTool()) {
-      return;
-    }
-
-    this.currentTool().disable();
-    this.options.clear();
-    this.options.add(this.tooloption);
-    this.subTool = this.options.get("shape").value;
-    this.currentTool().getOptions().each(function(o) {
-      this.options.addWithoutEvents(o);
-    }, this);
-
-    this.toolManager.setOptions();
-
-    if (this.enabled) {
-      this.currentTool().enable();
-    }
-  }
-});
-
 function Measure(manager) {
   Tool.call(this, manager);
   this.super = Tool.prototype;
@@ -78,15 +16,15 @@ Measure.prototype = _.extend(Measure.prototype, Tool.prototype, {
   enable: function () {
     var board = this.board;
     var self = this;
-    $(board.event_manager).on('dragstart.Measure', function (evt, mapEvt) {
+    board.event_manager.on('dragstart.Measure', function (mapEvt) {
       self.startCell = mapEvt.mapPointCell;
     });
 
-    $(board.event_manager).on('drag.Measure', function (evt, mapEvt) {
+    board.event_manager.on('drag.Measure', function (mapEvt) {
       self.currentCell = mapEvt.mapPointCell;
     });
 
-    $(board.event_manager).on('dragstop.Measure', function (evt, mapEvt) {
+    board.event_manager.on('dragstop.Measure', function (mapEvt) {
       self.saveAction();
       self.startCell = null;
       self.currentCell = null;
@@ -94,7 +32,7 @@ Measure.prototype = _.extend(Measure.prototype, Tool.prototype, {
   },
 
   disable: function () {
-    $(this.board.event_manager).off(".Measure");
+    this.board.event_manager.off(".Measure");
   },
 
   draw: function() {
@@ -144,22 +82,22 @@ RadialTemplate.prototype = _.extend(RadialTemplate.prototype, Tool.prototype, {
     var self = this;
     var cellSize = this.board.drawing.cellSize;
 
-    $(board.event_manager).on('mousemove.' + this.toolName(), function(evt, mapEvt) {
+    board.event_manager.on('mousemove.' + this.toolName(), function(mapEvt) {
       if (!self.dragging) {
         self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       }
     });
 
-    $(board.event_manager).on('dragstart.' + this.toolName(), function (evt, mapEvt) {
+    board.event_manager.on('dragstart.' + this.toolName(), function (mapEvt) {
       self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       self.dragging = true;
     });
 
-    $(board.event_manager).on('drag.' + this.toolName(), function (evt, mapEvt) {
+    board.event_manager.on('drag.' + this.toolName(), function (mapEvt) {
       self.radiusPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
     });
 
-    $(board.event_manager).on('dragstop.' + this.toolName(), function (evt, mapEvt) {
+    board.event_manager.on('dragstop.' + this.toolName(), function (mapEvt) {
       self.saveAction();
       self.radiusPoint = null;
       self.dragging = false;
@@ -192,7 +130,7 @@ RadialTemplate.prototype = _.extend(RadialTemplate.prototype, Tool.prototype, {
   },
 
   disable: function () {
-    $(this.board.event_manager).off('.' + this.toolName());
+    this.board.event_manager.off('.' + this.toolName());
   },
 
   drawCross: function(point) {
@@ -279,22 +217,22 @@ LineTemplate.prototype = _.extend(LineTemplate.prototype, Tool.prototype, {
     var self = this;
     var cellSize = this.board.drawing.cellSize;
 
-    $(board.event_manager).on('mousemove.LineTemplate', function(evt, mapEvt) {
+    board.event_manager.on('mousemove.LineTemplate', function(mapEvt) {
       if (!self.dragging) {
         self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       }
     });
 
-    $(board.event_manager).on('dragstart.LineTemplate', function (evt, mapEvt) {
+    board.event_manager.on('dragstart.LineTemplate', function (mapEvt) {
       self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       self.dragging = true;
     });
 
-    $(board.event_manager).on('drag.LineTemplate', function (evt, mapEvt) {
+    board.event_manager.on('drag.LineTemplate', function (mapEvt) {
       self.currentPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize); //mapEvt.mapPoint;
     });
 
-    $(board.event_manager).on('dragstop.LineTemplate', function (evt, mapEvt) {
+    board.event_manager.on('dragstop.LineTemplate', function (mapEvt) {
       self.saveAction();
       self.currentPoint = null;
       self.dragging = false;
@@ -303,7 +241,7 @@ LineTemplate.prototype = _.extend(LineTemplate.prototype, Tool.prototype, {
   },
 
   disable: function () {
-    $(this.board.event_manager).off(".LineTemplate");
+    this.board.event_manager.off(".LineTemplate");
   },
 
   draw: function() {
@@ -373,22 +311,22 @@ RectangleTemplate.prototype = _.extend(RectangleTemplate.prototype, Tool.prototy
     var self = this;
     var cellSize = this.board.drawing.cellSize;
 
-    $(board.event_manager).on('mousemove.RectangleTemplate', function(evt, mapEvt) {
+    board.event_manager.on('mousemove.RectangleTemplate', function(mapEvt) {
       if (!self.dragging) {
         self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       }
     });
 
-    $(board.event_manager).on('dragstart.RectangleTemplate', function (evt, mapEvt) {
+    board.event_manager.on('dragstart.RectangleTemplate', function (mapEvt) {
       self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
       self.dragging = true;
     });
 
-    $(board.event_manager).on('drag.RectangleTemplate', function (evt, mapEvt) {
+    board.event_manager.on('drag.RectangleTemplate', function (mapEvt) {
       self.currentPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize); //mapEvt.mapPoint;
     });
 
-    $(board.event_manager).on('dragstop.RectangleTemplate', function (evt, mapEvt) {
+    board.event_manager.on('dragstop.RectangleTemplate', function (mapEvt) {
       self.saveAction();
       self.currentPoint = null;
       self.dragging = false;
@@ -397,7 +335,7 @@ RectangleTemplate.prototype = _.extend(RectangleTemplate.prototype, Tool.prototy
   },
 
   disable: function () {
-    $(this.board.event_manager).off(".RectangleTemplate");
+    this.board.event_manager.off(".RectangleTemplate");
   },
 
   canDraw: function() {

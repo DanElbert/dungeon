@@ -19,11 +19,4 @@ module ApplicationHelper
     end
   end
 
-  def get_background_image_options(selected_image_id)
-    BackgroundImage.order(:filename).map do |bg|
-      selected = selected_image_id == bg.id
-      url =  bg.url
-      "<option#{selected ? ' selected' : ''} data-img-src='#{url}' value='#{bg.id}'>#{bg.filename}</option>"
-    end.join("\n").html_safe
-  end
 end

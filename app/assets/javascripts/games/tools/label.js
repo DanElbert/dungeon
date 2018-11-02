@@ -31,28 +31,28 @@ LabelTool.prototype = _.extend(LabelTool.prototype, Tool.prototype, {
     var self = this;
     var board = this.board;
 
-    $(board.event_manager).on('click.LabelTool', function(evt, mapEvt) {
+    board.event_manager.on('click.LabelTool', function(mapEvt) {
       self.cursor = self.getPoint(mapEvt.mapPoint);
       self.draw();
       self.save();
     });
 
-    $(board.event_manager).on('mousemove.LabelTool', function(evt, mapEvt) {
+    board.event_manager.on('mousemove.LabelTool', function(mapEvt) {
       self.cursor = self.getPoint(mapEvt.mapPoint);
     });
 
-    $(board.event_manager).on('keydown.LabelTool', function(evt, mapEvt) {
+    board.event_manager.on('keydown.LabelTool', function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
     });
 
-    $(board.event_manager).on('keyup.LabelTool', function(evt, mapEvt) {
+    board.event_manager.on('keyup.LabelTool', function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
     });
   },
   disable: function() {
-    $(this.board.event_manager).off(".LabelTool");
+    this.board.event_manager.off(".LabelTool");
     this.clear();
   },
   draw: function() {

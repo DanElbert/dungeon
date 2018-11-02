@@ -22,7 +22,7 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
     this.super.enable.apply(this);
     this.setCursor('none');
     var self = this;
-    $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(evt, mapEvt) {
+    $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();
@@ -79,7 +79,7 @@ RemoveFogPen.prototype = _.extend(RemoveFogPen.prototype, DrawTool.prototype, {
     this.super.enable.apply(this);
     this.setCursor('none');
     var self = this;
-    $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(evt, mapEvt) {
+    $(this.board.event_manager).bind('click.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();

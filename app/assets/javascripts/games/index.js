@@ -2,7 +2,6 @@
 //= require ./initiative
 //= require ./initiative_manager
 //= require ./animation
-//= require ./geometry
 //= require ./drawing_objects
 //= require ./drawing
 //= require ./board_events

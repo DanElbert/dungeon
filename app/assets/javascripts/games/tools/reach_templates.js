@@ -30,17 +30,17 @@ ReachTemplateTool.prototype = _.extend(ReachTemplateTool.prototype, Tool.prototy
     var self = this;
     var board = this.board;
 
-    $(board.event_manager).on('mousemove.' + this.eventNamespace(), function (evt, mapEvt) {
+    board.event_manager.on('mousemove.' + this.eventNamespace(), function (mapEvt) {
       self.cursor = mapEvt.mapPoint;
     });
 
-    $(board.event_manager).on('click.' + this.eventNamespace(), function (evt, mapEvt) {
+    board.event_manager.on('click.' + this.eventNamespace(), function (mapEvt) {
       self.saveAction();
     });
   },
 
   disable: function () {
-    $(this.board.event_manager).off('.' + this.eventNamespace());
+    this.board.event_manager.off('.' + this.eventNamespace());
   },
 
   saveAction: function () {

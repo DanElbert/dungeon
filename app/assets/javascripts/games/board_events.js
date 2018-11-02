@@ -2,51 +2,60 @@
 // Wraps canvas events and generates map-friendly events.
 // Each event has a custom event object with the following properties (as appropriate):
 // dragStart, dragStartCell, previousDrag, mapPoint, mapPointCell, mousePoint
-function BoardEvents(board) {
-  this.board = board;
+class BoardEvents extends Eventer {
+  constructor(board) {
+    super();
 
-  var jqThis = $(this);
-  var jqCanvas = $(board.canvas);
+    this.board = board;
+    this.canvas = board.canvas;
+    preventGhosts(this.canvas);
 
-  preventGhosts(jqCanvas);
+    // Track mouse location as it moves so that we can use it in events that don't give the mouse location
+    this.mouseCanvasPoint = null;
 
-  // Track mouse location as it moves so that we can use it in events that don't give the mouse location
-  this.mouseCanvasPoint = null;
+    this.leftMouseState = {
+      down: false,
+      dragging: false,
+      dragStart: null,
+      previousDrag: null,
+      previousClick: null,
+      eventPrefix: ''
+    };
 
-  this.leftMouseState = {
-    down: false,
-    dragging: false,
-    dragStart: null,
-    previousDrag: null,
-    previousClick: null,
-    eventPrefix: ''
-  };
+    this.rightMouseState = {
+      down: false,
+      dragging: false,
+      dragStart: null,
+      previousDrag: null,
+      previousClick: null,
+      eventPrefix: 'right'
+    };
 
-  this.rightMouseState = {
-    down: false,
-    dragging: false,
-    dragStart: null,
-    previousDrag: null,
-    previousClick: null,
-    eventPrefix: 'right'
-  };
+    this.shiftKey = false;
+    this.altKey = false;
+    this.ctrlKey = false;
 
-  this.shiftKey = false;
-  this.altKey = false;
-  this.ctrlKey = false;
+    this.draggingFingers = 0;
 
-  var self = this;
+    this.setupEvents();
+  }
 
-  this.getCanvasCoordinates = function(mouseX, mouseY) {
+  getCanvasCoordinates(mouseX, mouseY) {
     // x, y coords of mouse click relative to canvas
-    var offset = $(this.board.canvas).offset();
+    var rect = this.canvas.getBoundingClientRect();
+    var win = this.canvas.ownerDocument.defaultView;
+    var offset = {
+      top: rect.top + win.pageYOffset,
+      left: rect.left + win.pageXOffset
+    };
+
     var x = mouseX - offset.left;
     var y = mouseY - offset.top;
 
     return [x, y];
-  };
+  }
 
-  this.getMapCoordinates = function(canvasX, canvasY) {
+  getMapCoordinates(canvasX, canvasY) {
     var x = canvasX;
     var y = canvasY;
 
@@ -59,30 +68,30 @@ function BoardEvents(board) {
     y = y + this.board.getViewPortCoordinates()[1];
 
     return [x, y];
-  };
+  }
 
-  this.getCell = function(mapX, mapY) {
+  getCell(mapX, mapY) {
     return Geometry.getCell([mapX, mapY], this.board.drawing.cellSize);
-  };
+  }
 
-  this.cursorDownHandler = function(canvasCoords, mouseState) {
+  cursorDownHandler(canvasCoords, mouseState) {
     mouseState.down = true;
-    mouseState.dragStart = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-  };
+    mouseState.dragStart = this.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+  }
 
-  this.cursorMoveHandler = function(canvasCoords, mouseState) {
-    var mapPoint = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-    var cell = self.getCell(mapPoint[0], mapPoint[1]);
+  cursorMoveHandler(canvasCoords, mouseState) {
+    var mapPoint = this.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+    var cell = this.getCell(mapPoint[0], mapPoint[1]);
 
     if(mouseState.down && !mouseState.dragging) {
       mouseState.dragging = true;
-      jqThis.trigger(mouseState.eventPrefix + 'dragstart', {mapPoint: mouseState.dragStart, mapPointCell: self.getCell(mouseState.dragStart[0], mouseState.dragStart[1]), mousePoint: canvasCoords});
+      this.trigger(mouseState.eventPrefix + 'dragstart', {mapPoint: mouseState.dragStart, mapPointCell: this.getCell(mouseState.dragStart[0], mouseState.dragStart[1]), mousePoint: canvasCoords});
     }
 
     if (mouseState.dragging) {
-      jqThis.trigger(mouseState.eventPrefix + 'drag', {
+      this.trigger(mouseState.eventPrefix + 'drag', {
         dragStart: mouseState.dragStart,
-        dragStartCell: self.getCell(mouseState.dragStart[0], mouseState.dragStart[1]),
+        dragStartCell: this.getCell(mouseState.dragStart[0], mouseState.dragStart[1]),
         previousDrag: mouseState.previousDrag ? mouseState.previousDrag : mouseState.dragStart,
         mousePoint: canvasCoords,
         mapPoint: mapPoint,
@@ -91,10 +100,10 @@ function BoardEvents(board) {
       mouseState.previousDrag = mapPoint;
     }
 
-    jqThis.trigger(mouseState.eventPrefix + 'mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
-  };
+    this.trigger(mouseState.eventPrefix + 'mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
+  }
 
-  this.cursorUpHandler = function(mouseState) {
+  cursorUpHandler(mouseState) {
     // Ignore any mouse up events that didn't start with a mousedown on the canvas
     if (!mouseState.down) {
       return;
@@ -104,11 +113,11 @@ function BoardEvents(board) {
 
     if (mouseState.dragging) {
       mapPoint = mouseState.previousDrag;
-      cell = self.getCell(mapPoint[0], mapPoint[1]);
+      cell = this.getCell(mapPoint[0], mapPoint[1]);
 
-      jqThis.trigger(mouseState.eventPrefix + 'dragstop', {
+      this.trigger(mouseState.eventPrefix + 'dragstop', {
         dragStart: mouseState.dragStart,
-        dragStartCell: self.getCell(mouseState.dragStart[0], mouseState.dragStart[1]),
+        dragStartCell: this.getCell(mouseState.dragStart[0], mouseState.dragStart[1]),
         previousDrag: mouseState.previousDrag ? mouseState.previousDrag : mouseState.dragStart,
         mapPoint: mapPoint,
         mapPointCell: cell
@@ -116,16 +125,16 @@ function BoardEvents(board) {
 
     } else {
       mapPoint = mouseState.dragStart;
-      cell = self.getCell(mapPoint[0], mapPoint[1]);
+      cell = this.getCell(mapPoint[0], mapPoint[1]);
 
-      jqThis.trigger(mouseState.eventPrefix + 'click', {
+      this.trigger(mouseState.eventPrefix + 'click', {
         mapPoint: mapPoint,
         mapPointCell: cell
       });
 
       var now = Date.now();
       if (mouseState.previousClick && (now - mouseState.previousClick < 500)) {
-        jqThis.trigger(mouseState.eventPrefix + 'dblclick', {
+        this.trigger(mouseState.eventPrefix + 'dblclick', {
           mapPoint: mapPoint,
           mapPointCell: cell
         });
@@ -138,27 +147,27 @@ function BoardEvents(board) {
     mouseState.previousDrag = null;
     mouseState.dragging = false;
     mouseState.down = false;
-  };
+  }
 
-  this.keyDownHandler = function(key) {
-    jqThis.trigger('keydown', {
+  keyDownHandler(key) {
+    this.trigger("keydown", {
       key: key,
-      isShift: self.shiftKey,
-      isAlt: self.altKey,
-      isCtrl: self.ctrlKey
+      isShift: this.shiftKey,
+      isAlt: this.altKey,
+      isCtrl: this.ctrlKey
     });
-  };
+  }
 
-  this.keyUpHandler = function(key) {
-    jqThis.trigger('keyup', {
+  keyUpHandler(key) {
+    this.trigger("keyup", {
       key: key,
-      isShift: self.shiftKey,
-      isAlt: self.altKey,
-      isCtrl: self.ctrlKey
+      isShift: this.shiftKey,
+      isAlt: this.altKey,
+      isCtrl: this.ctrlKey
     });
-  };
+  }
 
-  this.scrollHandler = function(evt) {
+  scrollHandler(evt) {
 
     var deltaX = evt.deltaX;
     var deltaY = evt.deltaY;
@@ -169,190 +178,196 @@ function BoardEvents(board) {
       deltaY = deltaY * 25;
     }
 
-    if (self.mouseCanvasPoint !== null) {
-      jqThis.trigger('scroll', {
+    if (this.mouseCanvasPoint !== null) {
+      this.trigger('scroll', {
         deltaX: deltaX,
         deltaY: deltaY,
-        mapPoint: self.getMapCoordinates(self.mouseCanvasPoint[0], self.mouseCanvasPoint[1])
+        mapPoint: this.getMapCoordinates(this.mouseCanvasPoint[0], this.mouseCanvasPoint[1])
       });
     }
-  };
+  }
 
-  $(document).on('keydown.BoardEvents', function(evt) {
-    self.board.invalidate();
-    // Process all keystrokes, but only those not obviously intended for something else
-    var tag = evt.target.tagName.toLowerCase();
-    if (tag == "input" || tag == "textarea") {
-      return;
-    }
+  setupEvents() {
 
-    if (evt.which == 16) {
-      self.shiftKey = true;
-    } else if (evt.which == 17) {
-      self.ctrlKey = true;
-    } else if (evt.which == 18) {
-      self.altKey = true;
-    }
+    var self = this;
 
-    self.keyDownHandler(evt.which);
-  });
+    window.document.addEventListener("keydown", function(evt) {
+      self.board.invalidate();
 
-  $(document).on('keyup.BoardEvents', function(evt) {
-    self.board.invalidate();
-    // Process all keystrokes, but only those not obviously intended for something else
-    var tag = evt.target.tagName.toLowerCase();
-    if (tag == "input" || tag == "textarea") {
-      return;
-    }
+      // Process all keystrokes, but only those not obviously intended for something else
+      var tag = evt.target.tagName.toLowerCase();
+      if (tag == "input" || tag == "textarea") {
+        return;
+      }
 
-    if (evt.which == 16) {
-      self.shiftKey = false;
-    } else if (evt.which == 17) {
-      self.ctrlKey = false;
-    } else if (evt.which == 18) {
-      self.altKey = false;
-    }
+      if (evt.key == "Shift") {
+        self.shiftKey = true;
+      } else if (evt.key == "Control") {
+        self.ctrlKey = true;
+      } else if (evt.key == "Alt") {
+        self.altKey = true;
+      }
 
-    self.keyUpHandler(evt.which);
+      self.keyDownHandler(evt.key);
+    });
 
-    evt.preventDefault();
-  });
 
-  jqCanvas.on('mousedown.BoardEvents', function(evt) {
-    self.board.invalidate();
-    var canvasCoords;
-    if (evt.which == 1) { // left button
-      canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-      self.cursorDownHandler(canvasCoords, self.leftMouseState);
-    } else if (evt.which == 3) { // right button
-      canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-      self.cursorDownHandler(canvasCoords, self.rightMouseState);
-    }
-    evt.preventDefault();
-  });
 
-  // Disable browser context menu
-  jqCanvas.on('contextmenu.BoardEvents', function(evt) {
-    self.board.invalidate();
-    evt.preventDefault();
-  });
+    window.document.addEventListener("keyup", function(evt) {
+      self.board.invalidate();
+      // Process all keystrokes, but only those not obviously intended for something else
+      var tag = evt.target.tagName.toLowerCase();
+      if (tag == "input" || tag == "textarea") {
+        return;
+      }
 
-  jqCanvas.on('mouseup.BoardEvents', function(evt) {
-    self.board.invalidate();
-    if (evt.which == 1) { // left button
+      if (evt.key == "Shift") {
+        self.shiftKey = false;
+      } else if (evt.key == "Control") {
+        self.ctrlKey = false;
+      } else if (evt.key == "Alt") {
+        self.altKey = false;
+      }
+
+      self.keyUpHandler(evt.key);
+
+      evt.preventDefault();
+    });
+
+    this.canvas.addEventListener("mousedown", function(evt) {
+      self.board.invalidate();
+      var canvasCoords;
+      if (evt.which == 1) { // left button
+        canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+        self.cursorDownHandler(canvasCoords, self.leftMouseState);
+      } else if (evt.which == 3) { // right button
+        canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+        self.cursorDownHandler(canvasCoords, self.rightMouseState);
+      }
+      evt.preventDefault();
+    });
+
+    // Disable browser context menu
+    this.canvas.addEventListener("contextmenu", function(evt) {
+      self.board.invalidate();
+      evt.preventDefault();
+    });
+
+    this.canvas.addEventListener('mouseup', function(evt) {
+      self.board.invalidate();
+      if (evt.which == 1) { // left button
+        self.cursorUpHandler(self.leftMouseState);
+      } else if (evt.which == 3) { // right button
+        self.cursorUpHandler(self.rightMouseState);
+      }
+      evt.preventDefault();
+    });
+
+    this.canvas.addEventListener('mousemove', function(evt) {
+      self.board.invalidate();
+      self.mouseCanvasPoint = self.getCanvasCoordinates(evt.pageX, evt.pageY);
+      self.cursorMoveHandler(self.mouseCanvasPoint, self.leftMouseState);
+      self.cursorMoveHandler(self.mouseCanvasPoint, self.rightMouseState);
+      evt.preventDefault();
+    });
+
+    this.canvas.addEventListener('mouseout', function(evt) {
+      self.board.invalidate();
+      self.mouseCanvasPoint = null;
       self.cursorUpHandler(self.leftMouseState);
-    } else if (evt.which == 3) { // right button
       self.cursorUpHandler(self.rightMouseState);
-    }
-    evt.preventDefault();
-  });
+    });
 
-  jqCanvas.on('mousemove.BoardEvents', function(evt) {
-    self.board.invalidate();
-    self.mouseCanvasPoint = self.getCanvasCoordinates(evt.pageX, evt.pageY);
-    self.cursorMoveHandler(self.mouseCanvasPoint, self.leftMouseState);
-    self.cursorMoveHandler(self.mouseCanvasPoint, self.rightMouseState);
-    evt.preventDefault();
-  });
+    // Special event handling for mouse wheel events.
+    // jQuery doesn't handle this well; see javascripts/mouse_wheel_events
+    addWheelListener(this.canvas, function(evt) {
+      self.board.invalidate();
+      self.scrollHandler(evt);
+      evt.preventDefault();
+    });
 
-  jqCanvas.on('mouseout.BoardEvents', function(evt) {
-    self.board.invalidate();
-    self.mouseCanvasPoint = null;
-    self.cursorUpHandler(self.leftMouseState);
-    self.cursorUpHandler(self.rightMouseState);
-  });
+    var hammer = new Hammer.Manager(this.canvas, {
+      inputClass: Hammer.TouchInput,
+      recognizers: [
+        // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
+        [Hammer.Tap, {taps: 1, event: "tap"}],
+        [Hammer.Press, {time: 500}],
+        [Hammer.Pan, {event: "drag"}],
+        [Hammer.Pan, {event: "twofingerdrag", pointers: 2, threshold: 10}],
+        [Hammer.Pinch, {threshold: 0 }, ["twofingerdrag"]]
+      ]
+    });
 
-  // Special event handling for mouse wheel events.
-  // jQuery doesn't handle this well; see javascripts/mouse_wheel_events
-  addWheelListener(board.canvas, function(evt) {
-    self.board.invalidate();
-    self.scrollHandler(evt);
-    evt.preventDefault();
-  });
-
-  this.draggingFingers = 0;
-
-  var hammer = new Hammer.Manager(jqCanvas[0], {
-    inputClass: Hammer.TouchInput,
-    recognizers: [
-      // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
-      [Hammer.Tap, {taps: 1, event: "tap"}],
-      [Hammer.Press, {time: 500}],
-      [Hammer.Pan, {event: "drag"}],
-      [Hammer.Pan, {event: "twofingerdrag", pointers: 2, threshold: 10}],
-      [Hammer.Pinch, {threshold: 0 }, ["twofingerdrag"]]
-    ]
-  });
-
-  hammer.on('tap', function(evt) {
-    self.board.invalidate();
-    var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
-    self.cursorDownHandler(coords, self.leftMouseState);
-    self.cursorUpHandler(self.leftMouseState);
-  });
-
-  hammer.on('dragstart twofingerdragstart', function(evt) {
-    self.board.invalidate();
-    var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
-    self.draggingFingers = evt.pointers.length;
-    if (self.draggingFingers == 1) {
+    hammer.on('tap', function(evt) {
+      self.board.invalidate();
+      var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
       self.cursorDownHandler(coords, self.leftMouseState);
-    } else if (self.draggingFingers == 2) {
-      self.cursorDownHandler(coords, self.rightMouseState);
-    }
-  });
-
-  hammer.on('drag twofingerdrag', function(evt) {
-    self.board.invalidate();
-    if (self.draggingFingers != evt.pointers.length) {
       self.cursorUpHandler(self.leftMouseState);
-      self.cursorUpHandler(self.rightMouseState);
-      return;
-    }
-    var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
-    if (evt.pointers.length == 1) {
-      self.cursorMoveHandler(coords, self.leftMouseState);
-    } else if (evt.pointers.length == 2) {
-      self.cursorMoveHandler(coords, self.rightMouseState);
-    }
-  });
-
-  hammer.on('dragend twofingerdragend', function(evt) {
-    self.board.invalidate();
-    if (evt.pointers.length == 1) {
-      self.cursorUpHandler(self.leftMouseState);
-    } else if (evt.pointers.length == 2) {
-      self.cursorUpHandler(self.rightMouseState);
-    }
-  });
-
-  hammer.on('pinchstart', function(evt) {
-    self.board.invalidate();
-    var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
-    var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-    jqThis.trigger('pinchstart', {
-      scale: evt.scale,
-      center: mapCoords
     });
-  });
 
-  hammer.on('pinchmove', function(evt) {
-    self.board.invalidate();
-    var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
-    var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-    jqThis.trigger('pinch', {
-      scale: evt.scale,
-      center: mapCoords
+    hammer.on('dragstart twofingerdragstart', function(evt) {
+      self.board.invalidate();
+      var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
+      self.draggingFingers = evt.pointers.length;
+      if (self.draggingFingers == 1) {
+        self.cursorDownHandler(coords, self.leftMouseState);
+      } else if (self.draggingFingers == 2) {
+        self.cursorDownHandler(coords, self.rightMouseState);
+      }
     });
-  });
 
-  hammer.on('press', function(evt) {
-    self.board.invalidate();
-    var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
-    var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-    jqThis.trigger('hold', {
-      mapPoint: mapCoords,
-      mapPointCell: self.getCell(mapCoords[0], mapCoords[1])
+    hammer.on('drag twofingerdrag', function(evt) {
+      self.board.invalidate();
+      if (self.draggingFingers != evt.pointers.length) {
+        self.cursorUpHandler(self.leftMouseState);
+        self.cursorUpHandler(self.rightMouseState);
+        return;
+      }
+      var coords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
+      if (evt.pointers.length == 1) {
+        self.cursorMoveHandler(coords, self.leftMouseState);
+      } else if (evt.pointers.length == 2) {
+        self.cursorMoveHandler(coords, self.rightMouseState);
+      }
     });
-  });
+
+    hammer.on('dragend twofingerdragend', function(evt) {
+      self.board.invalidate();
+      if (evt.pointers.length == 1) {
+        self.cursorUpHandler(self.leftMouseState);
+      } else if (evt.pointers.length == 2) {
+        self.cursorUpHandler(self.rightMouseState);
+      }
+    });
+
+    hammer.on('pinchstart', function(evt) {
+      self.board.invalidate();
+      var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
+      var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+      jqThis.trigger('pinchstart', {
+        scale: evt.scale,
+        center: mapCoords
+      });
+    });
+
+    hammer.on('pinchmove', function(evt) {
+      self.board.invalidate();
+      var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
+      var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+      jqThis.trigger('pinch', {
+        scale: evt.scale,
+        center: mapCoords
+      });
+    });
+
+    hammer.on('press', function(evt) {
+      self.board.invalidate();
+      var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
+      var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
+      jqThis.trigger('hold', {
+        mapPoint: mapCoords,
+        mapPointCell: self.getCell(mapCoords[0], mapCoords[1])
+      });
+    });
+  }
 }

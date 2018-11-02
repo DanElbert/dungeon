@@ -1,32 +1,32 @@
 
-function Vector2(x, y) {
-  if (Array.isArray(x)) {
-    this.x = x[0];
-    this.y = x[1];
-  } else {
-    this.x = x;
-    this.y = y;
+class Vector2 {
+  constructor(x, y) {
+    if (Array.isArray(x)) {
+      this.x = x[0];
+      this.y = x[1];
+    } else {
+      this.x = x;
+      this.y = y;
+    }
   }
-}
 
-Vector2.prototype = _.extend(Vector2.prototype, {
-  toArray: function() {
+  toArray() {
     return [this.x, this.y]
-  },
+  }
 
-  add: function(point) {
+  add(point) {
     return new Vector2(this.x + point.x, this.y + point.y);
-  },
+  }
 
-  subtract: function(point) {
+  subtract(point) {
     return new Vector2(this.x - point.x, this.y - point.y);
-  },
+  }
 
-  translate: function(x, y) {
+  translate(x, y) {
     return new Vector2(this.x + x, this.y + y);
-  },
+  }
 
-  rotate: function(angle, point) {
+  rotate(angle, point) {
 
     var m = TransformMatrix.Identity;
 
@@ -39,16 +39,19 @@ Vector2.prototype = _.extend(Vector2.prototype, {
     }
 
     return this.matrixMultiply(m);
-  },
+  }
 
-  scale: function(x, y) {
+  scale(x, y) {
     var m = TransformMatrix.Identity.scale(x, y);
 
     return this.matrixMultiply(m);
-  },
-
-  matrixMultiply: function(m) {
+  }
+  
+  matrixMultiply(m) {
     var out = m.pointMultiply([this.x, this.y, 1]);
     return new Vector2(out[0], out[1]);
   }
-});
+}
+
+
+export default Vector2;

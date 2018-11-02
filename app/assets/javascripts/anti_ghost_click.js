@@ -33,7 +33,7 @@ function preventGhosts(element) {
 
   function attachEvents(eventList, interactionType) {
     eventList.forEach(function(eventName) {
-      element[0].addEventListener(eventName, handleTap.bind(null, interactionType), true);
+      element.addEventListener(eventName, handleTap.bind(null, interactionType), true);
     });
   }
 
