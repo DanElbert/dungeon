@@ -1,6 +1,8 @@
 FROM ruby:2.5.1-stretch
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list && \
     apt-get update && apt-get install -y \
     rsync \
     cmake \
@@ -8,6 +10,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     libvips-dev \
     libvips-tools \
     nodejs \
+    yarn \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -17,12 +20,14 @@ COPY docker/image_magic_policy.xml /etc/ImageMagick-6/policy.xml
 
 RUN mkdir -p /dungeon_assets/
 RUN mkdir -p /dungeon/
-COPY Gemfile /dungeon/
-COPY Gemfile.lock /dungeon/
-RUN cd /dungeon && bundle install
+WORKDIR /dungeon
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+COPY package.json yarn.lock ./
+RUN yarn install --production=true
 
 COPY . /dungeon
-WORKDIR /dungeon
 ENV RAILS_ENV docker
 
 RUN chmod a+x /dungeon/docker/web_boot.sh
