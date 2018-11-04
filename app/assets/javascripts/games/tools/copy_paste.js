@@ -93,18 +93,25 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
     formData.append("image[filename]", "copied_data.png");
     formData.append("image[data]", data);
 
-    $.ajax({
-      url: ROOT_URL + 'copied_images.json',
-      type: 'POST',
-      data: formData,
-      contentType: false,
-      processData: false,
-      success: function(data, status, xhr) {
-        self.board.setCopiedArea(data.url);
-        self.getOptions().get("copiedImage").url = data.url;
-        self.toolManager.setOptions();
-      }
+    Api.postFormData(ROOT_URL + 'copied_images.json', formData).then(data => {
+      console.log(data);
+      self.board.setCopiedArea(data.url);
+      self.getOptions().get("copiedImage").url = data.url;
+      self.toolManager.setOptions();
     });
+
+    // $.ajax({
+    //   url: ROOT_URL + 'copied_images.json',
+    //   type: 'POST',
+    //   data: formData,
+    //   contentType: false,
+    //   processData: false,
+    //   success: function(data, status, xhr) {
+    //     self.board.setCopiedArea(data.url);
+    //     self.getOptions().get("copiedImage").url = data.url;
+    //     self.toolManager.setOptions();
+    //   }
+    // });
   },
   
   clampedDragCurrent: function() {

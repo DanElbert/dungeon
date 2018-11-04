@@ -1,11 +1,18 @@
 <template>
 
-  <div>
-
-    <div v-for="i in displayList" :key="i.value" @click="itemClick(i.value)">
-      <slot :item="i">
-        {{ i.name }}
+  <div class="option-dropdown">
+    <div v-if="selectedItem" class="item-wrapper" @click="itemClick(selectedItem.value)">
+      <slot :item="selectedItem">
+        {{ selectedItem.name }}
       </slot>
+    </div>
+
+    <div class="popup" v-if="isOpen">
+      <div class="item-wrapper" v-for="i in list" :key="i.value" @click="itemClick(i.value)">
+        <slot :item="i">
+          {{ i.name }}
+        </slot>
+      </div>
     </div>
 
   </div>
@@ -35,16 +42,6 @@
       selectedItem() {
         return this.list.find(i => i.value === this.value) || null;
       },
-
-      displayList() {
-        if (this.isOpen) {
-          return this.list;
-        } else if (this.selectedItem !== null) {
-          return [this.selectedItem];
-        } else {
-          return [this.list[0]];
-        }
-      }
     },
 
     methods: {
@@ -62,5 +59,23 @@
 </script>
 
 <style lang="scss" scoped>
+
+  @import "../styles/variables";
+
+  .option-dropdown {
+    position: relative;
+  }
+
+  .popup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: $white;
+  }
+
+  .item-wrapper {
+    width: 4rem;
+    height: 4rem;
+  }
 
 </style>

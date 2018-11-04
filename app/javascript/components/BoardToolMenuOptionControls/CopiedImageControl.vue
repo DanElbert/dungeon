@@ -1,6 +1,5 @@
 <template>
-  <div>
-    Option!!
+  <div class="img" :style="{backgroundImage: `url(${option.url})`}">
   </div>
 </template>
 
@@ -18,6 +17,11 @@
 
 <style lang="scss" scoped>
 
-
+  .img {
+    height: 50px;
+    width: 50px;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
 
 </style>

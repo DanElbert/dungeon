@@ -1,6 +1,6 @@
 <template>
   <div>
-    Option!!
+    <button @click="option.command()">{{option.label}}</button>
   </div>
 </template>
 

@@ -12,7 +12,9 @@ export default {
 
   mounted() {
     this.$el.title = this.option.label || this.option.name;
-    new bsn.Tooltip(this.$el);
+    new bsn.Tooltip(this.$el, {
+      placement: 'top'
+    });
   },
 
   components: {

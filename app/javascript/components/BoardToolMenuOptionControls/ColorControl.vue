@@ -1,7 +1,8 @@
 <template>
   <div>
     <option-dropdown v-model="option.value" :list="colors">
-
+      <div slot-scope="{ item }" :style="{ backgroundColor: item.value, height: '100%' }">
+      </div>
     </option-dropdown>
   </div>
 </template>

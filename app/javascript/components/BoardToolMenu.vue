@@ -8,7 +8,7 @@
     </div>
 
     <div v-if="visible && options" class="option-menu">
-      <div v-for="o in optionList" :key="o.name">
+      <div v-for="o in optionList" :key="o.name" class="option-item">
         <component :is="optionComponent(o)" :option="o"></component>
       </div>
     </div>
@@ -129,7 +129,7 @@
 
   .tool-menu {
     position: absolute;
-    top: 32px;
+    top: 40px;
     left: 32px;
     z-index: 200;
     box-shadow: $toolpanel_shadow;
@@ -138,11 +138,16 @@
   .option-menu {
     position: absolute;
     display: flex;
-    top: 32px;
+    top: 40px;
     left: 150px;
     z-index: 100;
     box-shadow: $toolpanel_shadow;
     background-color: $white;
+  }
+
+  .option-item {
+    border: 1px solid black;
+    margin: 3px;
   }
 
 </style>

@@ -1,11 +1,9 @@
 class Api {
 
-  performRequest(url, method, params = {}, headers = {}) {
-    const hasBody = Object.keys(params || {}).length !== 0;
+  performRequest(url, method, body, headers = {}) {
 
     const reqHeaders = new Headers();
     reqHeaders.append('Accept', 'application/json');
-    reqHeaders.append('Content-Type', 'application/json');
 
     for (let key in headers) {
       reqHeaders.append(key, headers[key]);
@@ -17,21 +15,36 @@ class Api {
       credentials: "same-origin"
     };
 
-    if (hasBody) {
-      opts.body = JSON.stringify(params);
+    if (body) {
+      opts.body = body;
     }
+
 
     return fetch(url, opts);
   }
 
-  getJson(url, params = {}) {
-    return this.performRequest(url, "GET", params).then(response => {
+  getJson(url, params) {
+    let body = params || null;
+    if (body) {
+      body = JSON.stringify(body);
+    }
+    return this.performRequest(url, "GET", body, {"Content-Type": "application/json"}).then(response => {
       if (response.ok) {
         return response.json();
       } else {
         throw "invalid response: " + response.status
       }
     })
+  }
+
+  postFormData(url, data) {
+    return this.performRequest(url, "POST", data).then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw "invalid response: " + response.status
+      }
+    });
   }
 
 }
