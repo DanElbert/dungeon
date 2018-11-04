@@ -21,69 +21,69 @@ function BoardDetectionManager(board, toolManager, camera, gameClient) {
   this.camera = camera;
 
   // Hide camera button by default
-  this.toolManager.hideCameraButton();
+  // this.toolManager.hideCameraButton();
+  //
+  // var self = this;
+  //
+  // this.boardDetectionActionManager = new ActionMessenger(gameClient, '/game/' + GAME_ID + '/board_detection', function(message) {
+  //   self.receiveAction(message);
+  // });
+  // this.boardDetectionActionManager.connect();
+  //
+  // this.toolManager.on('startBoardCapture', function(e) {
+  //   var size = parseInt(self.getPatternDimension());
+  //   var origin_x = board.getViewPortCoordinates()[0];
+  //   var origin_y = board.getViewPortCoordinates()[1];
+  //
+  //   self.addAction({
+  //         actionType: "submitBoardDetectionGeometryAction",
+  //         uid: generateActionId(),
+  //         origin_x: origin_x,
+  //         origin_y: origin_y,
+  //         width: board.getViewPortSize()[0],
+  //         height: board.getViewPortSize()[1],
+  //         pattern_size: self.getPatternSize(),
+  //         pattern_dimension: size});
+  //
+  //   self.board.displayCapturePattern = true;
+  //
+  //   self.toolBars.hideStartCaptureButton();
+  // });
+  //
+  // this.toolManager.on('stopBoardCapture', function(e) {
+  //   var action = {actionType: "finishBoardDetectionAction", uid: generateActionId() };
+  //   self.addAction(action);
+  // });
+  //
+  // this.toolManager.on('openCamera', function(e) {
+  //   self.toolBars.hideCameraButton();
+  //   var width = parseInt(self.board.canvas.width * 0.9);
+  //   var height = parseInt(self.board.canvas.height * 0.9);
+  //   self.camera.open(width, height);
+  //   self.addAction({actionType: "initializeBoardDetectionAction", uid: generateActionId()}, null, true, true);
+  // });
 
-  var self = this;
-
-  this.boardDetectionActionManager = new ActionMessenger(gameClient, '/game/' + GAME_ID + '/board_detection', function(message) {
-    self.receiveAction(message);
-  });
-  this.boardDetectionActionManager.connect();
-
-  $(this.toolManager).on('startBoardCapture', function(e) {
-    var size = parseInt(self.getPatternDimension());
-    var origin_x = board.getViewPortCoordinates()[0];
-    var origin_y = board.getViewPortCoordinates()[1];
-
-    self.addAction({
-          actionType: "submitBoardDetectionGeometryAction",
-          uid: generateActionId(),
-          origin_x: origin_x,
-          origin_y: origin_y,
-          width: board.getViewPortSize()[0],
-          height: board.getViewPortSize()[1],
-          pattern_size: self.getPatternSize(),
-          pattern_dimension: size});
-
-    self.board.displayCapturePattern = true;
-
-    self.toolBars.hideStartCaptureButton();
-  });
-
-  $(this.toolManager).on('stopBoardCapture', function(e) {
-    var action = {actionType: "finishBoardDetectionAction", uid: generateActionId() };
-    self.addAction(action);
-  });
-
-  $(this.toolManager).on('openCamera', function(e) {
-    self.toolBars.hideCameraButton();
-    var width = parseInt(self.board.canvas.width * 0.9);
-    var height = parseInt(self.board.canvas.height * 0.9);
-    self.camera.open(width, height);
-    self.addAction({actionType: "initializeBoardDetectionAction", uid: generateActionId()}, null, true, true);
-  });
-
-  $(this.camera).on('capture', function(e) {
-    self.addAction({actionType: "captureBoardDetectionImageAction", uid: generateActionId(), image_data: e.image_data, image_orientation: e.image_orientation}, null, true, true);
-  });
-
-  $(this.camera).on('close', function(e) {
-    var action = {actionType: "finishBoardDetectionAction", uid: generateActionId() };
-    self.addAction(action);
-  });
-
-  $(this.camera).on('supportedChanged', function() {
-    self.enableCameraButton();
-  });
+  // $(this.camera).on('capture', function(e) {
+  //   self.addAction({actionType: "captureBoardDetectionImageAction", uid: generateActionId(), image_data: e.image_data, image_orientation: e.image_orientation}, null, true, true);
+  // });
+  //
+  // $(this.camera).on('close', function(e) {
+  //   var action = {actionType: "finishBoardDetectionAction", uid: generateActionId() };
+  //   self.addAction(action);
+  // });
+  //
+  // $(this.camera).on('supportedChanged', function() {
+  //   self.enableCameraButton();
+  // });
 
   this.enableCameraButton();
 }
 
 _.extend(BoardDetectionManager.prototype, {
   enableCameraButton: function() {
-    if (this.camera.supported()) {
-      this.toolManager.showCameraButton();
-    }
+    // if (this.camera.supported()) {
+    //   this.toolManager.showCameraButton();
+    // }
   },
 
   initializeAction: function(action) {

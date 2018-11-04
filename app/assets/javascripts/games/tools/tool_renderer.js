@@ -2,22 +2,25 @@
 function ToolRenderer(tools) {
   this.tools = tools;
   this.options = null;
-  this.container = null;
-  this.optionContainer = null;
+  this.element = null;
+  this.toolMenu = null;
+  //this.optionContainer = null;
 }
 
 _.extend(ToolRenderer.prototype, {
 
   render: function() {
 
-    if (this.container == null) {
-      this.container = $("<div />")
-        .attr("id", "tool_menu")
-        .appendTo("#game_board_container");
+    if (this.element === null) {
+      const container = document.getElementById("game_board_container");
+      this.element = document.createElement("div");
+      container.appendChild(this.element);
 
-      this.container.toolMenu({tools: this.tools});
+      this.toolMenu = VUE_COMPONENTS.install(this.element, VUE_COMPONENTS.BoardToolMenu, {}, {toolsInput: this.tools});
+
+
     } else {
-      this.container.toolMenu("refresh");
+      //this.container.toolMenu("refresh");
     }
   },
 
@@ -27,27 +30,11 @@ _.extend(ToolRenderer.prototype, {
   },
 
   toggleDisplay: function() {
-    this.container.toggle();
-
-    if (this.options && this.options.length) {
-      this.optionContainer.toggle();
-    }
+    this.toolMenu.$refs.component.toggleDisplay();
   },
 
   renderOptions: function() {
-    var rawOpts = [];
-
-    this.options.each(function(o) { rawOpts.push(o); }, this);
-
-    if (this.optionContainer == null) {
-      this.optionContainer = $("<div />")
-        .attr("id", "tool_option_menu")
-        .appendTo("#game_board_container");
-
-      this.optionContainer.toolOptionMenu({toolOptions: rawOpts});
-    } else {
-      this.optionContainer.toolOptionMenu("setOptions", rawOpts);
-    }
+    this.toolMenu.$refs.component.updateOptions(this.options);
   }
 
 });

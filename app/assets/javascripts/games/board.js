@@ -93,7 +93,7 @@ function Board(canvas, cameraApi) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
   });
 
-  $(this.initiative).on('changed', function(e, evt) {
+  this.initiative.on('changed', function(e, evt) {
     self.addAction({actionType: "updateInitiativeAction", initiative: evt.initiative, uid: generateActionId()}, null, true);
   });
 

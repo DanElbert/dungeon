@@ -14,21 +14,26 @@ _.extend(MainMenu.prototype, {
 
   render: function() {
     if (!this.container) {
-      this.container = $("<div id='main_menu' />")
-          .appendTo("#game_board_container");
+      const boardContainer = document.getElementById("game_board_container");
+      this.container = document.createElement("div");
+      this.container.id = "main_menu";
+      boardContainer.appendChild(this.container);
     }
 
-    this.container.empty();
+    while (this.container.firstChild) this.container.removeChild(this.container.firstChild);
 
-    var self = this;
+    const self = this;
 
-    _.each(this.buttons, function(b) {
-      $("<button />")
-          .addClass("btn btn-secondary btn-sm")
-          .text(b.name)
-          .click(function() { b.handler.call(self); })
-          .appendTo(this.container);
-    }, this);
+    for (let b of this.buttons) {
+      const anchor = document.createElement("button");
+      anchor.className = "btn btn-secondary btn-sm";
+      anchor.innerText = b.name;
+      this.container.appendChild(anchor);
+
+      anchor.addEventListener("click", function(e) {
+        b.handler.call(self);
+      });
+    }
 
   },
 
@@ -41,10 +46,7 @@ _.extend(MainMenu.prototype, {
   },
 
   getInitiativeContainer: function() {
-    if (this.initiativeContainer == null) {
-      this.initiativeContainer = $("<div />").appendTo("#game_board_container");
-    }
-    return this.initiativeContainer;
+    return document.getElementById("game_board_container");
   }
 
 });

@@ -130,7 +130,7 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
     this.super.enable.apply(this);
     this.setCursor('none');
     var self = this;
-    this.board.event_manager.bind('click.' + this.eventNamespace(), function(mapEvt) {
+    this.board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();

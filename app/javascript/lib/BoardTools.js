@@ -10,6 +10,7 @@ class ToolMenuItem {
     this.children = options.children;
     this.handler = options.handler;
     this.type = _.has(options, "type") ? options.type : "button";
+    this.active = false;
 
     _.each(this.children, function(c) {c.parent = this;}, this);
   }
@@ -37,7 +38,7 @@ class ToolMenuGroup extends ToolMenuItem {
       children = options;
       options = {};
     }
-    _.extend(options, {children: children, type: "mainButton"});
+    _.extend(options, {children: children, type: "group"});
     super(name, options);
   }
 }

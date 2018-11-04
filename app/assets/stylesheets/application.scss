@@ -8,26 +8,12 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require image-picker
- *= require jquery-ui/dialog
- *= require jquery-ui/sortable
- *= require spectrum
  */
 
-//@import "bootstrap-sprockets";
-@import "spacelab_variables";
 
-$secondary: $gray-700;
-$font-size-base: 0.9rem;
-
-@import "bootstrap";
-@import "spacelab_bootswatch";
-@import "jquery.ui.overrides";
 @import "font-awesome-sprockets";
 @import "font-awesome";
 @import "games";
-@import "tools";
-@import "initiative";
 @import "flash_messages";
 @import "typeahead-bootstrap";
 
@@ -95,7 +81,7 @@ ul.game-list {
 
   .timestamp {
     font-size: 0.75rem;
-    color: $gray-500;
+    color: #bbbbbb;
   }
 
   .controls {

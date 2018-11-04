@@ -11,7 +11,7 @@ function BackgroundLayer(board) {
 
   this.canvas = document.createElement("canvas");
   this.canvas.className = 'background';
-  $(board.canvas).before($(this.canvas));
+  board.canvas.parentElement.insertBefore(this.canvas, board.canvas);
 
   this.imageCache = board.imageCache;
   this.context = this.canvas.getContext('2d');

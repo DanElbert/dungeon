@@ -6,7 +6,7 @@ function Tool(manager) {
   this.buildOptions();
   this.optionsChanged();
   var self = this;
-  $(this.options).on('changed', function(e) {
+  this.options.on('changed', function(e) {
     self.optionsChanged();
   });
 }
@@ -21,9 +21,9 @@ _.extend(Tool.prototype, {
     return [p[0]>>0, p[1]>>0];
   },
   setCursor: function(s) {
-    $(this.board.canvas).css('cursor', s);
+    this.board.canvas.style.cursor = s;
   },
   clearCursor: function() {
-    $(this.board.canvas).css('cursor', 'auto');
+    this.board.canvas.style.cursor = "auto";
   }
 });

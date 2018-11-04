@@ -1,5 +1,4 @@
 //= require ./fullscreen
-//= require ./initiative
 //= require ./initiative_manager
 //= require ./animation
 //= require ./drawing_objects

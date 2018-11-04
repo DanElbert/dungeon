@@ -1,4 +1,4 @@
-window.toggleDungeonFullscreen = (function($) {
+window.toggleDungeonFullscreen = (function() {
 
   function fullscreenAvailable() {
     return document.fullscreenEnabled ||
@@ -49,4 +49,4 @@ window.toggleDungeonFullscreen = (function($) {
     }
   }
 
-})(jQuery);
+})();

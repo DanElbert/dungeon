@@ -1,10 +1,11 @@
 
-function ImageCache() {
-  this.images = {};
-}
+class ImageCache extends Eventer {
+  constructor() {
+    super();
+    this.images = {};
+  }
 
-_.extend(ImageCache.prototype, {
-  addImages: function(images) {
+  addImages(images) {
     images = Object.prototype.toString.apply( images ) === '[object Array]' ? images : [images];
 
     for ( var i = 0; i < images.length; i++ ) {
@@ -13,14 +14,14 @@ _.extend(ImageCache.prototype, {
 
       this.addImage(image.url);
     }
-  },
+  }
 
-  addImage: function(url, callback) {
+  addImage(url, callback) {
     var self = this;
     if (!this.images[url]) {
 
       var imageData = {image: new Image(), loaded: false, callbacks: []};
-      
+
       if (callback) {
         imageData.callbacks.push(callback);
       }
@@ -30,16 +31,16 @@ _.extend(ImageCache.prototype, {
         for (let c of imageData.callbacks) {
           c(imageData.image);
         }
-        $(self).trigger("imageloaded");
+        self.trigger("imageloaded");
       };
 
       imageData.image.src = url;
       this.images[url] = imageData;
     }
-  },
+  }
 
   // callback will only be called if image not immidiately available
-  getImage: function(url, callback) {
+  getImage(url, callback) {
     var imageData = this.images[url];
 
     if (imageData && imageData.loaded) {
@@ -49,9 +50,9 @@ _.extend(ImageCache.prototype, {
       return null;
     } else {
       if (callback) {
-       imageData.callbacks.push(callback); 
+        imageData.callbacks.push(callback);
       }
       return null;
     }
   }
-});
+}

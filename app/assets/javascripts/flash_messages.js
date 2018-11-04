@@ -5,6 +5,7 @@ var flashMessageTypeMap = {
 };
 
 function flashMessage(flashType, message) {
+  return;
 
   var timeoutIdContainer = {};
 

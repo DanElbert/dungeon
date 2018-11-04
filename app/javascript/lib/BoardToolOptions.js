@@ -1,37 +1,32 @@
 import Eventer from "./Eventer";
 
-// ToolOptions is a collection of options, indexed by name and held in a sorted array
-// Raises an event any time any value of an option changes
-class ToolOptions extends Eventer{
+class ToolOptions extends Eventer {
   constructor() {
     super();
-    this.options = new Map();
-    this._version = 0;
+    this.options = [];
   }
 
   get length() {
-    return this._version && this.options.size;
+    return this.options.length;
   }
 
   add(opt) {
     if (!opt.name)
       throw "Options must have names";
 
-    this._version += 1;
-    this.options.set(opt.name, opt);
+    this.options.push(opt);
   }
 
   get(name) {
-    return this._version && this.options.get(name);
+    return this.options.find(o => o.name === name) || null;
   }
 
-  each(iterator, context) {
-    _.each(this.sorted, iterator, context);
-  }
+  // each(iterator, context) {
+  //   _.each(this.options, iterator, context);
+  // }
 
   clear() {
-    this._version += 1;
-    this.options.clear();
+    this.options = [];
   }
 }
 
