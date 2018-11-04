@@ -30,11 +30,11 @@ _.extend(ToolRenderer.prototype, {
   },
 
   toggleDisplay: function() {
-    this.toolMenu.$refs.component.toggleDisplay();
+    this.toolMenu.toggleDisplay();
   },
 
   renderOptions: function() {
-    this.toolMenu.$refs.component.updateOptions(this.options);
+    this.toolMenu.updateOptions(this.options);
   }
 
 });

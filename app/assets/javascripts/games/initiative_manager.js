@@ -7,7 +7,7 @@ class InitiativeManager extends Eventer {
 
     this.element = document.createElement("div");
     this.container.appendChild(this.element);
-    this.initiative = VUE_COMPONENTS.install(this.element, VUE_COMPONENTS.Initiative).$refs.component;
+    this.initiative = VUE_COMPONENTS.install(this.element, VUE_COMPONENTS.Initiative);
   }
 
   toggleDisplay() {

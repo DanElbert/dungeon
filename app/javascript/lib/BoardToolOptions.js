@@ -21,10 +21,6 @@ class ToolOptions extends Eventer {
     return this.options.find(o => o.name === name) || null;
   }
 
-  // each(iterator, context) {
-  //   _.each(this.options, iterator, context);
-  // }
-
   clear() {
     this.options = [];
   }

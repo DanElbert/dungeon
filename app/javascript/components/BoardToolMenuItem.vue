@@ -1,5 +1,5 @@
 <template>
-  <div :class="itemClass" @mouseenter="handleMouseenter" @mouseleave="handleMouseleave" @click="handleClick" ref="item">
+  <div :class="itemClass" @mouseenter="handleMouseenter" @mouseleave="handleMouseleave" @click="handleClick" ref="item" v-tooltip :data-original-title="tool.tooltip" data-placement="right">
     <i :class="activeTool.glyph"></i>
 
     <div class="submenu-wrapper" v-if="submenuOpen" :style="submenuWrapperStyle" ref="submenuWrapper">
@@ -98,6 +98,7 @@
         this.submenuOpen = false;
       }
     },
+
 
     components: {
       BoardToolMenuSubmenuItem

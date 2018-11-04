@@ -13,6 +13,7 @@ import { ToolMenuItem, ToolMenuGroup, ZoomMenuItem, CheckMenuItem } from "../lib
 import ToolOptions from "../lib/BoardToolOptions";
 import Eventer from "../lib/Eventer";
 import { Vector2, TransformMatrix, Rectangle, Geometry } from "../lib/geometry";
+import "../lib/Directives";
 
 import AppColorPicker from "../components/AppColorPicker";
 import AppImagePicker from "../components/AppImagePicker";
@@ -48,7 +49,8 @@ function installComponent(element, component, opts, attrs) {
     render: createElement => createElement(component, { props: attrs, ref: 'component' })
   });
 
-  return new Vue(vmOptions);
+  const vm = new Vue(vmOptions);
+  return vm.$refs.component;
 }
 
 window.VUE_COMPONENTS = {

@@ -1,5 +1,5 @@
 <template>
-  <div :class="subitemClasses" @mouseenter="hovered = true" @mouseleave="hovered = false" @click="handleClick">
+  <div :class="subitemClasses" @mouseenter="hovered = true" @mouseleave="hovered = false" @click="handleClick" v-tooltip :data-original-title="tool.tooltip" data-placement="right">
     <template v-if="tool.type === 'zoom'">
       <select v-model="internalValue" class="form-control">
         <option v-for="i in zoomSelectItems" :key="i.value" :value="i.value">{{i.label}}</option>
