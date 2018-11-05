@@ -1,7 +1,9 @@
 <template>
   <div>
-    <option-dropdown v-bind="option.value" :list="availableSizes">
-      <div ></div>
+    <option-dropdown v-model="option.value" :list="availableSizes">
+      <div class="line-container" slot-scope="{ item }">
+        <div class="line" :style="{height: item.height + 'px' }"></div>
+      </div>
     </option-dropdown>
   </div>
 </template>
@@ -22,7 +24,7 @@
 
         let maxSize = -1;
         let minSize = 99999;
-        for (let s of thie.option.sizes) {
+        for (let s of this.option.sizes) {
           if (s > maxSize) maxSize = s;
           if (s < minSize) minSize = s;
         }
@@ -43,6 +45,15 @@
 
 <style lang="scss" scoped>
 
+  .line-container {
+    display: flex;
+    height: 100%;
+    align-items: center;
 
+    .line {
+      width: 100%;
+      background-color: black;
+    }
+  }
 
 </style>

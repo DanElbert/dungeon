@@ -1,6 +1,6 @@
 <template>
   <div>
-    Option!!
+    <input type="text" v-model="option.value" />
   </div>
 </template>
 

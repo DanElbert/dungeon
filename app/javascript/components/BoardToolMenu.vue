@@ -44,7 +44,7 @@
         tools: this.toolsInput,
         visible: true,
         options: null,
-        updatingOptions: false
+        wasExternalOptionUpdate: false
       };
     },
 
@@ -60,9 +60,8 @@
       },
 
       updateOptions(opts) {
-        this.updatingOptions = true;
+        this.wasExternalOptionUpdate = true;
         this.options = opts;
-        this.updatingOptions = false;
       },
 
       optionComponent(opt) {
@@ -96,7 +95,9 @@
     mounted() {
       this.$watch("options",
         function(newVal, oldVal){
-          if (!this.updatingOptions) {
+          if (this.wasExternalOptionUpdate) {
+            this.wasExternalOptionUpdate = false;
+          } else {
             this.options.trigger("changed");
           }
         },

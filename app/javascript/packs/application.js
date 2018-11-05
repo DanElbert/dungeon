@@ -19,6 +19,7 @@ import AppColorPicker from "../components/AppColorPicker";
 import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
 import Initiative from "../components/Initiative";
+import InitiativeData from "../lib/InitiativeData";
 
 
 window.ToolMenuItem = ToolMenuItem;
@@ -27,6 +28,7 @@ window.ZoomMenuItem = ZoomMenuItem;
 window.CheckMenuItem = CheckMenuItem;
 
 window.ToolOptions = ToolOptions;
+window.InitiativeData = InitiativeData;
 
 window.Vector2 = Vector2;
 window.Rectangle = Rectangle;

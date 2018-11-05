@@ -1,13 +1,18 @@
+
 class InitiativeManager extends Eventer {
   constructor(board, init_url) {
     super();
     this.board = board;
     this.container = this.board.mainMenu.getInitiativeContainer();
+    this.data = new InitiativeData();
 
+    this.data.on("changed", () => {
+      this.trigger("changed", { initiative: this.data.initiatives });
+    });
 
     this.element = document.createElement("div");
     this.container.appendChild(this.element);
-    this.initiative = VUE_COMPONENTS.install(this.element, VUE_COMPONENTS.Initiative);
+    this.initiative = VUE_COMPONENTS.install(this.element, VUE_COMPONENTS.Initiative, {}, { initiativeData: this.data });
   }
 
   toggleDisplay() {
@@ -15,14 +20,7 @@ class InitiativeManager extends Eventer {
   }
 
   update(data) {
-    //this.initiative.initiative("update", data);
-  }
-
-  triggerChanged(data) {
-    // data = data || this.initiative.initiative("data");
-    // $(this).trigger('changed', {
-    //   initiative: data
-    // });
+    this.initiative.updateInitiative(data);
   }
 }
 
