@@ -102,6 +102,14 @@ class Rectangle {
     );
   }
 
+  shrink(v) {
+    return new Rectangle(
+      this.topLeft().translate(v, v),
+      this.width() - (v * 2),
+      this.height() - (v * 2)
+    );
+  }
+
   roundValues() {
     return new Rectangle(
       new Vector2(Math.floor(this.left()), Math.floor(this.top())),

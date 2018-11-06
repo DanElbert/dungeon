@@ -51,6 +51,16 @@ class Vector2 {
     var out = m.pointMultiply([this.x, this.y, 1]);
     return new Vector2(out[0], out[1]);
   }
+
+  confineTo(rect) {
+    let cX = Math.max(rect.left(), this.x);
+    let cY = Math.max(rect.top(), this.y);
+
+    cX = Math.min(rect.right(), cX);
+    cY = Math.min(rect.bottom(), cY);
+
+    return new Vector2(cX, cY);
+  }
 }
 
 

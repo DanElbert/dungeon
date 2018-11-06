@@ -96,7 +96,7 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
 
     this.board.event_manager.on('keydown.TokenTool', function(mapEvt) {
 
-      if (self.editingToken && (mapEvt.key === 8 || mapEvt.key === 46)) {
+      if (self.editingToken && (mapEvt.key === "Backspace" || mapEvt.key === "Delete")) {
         self.delete();
       }
 

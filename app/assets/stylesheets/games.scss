@@ -3,8 +3,14 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 
+body.game {
+  height: 100vh;
+}
+
 #game_board_container {
   position: relative;
+  height: 100%;
+  overflow: hidden;
 
   canvas, div.background {
     position: absolute;

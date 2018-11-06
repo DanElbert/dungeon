@@ -19,13 +19,11 @@
   <%= yield :header %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body class="game">
 
 <%= render :partial => 'layouts/flash_message' %>
 
-<div class="container-fluid" style="padding: 0;">
-  <%= yield %>
-</div>
+<%= yield %>
 
 <div id="dialog_container"></div>
 

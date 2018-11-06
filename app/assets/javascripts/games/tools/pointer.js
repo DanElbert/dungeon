@@ -66,7 +66,7 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
     });
 
     board.event_manager.on('keydown.Pointer', function(mapEvt) {
-      if (self.selected_template && (mapEvt.key == 8 || mapEvt.key == 46)) {
+      if (self.selected_template && (mapEvt.key == "Backspace" || mapEvt.key == "Delete")) {
         self.removeTemplate(self.selected_template);
         self.selected_template = null;
       }

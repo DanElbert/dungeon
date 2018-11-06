@@ -99,8 +99,8 @@ function Board(canvas, cameraApi) {
 
   this.setCanvasSize = function(width, height, pixelRatio) {
 
-    this.canvas.width = width * pixelRatio;
-    this.canvas.height = height * pixelRatio;
+    this.canvas.width = Math.floor(width * pixelRatio);
+    this.canvas.height = Math.floor(height * pixelRatio);
     this.canvas.style.width = width.toString() + "px";
     this.canvas.style.height = height.toString() + "px";
     this.pixelRatio = pixelRatio;

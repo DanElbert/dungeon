@@ -33,12 +33,12 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
     });
 
     this.board.event_manager.on('keydown.GlobalShortCuts', function(mapEvt) {
-      if (mapEvt.key == 90 && mapEvt.isCtrl) {
+      if (mapEvt.key == "z" && mapEvt.isCtrl) {
         // ctrl-z
         self.board.undo();
       }
 
-      if (mapEvt.key == 83) {
+      if (mapEvt.key == "s") {
         // s key
         if (self.stickyViewPort && self.stickyKeyReleased === true) {
           self.revertViewport();
@@ -50,14 +50,14 @@ GlobalShortCuts.prototype = _.extend(GlobalShortCuts.prototype, Tool.prototype, 
         }
       }
 
-      if (mapEvt.key == 70) {
+      if (mapEvt.key == "f") {
         self.board.toggleFullscreen();
       }
     });
 
     this.board.event_manager.on('keyup.GlobalShortCuts', function(mapEvt) {
       // s key
-      if (mapEvt.key == 83 && self.stickyViewPort) {
+      if (mapEvt.key == "s" && self.stickyViewPort) {
         if ((new Date() - self.stickyStart) > 1000) {
           self.revertViewport();
         } else {

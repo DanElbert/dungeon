@@ -1,32 +1,42 @@
 <template>
-  <app-popup ref="popup" title="Initiative">
-    <div>
-      <table class="table table-sm">
-        <tr>
-          <th>Name</th>
-          <th>Initiative</th>
-          <th></th>
-        </tr>
-        <tr>
-          <td>
-            <input class="form-control" type="text" v-model="newInitiative.name" ref="nameInput" />
-          </td>
-          <td>
-            <input class="form-control" type="number" v-model="newInitiative.value" />
-          </td>
-          <td>
-            <button class="btn btn-primary" @click="addNewInitiative">Add</button>
-          </td>
-        </tr>
-        <tr v-for="i in init.initiatives">
-          <td>{{i.name}}</td>
-          <td>{{i.value}}</td>
-        </tr>
-      </table>
-      <button @click="sort" class="btn btn-secondary">Sort</button>
-      <button @click="clear" class="btn btn-secondary">Clear</button>
-      <button @click="toggleViewMode" class="btn btn-secondary">View Mode</button>
+  <app-popup class="initiative" ref="popup" title="Initiative">
+    <div class="form-row">
+      <div class="col-6">
+        <label>Name</label>
+      </div>
+      <div class="col-3">
+        <label>Initiative</label>
+      </div>
     </div>
+
+    <div class="form-row">
+      <div class="col-6">
+        <input class="form-control form-control-sm" type="text" v-model="newInitiative.name" ref="nameInput" />
+      </div>
+      <div class="col-3">
+        <input class="form-control form-control-sm" type="number" v-model="newInitiative.value" />
+      </div>
+      <div class="col-3">
+        <button class="btn btn-primary btn-sm" @click="addNewInitiative">Add</button>
+      </div>
+    </div>
+
+    <draggable class="mt-3 mb-3" v-model="init.initiatives">
+      <div class="initiative-item form-row" v-for="i in init.initiatives">
+        <div class="col-9">
+          <span class="btn btn-primary">{{i.name}}</span>
+        </div>
+        <div class="col-3">
+          <span class="btn btn-primary">{{i.value}}</span>
+        </div>
+      </div>
+    </draggable>
+
+
+    <button @click="sort" class="btn btn-secondary btn-sm">Sort</button>
+    <button @click="clear" class="btn btn-secondary btn-sm">Clear</button>
+    <button @click="toggleViewMode" class="btn btn-secondary btn-sm">View Mode</button>
+
   </app-popup>
 </template>
 
@@ -119,5 +129,15 @@
 </script>
 
 <style lang="scss" scoped>
+
+  .initiative {
+    width: 18rem;
+  }
+
+  .initiative-item {
+    .btn {
+      width: 100%;
+    }
+  }
 
 </style>

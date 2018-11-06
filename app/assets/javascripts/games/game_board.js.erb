@@ -50,9 +50,9 @@ window.requestAnimFrame = (function () {
 function setCanvasSize() {
   // Set game board size
   //var b = document.getElementById("game_board_container");
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-  game_board.setCanvasSize(width, height - 5, PIXEL_RATIO);
+  var width = Math.floor(window.innerWidth);
+  var height = Math.floor(window.innerHeight);
+  game_board.setCanvasSize(width, height, PIXEL_RATIO);
 }
 
 function draw_game() {

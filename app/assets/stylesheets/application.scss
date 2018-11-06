@@ -39,22 +39,6 @@ div.thumbnail {
   width: 150px;
 }
 
-.modal.modeless {
-  overflow: hidden;
-  top: 15px;
-  right: 15px;
-  left: auto;
-  bottom: auto;
-  z-index: 8000;
-
-  .modal-header {
-    cursor: move;
-  }
-
-  .modal-dialog {
-    margin: 0;
-  }
-}
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
