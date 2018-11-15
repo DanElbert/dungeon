@@ -5,10 +5,11 @@
     "bootstrap.native": "^2.0.24",
     "underscore": "^1.9.1",
     "vue": "^2.5.17",
+    "vue-bootstrap-typeahead": "^0.2.6",
     "vue-color": "^2.7.0",
     "vue-loader": "^15.4.2",
-    "vue-template-compiler": "^2.5.17",
-    "vuedraggable": "^2.16.0"
+    "vue-slicksort": "^1.1.1",
+    "vue-template-compiler": "^2.5.17"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.1.10"

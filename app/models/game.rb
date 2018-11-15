@@ -49,6 +49,7 @@ class Game < ApplicationRecord
         :is_owner => is_owner(options[:current_user_id]),
         :board => board.as_json(),
         :initiative => initiatives.to_a.map { |i| {:name => i.name, :value => i.value} },
+        :initiative_names => initiative_histories.order(use_count: :desc).pluck(:name),
         :campaign_images => campaign.campaign_images.to_a.map(&:as_json),
         :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters
     }

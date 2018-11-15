@@ -3,7 +3,6 @@
 import "../styles";
 
 import Vue from "vue";
-import draggable from 'vuedraggable'
 import _ from "underscore";
 import bsn from "bootstrap.native/dist/bootstrap-native-v4";
 
@@ -39,7 +38,6 @@ window.Eventer = Eventer;
 window.BootstrapNative = bsn;
 window.Api = Api;
 
-Vue.component('draggable', draggable);
 
 function installComponent(element, component, opts, attrs) {
   opts = opts || {};

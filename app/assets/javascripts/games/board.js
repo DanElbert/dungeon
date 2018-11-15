@@ -11,6 +11,7 @@ function Board(canvas, cameraApi) {
         }
       });
 
+  this.gameId = GAME_ID;
   this.invalid = true;
   this.networkDown = false;
   this.camera = cameraApi;
@@ -30,7 +31,7 @@ function Board(canvas, cameraApi) {
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
-  this.initiative = new InitiativeManager(this, INITIATIVE_URL);
+  this.initiative = new InitiativeManager(this, this.mainMenu.getInitiativeContainer());
   this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, this.gameServerClient);
 
   this.isOwner = false;
@@ -78,23 +79,16 @@ function Board(canvas, cameraApi) {
     }
   });
 
-  this.addActionManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/add_action', function(message) {
+  this.addActionManager = new ActionMessenger(this.gameServerClient, '/game/' + this.gameId + '/add_action', function(message) {
     self.handleAddActionMessage(message);
   });
 
-  this.initiativeActionManager = new ActionMessenger(this.gameServerClient, '/game/' + GAME_ID + '/update_initiative', function(message) {
-    self.handleAddActionMessage(message);
-  });
+
 
   this.addActionManager.connect();
-  this.initiativeActionManager.connect();
 
   this.event_manager.on('mousemove', function(mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
-  });
-
-  this.initiative.on('changed', function(evt) {
-    self.addAction({actionType: "updateInitiativeAction", initiative: evt.initiative, uid: generateActionId()}, null, true);
   });
 
   this.setCanvasSize = function(width, height, pixelRatio) {
@@ -159,22 +153,13 @@ function Board(canvas, cameraApi) {
     this.addActionManager.sendActionMessage(action);
   };
 
-  this.sendInitiativeMessage = function(action) {
-    this.initiativeActionManager.sendActionMessage(action);
-  };
-
   this.addAction = function(action, undoAction, broadcastAction) {
     action = attachActionMethods(action);
 
     this.pending_action_queue.push(action);
 
     if (broadcastAction) {
-      if (action.actionType == 'updateInitiativeAction')
-      {
-        this.sendInitiativeMessage(action.serialize());
-      } else {
-        this.sendActionMessage(action.serialize());
-      }
+      this.sendActionMessage(action.serialize());
     }
 
     if (undoAction) {
@@ -211,7 +196,7 @@ function Board(canvas, cameraApi) {
       return;
     }
 
-    this.initiative.update(data.initiative);
+    this.initiative.update(data.initiative, data.initiative_names);
     this.board_data = data.board;
     this.isOwner = data.is_owner;
     this.campaign_images = data.campaign_images;

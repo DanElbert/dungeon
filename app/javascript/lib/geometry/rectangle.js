@@ -22,6 +22,13 @@ class Rectangle {
     return this.width() === 0 || this.height() === 0;
   }
 
+  containsPoint(point) {
+    return point.x >= this.left() &&
+      point.x <= this.right() &&
+      point.y >= this.top() &&
+      point.y <= this.bottom();
+  }
+
   // Returns the portion of this rectangle inside the given rec
   clipTo(otherRec) {
     var left = Math.max(this.left(), otherRec.left());

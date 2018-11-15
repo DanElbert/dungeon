@@ -2,3 +2,18 @@
 @import "variables";
 @import "~bootstrap/scss/bootstrap";
 @import "spacelab_bootswatch";
+
+
+.initiative-item {
+
+  .btn {
+    @extend .btn-primary;
+  }
+
+  &.initiative-item-delete {
+    .btn {
+      @extend .btn-danger;
+      text-decoration: line-through;
+    }
+  }
+}
