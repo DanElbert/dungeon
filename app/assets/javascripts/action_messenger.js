@@ -5,6 +5,7 @@ function ActionMessenger(client, url, callback) {
   this.sentMessageIds = [];
   this.callback = callback;
   this.subscription = null;
+  this.ignoreReflections = true;
 }
 
 _.extend(ActionMessenger.prototype, {
@@ -27,7 +28,9 @@ _.extend(ActionMessenger.prototype, {
 
   sendActionMessage: function(action) {
     if (this.subscription == null) throw "Messenger is not connected";
-    this.sentMessageIds.push(action.uid);
+    if (this.ignoreReflections) {
+      this.sentMessageIds.push(action.uid);
+    }
     // Publish action, omitting any privateData
     this.client.publish(this.url, action);
   }

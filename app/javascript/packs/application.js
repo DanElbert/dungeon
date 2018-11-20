@@ -1,12 +1,15 @@
 /* eslint no-console:0 */
 
 import "../styles";
+import 'vue-resize/dist/vue-resize.css'
 
 import Vue from "vue";
 import _ from "underscore";
 import bsn from "bootstrap.native/dist/bootstrap-native-v4";
+import TWEEN from '@tweenjs/tween.js';
 
 window._ = _;
+window.TWEEN = TWEEN;
 
 import Api from "../lib/Api";
 import { ToolMenuItem, ToolMenuGroup, ZoomMenuItem, CheckMenuItem } from "../lib/BoardTools";
@@ -15,6 +18,7 @@ import Eventer from "../lib/Eventer";
 import { Vector2, TransformMatrix, Rectangle, Geometry } from "../lib/geometry";
 import "../lib/Directives";
 
+import VueResize from 'vue-resize'
 import AppColorPicker from "../components/AppColorPicker";
 import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
@@ -37,6 +41,13 @@ window.Geometry = Geometry;
 window.Eventer = Eventer;
 window.BootstrapNative = bsn;
 window.Api = Api;
+
+// Setup global animation loop
+function animate () {
+  TWEEN.update();
+  requestAnimationFrame(animate);
+}
+animate();
 
 
 function installComponent(element, component, opts, attrs) {
@@ -63,6 +74,8 @@ window.VUE_COMPONENTS = {
   BoardToolMenu,
   Initiative
 };
+
+Vue.use(VueResize);
 
 
 document.addEventListener('DOMContentLoaded', () => {

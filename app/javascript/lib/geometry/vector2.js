@@ -22,6 +22,12 @@ class Vector2 {
     return new Vector2(this.x - point.x, this.y - point.y);
   }
 
+  distance(point) {
+    const a = this.x - point.x;
+    const b = this.y - point.y;
+    return Math.sqrt((a ** 2) + (b ** 2));
+  }
+
   translate(x, y) {
     return new Vector2(this.x + x, this.y + y);
   }

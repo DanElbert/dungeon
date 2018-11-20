@@ -11,6 +11,7 @@ class InitiativeManager extends Eventer {
     this.initiativeActionManager = new ActionMessenger(this.board.gameServerClient, '/game/' + this.board.gameId + '/update_initiative', message => {
       this.handleAddActionMessage(message);
     });
+    this.initiativeActionManager.ignoreReflections = false;
     this.initiativeActionManager.connect();
 
     this.element = document.createElement("div");
@@ -41,7 +42,7 @@ class InitiativeManager extends Eventer {
 
   update(initiatives, names) {
     if (initiatives !== null) {
-      this.initiative.updateInitiative(initiatives);
+      this.data.update(initiatives);
     }
     if (names !== null) {
       this.initiative.updateNames(names);

@@ -20,13 +20,23 @@ module GameServer
       end
 
       game.transaction do
-        game.initiatives.destroy_all
-
-        action_data['initiative'].each_with_index do |init, i|
-          game.initiatives << Initiative.from_message(init, i)
+        sort_idx = 0
+        init_attrs = action_data['initiative'].map do |i|
+          id = i['id'].to_i
+          id = nil if id <= 0
+          {
+              id: id,
+              name: i['name'],
+              value: i['value'],
+              sort_order: sort_idx += 1,
+              _destroy: i['_destroy']
+          }
         end
 
+        game.update!({initiatives_attributes: init_attrs})
+        game.initiatives.reload
         game.update_initiative_counts(game.initiatives.map { |i| i.name })
+        action_data['initiative'] = game.initiatives.as_json
       end
     end
   end

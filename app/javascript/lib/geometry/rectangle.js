@@ -6,6 +6,11 @@ class Rectangle {
     this._height = height;
   }
 
+  static fromElement(el) {
+    const bounds = el.getBoundingClientRect();
+    return new Rectangle(new Vector2(bounds.left, bounds.top), bounds.width, bounds.height);
+  }
+
   overlaps(otherRec) {
     // If one rectangle is on left side of other
     if (this.left() > otherRec.right() || otherRec.left() > this.right())

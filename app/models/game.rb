@@ -9,6 +9,7 @@ class Game < ApplicationRecord
   belongs_to :campaign
 
   accepts_nested_attributes_for :board, update_only: true
+  accepts_nested_attributes_for :initiatives, allow_destroy: true
 
   validates :board, :presence => true
   validates :name, :presence => true
@@ -48,7 +49,7 @@ class Game < ApplicationRecord
         :status => status,
         :is_owner => is_owner(options[:current_user_id]),
         :board => board.as_json(),
-        :initiative => initiatives.to_a.map { |i| {:name => i.name, :value => i.value} },
+        :initiative => initiatives.to_a.map { |i| {:id => i.id, :name => i.name, :value => i.value} },
         :initiative_names => initiative_histories.order(use_count: :desc).pluck(:name),
         :campaign_images => campaign.campaign_images.to_a.map(&:as_json),
         :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters

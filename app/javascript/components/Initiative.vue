@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <initiative-list class="mt-3 mb-2" helper-class="init-drag-helper" append-to="#initiative-popup" v-model="init.initiatives">
+    <initiative-list class="mt-3 mb-2" append-to="#initiative-popup" :initiative-data="initiativeData">
     </initiative-list>
 
 
@@ -66,7 +66,6 @@
     data() {
       return {
         init: this.initiativeData,
-        wasExternalInitUpdate: false,
         newInitiative: initiativeFactory(),
         isViewMode: false,
         names: []
@@ -77,7 +76,7 @@
       typeaheadNames() {
         const usedNames = this.init.initiatives.map(i => i.name);
         return this.names.filter(n => usedNames.indexOf(n) === -1);
-      }
+      },
     },
 
     methods: {
@@ -109,36 +108,19 @@
         this.isViewMode = !this.isViewMode;
       },
 
-      updateInitiative(newData) {
-        this.wasExternalInitUpdate = true;
-        this.init.update(newData);
-      },
-
       updateNames(newNames) {
         this.names = newNames || [];
       },
 
       addNewInitiative() {
         if (this.newInitiative.name && this.newInitiative.value !== "") {
-          this.init.add(this.newInitiative);
+          this.init.add(this.newInitiative.name, this.newInitiative.value);
           this.newInitiative = initiativeFactory();
           this.$nextTick(() => {
             //this.$refs.nameInput.focus();
           });
         }
       }
-    },
-
-    mounted() {
-      this.$watch("init",
-        function() {
-          if (this.wasExternalInitUpdate) {
-            this.wasExternalInitUpdate = false;
-          } else {
-            this.init.trigger("changed");
-          }
-        },
-        {deep: true});
     },
 
     components: {

@@ -12,7 +12,7 @@ class Initiative < ApplicationRecord
   def as_json(options={})
     opts = {
         :root => false,
-        :only => [:name, :value]
+        :only => [:id, :name, :value]
     }
 
     super(opts)
