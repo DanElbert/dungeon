@@ -20,10 +20,14 @@ module GameServer
       end
 
       game.transaction do
+        names = []
+        new_names = []
         sort_idx = 0
         init_attrs = action_data['initiative'].map do |i|
           id = i['id'].to_i
           id = nil if id <= 0
+          names << i['name'] unless i['_destroy'] || id.nil?
+          new_names << i['name'] if id.nil?
           {
               id: id,
               name: i['name'],
@@ -34,8 +38,12 @@ module GameServer
         end
 
         game.update!({initiatives_attributes: init_attrs})
+        InitiativeHistory.where(game_id: game.id, names: names).update_all("use_count = use_count + 1")
+        new_names.each do |name|
+          InitiativeHistory.create!(game: game, name: name, use_count: 1)
+        end
+
         game.initiatives.reload
-        game.update_initiative_counts(game.initiatives.map { |i| i.name })
         action_data['initiative'] = game.initiatives.as_json
       end
     end
