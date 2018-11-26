@@ -1,7 +1,10 @@
 <template>
   <div class="initiative-item btn-group" :class="{'initiative-item-delete': deleting}">
-    <span class="btn flex-grow-1">{{item.name}}</span>
-    <span class="btn value">{{item.value}}</span>
+    <span class="name btn flex-grow-1">{{value.name}}</span>
+    <span @click="startEdit" v-if="!editMode" class="btn value">{{value.value}}</span>
+    <span v-else>
+      <input v-model="editValue" v-catch-external-click="saveEdit" @keyup.enter="saveEdit">
+    </span>
   </div>
 </template>
 
@@ -9,7 +12,7 @@
 
   export default {
     props: {
-      item: {
+      value: {
         type: Object,
         required: true
       },
@@ -19,6 +22,40 @@
         required: false,
         default: false
       }
+    },
+
+    data() {
+      return {
+        editMode: false,
+        editValue: null
+      }
+    },
+
+    methods: {
+      startEdit() {
+        this.editValue = this.value.value;
+        this.editMode = true;
+      },
+
+      saveEdit() {
+        if (this.editValue !== this.value) {
+          this.$emit("input", {id: this.value.id, name: this.value.name, value: this.editValue});
+        }
+        this.editMode = false;
+        this.editValue = null;
+      },
+
+      attachEventHandlers() {
+
+      },
+
+      detachEventHandlers() {
+
+      }
+    },
+
+    beforeDestroy() {
+      this.detachEventHandlers();
     }
   }
 

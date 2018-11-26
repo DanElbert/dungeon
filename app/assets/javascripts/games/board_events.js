@@ -237,10 +237,10 @@ class BoardEvents extends Eventer {
     this.canvas.addEventListener("mousedown", function(evt) {
       self.board.invalidate();
       var canvasCoords;
-      if (evt.which == 1) { // left button
+      if (evt.button == 0) { // left button
         canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
         self.cursorDownHandler(canvasCoords, self.leftMouseState);
-      } else if (evt.which == 3) { // right button
+      } else if (evt.button == 2) { // right button
         canvasCoords = self.getCanvasCoordinates(evt.pageX, evt.pageY);
         self.cursorDownHandler(canvasCoords, self.rightMouseState);
       }
@@ -255,9 +255,9 @@ class BoardEvents extends Eventer {
 
     this.canvas.addEventListener('mouseup', function(evt) {
       self.board.invalidate();
-      if (evt.which == 1) { // left button
+      if (evt.button == 0) { // left button
         self.cursorUpHandler(self.leftMouseState);
-      } else if (evt.which == 3) { // right button
+      } else if (evt.button == 2) { // right button
         self.cursorUpHandler(self.rightMouseState);
       }
       evt.preventDefault();

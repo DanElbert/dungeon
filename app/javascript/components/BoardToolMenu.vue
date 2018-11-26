@@ -9,7 +9,7 @@
 
     <div v-if="visible && options" class="option-menu">
       <div v-for="o in optionList" :key="o.name" class="option-item">
-        <component :is="optionComponent(o)" :option="o"></component>
+        <component :is="optionComponent(o)" :option="o" class="option-item-control"></component>
       </div>
     </div>
 
@@ -147,8 +147,12 @@
   }
 
   .option-item {
-    border: 1px solid black;
     margin: 3px;
+    height: 2rem;
+  }
+
+  .option-item-control {
+    height: 100%;
   }
 
 </style>

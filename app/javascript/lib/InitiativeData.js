@@ -30,6 +30,15 @@ class InitiativeData extends Eventer {
     }
   }
 
+  updateItem(id, name, value) {
+    const idx = this.initiatives.findIndex(i => i.id === id);
+    if (idx >= 0) {
+      this.initiatives[idx].name = name;
+      this.initiatives[idx].value = value;
+      this.trigger("changed");
+    }
+  }
+
   move(id, newIdx) {
     const oldIdx = this.initiatives.findIndex(i => i.id === id);
     if (oldIdx >= 0 && oldIdx !== newIdx) {
@@ -44,7 +53,7 @@ class InitiativeData extends Eventer {
   }
 
   clear() {
-    this.initiatives = [];
+    this.initiatives.forEach(i => i._destroy = true);
     this.trigger("changed");
   }
 

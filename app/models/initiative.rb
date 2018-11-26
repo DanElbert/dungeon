@@ -1,5 +1,5 @@
 class Initiative < ApplicationRecord
-  belongs_to :game
+  belongs_to :game, :inverse_of => :initiatives
 
   def self.from_message(json, index)
     init = Initiative.new

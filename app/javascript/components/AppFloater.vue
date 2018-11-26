@@ -197,6 +197,10 @@
       },
 
       handleMousedown(e) {
+        if (e.button !== 0) {
+          return;
+        }
+
         if (this.dragSelector !== null) {
           let matches = false;
           let el = e.target;
@@ -213,6 +217,7 @@
       },
 
       handleMousemove(e) {
+        e.preventDefault();
         const mousePoint = new Vector2(e.clientX, e.clientY);
         this.performDragMove(mousePoint);
       },

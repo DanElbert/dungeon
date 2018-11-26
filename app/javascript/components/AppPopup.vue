@@ -80,7 +80,7 @@
 <style lang="scss" scoped>
 
   .modal {
-    overflow: hidden;
+    overflow: visible;
     right: auto;
     bottom: auto;
     z-index: 8000;

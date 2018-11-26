@@ -4,7 +4,9 @@ import bsn from "bootstrap.native/dist/bootstrap-native-v4";
 
 Vue.directive("tooltip", {
   bind(el, binding) {
-    new bsn.Tooltip(el);
+    new bsn.Tooltip(el, {
+      delay: 10
+    });
   },
 
   update(el, binding) {

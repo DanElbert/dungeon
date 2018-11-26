@@ -4,12 +4,13 @@ class Game < ApplicationRecord
 
   has_one :board, :dependent => :destroy
   has_many :board_detection_sessions, :dependent => :destroy
-  has_many :initiatives, -> { order(:sort_order) }, :dependent => :destroy
-  has_many :initiative_histories, dependent: :destroy
+  has_many :initiatives, -> { order(:sort_order) }, :dependent => :destroy, :inverse_of => :game
+  has_many :initiative_histories, -> { order(use_count: :desc) }, dependent: :destroy, :inverse_of => :game
   belongs_to :campaign
 
   accepts_nested_attributes_for :board, update_only: true
   accepts_nested_attributes_for :initiatives, allow_destroy: true
+  accepts_nested_attributes_for :initiative_histories
 
   validates :board, :presence => true
   validates :name, :presence => true

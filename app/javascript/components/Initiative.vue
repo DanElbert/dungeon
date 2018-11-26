@@ -11,19 +11,20 @@
 
     <div class="form-row" v-if="!isViewMode">
       <div class="col-6">
-        <vue-bootstrap-typeahead
-            size="sm"
+        <app-auto-complete
             v-model="newInitiative.name"
-            :data="typeaheadNames"
+            :searchOptions="typeaheadNames"
             ref="nameInput"
-            @keyup.enter="addNewInitiative"
-        />
+            input-class="form-control-sm"
+            @optionSelected="nameSelected"
+        >
+        </app-auto-complete>
       </div>
       <div class="col-3">
-        <input class="form-control form-control-sm" type="number" v-model="newInitiative.value" @keyup.enter="addNewInitiative" />
+        <input class="form-control form-control-sm" type="number" ref="valueInput" v-model="newInitiative.value" @keyup.enter="addNewInitiative" />
       </div>
       <div class="col-3">
-        <button class="btn btn-primary btn-sm" @click="addNewInitiative">Add</button>
+        <button class="btn btn-secondary btn-sm" @click="addNewInitiative">Add</button>
       </div>
     </div>
 
@@ -43,10 +44,10 @@
 
 <script>
 
+  import AppAutoComplete from "./AppAutocomplete";
   import AppPopup from "./AppPopup";
   import InitiativeList from "./InitiativeList";
   import InitiativeListItem from "./InitiativeListItem";
-  import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 
   function initiativeFactory() {
     return {
@@ -108,6 +109,10 @@
         this.isViewMode = !this.isViewMode;
       },
 
+      nameSelected() {
+        this.$refs.valueInput.focus();
+      },
+
       updateNames(newNames) {
         this.names = newNames || [];
       },
@@ -116,18 +121,16 @@
         if (this.newInitiative.name && this.newInitiative.value !== "") {
           this.init.add(this.newInitiative.name, this.newInitiative.value);
           this.newInitiative = initiativeFactory();
-          this.$nextTick(() => {
-            //this.$refs.nameInput.focus();
-          });
+          this.$refs.nameInput.focus();
         }
       }
     },
 
     components: {
+      AppAutoComplete,
       AppPopup,
       InitiativeList,
-      InitiativeListItem,
-      VueBootstrapTypeahead
+      InitiativeListItem
     }
   }
 

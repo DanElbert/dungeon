@@ -36,7 +36,8 @@
       subitemClasses() {
         return {
           subitem: true,
-          hovered: this.hovered
+          hovered: this.hovered,
+          selected: this.tool.selected
         }
       },
 
@@ -103,6 +104,11 @@
 
     &.hovered {
       border: $border-width solid $gray-200;
+    }
+
+    &.selected {
+      color: $white;
+      background-color: $primary;
     }
   }
 

@@ -11,7 +11,7 @@ module GameServer
       # Assume that should_handle_message has already been called and this will always work
       game_id = CHANNEL_REGEX.match(message['channel'])[1].to_i
 
-      game = Game.includes(:board, :initiatives).find(game_id)
+      game = Game.includes(:board, :initiatives, :initiative_histories).find(game_id)
       action_data = message['data']
 
       unless game
@@ -20,14 +20,13 @@ module GameServer
       end
 
       game.transaction do
-        names = []
-        new_names = []
+        extant_init_ids = game.initiatives.map(&:id)
         sort_idx = 0
+
         init_attrs = action_data['initiative'].map do |i|
           id = i['id'].to_i
           id = nil if id <= 0
-          names << i['name'] unless i['_destroy'] || id.nil?
-          new_names << i['name'] if id.nil?
+          id = -1 if !id.nil? && !extant_init_ids.include?(id)
           {
               id: id,
               name: i['name'],
@@ -37,14 +36,25 @@ module GameServer
           }
         end
 
-        game.update!({initiatives_attributes: init_attrs})
-        InitiativeHistory.where(game_id: game.id, names: names).update_all("use_count = use_count + 1")
-        new_names.each do |name|
-          InitiativeHistory.create!(game: game, name: name, use_count: 1)
+        init_attrs.reject! { |i| i[:id] == -1}
+
+        history_attrs = init_attrs.select { |i| !i[:_destroy] }.map { |i| i[:name] }.map do |n|
+          extant_history = game.initiative_histories.detect { |h| h.name.downcase == n.downcase }
+          {
+              id: extant_history ? extant_history.id : nil,
+              name: n,
+              use_count: extant_history ? extant_history.use_count + 1 : 1
+          }
         end
 
+
+        game.update!({initiatives_attributes: init_attrs, initiative_histories_attributes: history_attrs})
+
         game.initiatives.reload
+        game.initiative_histories.reload
         action_data['initiative'] = game.initiatives.as_json
+        action_data['initiative_names'] = game.initiative_histories.map(&:name)
+
       end
     end
   end

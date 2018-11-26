@@ -29,7 +29,13 @@ module GameServer
         return
       end
 
-      handle(message)
+      begin
+        handle(message)
+      rescue StandardError => e
+        Rails.logger.error "#{e.class}: #{e.message}\n    #{(e.backtrace || []).join("\n    ")}"
+        message['error'] = e.to_s
+        raise
+      end
     end
   end
 end

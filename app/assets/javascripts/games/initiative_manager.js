@@ -22,10 +22,7 @@ class InitiativeManager extends Eventer {
   handleAddActionMessage(message) {
     switch (message.actionType) {
       case "updateInitiativeAction":
-        this.update(message.initiative);
-        break;
-      case "updateInitiativeNamesAction":
-        // update names
+        this.update(message.initiative, message.initiative_names);
         break;
     }
   }

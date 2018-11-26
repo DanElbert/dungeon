@@ -1,7 +1,7 @@
 <template>
 
   <div class="option-dropdown">
-    <div v-if="selectedItem" class="item-wrapper" @click="itemClick(selectedItem.value)">
+    <div v-if="selectedItem" class="dropdown-wrapper" @click="itemClick(selectedItem.value)">
       <slot :item="selectedItem">
         {{ selectedItem.name }}
       </slot>
@@ -42,14 +42,6 @@
       selectedItem() {
         return this.list.find(i => i.value === this.value) || null;
       },
-
-      // externalClickHandler() {
-      //   if (this.isOpen) {
-      //     return () => { return this.externalClick(); }
-      //   } else {
-      //     return null;
-      //   }
-      // }
     },
 
     methods: {
@@ -77,18 +69,24 @@
 
   .option-dropdown {
     position: relative;
+    height: 100%;
   }
 
   .popup {
     position: absolute;
-    top: 0;
+    top: 2.25rem;
     left: 0;
     background-color: $white;
   }
 
+  .dropdown-wrapper {
+    height: 100%;
+    width: 3rem;
+  }
+
   .item-wrapper {
-    width: 4rem;
-    height: 4rem;
+    height: 2rem;
+    width: 3rem;
   }
 
 </style>

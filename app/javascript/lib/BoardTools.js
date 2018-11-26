@@ -41,6 +41,13 @@ class ToolMenuGroup extends ToolMenuItem {
     _.extend(options, {children: children, type: "group"});
     super(name, options);
   }
+
+  unselect() {
+    super.unselect();
+    if (this.children) {
+      this.children.forEach(c => c.unselect());
+    }
+  }
 }
 
 class ZoomMenuItem extends ToolMenuItem {
