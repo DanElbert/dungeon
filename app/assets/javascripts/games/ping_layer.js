@@ -21,7 +21,7 @@ _.extend(PingLayer.prototype, {
     var livingPings = [];
 
     _.each(this.pings, function(ping) {
-      ping.draw(drawing);
+      ping.draw(drawing, this.board);
 
       if (ping.finished) {
         this.board.animations.end("ping_" + ping.id);
@@ -45,12 +45,15 @@ function Ping(point, color, id, maxSize, pulseCount, duration) {
   this.animation = new Animation(duration, EasingFactory.pulse(pulseCount));
 }
 _.extend(Ping.prototype, {
-  draw: function(drawing) {
+  draw: function(drawing, board) {
     var animationPoint = this.animation.calculateEasing();
     this.finished = this.animation.finished;
 
+    var pingSize = this.maxSize / board.getZoom();
+    var lineSize = 3 / board.getZoom();
+
     //drawing.drawCircle(this.point[0], this.point[1], this.maxSize * (1 - animationPoint), 3, this.color);
-    drawing.drawCircle(this.point[0], this.point[1], (this.maxSize *0.25) * animationPoint, 3, this.color);
-    drawing.drawCircle(this.point[0], this.point[1], this.maxSize * animationPoint, 3, this.color);
+    drawing.drawCircle(this.point[0], this.point[1], (pingSize *0.25) * animationPoint, lineSize, this.color);
+    drawing.drawCircle(this.point[0], this.point[1], pingSize * animationPoint, lineSize, this.color);
   }
 });

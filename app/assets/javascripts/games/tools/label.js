@@ -14,7 +14,7 @@ LabelTool.prototype = _.extend(LabelTool.prototype, Tool.prototype, {
   buildOptions: function() {
     this.options.add({type: "color", name: "color", label: "Color", value: "#000000"});
     this.options.add({type: "color", name: "backgroundColor", label: "Background Color", value: "#FFFFFF"});
-    this.options.add({type: "size", name: "fontSize", label: "Size", sizes: [12, 18, 24, 30, 40, 50], value: 24});
+    this.options.add({type: "size", name: "fontSize", label: "Size", sizes: [16, 25, 36, 49, 64, 81, 100], value: 25});
     this.options.add({type: "text", name: "text", label: "Text", value: ""});
   },
 
