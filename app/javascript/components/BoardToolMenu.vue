@@ -50,7 +50,7 @@
 
     computed: {
       optionList() {
-        return this.options.options;
+        return this.options.options.filter(o => o.visible !== false);
       }
     },
 
