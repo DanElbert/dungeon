@@ -33,8 +33,8 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, DrawingColle
     if (this.imageJson === null && this.imageJsonFetching === false) {
       this.imageJsonFetching = true;
       var self = this;
-      $.getJSON(this.url, function(data) {
 
+      window.Api.getJson(this.url).then(data => {
         var calculateFallbackLevel = function(tileSize, width, height) {
           var dim = Math.max(width, height);
           var lvl = 1;
@@ -58,8 +58,6 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, DrawingColle
         if (fallback !== null) {
           hasFallbackImage(fallback);
         }
-
-        //console.log(data);
       });
     }
 

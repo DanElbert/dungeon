@@ -1,5 +1,5 @@
 <template>
-  <div :class="itemClass" @mouseenter="handleMouseenter" @mouseleave="handleMouseleave" @click="handleClick" v-touch-tap="handleTap" ref="item" v-tooltip :data-original-title="tool.tooltip" data-placement="right">
+  <div :class="itemClass" @mouseenter="handleMouseenter" @mouseleave="handleMouseleave" @click="handleClick" v-touch-tap="handleTap" ref="item" :data-tooltip="tool.tooltip">
     <i :class="activeTool.glyph"></i>
 
     <div class="submenu-wrapper" v-if="submenuOpen" :style="submenuWrapperStyle" ref="submenuWrapper">
@@ -26,6 +26,12 @@
       submenuOpen: {
         required: true,
         type: Boolean
+      },
+
+      submenuMinY: {
+        required: false,
+        type: Number,
+        default: 10
       }
     },
 
@@ -50,7 +56,9 @@
           item: true,
           selected: this.tool.selected,
           hovered: this.hovered,
-          active: this.tool.active
+          active: this.tool.active,
+          tooltip: this.tool.tooltip,
+          'is-tooltip-right': true
         }
       },
 
@@ -111,7 +119,7 @@
             const item = this.$refs.item;
             const wrapper = this.$refs.submenuWrapper;
             const itemBox = item.getBoundingClientRect();
-            const headRoom = itemBox.top;
+            const headRoom = itemBox.top - this.submenuMinY;
             const half = (wrapper.scrollHeight / 2) - (itemBox.height / 2);
 
             this.submenuPosition = new Vector2(item.offsetWidth, -Math.min(headRoom, half));

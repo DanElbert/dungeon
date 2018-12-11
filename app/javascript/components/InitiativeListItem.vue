@@ -7,7 +7,7 @@
       <span @click="startEdit" class="button value">{{value.value}}</span>
     </p>
     <p class="control" v-else>
-      <input class="input value" type="number" v-model="editValue" v-catch-external-click="saveEdit" @keyup.enter="saveEdit">
+      <input class="input value" type="number" v-model="editValue" ref="editInput" v-catch-external-click="saveEdit" @keyup.enter="saveEdit">
     </p>
   </div>
 </template>
@@ -39,6 +39,9 @@
       startEdit() {
         this.editValue = this.value.value;
         this.editMode = true;
+        this.$nextTick(() => {
+          this.$refs.editInput.focus();
+        })
       },
 
       saveEdit() {

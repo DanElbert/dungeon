@@ -15,13 +15,13 @@
             v-model="newInitiative.name"
             :searchOptions="typeaheadNames"
             ref="nameInput"
-            input-class="input"
+            input-class="is-small"
             @optionSelected="nameSelected"
         >
         </app-auto-complete>
       </div>
       <div class="column is-one-quarter">
-        <input class="input" type="number" ref="valueInput" v-model="newInitiative.value" @keyup.enter="addNewInitiative" />
+        <input class="input is-small" type="number" ref="valueInput" v-model="newInitiative.value" @keyup.enter="addNewInitiative" />
       </div>
       <div class="column is-one-quarter">
         <button class="button is-secondary is-small" @click="addNewInitiative">Add</button>

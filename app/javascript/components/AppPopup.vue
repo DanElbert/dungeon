@@ -75,12 +75,12 @@
     bottom: auto;
     z-index: 8000;
 
-    .modal-header {
+    .modal-card-head {
       cursor: move;
     }
 
-    .modal-dialog {
-      margin: 0;
+    .modal-card {
+      overflow: visible;
     }
   }
 

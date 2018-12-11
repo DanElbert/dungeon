@@ -1,6 +1,10 @@
 <template>
-  <div>
-    <option-dropdown v-model="option.value" :list="availableSizes"></option-dropdown>
+  <div class="select is-small">
+    <select v-model="option.value">
+      <option v-for="s in availableSizes" :key="s.value" :value="s.value">
+        {{ s.name }}
+      </option>
+    </select>
   </div>
 </template>
 

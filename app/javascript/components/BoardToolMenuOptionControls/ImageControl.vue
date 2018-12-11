@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <option-dropdown v-model="selectedValue" :list="availableImages"></option-dropdown>
+  <div class="select is-small">
+    <select v-model="selectedValue">
+      <option v-for="i in availableImages" :key="i.value" :value="i.value">{{i.name}}</option>
+    </select>
   </div>
 </template>
 

@@ -15,6 +15,12 @@ $addColors: (
 
 $colors: map-merge($colors, $addColors);
 
+$modal-card-head-padding: 16px;
+
+$panel-block-active-border-left-color: $primary;
+$panel-block-active-color: $primary;
+$panel-block-active-icon-color: $primary;
+
 
 
 // TODO: remove everything below

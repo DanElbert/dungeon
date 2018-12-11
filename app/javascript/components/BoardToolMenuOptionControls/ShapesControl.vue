@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="select is-small">
     <select v-model="option.value">
       <option v-for="s in shapes" :key="s.value" :value="s.value">{{s.name}}</option>
     </select>

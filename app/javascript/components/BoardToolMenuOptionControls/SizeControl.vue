@@ -2,6 +2,9 @@
   <div>
     <option-dropdown v-model="option.value" :list="availableSizes">
       <div class="line-container" slot-scope="{ item }">
+        <span class="line-label">
+          {{ item.name }}
+        </span>
         <div class="line" :style="{height: item.height + 'px' }"></div>
       </div>
     </option-dropdown>
@@ -11,6 +14,7 @@
 <script>
 
   import BoardToolMenuOptionMixin from "../../lib/BoardToolMenuOptionMixin";
+  import { feetToText } from "../../lib/Formatting";
 
   export default {
     mixins: [
@@ -32,11 +36,20 @@
         return this.option.sizes.map(s => {
           const dist = (s - minSize) / (maxSize - minSize);
           return {
-            name: '',
+            name: this.pixelsToMeasure(s),
             value: s,
             height: (minHeight + ((maxHeight - minHeight) * dist))>>0
           }
         });
+      }
+    },
+
+    methods: {
+      pixelsToMeasure(px) {
+        // 50 px = 5 ft.  10px = 1 ft.
+        let feet = px / 10;
+
+        return feetToText(feet);
       }
     }
   }
@@ -45,6 +58,8 @@
 
 <style lang="scss" scoped>
 
+  @import "../../styles/variables";
+
   .line-container {
     display: flex;
     height: 100%;
@@ -52,7 +67,14 @@
 
     .line {
       width: 100%;
-      background-color: black;
+      background-color: $grey-light;
+    }
+
+    .line-label {
+      position: absolute;
+      display: block;
+      text-align: center;
+      color: $black;
     }
   }
 

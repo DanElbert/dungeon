@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="text" v-model="option.value" />
+    <input type="text" class="input is-small" v-model="option.value" />
   </div>
 </template>
 

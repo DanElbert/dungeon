@@ -17,12 +17,14 @@
         @keydown="keydownHandler"
     />
     <div v-show="isListOpen">
-      <ul class="list-group">
-        <li v-for="(opt, idx) in options" :key="optionKey(opt)" class="list-group-item" :class="optionClass(idx)" @mousemove="optionMousemove(idx)" @click="optionClick(opt)">
-          <b class="opt_value">{{ optionValue(opt) }}</b>
-          <span v-if="optionLabel(opt) !== null" class="opt_label" v-html="optionLabel(opt)"></span>
-        </li>
-      </ul>
+      <div class="panel">
+        <a href="#" v-for="(opt, idx) in options" :key="optionKey(opt)" class="panel-block" :class="optionClass(idx)" @mousemove="optionMousemove(idx)" @click.prevent="optionClick(opt)">
+          <span class="panel-icon">
+            <i class="fas fa-angle-double-right"></i>
+          </span>
+          <span class="opt_value">{{ optionValue(opt) }}</span>
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -82,7 +84,7 @@
 
     computed: {
       finalInputClass() {
-        let cls = ['form-control'];
+        let cls = ['input'];
         if (this.inputClass === null) {
           return cls;
         } else if (Array.isArray(this.inputClass)) {
@@ -104,7 +106,7 @@
       },
 
       optionClass(idx) {
-        return this.activeListIndex === idx ? 'active' : '';
+        return this.activeListIndex === idx ? 'is-active' : '';
       },
 
       optionClick(opt) {
@@ -215,18 +217,24 @@
 
 <style lang="scss" scoped>
 
+  @import "../styles/variables";
 
-  $labelLineHeight: 0.8rem;
-
-  input.input {
-    &::placeholder {
-      //color: $grey-darker;
-    }
+  .panel {
+    position: absolute;
+    z-index: 8005;
+    background-color: $white;
+    width: 60%;
   }
 
-  .list-group {
+  .option-list {
+    display: block;
     position: absolute;
     width: 100%;
+    z-index: 8010;
+    background-color: $grey-light;
+  }
+
+  .option-item {
 
   }
 

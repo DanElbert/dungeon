@@ -1,10 +1,10 @@
 <template>
-  <div :class="subitemClasses" @mouseenter="hovered = true" @mouseleave="hovered = false" @click="handleClick" v-touch-tap="handleTap" v-tooltip :data-original-title="tool.tooltip" data-placement="right">
-    <template v-if="tool.type === 'zoom'">
-      <select v-model="internalValue" class="form-control">
+  <div :class="subitemClasses" @mouseenter="hovered = true" @mouseleave="hovered = false" @click="handleClick" v-touch-tap="handleTap" :data-tooltip="tool.tooltip" data-placement="right">
+    <div v-if="tool.type === 'zoom'" class="select is-fullwidth">
+      <select v-model="internalValue">
         <option v-for="i in zoomSelectItems" :key="i.value" :value="i.value">{{i.label}}</option>
       </select>
-    </template>
+    </div>
     <template v-else>
       <i :class="tool.glyph"></i>
       <i class="far" :class="{'fa-check-square': tool.value, 'fa-square': !tool.value}" v-if="tool.type === 'checkbox'"></i>
@@ -37,7 +37,9 @@
         return {
           subitem: true,
           hovered: this.hovered,
-          selected: this.tool.selected
+          selected: this.tool.selected,
+          tooltip: this.tool.tooltip,
+          'is-tooltip-right': true
         }
       },
 

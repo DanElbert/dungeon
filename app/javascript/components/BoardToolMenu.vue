@@ -3,12 +3,12 @@
 
     <div v-if="visible" class="tool-menu">
       <div v-for="(t, idx) in tools" :key="t.name">
-        <board-tool-menu-item :tool="t" :submenu-open="idx === openSubmenuIdx" @submenu-open="openSubmenuIdx = idx" @submenu-close="openSubmenuIdx = null" ></board-tool-menu-item>
+        <board-tool-menu-item :tool="t" :submenu-min-y="60" :submenu-open="idx === openSubmenuIdx" @submenu-open="openSubmenuIdx = idx" @submenu-close="openSubmenuIdx = null" ></board-tool-menu-item>
       </div>
     </div>
 
     <div v-if="visible && options" class="option-menu">
-      <div v-for="o in optionList" :key="o.name" class="option-item">
+      <div v-for="o in optionList" :key="o.name" class="option-item tooltip is-tooltip-top" :data-tooltip="o.label">
         <component :is="optionComponent(o)" :option="o" class="option-item-control"></component>
       </div>
     </div>
@@ -131,7 +131,7 @@
 
   .tool-menu {
     position: absolute;
-    top: 40px;
+    top: 60px;
     left: 32px;
     z-index: 200;
     box-shadow: $toolpanel_shadow;
@@ -140,7 +140,7 @@
   .option-menu {
     position: absolute;
     display: flex;
-    top: 40px;
+    top: 30px;
     left: 150px;
     z-index: 100;
     box-shadow: $toolpanel_shadow;
@@ -150,6 +150,15 @@
   .option-item {
     margin: 3px;
     height: 2rem;
+
+    &:not(:first-child) {
+      border-left: 1px solid $grey-light;
+      padding-left: 6px;
+    }
+
+    &:last-child {
+      padding-right: 3px;
+    }
   }
 
   .option-item-control {
