@@ -20,44 +20,48 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="/">
+      Dungeon
+    </a>
 
-<nav class="navbar navbar-fixed-top navbar-expand-md navbar-light bg-light mb-3">
-
-  <%= link_to "Dungeon", lobby_path, class: 'navbar-brand' %>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="expand navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbar-content">
-    <ul class="navbar-nav ml-auto">
-
-      <%= if_admin do %>
-        <li class="nav-item"><%= link_to "Admin", admin_path, class: 'nav-link' %></li>
-      <% end %>
-      <% if current_user %>
-        <li class="nav-item"><%= link_to "About", about_path, class: 'nav-link' %></li>
-        <li class="nav-item"><%= link_to "Profile", edit_user_path, class: 'nav-link' %></li>
-        <li class="nav-item"><%= link_to "Logout", logout_path, class: 'nav-link' %></li>
-      <% end %>
-
-    </ul>
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="dungeon-nav-menu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
   </div>
 
+  <div id="dungeon-nav-menu" class="navbar-menu">
+    <div class="navbar-end">
+
+      <%= if_admin do %>
+        <%= link_to "Admin", admin_path, class: 'navbar-item' %>
+      <% end %>
+      <% if current_user %>
+        <%= link_to "About", about_path, class: 'navbar-item' %>
+        <%= link_to "Profile", edit_user_path, class: 'navbar-item' %>
+        <%= link_to "Logout", logout_path, class: 'navbar-item' %>
+      <% end %>
+
+    </div>
+  </div>
 </nav>
+
+
 
 <%= render :partial => 'layouts/flash_message' %>
 
-<div class="container">
-  <%= yield %>
-</div>
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12">
-      <span class="float-right">&copy; 2013-2018 Dan Elbert</span>
-    </div>
+<section class="section">
+  <div class="container">
+    <%= yield %>
   </div>
-</div>
+</section>
+
+<footer class="footer has-text-right">
+  <span>&copy; 2013-2018 Dan Elbert</span>
+</footer>
 
 <div id="dialog_container"></div>
 

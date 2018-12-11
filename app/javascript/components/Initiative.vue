@@ -1,43 +1,44 @@
 <template>
   <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup">
-    <div class="form-row" v-if="!isViewMode">
-      <div class="col-6">
+    <div class="columns is-mobile is-variable is-1" v-if="!isViewMode">
+      <div class="column is-half">
         <label>Name</label>
       </div>
-      <div class="col-3">
+      <div class="column is-one-quarter">
         <label>Initiative</label>
       </div>
     </div>
 
-    <div class="form-row" v-if="!isViewMode">
-      <div class="col-6">
+    <div class="columns is-mobile is-variable is-1" v-if="!isViewMode">
+      <div class="column is-half">
         <app-auto-complete
             v-model="newInitiative.name"
             :searchOptions="typeaheadNames"
             ref="nameInput"
-            input-class="form-control-sm"
+            input-class="input"
             @optionSelected="nameSelected"
         >
         </app-auto-complete>
       </div>
-      <div class="col-3">
-        <input class="form-control form-control-sm" type="number" ref="valueInput" v-model="newInitiative.value" @keyup.enter="addNewInitiative" />
+      <div class="column is-one-quarter">
+        <input class="input" type="number" ref="valueInput" v-model="newInitiative.value" @keyup.enter="addNewInitiative" />
       </div>
-      <div class="col-3">
-        <button class="btn btn-secondary btn-sm" @click="addNewInitiative">Add</button>
+      <div class="column is-one-quarter">
+        <button class="button is-secondary is-small" @click="addNewInitiative">Add</button>
       </div>
     </div>
 
     <initiative-list class="mt-3 mb-2" append-to="#initiative-popup" :initiative-data="initiativeData">
     </initiative-list>
 
-
-    <button v-if="!isViewMode" @click="sort" class="btn btn-secondary btn-sm">Sort</button>
-    <button v-if="!isViewMode" @click="clear" class="btn btn-secondary btn-sm">Clear</button>
-    <button @click="toggleViewMode" class="btn btn-secondary btn-sm">
-      <span v-if="!isViewMode">View Mode</span>
-      <span v-else>Edit Mode</span>
-    </button>
+    <template slot="footer">
+      <button v-if="!isViewMode" @click="sort" class="button is-secondary is-small">Sort</button>
+      <button v-if="!isViewMode" @click="clear" class="button is-secondary is-small">Clear</button>
+      <button @click="toggleViewMode" class="button is-secondary is-small">
+        <span v-if="!isViewMode">View Mode</span>
+        <span v-else>Edit Mode</span>
+      </button>
+    </template>
 
   </app-popup>
 </template>
@@ -140,9 +141,18 @@
 
   .initiative {
     width: 18rem;
+
+    .column {
+      padding-top: 0.1em;
+      padding-bottom: 0.1em;
+    }
   }
 
-  >>> .init-drag-helper {
+  .initiative /deep/ .modal-card {
+      width: 18rem;
+  }
+
+  /deep/ .init-drag-helper {
     z-index: 8010;
   }
 

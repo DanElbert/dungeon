@@ -1,19 +1,23 @@
 <%= form_for(@campaign) do |f| %>
   <%= render partial: 'shared/error_list', locals: {model: @campaign} %>
 
-  <div class="form-group">
-    <%= f.label :name %>
-    <%= f.text_field :name, class: 'form-control', autofocus: true %>
+  <div class="field">
+    <%= f.label :name, class: 'label' %>
+    <div class="control">
+      <%= f.text_field :name, class: 'input', autofocus: true %>
+    </div>
   </div>
 
-  <div class="checkbox">
-    <label>
-      <%= f.check_box :use_x_letters %> Use Letters on X Axis
-    </label>
+  <div class="field">
+    <div class="control">
+      <label class="checkbox">
+        <%= f.check_box :use_x_letters %> Use Letters on X Axis
+      </label>
+    </div>
   </div>
   
 
   <div class="actions">
-    <%= f.submit class: 'btn btn-primary' %>
+    <%= f.submit class: 'button is-primary' %>
   </div>
 <% end %>

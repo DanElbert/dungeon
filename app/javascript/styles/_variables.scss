@@ -1,8 +1,33 @@
-
 @import "spacelab_variables";
+@import "~bulma/sass/utilities/initial-variables.sass";
+@import "~bulma/sass/utilities/functions.sass";
 
-$secondary: $gray-700;
-$font-size-base: 0.9rem;
+// Put color overrides here
 
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+@import "~bulma/sass/utilities/derived-variables.sass";
+
+$secondary: $black-ter;
+$secondary-invert: $white;
+
+$addColors: (
+        "secondary": ($secondary, $secondary-invert)
+);
+
+$colors: map-merge($colors, $addColors);
+
+
+
+// TODO: remove everything below
+//@import "spacelab_variables";
+
+//$secondary: $gray-700;
+//$font-size-base: 0.9rem;
+
+//@import "~bootstrap/scss/functions";
+//@import "~bootstrap/scss/variables";
+
+
+//$white: '#FFF';
+$gray-200: '#888';
+//$primary: green;
+$body-color: gray;

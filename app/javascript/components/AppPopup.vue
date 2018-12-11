@@ -1,22 +1,24 @@
 <template>
-  <app-floater class="modal" role="dialog" :start-position="startPosition" drag-selector=".modal-header">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">{{ title }}</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <slot></slot>
-        </div>
-      </div>
+  <app-floater class="modal" :class="{'is-active': isOpen}" role="dialog" :start-position="startPosition" drag-selector=".modal-card-head">
+
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">{{ title }}</p>
+        <button @click="close" class="delete" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <slot></slot>
+      </section>
+      <footer class="modal-card-foot">
+        <slot name="footer"></slot>
+      </footer>
     </div>
   </app-floater>
 </template>
 
 <script>
 
-  import bsn from "bootstrap.native/dist/bootstrap-native-v4";
   import AppFloater from "./AppFloater";
   import { Rectangle, Vector2 } from "../lib/geometry";
 
@@ -41,33 +43,21 @@
 
     methods: {
       open() {
-        this.modal.open();
+        this.isOpen = true;
       },
 
       close() {
-        this.modal.close();
+        this.isOpen = false;
       },
 
       toggle() {
-        this.modal.toggle();
+        this.isOpen = !this.isOpen;
       },
 
     },
 
     mounted() {
-      this.modal = new bsn.Modal(this.$el, {
-        backdrop: false
-      });
 
-      this.$el.addEventListener('shown.bs.modal', () => {
-        this.isOpen = true;
-        this.$emit("opened");
-      });
-
-      this.$el.addEventListener('hidden.bs.modal', () => {
-        this.isOpen = false;
-        this.$emit("closed");
-      });
     },
 
     components: {

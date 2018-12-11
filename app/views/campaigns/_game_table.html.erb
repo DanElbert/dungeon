@@ -1,16 +1,16 @@
 
 <% if games.empty? %>
 
-  <h4 class="mt-3">No <%= title %></h4>
+  <h4 class="title is-5">No <%= title %></h4>
 
 <% else %>
 
-  <h4 class="mt-3"><%= title %></h4>
+  <h4 class="title is-5"><%= title %></h4>
 
-  <ul class="list-group game-list">
+  <ul class="game-list">
     <% games.each do |game| %>
 
-      <li class="list-group-item">
+      <li class="box">
         <div class="game-label">
           <%= link_to game.name, game_path(game), class: 'name' %>
           <br />
@@ -20,14 +20,14 @@
         </div>
 
         <div class="controls">
-          <%= link_to initiative_game_path(game), class: 'btn btn-secondary', data: {toggle: 'tooltip'}, title: 'Initiative' do %>
+          <%= link_to initiative_game_path(game), class: 'button is-secondary', data: {toggle: 'tooltip'}, title: 'Initiative' do %>
             <span class="far fa-hourglass fa-fw"></span>
           <% end %>
           <%= if_owner(game) do %>
-            <%= link_to edit_game_path(game), class: 'btn btn-secondary', data: {toggle: 'tooltip'}, title: 'Edit' do %>
+            <%= link_to edit_game_path(game), class: 'button is-secondary', data: {toggle: 'tooltip'}, title: 'Edit' do %>
               <span class="far fa-edit fa-fw"></span>
             <% end %>
-            <%= link_to game_path(game), { method: :delete, class: 'btn btn-danger', title: 'Delete', data: {confirm: 'Are you sure?', toggle: 'tooltip'}} do %>
+            <%= link_to game_path(game), { method: :delete, class: 'button is-danger', title: 'Delete', data: {confirm: 'Are you sure?', toggle: 'tooltip'}} do %>
               <span class="fas fa-times fa-fw"></span>
             <% end %>
           <% end %>

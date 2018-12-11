@@ -1,29 +1,33 @@
 <%= form_for([defined?(@campaign) ? @campaign: nil, @game].compact) do |f| %>
   <%= render partial: 'shared/error_list', locals: {model: @game} %>
 
-  <div class="form-group">
-    <%= f.label :name %>
-    <%= f.text_field :name, class: 'form-control', autofocus: true %>
+  <div class="field">
+    <%= f.label :name, class: 'label' %>
+    <%= f.text_field :name, class: 'input', autofocus: true %>
   </div>
 
-  <div class="form-group">
-    <%= f.label :status %>
-    <%= f.select :status, ['active', 'hidden', 'archived'], {}, class: 'form-control' %>
+  <div class="field">
+    <%= f.label :status, class: 'label' %>
+    <div class="control">
+      <div class="select is-fullwidth">
+        <%= f.select :status, ['active', 'hidden', 'archived'], {}, class: '' %>
+      </div>
+    </div>
   </div>
 
   <%= f.fields_for :board, include_id: false do |board_form| %>
-    <div class="form-group">
-      <%= board_form.label :grid_color %>
+    <div class="field">
+      <%= board_form.label :grid_color, class: 'label' %>
       <div data-color-picker data-attributes="<%= { inputName: 'game[board_attributes][grid_color]', selectedValue: board_form.object.grid_color }.to_json %>"></div>
     </div>
 
-    <div class="form-group">
-      <%= board_form.label :background_image %>
+    <div class="field">
+      <%= board_form.label :background_image, class: 'label' %>
       <div data-image-picker data-attributes="<%= { inputName: 'game[board_attributes][background_image_id]', images: BackgroundImage.order(:filename), selectedId: board_form.object.background_image_id }.to_json %>"></div>
     </div>
   <% end %>
 
-  <%= f.submit class: 'btn btn-primary' %>
+  <%= f.submit class: 'button is-primary' %>
 <% end %>
 
 

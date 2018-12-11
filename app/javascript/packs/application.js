@@ -5,18 +5,19 @@ import 'vue-resize/dist/vue-resize.css'
 
 import Vue from "vue";
 import _ from "underscore";
-import bsn from "bootstrap.native/dist/bootstrap-native-v4";
 import TWEEN from '@tweenjs/tween.js';
 
 window._ = _;
 window.TWEEN = TWEEN;
 
 import Api from "../lib/Api";
+import "../lib/BulmaNav";
 import { ToolMenuItem, ToolMenuGroup, ZoomMenuItem, CheckMenuItem } from "../lib/BoardTools";
 import ToolOptions from "../lib/BoardToolOptions";
 import Eventer from "../lib/Eventer";
 import { Vector2, TransformMatrix, Rectangle, Geometry } from "../lib/geometry";
 import "../lib/Directives";
+import "../lib/TouchTapDirective";
 
 import VueResize from 'vue-resize'
 import AppColorPicker from "../components/AppColorPicker";
@@ -39,7 +40,6 @@ window.Rectangle = Rectangle;
 window.TransformMatrix = TransformMatrix;
 window.Geometry = Geometry;
 window.Eventer = Eventer;
-window.BootstrapNative = bsn;
 window.Api = Api;
 
 // Setup global animation loop

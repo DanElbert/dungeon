@@ -1,10 +1,14 @@
 <template>
-  <div class="initiative-item btn-group" :class="{'initiative-item-delete': deleting}">
-    <span class="name btn flex-grow-1">{{value.name}}</span>
-    <span @click="startEdit" v-if="!editMode" class="btn value">{{value.value}}</span>
-    <span v-else>
-      <input v-model="editValue" v-catch-external-click="saveEdit" @keyup.enter="saveEdit">
-    </span>
+  <div class="initiative-item field has-addons" :class="{'initiative-item-delete': deleting}">
+    <p class="control name">
+      <span class="button">{{value.name}}</span>
+    </p>
+    <p class="control" v-if="!editMode">
+      <span @click="startEdit" class="button value">{{value.value}}</span>
+    </p>
+    <p class="control" v-else>
+      <input class="input value" type="number" v-model="editValue" v-catch-external-click="saveEdit" @keyup.enter="saveEdit">
+    </p>
   </div>
 </template>
 
@@ -69,6 +73,13 @@
 
     .value {
       width: 3.5em;
+    }
+
+    .name {
+      flex-grow: 1;
+      .button {
+        width: 100%;
+      }
     }
   }
 

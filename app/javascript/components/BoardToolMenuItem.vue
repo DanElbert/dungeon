@@ -1,10 +1,10 @@
 <template>
-  <div :class="itemClass" @mouseenter="handleMouseenter" @mouseleave="handleMouseleave" @click="handleClick" ref="item" v-tooltip :data-original-title="tool.tooltip" data-placement="right">
+  <div :class="itemClass" @mouseenter="handleMouseenter" @mouseleave="handleMouseleave" @click="handleClick" v-touch-tap="handleTap" ref="item" v-tooltip :data-original-title="tool.tooltip" data-placement="right">
     <i :class="activeTool.glyph"></i>
 
     <div class="submenu-wrapper" v-if="submenuOpen" :style="submenuWrapperStyle" ref="submenuWrapper">
       <div class="submenu">
-        <board-tool-menu-submenu-item v-for="t in tool.children" :key="t.name" :tool="t">
+        <board-tool-menu-submenu-item v-for="t in tool.children" :key="t.name" :tool="t" @close="closeSubmenu">
         </board-tool-menu-submenu-item>
       </div>
     </div>
@@ -21,13 +21,17 @@
       tool: {
         required: true,
         type: Object
+      },
+
+      submenuOpen: {
+        required: true,
+        type: Boolean
       }
     },
 
     data() {
       return {
         hovered: false,
-        submenuOpen: false,
         submenuPosition: new Vector2(0, 0)
       };
     },
@@ -59,6 +63,16 @@
     },
 
     methods: {
+      handleTap() {
+        if (this.tool.handler) {
+          this.tool.handler();
+        } else if (this.submenuOpen) {
+          this.closeSubmenu();
+        } else {
+          this.openSubmenu();
+        }
+      },
+
       handleClick() {
         if (this.tool.handler) {
           this.tool.handler();
@@ -81,7 +95,18 @@
 
       openSubmenu() {
         if (!this.submenuOpen && this.tool.children && this.tool.children.length > 0) {
-          this.submenuOpen = true;
+          this.$emit("submenu-open");
+        }
+      },
+
+      closeSubmenu() {
+        this.$emit("submenu-close");
+      }
+    },
+
+    watch: {
+      submenuOpen: function(newVal, oldVal) {
+        if (newVal) {
           this.$nextTick(() => {
             const item = this.$refs.item;
             const wrapper = this.$refs.submenuWrapper;
@@ -92,13 +117,8 @@
             this.submenuPosition = new Vector2(item.offsetWidth, -Math.min(headRoom, half));
           });
         }
-      },
-
-      closeSubmenu() {
-        this.submenuOpen = false;
       }
     },
-
 
     components: {
       BoardToolMenuSubmenuItem

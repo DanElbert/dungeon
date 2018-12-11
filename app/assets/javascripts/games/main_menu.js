@@ -26,7 +26,7 @@ _.extend(MainMenu.prototype, {
 
     for (let b of this.buttons) {
       const anchor = document.createElement("button");
-      anchor.className = "btn btn-secondary btn-sm";
+      anchor.className = "button is-secondary is-small";
       anchor.innerText = b.name;
       this.container.appendChild(anchor);
 

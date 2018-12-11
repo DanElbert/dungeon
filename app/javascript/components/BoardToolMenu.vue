@@ -2,8 +2,8 @@
   <div>
 
     <div v-if="visible" class="tool-menu">
-      <div v-for="t in tools" :key="t.name">
-        <board-tool-menu-item :tool="t"></board-tool-menu-item>
+      <div v-for="(t, idx) in tools" :key="t.name">
+        <board-tool-menu-item :tool="t" :submenu-open="idx === openSubmenuIdx" @submenu-open="openSubmenuIdx = idx" @submenu-close="openSubmenuIdx = null" ></board-tool-menu-item>
       </div>
     </div>
 
@@ -44,7 +44,8 @@
         tools: this.toolsInput,
         visible: true,
         options: null,
-        wasExternalOptionUpdate: false
+        wasExternalOptionUpdate: false,
+        openSubmenuIdx: null
       };
     },
 

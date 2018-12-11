@@ -1,12 +1,11 @@
 
 import Vue from "vue";
-import bsn from "bootstrap.native/dist/bootstrap-native-v4";
 
 Vue.directive("tooltip", {
   bind(el, binding) {
-    new bsn.Tooltip(el, {
-      delay: 10
-    });
+    // new bsn.Tooltip(el, {
+    //   delay: 10
+    // });
   },
 
   update(el, binding) {
@@ -23,13 +22,13 @@ Vue.directive("tooltip", {
   }
 });
 
-const listenerKey = "__catchExternalClickList";
+const externalClickListenerKey = "__catchExternalClickList";
 
 function disableExternalClicks(el) {
-  const listener = el[listenerKey];
+  const listener = el[externalClickListenerKey];
   if (listener) {
     document.body.removeEventListener("click", listener);
-    delete el[listenerKey];
+    delete el[externalClickListenerKey];
   }
 }
 
@@ -40,7 +39,7 @@ function enableExternalClicks(el, handler) {
     }
   };
 
-  el[listenerKey] = listener;
+  el[externalClickListenerKey] = listener;
   document.body.addEventListener("click", listener);
 }
 

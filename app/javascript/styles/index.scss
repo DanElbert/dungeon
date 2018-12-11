@@ -1,19 +1,33 @@
 
 @import "variables";
-@import "~bootstrap/scss/bootstrap";
-@import "spacelab_bootswatch";
+@import "~bulma";
+@import "spacelab_overrides";
 
+html.noscroll {
+  overflow: hidden;
+}
 
 .initiative-item {
 
-  .btn {
-    @extend .btn-primary;
+  .button {
+    @extend .is-primary;
   }
 
   &.initiative-item-delete {
-    .btn {
-      @extend .btn-danger;
+    .button {
+      @extend .is-danger;
       text-decoration: line-through;
     }
   }
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance:textfield;
 }

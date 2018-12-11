@@ -1,5 +1,5 @@
 <template>
-  <div :style="floaterStyle" @mousedown="handleMousedown">
+  <div :style="floaterStyle" @mousedown="handleMousedown" @touchstart="handleTouchstart">
     <resize-observer @notify="handleResize" />
     <slot></slot>
   </div>
@@ -12,7 +12,10 @@
   const dragEventMap = {
     mousemove: "handleMousemove",
     mouseup: "handleMouseup",
-    mouseleave: "handleMouseleave"
+    mouseleave: "handleMouseleave",
+    touchmove: "handleTouchmove",
+    touchend: "handleTouchend",
+    touchcancel: "handleTouchend"
   };
 
   export default {
@@ -181,7 +184,7 @@
       attachDragEvents(mousePos) {
         for (let eventName in dragEventMap) {
           let handlerName = dragEventMap[eventName];
-          document.addEventListener(eventName, this[handlerName]);
+          document.addEventListener(eventName, this[handlerName], {passive: false});
         }
       },
 
@@ -196,21 +199,39 @@
         this.setupInitialPosition();
       },
 
+      handleTouchstart(e) {
+        if (!e.targetTouches || e.targetTouches.length !== 1) {
+          return;
+        }
+
+        if (!this.matchesDragSelector(e.target)) {
+          return;
+        }
+
+        e.preventDefault();
+        this.performDragStart(new Vector2(e.targetTouches[0].pageX, e.targetTouches[0].pageY));
+      },
+
+      handleTouchmove(e) {
+        if (!e.targetTouches || e.targetTouches.length < 1) {
+          return;
+        }
+
+        e.preventDefault();
+        this.performDragMove(new Vector2(e.targetTouches[0].pageX, e.targetTouches[0].pageY));
+      },
+
+      handleTouchend() {
+        this.performDragEnd();
+      },
+
       handleMousedown(e) {
         if (e.button !== 0) {
           return;
         }
 
-        if (this.dragSelector !== null) {
-          let matches = false;
-          let el = e.target;
-          do {
-            matches = el.matches(this.dragSelector);
-            el = el.parentElement;
-          } while (!matches && this.$el.contains(el));
-
-          if (!matches)
-            return;
+        if (!this.matchesDragSelector(e.target)) {
+          return;
         }
 
         this.performDragStart(new Vector2(e.clientX, e.clientY));
@@ -228,6 +249,20 @@
 
       handleMouseleave(e) {
         this.performDragEnd();
+      },
+
+      matchesDragSelector(el) {
+        if (this.dragSelector !== null) {
+          let matches = false;
+          do {
+            matches = el.matches(this.dragSelector);
+            el = el.parentElement;
+          } while (!matches && this.$el.contains(el));
+
+          return matches;
+        } else {
+          return true;
+        }
       },
     },
 
