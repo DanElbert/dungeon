@@ -8,6 +8,7 @@ function ImageDrawing(uid, board, url, size, position, scale, angle) {
   this.fallbackImage = null;
 
   this.transformedImage = null;
+  this.fallbackImageWriter = null;
 }
 
 ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype, {
@@ -58,8 +59,12 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
         ctx.rotate(this.angle);
         ctx.translate(-this.size.x / 2, -this.size.y / 2);
         if (this.loading) {
-          ctx.fillStyle = "#AAAAAA";
-          ctx.fillRect(0, 0, this.size.x, this.size.y);
+          if (this.fallbackImageWriter !== null) {
+            this.fallbackImageWriter(this, ctx);
+          } else {
+            ctx.fillStyle = "#AAAAAA";
+            ctx.fillRect(0, 0, this.size.x, this.size.y);
+          }
         } else {
           ctx.drawImage(imgObj, 0, 0);
         }
@@ -98,15 +103,15 @@ ImageDrawing.prototype = _.extend(ImageDrawing.prototype, BaseDrawing.prototype,
         destBox.width(),
         destBox.height());
 
-       // ctx.save();
-       // ctx.strokeStyle = 'red';
-       // ctx.lineWidth = 1;
-       // ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
-
+      //  ctx.save();
+      //  ctx.strokeStyle = 'red';
+      //  ctx.lineWidth = 1;
+      //  ctx.strokeRect(destBox.left(), destBox.top(), destBox.width(), destBox.height());
+      //
       // ctx.lineWidth = 5;
       // ctx.strokeStyle = 'green';
       // ctx.strokeRect(sourceBox.left(), sourceBox.top(), sourceBox.width(), sourceBox.height());
-       //ctx.restore();
+      //  ctx.restore();
     }
 
   },

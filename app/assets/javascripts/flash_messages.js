@@ -5,31 +5,31 @@ var flashMessageTypeMap = {
 };
 
 function flashMessage(flashType, message) {
-  return;
-
-  var timeoutIdContainer = {};
 
   if (flashMessageTypeMap[flashType]) {
     flashType = flashMessageTypeMap[flashType];
   }
 
-  var closeButton = $("<button type='button' />")
-      .addClass("close")
-      .append($("<span />").html("&times;"))
-      .bind("click.Flash", function() { $(this).parent().hide({effect: "fade", duration: 1000}); clearTimeout(timeoutIdContainer.id); });
+  const containerElement = document.getElementById("flashContainer");
+  const flash = document.createElement("div");
+  const close = document.createElement("button");
+  const content = document.createTextNode(message);
+  flash.classList.add("notification", `is-${flashType}`);
+  close.classList.add("delete");
+  flash.appendChild(close);
+  flash.appendChild(content);
+  containerElement.insertBefore(flash, containerElement.firstChild);
 
-  var $flashDiv = $("<div></div>")
-      .html(message)
-      .append(closeButton)
-      .addClass("popup")
-      .addClass("alert")
-      .addClass("alert-" + flashType)
-      .hide()
-      .appendTo("#flashContainer")
-      .show({effect: "pulsate", times: 1, duration: 1500});
+  const closeFunc = function() {
+    containerElement.removeChild(flash);
+  };
 
-  timeoutIdContainer.id = setTimeout(function() {
-    $flashDiv.unbind(".Flash");
-    $flashDiv.hide({effect: "fade", duration: 1000});
+  const timeoutId = setTimeout(function() {
+    closeFunc();
   }, 5000);
+
+  close.addEventListener("click", function() {
+    clearTimeout(timeoutId);
+    closeFunc();
+  });
 }

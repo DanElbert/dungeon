@@ -1,11 +1,10 @@
 <template>
-  <app-floater class="modal" :class="{'is-active': isOpen}" role="dialog" :start-position="startPosition" drag-selector=".modal-card-head">
+  <app-floater class="modal" :class="{'is-active': isOpen}" role="dialog" :floating="floating" :start-position="startPosition" drag-selector=".modal-card-head">
 
-    <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">{{ title }}</p>
-        <button @click="close" class="delete" aria-label="close"></button>
+        <button v-if="!alwaysOpen" @click="close" class="delete" aria-label="close"></button>
       </header>
       <section class="modal-card-body">
         <slot></slot>
@@ -27,13 +26,25 @@
       title: {
         required: true,
         type: String
+      },
+
+      floating: {
+        required: false,
+        type: Boolean,
+        default: true
+      },
+
+      alwaysOpen: {
+        required: false,
+        type: Boolean,
+        default: false
       }
     },
 
     data() {
       return {
         modal: null,
-        isOpen: false,
+        isOpen: this.alwaysOpen,
         startPosition: new Vector2(-15, 15)
       };
     },

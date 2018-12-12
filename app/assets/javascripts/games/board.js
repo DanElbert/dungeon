@@ -31,7 +31,7 @@ function Board(canvas, cameraApi) {
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
-  this.initiative = new InitiativeManager(this, this.mainMenu.getInitiativeContainer());
+  this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), this.gameServerClient, this.gameId);
   this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, this.gameServerClient);
 
   this.isOwner = false;

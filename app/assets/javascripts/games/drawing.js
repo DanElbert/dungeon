@@ -205,6 +205,15 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
   },
 
+  drawCross: function(x, y, size, lineWidth, color) {
+    var crossSize = size;
+    var lines = [
+      {start: [x - crossSize, y], end: [x + crossSize, y]},
+      {start: [x, y - crossSize], end: [x, y + crossSize]}
+    ];
+    this.drawLines(color, lineWidth, lines);
+  },
+
   drawCircleTiles: function(col, row, width, height, color, border) {
     this.context.save();
     this.context.fillStyle = color;

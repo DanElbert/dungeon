@@ -68,11 +68,13 @@
     .line {
       width: 100%;
       background-color: $grey-light;
+      opacity: 0.5;
     }
 
     .line-label {
       position: absolute;
       display: block;
+      width: 100%;
       text-align: center;
       color: $black;
     }

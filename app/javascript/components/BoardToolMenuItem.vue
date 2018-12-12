@@ -4,7 +4,7 @@
 
     <div class="submenu-wrapper" v-if="submenuOpen" :style="submenuWrapperStyle" ref="submenuWrapper">
       <div class="submenu">
-        <board-tool-menu-submenu-item v-for="t in tool.children" :key="t.name" :tool="t" @close="closeSubmenu">
+        <board-tool-menu-submenu-item v-for="t in tool.children.filter(c => c.visible !== false)" :key="t.name" :tool="t" @close="closeSubmenu">
         </board-tool-menu-submenu-item>
       </div>
     </div>
@@ -38,19 +38,13 @@
     data() {
       return {
         hovered: false,
-        submenuPosition: new Vector2(0, 0)
+        submenuPosition: new Vector2(0, 0),
+        activeToolName: null,
+        activeTool: null
       };
     },
 
     computed: {
-      activeTool() {
-        if (this.tool.type === "group") {
-          return this.tool.children.find(c => c.selected === true) || this.tool.children[0];
-        } else {
-          return this.tool;
-        }
-      },
-
       itemClass() {
         return {
           item: true,
@@ -125,7 +119,27 @@
             this.submenuPosition = new Vector2(item.offsetWidth, -Math.min(headRoom, half));
           });
         }
-      }
+      },
+    },
+
+    created() {
+      this.$watch("tool",
+        function(newTool) {
+          let tool = newTool;
+
+          if (newTool.type === "group") {
+            const selectedTool = newTool.children.find(c => c.selected === true);
+            const defaultTool = newTool.children.find(c => c.name === this.activeToolName) || newTool.children[0];
+            tool = selectedTool || defaultTool;
+          }
+
+          this.activeTool = tool;
+          this.activeToolName = tool.name;
+        },
+        {
+          deep: true,
+          immediate: true
+        });
     },
 
     components: {

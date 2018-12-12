@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   def ensure_valid_user
     if current_user.nil?
       flash[:warning] = "You must login"
-      session[:return_to] = request.referer
+      session[:return_to] = request.url
       redirect_to login_path
     end
   end

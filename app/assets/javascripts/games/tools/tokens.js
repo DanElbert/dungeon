@@ -136,6 +136,7 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
 
     if (this.editingToken !== null) {
       this.board.tokenLayer.addToken(this.editingToken);
+      this.editingToken = null;
     }
 
     if (t !== null) {
@@ -159,7 +160,7 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
     }
 
     this.editingToken = t;
-    this.toolManager.setOptions();
+    //this.toolManager.setOptions();
   },
 
   save: function() {

@@ -3,7 +3,7 @@
 <% unless flash.empty? %>
 
   <script type="text/javascript">
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
       <%=
         calls = []
         flash.each do |key, value|

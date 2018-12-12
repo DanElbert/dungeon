@@ -1,17 +1,41 @@
 <%= form_for(@image, as: :image) do |f| %>
     <%= render partial: 'shared/error_list', locals: {model: @image} %>
 
-    <div class="form-group">
-      <%= f.label :name %>
-      <%= f.text_field :name, class: 'form-control', autofocus: true %>
+    <div class="field">
+      <%= f.label :name, class: 'label' %>
+      <%= f.text_field :name, class: 'input', autofocus: true %>
     </div>
 
-    <div class="form-group">
-      <%= f.label :filename, 'Select File' %>
-      <%= f.file_field :filename %>
+    <div class="field">
+      <div class="file">
+        <label class="file-label">
+          <%= f.file_field :filename, class: 'file-input' %>
+          <span class="file-cta">
+            <span class="file-icon">
+              <i class="fas fa-upload"></i>
+            </span>
+            <span class="file-label">
+              Choose a file…
+            </span>
+          </span>
+          <span class="file-name">
+
+          </span>
+        </label>
+      </div>
     </div>
 
     <div class="actions">
-      <%= f.submit class: 'btn btn-primary' %>
+      <%= f.submit class: 'button is-primary' %>
     </div>
 <% end %>
+
+<script type="text/javascript">
+
+  document.addEventListener('DOMContentLoaded', function() {
+
+    document.querySelectorAll(".file-input");
+
+  });
+
+</script>

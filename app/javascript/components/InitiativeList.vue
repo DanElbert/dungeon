@@ -123,6 +123,7 @@
 <style lang="scss">
 
   .placeholder {
+    position: relative;
     opacity: 0;
   }
 
@@ -131,7 +132,7 @@
   }
 
   .init-list-enter-active, .init-list-leave-active {
-    transition: all 1s;
+    transition: all 0.5s;
   }
   .init-list-enter, .init-list-leave-to /* .list-leave-active below version 2.1.8 */ {
     opacity: 0;

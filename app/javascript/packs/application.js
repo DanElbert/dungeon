@@ -11,7 +11,7 @@ window._ = _;
 window.TWEEN = TWEEN;
 
 import Api from "../lib/Api";
-import "../lib/BulmaNav";
+import "../lib/BulmaGlue";
 import { ToolMenuItem, ToolMenuGroup, ZoomMenuItem, CheckMenuItem } from "../lib/BoardTools";
 import ToolOptions from "../lib/BoardToolOptions";
 import Eventer from "../lib/Eventer";

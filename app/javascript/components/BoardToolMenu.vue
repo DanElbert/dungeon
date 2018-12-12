@@ -2,7 +2,7 @@
   <div>
 
     <div v-if="visible" class="tool-menu">
-      <div v-for="(t, idx) in tools" :key="t.name">
+      <div v-for="(t, idx) in visibleTools" :key="t.name">
         <board-tool-menu-item :tool="t" :submenu-min-y="60" :submenu-open="idx === openSubmenuIdx" @submenu-open="openSubmenuIdx = idx" @submenu-close="openSubmenuIdx = null" ></board-tool-menu-item>
       </div>
     </div>
@@ -52,6 +52,10 @@
     computed: {
       optionList() {
         return this.options.options.filter(o => o.visible !== false);
+      },
+
+      visibleTools() {
+        return this.tools.filter(t => t.visible !== false);
       }
     },
 

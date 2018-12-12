@@ -1,40 +1,23 @@
 
+@keyframes flash-animation {
+  from { opacity: 0; }
+
+  40% { opacity: 1; }
+  55% { opacity: 0; }
+  70% { opacity: 1; }
+  85% { opacity: 0; }
+
+  to { opacity: 1; }
+}
+
 #flashContainer {
   position: fixed;
-  width: 100%;
+  left: 20px;
+  bottom: 10px;
+  width: 20rem;
   z-index: 9999;
-}
 
-.alert.popup {
-  position: fixed;
-  top: 15px;
-  left: 50%;
-  width: 30em;
-  margin-left: -15em;
-}
-
-.alert {
-}
-
-.flash {
-    text-align: center;
-    width: 30em;
-    padding: 5px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.error {
-    background-color: #fff6ff;
-    border: 3px solid #fda8a8;
-}
-
-.warning {
-    background-color: #ffffdd;
-    border: 3px solid #ffdd00;
-}
-
-.notice {
-    background-color: #D8F6CE;
-    border: 3px solid #3ADF00;
+  .notification {
+    animation: 2s 1 normal flash-animation;
+  }
 }

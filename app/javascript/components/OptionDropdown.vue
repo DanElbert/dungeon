@@ -87,6 +87,7 @@
   .item-wrapper {
     height: 2rem;
     width: 3rem;
+    margin: 2px 0;
   }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup">
+  <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup" :floating="floating" :always-open="!floating">
     <div class="columns is-mobile is-variable is-1" v-if="!isViewMode">
       <div class="column is-half">
         <label>Name</label>
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <initiative-list class="mt-3 mb-2" append-to="#initiative-popup" :initiative-data="initiativeData">
+    <initiative-list append-to="#initiative-popup" :initiative-data="initiativeData">
     </initiative-list>
 
     <template slot="footer">
@@ -62,6 +62,12 @@
       initiativeData: {
         required: true,
         type: Object
+      },
+
+      floating: {
+        required: false,
+        type: Boolean,
+        default: true
       }
     },
 

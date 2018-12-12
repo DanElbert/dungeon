@@ -12,7 +12,7 @@ class ToolManager extends Eventer {
     this.sharedToolOptions = {
       drawingColor: ({type: "color", label: "Color", name: "color", value: "#000000"}),
       drawingBackgroundColor: ({type: "color", label: "Background Color", name: "backgroundColor", includeClear: true, value: null}),
-      drawingWidth: ({type: "size", name: "width", label: "Width", sizes: [3, 5, 7, 10, 15, 20], value: 7 }),
+      drawingWidth: ({type: "size", name: "width", label: "Width", sizes: [5, 7, 10, 15, 20, 30], value: 7 }),
       fogWidth: ({type: "size", name: "width", label: "Width", sizes: [25, 75, 100, 200, 500], value: 75 }),
       templateColor: ({type: "color", name: "color", label: "Color", value: "#EE204D"}),
       copiedImage: ({type: "copiedImage", url: this.board.copiedArea, name: 'copiedImage'})

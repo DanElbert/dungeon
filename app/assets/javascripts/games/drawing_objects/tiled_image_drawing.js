@@ -46,6 +46,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, DrawingColle
         };
 
         var hasFallbackImage = function(img) {
+          self.fallbackImage = img;
           self.imageJsonFetching = false;
           self.imageJson = data;
           self.buildActions();
@@ -77,7 +78,7 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, DrawingColle
 
       for (x = 0; x < level.x_tiles; x++) {
         for (y = 0; y < level.y_tiles; y++) {
-          key = [level.number, x, y].join("::");
+          key = this.buildImageKey(level.number, x, y);
 
           imgDrwEntry = this.imageDrawings.get(key);
 
@@ -107,7 +108,10 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, DrawingColle
             );
 
             imgDrw.level = level.number;
+            imgDrw.fallbackImageWriter = (img, ctx) => this.generateFallbackImage(img, ctx);
             imgDrw.fallbackImage = this.fallbackImage;
+            imgDrw.tiledImageDrawingInnerPosition = tileCenter;
+            imgDrw.tiledImageDrawingScale = level.scale;
 
             imgDrwEntry = { level: level, imageDrawing: imgDrw, innerPosition: tileCenter };
             this.imageDrawings.set(key, imgDrwEntry);
@@ -137,4 +141,31 @@ TiledImageDrawing.prototype = _.extend(TiledImageDrawing.prototype, DrawingColle
       imgDrw.setAngle(this.angle);
     }
   },
+
+  generateFallbackImage(imgDrawing, context) {
+    var position = imgDrawing.tiledImageDrawingInnerPosition.translate(this.size.x / 2, this.size.y / 2);
+    var scale = imgDrawing.tiledImageDrawingScale;
+    var tileHeight = imgDrawing.size.y;
+    var tileWidth = imgDrawing.size.x;
+    var box = new Rectangle(position.translate(-tileWidth / scale / 2, -tileHeight / scale / 2), tileWidth / scale, tileHeight / scale);
+    var sourceBox = box.scale(this.fallbackImage.width / this.size.x, this.fallbackImage.height / this.size.y);
+
+    context.drawImage(
+      this.fallbackImage,
+      sourceBox.left(),
+      sourceBox.top(),
+      sourceBox.width(),
+      sourceBox.height(),
+      0,
+      0,
+      imgDrawing.size.x,
+      imgDrawing.size.y);
+
+    // context.fillStyle = "#FFFFFF";
+    // context.fillRect(0, 0, imgDrawing.size.x, imgDrawing.size.y);
+  },
+
+  buildImageKey(level, x, y) {
+    return [level, x, y].join("::");
+  }
 });

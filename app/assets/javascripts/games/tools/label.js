@@ -92,12 +92,7 @@ LabelTool.prototype = _.extend(LabelTool.prototype, Tool.prototype, {
   },
 
   drawCross: function(point) {
-    var crossSize = 10;
-    var lines = [
-      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
-      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
-    ];
-    this.board.drawing.drawLines("black", 3, lines);
+    this.board.drawing.drawCross(point[0], point[1], 10, 3, "black");
   },
 
   getPoint: function(mapPoint) {

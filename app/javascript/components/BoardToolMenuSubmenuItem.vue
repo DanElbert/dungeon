@@ -1,5 +1,5 @@
 <template>
-  <div :class="subitemClasses" @mouseenter="hovered = true" @mouseleave="hovered = false" @click="handleClick" v-touch-tap="handleTap" :data-tooltip="tool.tooltip" data-placement="right">
+  <div :class="subitemClasses" @mouseenter="hovered = true" @mouseleave="hovered = false" @click.stop="handleClick" v-touch-tap="handleTap" :data-tooltip="tool.tooltip" data-placement="right">
     <div v-if="tool.type === 'zoom'" class="select is-fullwidth">
       <select v-model="internalValue">
         <option v-for="i in zoomSelectItems" :key="i.value" :value="i.value">{{i.label}}</option>
@@ -113,7 +113,7 @@
     }
 
     &.hovered {
-      border: $border-width solid $gray-200;
+      border: $border-width solid $grey-lighter;
     }
 
     &.selected {

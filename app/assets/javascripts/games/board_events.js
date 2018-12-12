@@ -344,7 +344,7 @@ class BoardEvents extends Eventer {
       self.board.invalidate();
       var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
       var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-      jqThis.trigger('pinchstart', {
+      self.trigger('pinchstart', {
         scale: evt.scale,
         center: mapCoords
       });
@@ -354,7 +354,7 @@ class BoardEvents extends Eventer {
       self.board.invalidate();
       var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
       var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-      jqThis.trigger('pinch', {
+      self.trigger('pinch', {
         scale: evt.scale,
         center: mapCoords
       });
@@ -364,7 +364,7 @@ class BoardEvents extends Eventer {
       self.board.invalidate();
       var canvasCoords = self.getCanvasCoordinates(evt.center.x, evt.center.y);
       var mapCoords = self.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
-      jqThis.trigger('hold', {
+      self.trigger('hold', {
         mapPoint: mapCoords,
         mapPointCell: self.getCell(mapCoords[0], mapCoords[1])
       });

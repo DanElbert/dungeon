@@ -115,7 +115,7 @@ function Eraser(manager) {
 
 Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
   buildOptions: function() {
-    this.options.add({type: "size", name: "width", label: "Width", sizes: [10, 30, 50, 75, 125], value: 30 });
+    this.options.add({type: "size", name: "width", label: "Width", sizes: [20, 50, 75, 100, 150, 200], value: 75 });
   },
 
   optionsChanged: function() {
@@ -150,7 +150,8 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
     }
 
     if (this.cursor) {
-      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, cursorColor)
+      this.board.drawing.drawCircle(this.cursor[0], this.cursor[1], this.width / 2, 2, cursorColor);
+      this.board.drawing.drawCross(this.cursor[0], this.cursor[1], 5, 3, cursorColor);
     }
   },
   saveAction: function() {
