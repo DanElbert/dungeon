@@ -12,6 +12,7 @@ services:
       - ./dungeon_nginx:/etc/nginx/conf.d/
       - assets:/dungeon/public/assets/
       - images:/dungeon/public/images/
+      - packs:/dungeon/public/packs/
     links:
       - web1
       - web2
@@ -35,6 +36,7 @@ services:
     volumes:
       - assets:/dungeon_assets/
       - images:/dungeon/public/images/
+      - packs:/dungeon_packs/
       - /var/log/dungeon:/dungeon/log/
     links:
       - redis
@@ -74,6 +76,9 @@ volumes:
     driver: local
 
   images:
+    driver: local
+
+  packs:
     driver: local
 
 networks:

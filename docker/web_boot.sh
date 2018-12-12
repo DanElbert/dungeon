@@ -6,6 +6,7 @@ fi
 
 if [ "$COPY_ASSETS" == "true" ]; then
     rsync -a --delete /dungeon/public/assets/ /dungeon_assets
+    rsync -a --delete /dungeon/public/packs/ /dungeon_packs
 fi
 
 cd /dungeon
