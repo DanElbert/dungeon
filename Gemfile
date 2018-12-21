@@ -11,7 +11,7 @@ gem 'faye', '1.2.4', :require => false #, path: '/Users/delbert/Development/faye
 gem 'faye-redis', '~> 0.2.0', :require => false
 gem 'redis-rails', '~> 5.0.2'
 
-gem 'webpacker', '>= 4.0.x'
+gem 'webpacker', '>= 4.0.0-rc.2'
 
 gem 'jquery-rails', '~> 4.3.3'
 gem 'jquery-ui-rails', '~> 6.0.1'
