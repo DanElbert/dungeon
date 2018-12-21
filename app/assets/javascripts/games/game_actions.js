@@ -303,7 +303,7 @@ _.extend(actionTypes, {
       return Geometry.getMovementPath(this.properties.start, this.properties.end);
     },
     drawExtras: function(board) {
-      board.drawing.drawMovementLine(this.properties.start, this.properties.end);
+      board.drawing.drawMovementLine(this.properties.start, this.properties.end, board.getZoom());
     },
 
     validateData: function() {
@@ -334,7 +334,7 @@ _.extend(actionTypes, {
       var startCell = Geometry.getCell(this.properties.start, cellSize);
       var endCell = Geometry.getCell(this.properties.end, cellSize);
       var distance = Geometry.getCellDistance(startCell, endCell) * 5;
-      board.drawing.drawMeasureLine(this.properties.start, this.properties.end, distance);
+      board.drawing.drawMeasureLine(this.properties.start, this.properties.end, distance, null, null, board.getZoom());
     },
     calculateCells: function(board) {
       return Geometry.getCellsOnLine(this.properties.start, this.properties.end, board.drawing.cellSize);

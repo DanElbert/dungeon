@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_16_044418) do
+ActiveRecord::Schema.define(version: 2018_12_15_194832) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -43,6 +43,10 @@ ActiveRecord::Schema.define(version: 2018_10_16_044418) do
     t.datetime "updated_at"
     t.integer "background_image_id"
     t.string "grid_color"
+    t.integer "default_zoom"
+    t.integer "cell_size_pixels"
+    t.integer "cell_size_feet"
+    t.string "template_type"
   end
 
   create_table "campaigns", force: :cascade do |t|

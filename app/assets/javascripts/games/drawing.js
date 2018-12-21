@@ -15,16 +15,16 @@ _.extend(Drawing.prototype, {
     this.context.clearRect(0, 0, columns * this.cellSize, rows * this.cellSize);
   },
 
-  drawMovementLine: function(start, end) {
+  drawMovementLine: function(start, end, zoom) {
     var startPoint = Geometry.getCellMidpoint(start, this.cellSize);
     var endPoint = Geometry.getCellMidpoint(end, this.cellSize);
 
     var totalMovement = Geometry.getCellDistance(start, end) * 5;
 
-    this.drawMeasureLine(startPoint, endPoint, totalMovement);
+    this.drawMeasureLine(startPoint, endPoint, totalMovement, null, null, zoom);
   },
 
-  drawMeasureLine: function(start, end, label, color, width) {
+  drawMeasureLine: function(start, end, label, color, width, zoom) {
     this.context.lineWidth = this.checkWidth(width || 5);
     this.context.strokeStyle = color || "#000000";
     this.context.lineCap = 'round';
@@ -37,7 +37,8 @@ _.extend(Drawing.prototype, {
 
     var midPoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
 
-    this.drawLabel(midPoint, label, "black", "black", "white");
+    zoom = zoom || 1;
+    this.drawLabel(midPoint, label, "black", "black", "white", 25 / zoom);
   },
 
   // Draws some text in a rounded box and returns the bounding box

@@ -204,6 +204,7 @@ function Board(canvas, cameraApi) {
     this.drawingLayer.setOwner(this.isOwner);
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
     this.labelLayer.useXLetters = data.useXLetters;
+    this.setZoom(data.board.default_zoom / 100.0, null, true);
 
     if (!this.isOwner) {
       this.toolManager.hideFogTools();

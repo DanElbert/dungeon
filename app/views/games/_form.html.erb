@@ -17,6 +17,21 @@
 
   <%= f.fields_for :board, include_id: false do |board_form| %>
     <div class="field">
+      <%= board_form.label :default_zoom, class: 'label' %>
+      <%= board_form.text_field :default_zoom, class: 'input' %>
+    </div>
+
+    <div class="field">
+      <%= board_form.label :cell_size_pixels, class: 'label' %>
+      <%= board_form.text_field :cell_size_pixels, class: 'input' %>
+    </div>
+
+    <div class="field">
+      <%= board_form.label :cell_size_feet, class: 'label' %>
+      <%= board_form.text_field :cell_size_feet, class: 'input' %>
+    </div>
+
+    <div class="field">
       <%= board_form.label :grid_color, class: 'label' %>
       <div data-color-picker data-attributes="<%= { inputName: 'game[board_attributes][grid_color]', selectedValue: board_form.object.grid_color }.to_json %>"></div>
     </div>

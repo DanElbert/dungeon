@@ -101,7 +101,7 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
       var cellSize = this.board.drawing.cellSize;
 
       if (dx != 0 || dy != 0) {
-        this.board.drawing.drawMovementLine(this.template_start_cell, this.template_current_cell);
+        this.board.drawing.drawMovementLine(this.template_start_cell, this.template_current_cell, this.board.getZoom());
       }
 
       border = _.map(this.selected_template.getBorder(this.board), function(line) {

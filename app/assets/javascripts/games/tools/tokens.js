@@ -128,7 +128,7 @@ TokenTool.prototype = _.extend(TokenTool.prototype, Tool.prototype, {
       var border = Geometry.getBorder(template, this.board.drawing.cellSize);
 
       this.board.drawing.drawTemplate(template, border, 'white');
-      this.board.drawing.drawMovementLine(this.dragStart, this.dragEnd);
+      this.board.drawing.drawMovementLine(this.dragStart, this.dragEnd, this.board.getZoom());
     }
   },
 

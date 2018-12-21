@@ -16,7 +16,7 @@ class GamesController < ApplicationController
   def new
     @game = Game.new
     @game.campaign = @campaign
-    @game.board = Board.new
+    @game.board = Board.new(default_zoom: 100, cell_size_pixels: 50, cell_size_feet: 5)
   end
 
   def create
@@ -88,7 +88,7 @@ class GamesController < ApplicationController
   end
 
   def game_params
-    params.require(:game).permit(:name, :status, {:board_attributes => [:background_image_id, :grid_color]})
+    params.require(:game).permit(:name, :status, {:board_attributes => [:background_image_id, :grid_color, :cell_size_pixels, :cell_size_feet, :default_zoom]})
   end
 
 end

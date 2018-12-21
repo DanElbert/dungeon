@@ -45,7 +45,7 @@ Measure.prototype = _.extend(Measure.prototype, Tool.prototype, {
       var border = Geometry.getBorder(template, this.board.drawing.cellSize);
 
       this.board.drawing.drawTemplate(template, border, this.color);
-      this.board.drawing.drawMovementLine(this.startCell, this.currentCell);
+      this.board.drawing.drawMovementLine(this.startCell, this.currentCell, this.board.getZoom());
     }
   },
 
@@ -125,7 +125,7 @@ RadialTemplate.prototype = _.extend(RadialTemplate.prototype, Tool.prototype, {
 
       this.board.drawing.drawTemplate(template, border, this.color);
 
-      this.board.drawing.drawMeasureLine(this.center, this.radiusPoint, distance * 5);
+      this.board.drawing.drawMeasureLine(this.center, this.radiusPoint, distance * 5, null, null, this.board.getZoom());
     }
   },
 
@@ -268,7 +268,7 @@ LineTemplate.prototype = _.extend(LineTemplate.prototype, Tool.prototype, {
       var distance = Geometry.getCellDistance(startCell, endCell) * 5;
 
       this.board.drawing.drawTemplate(template, border, this.color);
-      this.board.drawing.drawMeasureLine(this.startPoint, this.currentPoint, distance);
+      this.board.drawing.drawMeasureLine(this.startPoint, this.currentPoint, distance, null, null, this.board.getZoom());
     }
   },
 
@@ -375,8 +375,8 @@ RectangleTemplate.prototype = _.extend(RectangleTemplate.prototype, Tool.prototy
       var yDist = Math.abs(topLeft[1] - bottomRight[1]) * 5;
 
       this.board.drawing.drawTemplate(template, border, this.color);
-      this.board.drawing.drawMeasureLine([topLeft[0] * cellSize, (topLeft[1] * cellSize) - 30], [bottomRight[0] * cellSize, (topLeft[1] * cellSize) - 30], xDist);
-      this.board.drawing.drawMeasureLine([(bottomRight[0] * cellSize) + 30, topLeft[1] * cellSize], [(bottomRight[0] * cellSize) + 30, bottomRight[1] * cellSize], yDist);
+      this.board.drawing.drawMeasureLine([topLeft[0] * cellSize, (topLeft[1] * cellSize) - 30], [bottomRight[0] * cellSize, (topLeft[1] * cellSize) - 30], xDist, null, null, this.board.getZoom());
+      this.board.drawing.drawMeasureLine([(bottomRight[0] * cellSize) + 30, topLeft[1] * cellSize], [(bottomRight[0] * cellSize) + 30, bottomRight[1] * cellSize], yDist, null, null, this.board.getZoom());
     }
   },
 
