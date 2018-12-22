@@ -1,30 +1,41 @@
-function Drawing(context, imageCache) {
-  this.context = context;
-  this.imageCache = imageCache;
-  if (this.imageCache == null) throw "imageCache cannot be null";
-  this.cellSize = 50;
-  this.minWidth = 1;
-}
-_.extend(Drawing.prototype, {
+class Drawing {
+  constructor(context, drawingSettings) {
+    this.context = context;
+    this.drawingSettings = drawingSettings;
+    if (this.drawingSettings == null) throw "drawingSettings cannot be null";
+    this.minWidth = 1;
+  }
 
-  checkWidth: function(width) {
+  get imageCache() {
+    return this.drawingSettings.imageCache;
+  }
+
+  get cellSize() {
+    return this.drawingSettings.cellSize;
+  }
+
+  get cellSizeFeet() {
+    return this.drawingSettings.cellSizeFeet;
+  }
+
+  checkWidth(width) {
     return Math.max(width, this.minWidth);
-  },
+  }
 
-  clear: function (columns, rows) {
+  clear (columns, rows) {
     this.context.clearRect(0, 0, columns * this.cellSize, rows * this.cellSize);
-  },
+  }
 
-  drawMovementLine: function(start, end, zoom) {
+  drawMovementLine(start, end, zoom) {
     var startPoint = Geometry.getCellMidpoint(start, this.cellSize);
     var endPoint = Geometry.getCellMidpoint(end, this.cellSize);
 
-    var totalMovement = Geometry.getCellDistance(start, end) * 5;
+    var totalMovement = Geometry.getCellDistance(start, end) * this.cellSizeFeet;
 
     this.drawMeasureLine(startPoint, endPoint, totalMovement, null, null, zoom);
-  },
+  }
 
-  drawMeasureLine: function(start, end, label, color, width, zoom) {
+  drawMeasureLine(start, end, label, color, width, zoom) {
     this.context.lineWidth = this.checkWidth(width || 5);
     this.context.strokeStyle = color || "#000000";
     this.context.lineCap = 'round';
@@ -39,10 +50,10 @@ _.extend(Drawing.prototype, {
 
     zoom = zoom || 1;
     this.drawLabel(midPoint, label, "black", "black", "white", 25 / zoom);
-  },
+  }
 
   // Draws some text in a rounded box and returns the bounding box
-  drawLabel: function(midPoint, text, textColor, outlineColor, fillColor, fontSize) {
+  drawLabel(midPoint, text, textColor, outlineColor, fillColor, fontSize) {
 
     fontSize = fontSize || 25;
 
@@ -77,13 +88,13 @@ _.extend(Drawing.prototype, {
     this.context.restore();
 
     return bounds;
-  },
+  }
 
   // Draws text at the given point.  Centered by default, align and vAlign are optional params
   // that map to context.textAlign and context.textBaseLine respectively.
   // fillColor and strokeColor are both optional.  A null value will prevent the given operation
   // size is required, and is the font size in pixels (map coords)
-  drawText: function(text, point, size, fillColor, strokeColor, strokeWidth, align, vAlign) {
+  drawText(text, point, size, fillColor, strokeColor, strokeWidth, align, vAlign) {
     this.context.save();
 
     if (fillColor) this.context.fillStyle = fillColor;
@@ -99,9 +110,9 @@ _.extend(Drawing.prototype, {
     if (strokeColor) this.context.strokeText(text, point[0], point[1]);
 
     this.context.restore();
-  },
+  }
 
-  measureText: function(text, size) {
+  measureText(text, size) {
     this.context.save();
 
     this.context.font = 'bold ' + size + 'px sans-serif';
@@ -110,9 +121,9 @@ _.extend(Drawing.prototype, {
     this.context.restore();
 
     return measuredFontSize.width;
-  },
+  }
 
-  drawTemplate: function(cells, border, color) {
+  drawTemplate(cells, border, color) {
     this.context.globalAlpha = 0.3;
 
     _.each(cells, function(c) {
@@ -122,9 +133,9 @@ _.extend(Drawing.prototype, {
     this.context.globalAlpha = 1;
 
     this.drawLines("black", 3, border);
-  },
+  }
 
-  drawLines: function (color, width, lines) {
+  drawLines (color, width, lines) {
     this.context.beginPath();
     this.context.lineWidth = this.checkWidth(width);
     this.context.strokeStyle = color;
@@ -140,9 +151,9 @@ _.extend(Drawing.prototype, {
     }
 
     this.context.stroke();
-  },
+  }
 
-  drawSquare: function(topLeft, bottomRight, color, bgColor, width, lineCap) {
+  drawSquare(topLeft, bottomRight, color, bgColor, width, lineCap) {
     this.context.lineWidth = this.checkWidth(width);
     this.context.strokeStyle = color;
     this.context.lineCap = lineCap || "round";
@@ -160,9 +171,9 @@ _.extend(Drawing.prototype, {
     }
 
     this.context.stroke();
-  },
+  }
 
-  eraseLines: function(width, lines) {
+  eraseLines(width, lines) {
 
     var originalCompositeOperation = this.context.globalCompositeOperation;
     this.context.globalCompositeOperation = 'destination-out';
@@ -188,9 +199,9 @@ _.extend(Drawing.prototype, {
     this.context.stroke();
 
     this.context.globalCompositeOperation = originalCompositeOperation;
-  },
+  }
 
-  drawCircle: function(x, y, radius, width, color, fill) {
+  drawCircle(x, y, radius, width, color, fill) {
     this.context.lineWidth = this.checkWidth(width);
     this.context.strokeStyle = color;
     this.context.beginPath();
@@ -204,18 +215,18 @@ _.extend(Drawing.prototype, {
     }
 
     this.context.stroke();
-  },
+  }
 
-  drawCross: function(x, y, size, lineWidth, color) {
+  drawCross(x, y, size, lineWidth, color) {
     var crossSize = size;
     var lines = [
       {start: [x - crossSize, y], end: [x + crossSize, y]},
       {start: [x, y - crossSize], end: [x, y + crossSize]}
     ];
     this.drawLines(color, lineWidth, lines);
-  },
+  }
 
-  drawCircleTiles: function(col, row, width, height, color, border) {
+  drawCircleTiles(col, row, width, height, color, border) {
     this.context.save();
     this.context.fillStyle = color;
     this.drawEllipse(col * this.cellSize, row * this.cellSize, width * this.cellSize, height * this.cellSize);
@@ -229,26 +240,26 @@ _.extend(Drawing.prototype, {
       this.context.stroke();
     }
     this.context.restore();
-  },
+  }
 
-  drawToken: function(col, row, width, height, color, text, fontColor, fontSize, highlight) {
+  drawToken(col, row, width, height, color, text, fontColor, fontSize, highlight) {
     this.drawCircleTiles(col, row, width, height, color, highlight);
     var fontPoint = [col * this.cellSize, row * this.cellSize];
     fontPoint[0] += (width * this.cellSize) / 2;
     fontPoint[1] += (height * this.cellSize) / 2;
     this.drawText(text, fontPoint, fontSize, fontColor);
-  },
+  }
 
   // Low level drawing function; places an ellipse in the context path
   // but does not stroke or fill
-  drawEllipse: function(x, y, w, h) {
+  drawEllipse(x, y, w, h) {
     var kappa = .5522848,
-        ox = (w / 2) * kappa, // control point offset horizontal
-        oy = (h / 2) * kappa, // control point offset vertical
-        xe = x + w,           // x-end
-        ye = y + h,           // y-end
-        xm = x + w / 2,       // x-middle
-        ym = y + h / 2;       // y-middle
+      ox = (w / 2) * kappa, // control point offset horizontal
+      oy = (h / 2) * kappa, // control point offset vertical
+      xe = x + w,           // x-end
+      ye = y + h,           // y-end
+      xm = x + w / 2,       // x-middle
+      ym = y + h / 2;       // y-middle
 
     this.context.beginPath();
     this.context.moveTo(x, ym);
@@ -257,9 +268,9 @@ _.extend(Drawing.prototype, {
     this.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
     this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
     this.context.closePath();
-  },
+  }
 
-  tileBackground: function(vpX, vpY, vpW, vpH, imageUrl) {
+  tileBackground(vpX, vpY, vpW, vpH, imageUrl) {
 
     var imageObj;
 
@@ -286,9 +297,9 @@ _.extend(Drawing.prototype, {
     this.context.fillStyle = pattern;
     this.context.fillRect(x, y, vpW + (2 * imgWidth), vpH + (2 * imgHeight));
     this.context.restore();
-  },
+  }
 
-  drawTile: function (x, y, width, height, imageObj) {
+  drawTile (x, y, width, height, imageObj) {
     var imgWidth = imageObj.width;
     var imgHeight = imageObj.height;
 
@@ -313,32 +324,19 @@ _.extend(Drawing.prototype, {
         this.context.drawImage(imageObj, 0, 0, rightClip, bottomClip, xPos, yPos, rightClip, bottomClip);
       }
     }
-  },
+  }
 
-  drawGrid: function (x, y, viewPortWidth, viewPortHeight, color, zoom) {
+  drawGrid (x, y, viewPortWidth, viewPortHeight, color, zoom) {
 
-    const zoomMap = [
-      {min: 0.6, size: this.cellSize, width: 1},
-      {min: 0.25, size: this.cellSize * 2, width: 2},
-      {min: 0.13, size: this.cellSize * 4, width: 4},
-      {min: -1, size: this.cellSize * 8, width: 8}
-    ];
+    var minZoomedGridSize = 25;
+    var gridSize = this.cellSize;
+    var lineWidth = 1 / this.drawingSettings.zoom;
 
-    var gridSize, lineWidth;
-
-    for (let map of zoomMap) {
-      if (map.min < zoom) {
-        gridSize = map.size;
-        lineWidth = map.width;
-        break;
-      }
+    while ((gridSize * this.drawingSettings.zoom) < minZoomedGridSize) {
+      gridSize = gridSize * 2;
+      lineWidth = lineWidth + 1;
     }
 
-    // var gridSize = this.cellSize;
-    // if (zoom < 0.3) {
-    //   return;
-    // }
-    
     var firstColumn = Math.floor(x / gridSize);
     var lastColumn = firstColumn + Math.floor(viewPortWidth / gridSize) + 1;
 
@@ -379,9 +377,9 @@ _.extend(Drawing.prototype, {
 
     this.context.stroke();
     this.context.restore();
-  },
+  }
 
-  drawImageFromCenter: function(x, y, imageUrl, scale, rotation, topLeft, bottomRight) {
+  drawImageFromCenter(x, y, imageUrl, scale, rotation, topLeft, bottomRight) {
     var imgObj = this.imageCache.getImage(imageUrl);
     if (imgObj) {
       scale = scale || 1.0;
@@ -403,16 +401,16 @@ _.extend(Drawing.prototype, {
       this.context.restore();
     }
     //this.drawCircle(x, y, 10, 3, "red", null);
-  },
+  }
 
-  drawImage: function(x, y, imageUrl) {
+  drawImage(x, y, imageUrl) {
     var imgObj = this.imageCache.getImage(imageUrl);
     if (imgObj) {
       this.context.drawImage(imgObj, x, y);
     }
-  },
+  }
 
-  drawChessBoard : function(x, y, size, pattern_size) {
+  drawChessBoard(x, y, size, pattern_size) {
     var square_size = size / pattern_size;
 
     for (var i = 0; i < (pattern_size * pattern_size); i++) {
@@ -423,9 +421,9 @@ _.extend(Drawing.prototype, {
 
       this.colorBackground(x + (col * square_size), y + (row * square_size), square_size, square_size, color);
     }
-  },
+  }
 
-  colorCell: function (column, row, color, borderSize) {
+  colorCell (column, row, color, borderSize) {
 
     if (arguments.length < 4) {
       borderSize = 1;
@@ -440,20 +438,20 @@ _.extend(Drawing.prototype, {
     this.context.rect(left, top, width, height);
     this.context.fillStyle = color;
     this.context.fill();
-  },
+  }
 
-  colorBackground: function(x, y, width, height, color) {
+  colorBackground(x, y, width, height, color) {
     this.context.beginPath();
     this.context.rect(x, y, width, height);
     this.context.fillStyle = color;
     this.context.fill();
-  },
+  }
 
-  gridWidth: function (columns) {
+  gridWidth (columns) {
     return columns * this.cellSize;
-  },
+  }
 
-  gridHeight: function (rows) {
+  gridHeight (rows) {
     return rows * this.cellSize;
   }
-});
+}

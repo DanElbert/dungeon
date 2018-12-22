@@ -142,8 +142,8 @@ ShapeTool.prototype = _.extend(ShapeTool.prototype, Tool.prototype, {
 
       this.board.drawing.drawSquare(topLeft, bottomRight, this.color, this.backgroundColor, this.width);
 
-      var xDist = Math.round((Math.abs(topLeft[0] - bottomRight[0]) / this.board.drawing.cellSize) * 5);
-      var yDist = Math.round((Math.abs(topLeft[1] - bottomRight[1]) / this.board.drawing.cellSize) * 5);
+      var xDist = Math.round((Math.abs(topLeft[0] - bottomRight[0]) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
+      var yDist = Math.round((Math.abs(topLeft[1] - bottomRight[1]) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
 
       this.board.drawing.drawMeasureLine([topLeft[0], topLeft[1] - 30], [bottomRight[0], topLeft[1] - 30], xDist, null, null, this.board.getZoom());
       this.board.drawing.drawMeasureLine([bottomRight[0] + 30, topLeft[1]], [bottomRight[0] + 30, bottomRight[1]], yDist, null, null, this.board.getZoom());
@@ -157,7 +157,7 @@ ShapeTool.prototype = _.extend(ShapeTool.prototype, Tool.prototype, {
 
       this.board.drawing.drawCircle(center[0], center[1], radius, this.width, this.color, this.backgroundColor);
 
-      var pathfinderDistance = Math.round((radius / this.board.drawing.cellSize) * 5);
+      var pathfinderDistance = Math.round((radius / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
 
       this.board.drawing.drawMeasureLine(this.drag_start, this.drag_current, pathfinderDistance, null, null, this.board.getZoom());
     }
@@ -167,7 +167,7 @@ ShapeTool.prototype = _.extend(ShapeTool.prototype, Tool.prototype, {
     if (this.drag_start && this.drag_current) {
 
       var length = Geometry.getDistance(this.drag_start, this.drag_current);
-      var pathfinderDistance = Math.round((length / this.board.drawing.cellSize) * 5);
+      var pathfinderDistance = Math.round((length / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
 
       this.board.drawing.drawMeasureLine(this.drag_start, this.drag_current, pathfinderDistance, this.color, this.width, this.board.getZoom());
     }

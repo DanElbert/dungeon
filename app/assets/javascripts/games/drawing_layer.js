@@ -1,8 +1,8 @@
-function DrawingLayer(imageCache) {
+function DrawingLayer(drawingSettings) {
   this.tileSize = 1024;
   this.isOwner = false;
   this.fogCover = false;
-  this.imageCache = imageCache;
+  this.drawingSettings = drawingSettings;
   this.drawingActions = new Map();
   this.fogActions = new Map();
 
@@ -10,7 +10,7 @@ function DrawingLayer(imageCache) {
 
   for (let x = 0; x < 5; x++) {
     this.levels.push(
-      new DrawingLevel(this.tileSize, x + 1, 1 / 2 ** x, this.isOwner, this.imageCache, this.fogCover)
+      new DrawingLevel(this.tileSize, x + 1, 1 / 2 ** x, this.isOwner, this.drawingSettings, this.fogCover)
     );
   }
 }
@@ -87,12 +87,12 @@ _.extend(DrawingLayer.prototype, {
 
 });
 
-function DrawingLevel(tileSize, number, scale, isOwner, imageCache, fogCover) {
+function DrawingLevel(tileSize, number, scale, isOwner, drawingSettings, fogCover) {
   this.tileSize = tileSize;
   this.number = number;
   this.scale = scale;
   this.isOwner = isOwner;
-  this.imageCache = imageCache;
+  this.drawingSettings = drawingSettings;
   this.fogCover = fogCover;
 
   this.trueTileSize = this.tileSize / this.scale;
@@ -172,7 +172,7 @@ _.extend(DrawingLevel.prototype, {
         tile = this.tiles.get(key);
 
         if (tile == null) {
-          tile = new Tile(this.trueTileSize, x, y, this.scale, this.isOwner, this.imageCache, this.fogCover);
+          tile = new Tile(this.trueTileSize, x, y, this.scale, this.isOwner, this.drawingSettings, this.fogCover);
           this.tiles.set(key, tile);
         }
 
@@ -188,7 +188,7 @@ _.extend(DrawingLevel.prototype, {
   }
 });
 
-function Tile(size, x, y, scale, isOwner, imageCache, fogCover) {
+function Tile(size, x, y, scale, isOwner, drawingSettings, fogCover) {
   this.rectangle = new Rectangle(new Vector2(x * size, y * size), size, size);
   this.dirtyRectangle = this.rectangle;
   this.isFogDirty = true;
@@ -203,7 +203,7 @@ function Tile(size, x, y, scale, isOwner, imageCache, fogCover) {
   this.canvas = null;
   this.context = null;
   this.drawing = null;
-  this.imageCache = imageCache;
+  this.drawingSettings = drawingSettings;
   this.fogCover = fogCover;
 
   this.fogCanvas = null;
@@ -348,8 +348,8 @@ _.extend(Tile.prototype, {
       this.fogCanvas.height = this.size * this.scale;
       this.context = this.canvas.getContext('2d');
       this.fogContext = this.fogCanvas.getContext('2d');
-      this.drawing = new Drawing(this.context, this.imageCache);
-      this.fogDrawing = new Drawing(this.fogContext, this.imageCache);
+      this.drawing = new Drawing(this.context, this.drawingSettings);
+      this.fogDrawing = new Drawing(this.fogContext, this.drawingSettings);
 
       this.context.scale(this.scale, this.scale);
       this.context.translate(-1 * this.rectangle.left(), -1 * this.rectangle.top());

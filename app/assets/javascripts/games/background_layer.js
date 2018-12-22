@@ -15,7 +15,7 @@ function BackgroundLayer(board) {
 
   this.imageCache = board.imageCache;
   this.context = this.canvas.getContext('2d');
-  this.drawing = new Drawing(this.context, this.imageCache);
+  this.drawing = new Drawing(this.context, board.drawingSettings);
   this.dimmedImage = null;
 
   this.viewPort = {};

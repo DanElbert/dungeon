@@ -1,6 +1,7 @@
 
-function ToolRenderer(tools) {
+function ToolRenderer(tools, drawingSettings) {
   this.tools = tools;
+  this.drawingSettings = drawingSettings;
   this.options = null;
   this.element = null;
   this.toolMenu = null;
@@ -16,7 +17,7 @@ _.extend(ToolRenderer.prototype, {
       this.element = document.createElement("div");
       container.appendChild(this.element);
 
-      this.toolMenu = VUE_COMPONENTS.install(this.element, VUE_COMPONENTS.BoardToolMenu, {}, {toolsInput: this.tools});
+      this.toolMenu = VUE_COMPONENTS.install(this.element, VUE_COMPONENTS.BoardToolMenu, {}, {toolsInput: this.tools, drawingSettings: this.drawingSettings});
 
 
     } else {

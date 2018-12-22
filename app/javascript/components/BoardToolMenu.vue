@@ -9,7 +9,7 @@
 
     <div v-if="visible && options" class="option-menu">
       <div v-for="o in optionList" :key="o.name" class="option-item tooltip is-tooltip-top" :data-tooltip="o.label">
-        <component :is="optionComponent(o)" :option="o" class="option-item-control"></component>
+        <component :is="optionComponent(o)" :option="o" :drawing-settings="drawingSettings" class="option-item-control"></component>
       </div>
     </div>
 
@@ -36,6 +36,12 @@
       toolsInput: {
         required: true,
         type: Array
+      },
+
+      drawingSettings: {
+        required: false,
+        type: Object,
+        default: () => null
       }
     },
 

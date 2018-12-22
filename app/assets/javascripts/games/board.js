@@ -17,13 +17,19 @@ function Board(canvas, cameraApi) {
   this.camera = cameraApi;
 
   this.imageCache = new ImageCache();
+  this.drawingSettings = {
+    imageCache: this.imageCache,
+    zoom: 1,
+    cellSize: 50,
+    cellSizeFeet: 5
+  };
   this.campaign_images = null;
 
   this.animations = new AnimationManager();
 
   this.canvas = canvas;
   this.context = this.canvas.getContext('2d');
-  this.drawing = new Drawing(this.context, this.imageCache);
+  this.drawing = new Drawing(this.context, this.drawingSettings);
   // To account for device pixel ratios that are not 1:1, we transform the identity matrix to match
   this.pixelRatio = 1;
   this.identityTransform = function() { this.context.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0) };
@@ -43,7 +49,7 @@ function Board(canvas, cameraApi) {
   this.template_actions = [];
   this.undo_stack = [];
 
-  this.drawingLayer = new DrawingLayer(this.imageCache);
+  this.drawingLayer = new DrawingLayer(this.drawingSettings);
   this.pingLayer = new PingLayer(this);
   this.tokenLayer = new TokenLayer();
   this.labelLayer = new ViewPortLabels(this, true);
@@ -205,6 +211,8 @@ function Board(canvas, cameraApi) {
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
     this.labelLayer.useXLetters = data.useXLetters;
     this.setZoom(data.board.default_zoom / 100.0, null, true);
+    this.drawingSettings.cellSize = data.board.cell_size_pixels;
+    this.drawingSettings.cellSizeFeet = data.board.cell_size_feet;
 
     if (!this.isOwner) {
       this.toolManager.hideFogTools();
@@ -343,6 +351,7 @@ function Board(canvas, cameraApi) {
 
     this.executeActions();
     this.viewPortManager.update();
+    this.drawingSettings.zoom = this.getZoom();
 
     if (this.displayCapturePattern) {
       this.renderCapturePattern();
@@ -375,7 +384,7 @@ function Board(canvas, cameraApi) {
     canvas.width = width;
     canvas.height = height;
     var context = canvas.getContext('2d');
-    var drawing = new Drawing(context, this.imageCache);
+    var drawing = new Drawing(context, this.drawingSettings);
     context.save();
     context.translate(-1 * x, -1 * y);
     this.drawingLayer.draw(x, y, width, height, drawing, 1, true);

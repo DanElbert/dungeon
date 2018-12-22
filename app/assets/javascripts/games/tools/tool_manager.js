@@ -269,7 +269,7 @@ class ToolManager extends Eventer {
   // Builds and/or updates the HTML tool menu
   render() {
     if (!this.renderer) {
-      this.renderer = new ToolRenderer(this.toolSet);
+      this.renderer = new ToolRenderer(this.toolSet, this.board.drawingSettings);
     }
     this.renderer.render();
   }

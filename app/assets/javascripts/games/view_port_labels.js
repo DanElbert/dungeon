@@ -84,7 +84,7 @@ _.extend(ViewPortLabels.prototype, {
   drawLabel: function(point, text, highlight) {
     var image = this.labelCache.get(text);
     if (image == null) {
-      image = new ViewPortLabel(text, this.labelWidth, this.labelHeight, this.board.imageCache);
+      image = new ViewPortLabel(text, this.labelWidth, this.labelHeight, this.board.drawingSettings);
       this.labelCache.set(text, image);
     }
     var width = image.width;
@@ -111,13 +111,13 @@ _.extend(ViewPortLabels.prototype, {
   }
 });
 
-function ViewPortLabel(label, width, height, imageCache) {
+function ViewPortLabel(label, width, height, drawingSettings) {
   this.label = label;
   this.canvas = null;
   this.highlightCanvas = null;
   this.context = null;
   this.drawing = null;
-  this.imageCache = imageCache;
+  this.drawingSettings = drawingSettings;
   this.width = width;
   this.height = height;
 }
@@ -130,7 +130,7 @@ _.extend(ViewPortLabel.prototype, {
       this.canvas.width = this.width * 2;
       this.canvas.height = this.height * 2;
       this.context = this.canvas.getContext("2d");
-      this.drawing = new Drawing(this.context, this.imageCache);
+      this.drawing = new Drawing(this.context, this.drawingSettings);
       this.drawing.drawText(this.label, [this.width, this.height], 40, "white", "black", 2);
       var raw = this.context.getImageData(0, 0, this.width, this.height);
       found = (_.find(raw.data, function(i) { return i !== 0; }) !== undefined);

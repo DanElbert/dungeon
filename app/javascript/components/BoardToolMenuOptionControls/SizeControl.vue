@@ -47,7 +47,7 @@
     methods: {
       pixelsToMeasure(px) {
         // 50 px = 5 ft.  10px = 1 ft.
-        let feet = px / 10;
+        let feet = px / (this.cellSize / this.cellSizeFeet);
 
         return feetToText(feet);
       }
