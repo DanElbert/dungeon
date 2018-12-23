@@ -1,26 +1,26 @@
 
 import Vue from "vue";
 
-Vue.directive("tooltip", {
-  bind(el, binding) {
-    // new bsn.Tooltip(el, {
-    //   delay: 10
-    // });
-  },
-
-  update(el, binding) {
-  },
-
-  componentUpdated(el, binding) {
-
-  },
-
-  unbind(el, binding) {
-    if (el.Tooltip) {
-      el.Tooltip.hide();
-    }
-  }
-});
+// Vue.directive("tooltip", {
+//   bind(el, binding) {
+//     // new bsn.Tooltip(el, {
+//     //   delay: 10
+//     // });
+//   },
+//
+//   update(el, binding) {
+//   },
+//
+//   componentUpdated(el, binding) {
+//
+//   },
+//
+//   unbind(el, binding) {
+//     if (el.Tooltip) {
+//       el.Tooltip.hide();
+//     }
+//   }
+// });
 
 const externalClickListenerKey = "__catchExternalClickList";
 
