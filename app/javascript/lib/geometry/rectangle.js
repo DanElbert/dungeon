@@ -4,6 +4,16 @@ class Rectangle {
     this._topLeft = topLeft;
     this._width = width;
     this._height = height;
+
+    if (this._width < 0) {
+      this._topLeft = this._topLeft.translate(this._width, 0);
+      this._width = -1 * this._width;
+    }
+
+    if (this._height < 0) {
+      this._topLeft = this._topLeft.translate(0, this._height);
+      this._height = -1 * this._height;
+    }
   }
 
   static fromElement(el) {

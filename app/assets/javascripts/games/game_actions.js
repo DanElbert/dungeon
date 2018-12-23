@@ -41,42 +41,6 @@ var DrawingAction = createActionType("DrawingAction", Action, {
 
 var TemplateAction = createActionType("TemplateAction", Action, {
   isPersistent: function() { return true; },
-  isTemplate: true,
-  calculateCells: function() { return []; },
-  drawExtras: function(board) { },
-  internalTranslateData: function(action, dx, dy, cellSize){},
-  cloneAndTranslate: function(dx, dy, cellSize) {
-    var clone = this.clone();
-    this.internalTranslateData(clone, dx, dy, cellSize);
-    return clone;
-  },
-  apply: function(board) {
-    board.template_actions.push(this);
-    this.ensureCells(board);
-    board.drawing.drawTemplate(this.cells, this.border, this.properties.color);
-    this.drawExtras(board);
-  },
-  validateData: function() {
-    throw "This shouldn't happen; templateAction isn't a real action";
-  },
-  ensureCells: function(board) {
-    if (!this.cells) {
-      this.cells = this.calculateCells(board);
-      this.border = Geometry.getBorder(this.cells, board.drawing.cellSize);
-    }
-  },
-  containsCell: function(board, cell) {
-    this.ensureCells(board);
-    return _.find(this.cells, function(c) { return c[0] == cell[0] && c[1] == cell[1]; });
-  },
-  getCells: function(board) {
-    this.ensureCells(board);
-    return this.cells;
-  },
-  getBorder: function(board) {
-    this.ensureCells(board);
-    return this.border;
-  }
 });
 
 
@@ -275,114 +239,199 @@ _.extend(actionTypes, {
 
   removeTemplateAction: createActionType("RemoveTemplateAction", RemovalAction, {
     apply: function(board) {
-      var index = null;
-
-      for (var x = board.template_actions.length - 1; x >= 0; x--) {
-        if (board.template_actions[x].uid == this.properties.actionId) {
-          index = x;
-          break;
-        }
-      }
-
-      if (index != null) {
-        if (index == 0) {
-          board.template_actions.shift();
-        } else {
-          board.template_actions.splice(index, 1);
-        }
-      }
+      board.templateLayer.removeTemplate(this.properties.actionId);
     }
   }),
 
   movementTemplateAction: createActionType("MovementTemplateAction", TemplateAction, {
-    internalTranslateData: function(action, dx, dy, cellSize){
-      action.properties.start = [this.properties.start[0] + dx, this.properties.start[1] + dy];
-      action.properties.end = [this.properties.end[0] + dx, this.properties.end[1] + dy];
-    },
-    calculateCells: function(board) {
-      return Geometry.getMovementPath(this.properties.start, this.properties.end);
-    },
-    drawExtras: function(board) {
-      board.drawing.drawMovementLine(this.properties.start, this.properties.end, board.getZoom());
+    apply: function(board) {
+      var p, delta;
+      if (this.version === 0) {
+        p = Geometry.getCellMidpoint(this.properties.start, board.drawingSettings.cellSize);
+        delta = [this.properties.end[0] - this.properties.start[0], this.properties.end[1] - this.properties.start[1]];
+      } else {
+        p = this.properties.position;
+        delta = this.properties.cellDelta;
+      }
+      var t = new PathfinderMovementTemplate(
+        this.properties.uid,
+        board,
+        new Vector2(p),
+        this.properties.color,
+        new Vector2(delta)
+      );
+
+      board.templateLayer.addTemplate(t);
     },
 
     validateData: function() {
-      this.ensureFields(["start", "end", "color", "uid"]);
+      this.ensureVersionedFields({
+        0: ["color", "uid", "start", "end"],
+        1: ["color", "uid", "position", "cellDelta"]
+      });
     }
   }),
 
   radiusTemplateAction: createActionType("RadiusTemplateAction", TemplateAction, {
-    internalTranslateData: function(action, dx, dy, cellSize){
-      action.properties.intersection = [this.properties.intersection[0] + dx, this.properties.intersection[1] + dy];
-    },
-    calculateCells: function(board) {
-      return Geometry.getCellsInRadius(this.properties.intersection, this.properties.radius);
+    apply: function(board) {
+      var p;
+      if (this.version === 0) {
+        p = Geometry.getCellMidpoint(this.properties.intersection, board.drawingSettings.cellSize);
+      } else {
+        p = this.properties.position;
+      }
+      var t = new PathfinderRadiusTemplate(
+        this.properties.uid,
+        board,
+        new Vector2(p),
+        this.properties.color,
+        this.properties.radius
+      );
+
+      board.templateLayer.addTemplate(t);
     },
 
     validateData: function() {
-      this.ensureFields(["intersection", "radius", "color", "uid"]);
+      this.ensureVersionedFields({
+        0: ["intersection", "radius", "color", "uid"],
+        1: ["position", "radius", "color", "uid"]
+      });
     }
   }),
 
   lineTemplateAction: createActionType("LineTemplateAction", TemplateAction, {
-    internalTranslateData: function(action, dx, dy, cellSize){
-      action.properties.start = [this.properties.start[0] + (dx * cellSize), this.properties.start[1] + (dy * cellSize)];
-      action.properties.end = [this.properties.end[0] + (dx * cellSize), this.properties.end[1] + (dy * cellSize)];
-    },
-    drawExtras: function(board) {
-      var cellSize = board.drawing.cellSize;
-      var startCell = Geometry.getCell(this.properties.start, cellSize);
-      var endCell = Geometry.getCell(this.properties.end, cellSize);
-      var distance = Geometry.getCellDistance(startCell, endCell) * 5;
-      board.drawing.drawMeasureLine(this.properties.start, this.properties.end, distance, null, null, board.getZoom());
-    },
-    calculateCells: function(board) {
-      return Geometry.getCellsOnLine(this.properties.start, this.properties.end, board.drawing.cellSize);
+    apply: function(board) {
+      var p, delta;
+      if (this.version === 0) {
+        p = this.properties.start;
+        delta = [this.properties.end[0] - this.properties.start[0], this.properties.end[1] - this.properties.start[1]];
+      } else {
+        p = this.properties.position;
+        delta = this.properties.delta;
+      }
+      var t = new PathfinderLineTemplate(
+        this.properties.uid,
+        board,
+        new Vector2(p),
+        this.properties.color,
+        new Vector2(delta)
+      );
+
+      board.templateLayer.addTemplate(t);
     },
 
     validateData: function() {
-      this.ensureFields(["start", "end", "color", "uid"]);
+      this.ensureVersionedFields({
+        0: ["start", "end", "color", "uid"],
+        1: ["position", "delta", "color", "uid"]
+      });
     }
   }),
 
   coneTemplateAction: createActionType("ConeTemplateAction", TemplateAction, {
-    internalTranslateData: function(action, dx, dy, cellSize){
-      action.properties.intersection = [this.properties.intersection[0] + dx, this.properties.intersection[1] + dy];
-    },
-    calculateCells: function(board) {
-      return Geometry.getCellsInCone(this.properties.intersection, this.properties.radius, this.properties.angle);
+    apply: function(board) {
+      var p, r;
+      if (this.version === 0) {
+        p = Geometry.getCellMidpoint(this.properties.intersection, board.drawingSettings.cellSize);
+        r = this.properties.radius;
+      } else {
+        p = this.properties.position;
+        r = this.properties.cellRadius;
+      }
+
+      var t = new PathfinderConeTemplate(
+        this.properties.uid,
+        board,
+        new Vector2(p),
+        this.properties.color,
+        r,
+        this.properties.angle
+      );
+
+      board.templateLayer.addTemplate(t);
     },
 
     validateData: function() {
-      this.ensureFields(["intersection", "radius", "angle", "color", "uid"]);
+      this.ensureVersionedFields({
+        0: ["intersection", "radius", "angle", "color", "uid"],
+        1: ["position", "cellRadius", "angle", "color", "uid"]
+      });
     }
   }),
 
   rectangleTemplateAction: createActionType("RectangleTemplateAction", TemplateAction, {
-    internalTranslateData: function(action, dx, dy, cellSize){
-      action.properties.topLeft = [this.properties.topLeft[0] + dx, this.properties.topLeft[1] + dy];
-      action.properties.bottomRight = [this.properties.bottomRight[0] + dx, this.properties.bottomRight[1] + dy];
-    },
-    calculateCells: function(board) {
-      return Geometry.getCellsInRectangle(this.properties.topLeft, this.properties.bottomRight);
+    apply: function(board) {
+      var p, delta;
+      if (this.version === 0) {
+        p = Geometry.getCellMidpoint(this.properties.topLeft, board.drawingSettings.cellSize);
+        delta = [this.properties.bottomRight[0] - this.properties.topLeft[0], this.properties.bottomRight[1] - this.properties.topLeft[1]]
+      } else {
+        p = this.properties.position;
+        delta = this.properties.cellDelta;
+      }
+
+      var t = new PathfinderRectangleTemplate(
+        this.properties.uid,
+        board,
+        new Vector2(p),
+        this.properties.color,
+        new Vector2(delta)
+      );
+
+      board.templateLayer.addTemplate(t);
     },
 
     validateData: function() {
-      this.ensureFields(["topLeft", "bottomRight", "color", "uid"]);
+      this.ensureVersionedFields({
+        0: ["topLeft", "bottomRight", "color", "uid"],
+        1: ["position", "cellDelta", "color", "uid"]
+      });
     }
   }),
 
   reachTemplateAction: createActionType("ReachTemplateAction", TemplateAction, {
-    internalTranslateData: function(action, dx, dy, cellSize){
-      action.properties.anchor = [this.properties.anchor[0] + (dx * cellSize), this.properties.anchor[1] + (dy * cellSize)];
-    },
-    calculateCells: function(board) {
-      var template = Geometry.getReachCells(this.properties.anchor, this.properties.size, this.properties.reach, board.drawing.cellSize);
-      return template.threat;
+    apply: function(board) {
+      var p;
+      if (this.version === 0) {
+        p = this.properties.anchor;
+      } else {
+        p = this.properties.position;
+      }
+      var t = new PathfinderReachTemplate(
+        this.properties.uid,
+        board,
+        new Vector2(p),
+        this.properties.color,
+        this.properties.size,
+        this.properties.reach
+      );
+
+      board.templateLayer.addTemplate(t);
     },
 
     validateData: function() {
-      this.ensureFields(["anchor", "size", "reach", "color", "uid"]);
+      this.ensureVersionedFields({
+        0: ["anchor", "size", "reach", "color", "uid"],
+        1: ["position", "size", "reach", "color", "uid"]
+      });
+    }
+  }),
+
+  overlandMeasureTemplateAction: createActionType("OverlandMeasureTemplateAction", TemplateAction, {
+    apply: function(board) {
+      var t = new OverlandMeasureTemplate(
+        this.properties.uid,
+        board,
+        new Vector2(this.properties.position),
+        this.properties.color,
+        new Vector2(this.properties.delta)
+      );
+
+      board.templateLayer.addTemplate(t);
+    },
+
+    validateData: function() {
+      this.ensureFields(["position", "delta", "color", "uid"]);
     }
   }),
 

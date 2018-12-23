@@ -13,11 +13,9 @@ export function feetToText(feet) {
     }
   }
 
-  if (feet > feetPerMile) {
-    const miles = Math.floor(feet / feetPerMile);
-    feet = Math.round(feet % feetPerMile);
-
-    return `${miles} mi ${feet}'`
+  if (feet > 2000) {
+    let miles = Math.floor((feet / feetPerMile) * 10) / 10.0;
+    return `${miles} mi`
   }
 
   return `${Math.round(feet)}'`

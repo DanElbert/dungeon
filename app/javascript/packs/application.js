@@ -18,6 +18,7 @@ import Eventer from "../lib/Eventer";
 import { Vector2, TransformMatrix, Rectangle, Geometry } from "../lib/geometry";
 import "../lib/Directives";
 import "../lib/TouchTapDirective";
+import * as formatting from "../lib/Formatting";
 
 import VueResize from 'vue-resize'
 import AppColorPicker from "../components/AppColorPicker";
@@ -41,6 +42,9 @@ window.TransformMatrix = TransformMatrix;
 window.Geometry = Geometry;
 window.Eventer = Eventer;
 window.Api = Api;
+window.Formatting = {
+  feetToText: formatting.feetToText
+};
 
 // Setup global animation loop
 function animate () {

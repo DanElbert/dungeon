@@ -32,6 +32,13 @@
     </div>
 
     <div class="field">
+      <%= board_form.label :template_type, class: 'label' %>
+      <div class="select">
+        <%= board_form.select :template_type, Board::TEMPLATE_TYPES.keys %>
+      </div>
+    </div>
+
+    <div class="field">
       <%= board_form.label :grid_color, class: 'label' %>
       <div data-color-picker data-attributes="<%= { inputName: 'game[board_attributes][grid_color]', selectedValue: board_form.object.grid_color }.to_json %>"></div>
     </div>

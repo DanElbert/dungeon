@@ -23,6 +23,7 @@ var Action = createActionType("Action", null, {
 
     Object.defineProperty(this, "actionType", { enumerable : true, get: function() { return this.properties.actionType; }});
     Object.defineProperty(this, "uid", { enumerable : true, get: function() { return this.properties.uid; }});
+    Object.defineProperty(this, "version", { enumerable : true, get: function() { return parseInt(this.properties.version) || 0; }});
 
     this.validateData();
   },
@@ -40,6 +41,14 @@ var Action = createActionType("Action", null, {
         throw new Error("Action of type " + this.actionType + " missing required field " + field);
       }
     }, this);
+  },
+  ensureVersionedFields: function(versionMap) {
+    var v = this.version;
+    var fields = versionMap[v];
+    if (!fields) {
+      throw new Error("Invalid version");
+    }
+    return this.ensureFields(fields);
   },
   clone: function() {
     return attachActionMethods(JSON.parse(JSON.stringify(this.properties)));

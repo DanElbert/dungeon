@@ -29,6 +29,7 @@ class ToolManager extends Eventer {
       "radius_template": new RadiusTemplate(this),
       "cone_template": new ConeTemplate(this),
       "reach_template": new ReachTemplateTool(this),
+      "overland_measure_template": new OverlandMeasureTemplateTool(this),
       "ping": new PingTool(this),
       "add_fog": new AddFogPen(this),
       "remove_fog": new RemoveFogPen(this),
@@ -37,6 +38,11 @@ class ToolManager extends Eventer {
       "paste": new PasteTool(this),
       "insert_image": new InsertImageTool(this),
       "tokens": new TokenTool(this)
+    };
+
+    this.templateGroups = {
+      pathfinder: "pathfinder_template_group",
+      overland: "overland_template_group"
     };
 
     this.toolSet = [
@@ -151,7 +157,7 @@ class ToolManager extends Eventer {
         })
       ]),
 
-      new ToolMenuGroup("template_group", [
+      new ToolMenuGroup("pathfinder_template_group", [
         new ToolMenuItem("measure_template", {
           label: "Measure",
           tooltip: "Measures movement distance in a straight line",
@@ -192,6 +198,15 @@ class ToolManager extends Eventer {
           tooltip: "Creates creature reach template",
           glyph: "fas fa-dharmachakra",
           handler: function() { self.setTool("reach_template"); }
+        })
+      ]),
+
+      new ToolMenuGroup("overland_template_group", [
+        new ToolMenuItem("overland_measure_template", {
+          label: "Measure",
+          tooltip: "Measure distances",
+          glyph: "fas fa-ruler",
+          handler: function() { self.setTool("overland_measure_template"); }
         })
       ]),
 
@@ -371,6 +386,13 @@ class ToolManager extends Eventer {
   setPcModeActiveState(state) {
     this.getMenuItem("toggle_pc_mode").active = state;
     this.render();
+  }
+
+  setTemplateSet(type) {
+    for (let t in this.templateGroups) {
+      let groupItem = this.getMenuItem(this.templateGroups[t]);
+      groupItem.visible = t === type;
+    }
   }
 
   hideCameraButton() {

@@ -46,7 +46,6 @@ function Board(canvas, cameraApi) {
   this.copiedArea = null;
 
   this.pending_action_queue = [];
-  this.template_actions = [];
   this.undo_stack = [];
 
   this.drawingLayer = new DrawingLayer(this.drawingSettings);
@@ -54,6 +53,7 @@ function Board(canvas, cameraApi) {
   this.tokenLayer = new TokenLayer();
   this.labelLayer = new ViewPortLabels(this, true);
   this.backgroundLayer = new BackgroundLayer(this);
+  this.templateLayer = new TemplateLayer(this);
 
   this.board_data = null;
 
@@ -214,6 +214,8 @@ function Board(canvas, cameraApi) {
     this.drawingSettings.cellSize = data.board.cell_size_pixels;
     this.drawingSettings.cellSizeFeet = data.board.cell_size_feet;
 
+    this.toolManager.setTemplateSet(data.board.template_type);
+
     if (!this.isOwner) {
       this.toolManager.hideFogTools();
       this.toolManager.hideImageTool();
@@ -252,11 +254,7 @@ function Board(canvas, cameraApi) {
   };
 
   this.renderTemplates = function() {
-    var actions = this.template_actions;
-    this.template_actions = [];
-    _.each(actions, function(action) {
-      action.apply(this);
-    }, this);
+    this.templateLayer.draw(this.drawing);
   };
 
   this.renderPings = function() {
@@ -361,9 +359,9 @@ function Board(canvas, cameraApi) {
         context.clearRect(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1]);
         this.renderBoardBackground();
         this.renderDrawing();
+        this.renderTemplates();
         this.renderTool();
         this.renderBoardGrid();
-        this.renderTemplates();
         this.renderTokens();
         this.renderPings();
         this.labelLayer.draw();

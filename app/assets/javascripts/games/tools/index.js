@@ -13,4 +13,5 @@
 //= require ./copy_paste
 //= require ./fog
 //= require ./reach_templates
+//= require ./overland_templates
 //= require ./tool_renderer

@@ -32,7 +32,7 @@ class Drawing {
 
     var totalMovement = Geometry.getCellDistance(start, end) * this.cellSizeFeet;
 
-    this.drawMeasureLine(startPoint, endPoint, totalMovement, null, null, zoom);
+    this.drawMeasureLine(startPoint, endPoint, window.Formatting.feetToText(totalMovement), null, null, zoom);
   }
 
   drawMeasureLine(start, end, label, color, width, zoom) {
@@ -72,13 +72,7 @@ class Drawing {
     var bounds = [[midPoint[0] - xOffset, midPoint[1] - yOffset], [midPoint[0] + xOffset, midPoint[1] + yOffset]];
 
     // draw ovalish box
-    this.context.beginPath();
-    this.context.moveTo(midPoint[0] - (fontWidth / 2), midPoint[1] - (fontHeight / 2));
-    this.context.lineTo(midPoint[0] + (fontWidth / 2), midPoint[1] - (fontHeight / 2));
-    this.context.arc(midPoint[0] + (fontWidth / 2), midPoint[1], fontHeight / 2, 1.5 * Math.PI, Math.PI / 2, false);
-    this.context.lineTo(midPoint[0] - (fontWidth / 2), midPoint[1] + (fontHeight / 2));
-    this.context.arc(midPoint[0] - (fontWidth / 2), midPoint[1], fontHeight / 2, Math.PI / 2, 1.5 * Math.PI, false);
-    this.context.closePath();
+    this.drawRoundedBox(midPoint, fontWidth, fontHeight);
 
     this.context.stroke();
     this.context.fill();
@@ -88,6 +82,17 @@ class Drawing {
     this.context.restore();
 
     return bounds;
+  }
+  
+  drawRoundedBox(center, width, height) {
+    // draw ovalish box
+    this.context.beginPath();
+    this.context.moveTo(center[0] - (width / 2), center[1] - (height / 2));
+    this.context.lineTo(center[0] + (width / 2), center[1] - (height / 2));
+    this.context.arc(center[0] + (width / 2), center[1], height / 2, 1.5 * Math.PI, Math.PI / 2, false);
+    this.context.lineTo(center[0] - (width / 2), center[1] + (height / 2));
+    this.context.arc(center[0] - (width / 2), center[1], height / 2, Math.PI / 2, 1.5 * Math.PI, false);
+    this.context.closePath();
   }
 
   // Draws text at the given point.  Centered by default, align and vAlign are optional params
@@ -133,6 +138,46 @@ class Drawing {
     this.context.globalAlpha = 1;
 
     this.drawLines("black", 3, border);
+  }
+  
+  drawOverlandMeasure(start, end, color, onlyoutline) {
+    this.context.save();
+
+    var dx = end[0] - start[0];
+    var dy = end[1] - start[1];
+    var height = 40 / this.drawingSettings.zoom;
+    var width = Math.sqrt(dx ** 2 + dy ** 2);
+    var rads = Math.atan2(dy, dx);
+
+    this.context.translate(start[0], start[1]);
+    this.context.rotate(rads);
+    this.drawRoundedBox([width / 2, 0], width, height);
+
+
+    if (onlyoutline) {
+      this.context.strokeStyle = color;
+      this.context.lineWidth = 6 / this.drawingSettings.zoom;
+      this.context.stroke();
+      this.context.strokeStyle = "black";
+      this.context.lineWidth = 1 / this.drawingSettings.zoom;
+      this.context.stroke();
+    } else {
+      this.context.fillStyle = color;
+      this.context.globalAlpha = 0.3;
+      this.context.fill();
+      this.context.globalAlpha = 1;
+      this.context.lineWidth = 2 / this.drawingSettings.zoom;
+      this.context.stroke();
+
+      this.drawLines("black", 2 / this.drawingSettings.zoom, [{start: [0, 0], end: [width, 0]}]);
+
+      this.context.translate(width / 2, 0);
+      this.context.rotate(-rads);
+      var text = window.Formatting.feetToText(width / (this.drawingSettings.cellSize / this.drawingSettings.cellSizeFeet));
+      this.drawLabel([0,0], text, "black", "black", "white", 20 / this.drawingSettings.zoom);
+    }
+
+    this.context.restore();
   }
 
   drawLines (color, width, lines) {

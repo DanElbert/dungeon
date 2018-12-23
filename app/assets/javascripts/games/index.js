@@ -10,6 +10,7 @@
 //= require ./drawing_layer
 //= require ./ping_layer
 //= require ./token_layer
+//= require ./template_layer
 //= require ./tools
 //= require ./view_port_labels
 //= require ./board_detection_manager

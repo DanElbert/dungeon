@@ -28,17 +28,15 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
 
       self.selected_template = null;
 
-      for (var x = board.template_actions.length - 1; x >= 0; x--) {
-        var action = board.template_actions[x];
-        if (action.isTemplate && action.containsCell(board, mapEvt.mapPointCell)) {
-          self.selected_template = action;
-          break;
-        }
+      var tmpl = board.templateLayer.templateAt(mapEvt.mapPoint);
+
+      if (tmpl !== null) {
+        self.selected_template = tmpl;
       }
     });
 
     board.event_manager.on('dragstart.Pointer', function(mapEvt) {
-      if (self.selected_template && self.selected_template.containsCell(self.board, mapEvt.mapPointCell)) {
+      if (self.selected_template && self.selected_template.containsPoint(mapEvt.mapPoint)) {
         self.dragging_template = true;
         self.template_start_cell = mapEvt.mapPointCell;
         self.viewPortDragging.disable();
@@ -82,7 +80,7 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
 
   removeTemplate: function(template) {
     var removeAction = {actionType: "removeTemplateAction", actionId: template.uid, uid: generateActionId()};
-    var restoreAction = template.clone().properties;
+    var restoreAction = template.clone(generateActionId()).toAction();
     this.board.addAction(removeAction, restoreAction, true);
   },
 
@@ -93,29 +91,22 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
 
   draw: function() {
 
-    var border = null;
+    var offset = null;
 
     if (this.dragging_template) {
       var dx = this.template_current_cell[0] - this.template_start_cell[0];
       var dy = this.template_current_cell[1] - this.template_start_cell[1];
-      var cellSize = this.board.drawing.cellSize;
-
-      if (dx != 0 || dy != 0) {
-        this.board.drawing.drawMovementLine(this.template_start_cell, this.template_current_cell, this.board.getZoom());
-      }
-
-      border = _.map(this.selected_template.getBorder(this.board), function(line) {
-        return {
-          start: [line.start[0] + dx * cellSize, line.start[1] + dy * cellSize],
-          end: [line.end[0] + dx * cellSize, line.end[1] + dy * cellSize]
-        }
-      });
+      offset = new Vector2(dx, dy);
     } else if (this.selected_template) {
-      border = this.selected_template.getBorder(this.board);
+      offset = new Vector2(0, 0);
     }
 
-    if (border) {
-      this.board.drawing.drawLines("white", 6, border);
+    if (offset) {
+      this.selected_template.drawHighlight(this.board.drawing, offset.scale(this.board.drawingSettings.cellSize, this.board.drawingSettings.cellSize));
+
+      if (offset.x !== 0 || offset.y !== 0) {
+        this.board.drawing.drawMovementLine(this.template_start_cell, this.template_current_cell, this.board.getZoom());
+      }
     }
   },
 
@@ -125,9 +116,9 @@ Pointer.prototype = _.extend(Pointer.prototype, Tool.prototype, {
       var dy = this.template_current_cell[1] - this.template_start_cell[1];
 
       var removeAction = {actionType: "removeTemplateAction", actionId: this.selected_template.uid, uid: generateActionId()};
-      var addAction = this.selected_template.cloneAndTranslate(dx, dy, this.board.drawing.cellSize).serialize();
+      var addAction = this.selected_template.clone(generateActionId()).translate(dx * this.board.drawingSettings.cellSize, dy * this.board.drawingSettings.cellSize).toAction();
 
-      var restoreAction = this.selected_template.clone().serialize();
+      var restoreAction = this.selected_template.clone(generateActionId()).toAction();
       var undoAction = {actionType: "removeTemplateAction", actionId: addAction.uid, uid: generateActionId()};
 
       this.board.addAction(

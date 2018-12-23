@@ -10,6 +10,8 @@ function BaseDrawing(uid, board, position, scale, angle, isPcLayer) {
   this.isPcLayer = !!isPcLayer;
 
   this._bounds = null;
+
+  Object.defineProperty(this, "cellSize", { enumerable : true, get: function() { return this.board.drawingSettings.cellSize; }});
 }
 
 BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
@@ -32,18 +34,21 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     this.invalidateHandler(() => {
       this.position = newPosition;
     });
+    return this;
   },
 
   setScale: function(newScale) {
     this.invalidateHandler(() => {
       this.scale = newScale;
     });
+    return this;
   },
 
   setAngle: function(newAngle) {
     this.invalidateHandler(() => {
       this.angle = newAngle;
     });
+    return this;
   },
 
   // Given a rectangle and an angle, returns a non-rotated containing rectangle
@@ -81,22 +86,12 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
   invalidate: function() {
     this.clearBounds();
     this.board.invalidate(this.bounds());
-    // var self = this;
-    // setTimeout(function() {
-    //   self.clearBounds();
-    //   if (self.drawingLayer) {
-    //     self.drawingLayer.actionChanged(self.uid);
-    //   }
-    //   self.board.invalidate();
-    // });
   },
 
   draw: function(drawing, drawBounds, level) {
     this.executeDraw(drawing, drawBounds, level);
   },
 
-  executeDraw: function(drawing, drawBounds) {
+  executeDraw: function(drawing, drawBounds, level) {
   },
-
-
 });
