@@ -6,3 +6,4 @@
 //= require ./base_template
 //= require ./pathfinder_templates
 //= require ./overland_templates
+//= require ./token_drawing

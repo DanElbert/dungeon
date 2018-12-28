@@ -4,6 +4,8 @@
 // =======================
 function BaseTemplate(uid, board, position, color) {
   BaseDrawing.call(this, uid, board, position, 1, 0, false);
+  this.selectable = true;
+  this.canInvalidateByBounds = false;
   this.color = color;
 }
 

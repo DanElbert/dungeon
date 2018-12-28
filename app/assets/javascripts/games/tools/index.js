@@ -1,6 +1,7 @@
 //= require ./tool_manager
 //= require ./tool
 //= require ./view_port_dragging
+//= require ./drag_delete_item
 //= require ./global_shortcuts
 //= require ./pointer
 //= require ./shape.js

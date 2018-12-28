@@ -13,12 +13,7 @@ class TemplateLayer {
   }
 
   templateAt(point) {
-    for (let t of this.templates.values()) {
-      if (t.containsPoint(point)) {
-        return t;
-      }
-    }
-    return null;
+    return [...this.templates.values()].filter(t => t.selectable !== false && t.containsPoint(point));
   }
 
   draw(drawing) {

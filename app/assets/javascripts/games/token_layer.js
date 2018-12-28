@@ -1,51 +1,37 @@
-function TokenLayer() {
-  this.tokens = [];
+function TokenLayer(board) {
+  this.board = board;
+  this.tokens = new Map();
 }
 
 _.extend(TokenLayer.prototype, {
   draw: function(drawing) {
-    _.each(this.tokens, function(t) {
-      drawing.drawToken(t.cell[0], t.cell[1], t.height, t.width, t.color, t.text, t.fontColor, t.fontSize);
-      // drawing.drawCircleTiles(t.x, t.y, t.width, t.height, "rgba(255,0,0,1.0)");
-      // drawing.drawCircle(t.raw_x, t.raw_y, 4, "rgba(0,0,0,1.0)", true);
-    }, this);
+    for (let t of this.tokens.values()) {
+      t.draw(drawing);
+    }
   },
 
   addToken: function(t) {
-    this.tokens.push(t);
+    this.tokens.set(t.uid, t);
+    this.board.invalidate();
   },
 
   removeToken: function(uid) {
-    var idx = null;
-    for (var x = 0; x < this.tokens.length; x++) {
-      if (this.tokens[x].uid === uid) {
-        idx = x;
-        break;
-      }
-    }
-
-    if (idx !== null) {
-      this.tokens.splice(idx, 1);
-    }
+    this.tokens.delete(uid);
+    this.board.invalidate();
   },
 
-  tokenAtCell: function(cell) {
-    for (var x = this.tokens.length - 1; x >= 0; x--) {
-      var t = this.tokens[x];
-
-      if ((cell[0] >= t.cell[0] && cell[0] < t.cell[0] + t.width) && (cell[1] >= t.cell[1] && cell[1] < t.cell[1] + t.height)) {
-        return t;
-      }
-    }
-
-    return null;
+  tokenAt: function(point) {
+    return [...this.tokens.values()].filter(t => t.selectable !== false && t.containsPoint(point));
   },
 
   clearTokens: function() {
-    this.tokens = [];
+    this.tokens = new Map();
+    this.board.invalidate();
   },
 
   setTokens: function(tokenArray) {
-    this.tokens = tokenArray;
+    for (let t of tokenArray) {
+      this.addToken(t);
+    }
   }
 });

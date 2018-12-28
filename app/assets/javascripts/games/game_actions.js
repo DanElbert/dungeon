@@ -447,10 +447,32 @@ _.extend(actionTypes, {
   addTokenAction: createActionType("AddTokenAction", Action, {
     isPersistent: function() { return true; },
     apply: function(board) {
-      board.tokenLayer.addToken(this.serialize());
+      var p, s;
+      if (this.version === 0) {
+        var cell = this.properties.cell;
+        p = [cell[0] * board.drawingSettings.cellSize, cell[1] * board.drawingSettings.cellSize];
+        s = this.properties.width;
+      } else {
+        p = this.properties.position;
+        s = this.properties.tokenCellSize;
+      }
+      var t = new TokenDrawing(
+        this.uid,
+        board,
+        new Vector2(p),
+        s,
+        this.properties.color,
+        this.properties.fontColor,
+        this.properties.fontSize,
+        this.properties.text
+      );
+      board.tokenLayer.addToken(t);
     },
     validateData: function() {
-      this.ensureFields(["uid", "cell", "height", "width", "color", "text", "fontSize", "fontColor"]);
+      this.ensureVersionedFields({
+        0: ["uid", "cell", "height", "width", "color", "text", "fontSize", "fontColor"],
+        1: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text"]
+      });
     }
   }),
 

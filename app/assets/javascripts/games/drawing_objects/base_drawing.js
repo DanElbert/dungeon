@@ -8,6 +8,8 @@ function BaseDrawing(uid, board, position, scale, angle, isPcLayer) {
   this.angle = angle;
   this.isFog = false;
   this.isPcLayer = !!isPcLayer;
+  this.selectable = false;
+  this.canInvalidateByBounds = true;
 
   this._bounds = null;
 
@@ -80,12 +82,20 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     this.clearBounds();
     var newBounds = this.bounds();
 
-    this.board.invalidate(originalBounds.add(newBounds), this.isFog);
+    if (this.canInvalidateByBounds) {
+      this.board.invalidate(originalBounds.add(newBounds), this.isFog);
+    } else {
+      this.board.invalidate();
+    }
   },
 
   invalidate: function() {
     this.clearBounds();
-    this.board.invalidate(this.bounds());
+    if (this.canInvalidateByBounds) {
+      this.board.invalidate(this.bounds(), this.isFog);
+    } else {
+      this.board.invalidate();
+    }
   },
 
   draw: function(drawing, drawBounds, level) {

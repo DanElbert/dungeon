@@ -50,7 +50,7 @@ function Board(canvas, cameraApi) {
 
   this.drawingLayer = new DrawingLayer(this.drawingSettings);
   this.pingLayer = new PingLayer(this);
-  this.tokenLayer = new TokenLayer();
+  this.tokenLayer = new TokenLayer(this);
   this.labelLayer = new ViewPortLabels(this, true);
   this.backgroundLayer = new BackgroundLayer(this);
   this.templateLayer = new TemplateLayer(this);
@@ -360,9 +360,9 @@ function Board(canvas, cameraApi) {
         this.renderBoardBackground();
         this.renderDrawing();
         this.renderTemplates();
+        this.renderTokens();
         this.renderTool();
         this.renderBoardGrid();
-        this.renderTokens();
         this.renderPings();
         this.labelLayer.draw();
         this.renderBorder();

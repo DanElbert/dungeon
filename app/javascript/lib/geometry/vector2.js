@@ -4,6 +4,9 @@ class Vector2 {
     if (Array.isArray(x)) {
       this.x = x[0];
       this.y = x[1];
+    } else if (x instanceof Vector2) {
+      this.x = x.x;
+      this.y = x.y;
     } else {
       this.x = x;
       this.y = y;
