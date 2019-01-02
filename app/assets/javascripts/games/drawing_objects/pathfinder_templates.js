@@ -16,6 +16,7 @@ PathfinderMovementTemplate.prototype = _.extend(PathfinderMovementTemplate.proto
   drawExtras: function(drawing) {
     var start = this.startCell();
     var end = this.endCell();
+
     drawing.drawMovementLine(start, end, this.board.getZoom());
   },
 
@@ -147,9 +148,8 @@ function PathfinderRectangleTemplate(uid, board, position, color, cellDelta) {
 
 PathfinderRectangleTemplate.prototype = _.extend(PathfinderRectangleTemplate.prototype, BaseCellTemplate.prototype, {
   calculateCells: function(cellSize) {
-    var tl = Geometry.getCell([this.position.x, this.position.y], this.cellSize);
-    var br = [tl[0] + this.cellDelta.x, tl[1] + this.cellDelta.y];
-    return Geometry.getCellsInRectangle(tl, br);
+    var rect = new Rectangle(new Vector2(Geometry.getCell([this.position.x, this.position.y], this.cellSize)), this.cellDelta.x, this.cellDelta.y);
+    return Geometry.getCellsInRectangle(rect.topLeft().toArray(), rect.bottomRight().toArray());
   },
 
   clone: function(uid) {

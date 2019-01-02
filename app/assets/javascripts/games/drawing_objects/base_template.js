@@ -50,6 +50,12 @@ BaseCellTemplate.prototype = _.extend(BaseCellTemplate.prototype, BaseTemplate.p
   drawExtras: function(drawing) {
   },
 
+  clearDrawing: function() {
+    BaseTemplate.prototype.clearDrawing.call(this);
+    this.cells = null;
+    this.border = null;
+  },
+
   drawHighlight: function(drawing, offset) {
     this.ensureCells();
     drawing.context.save();

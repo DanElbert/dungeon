@@ -1,399 +1,259 @@
-function Measure(manager) {
-  Tool.call(this, manager);
-  this.super = Tool.prototype;
-  this.color = null;
-  this.startCell = null;
-  this.currentCell = null;
-}
-Measure.prototype = _.extend(Measure.prototype, Tool.prototype, {
-  buildOptions: function() {
+
+class TemplateTool extends Tool {
+  constructor(manager) {
+    super(manager);
+
+    this.shouldDrawMeasure = true;
+    this.color = null;
+    this.cursor = new Vector2(0, 0);
+    this.cursorStart = null;
+    this.tempTemplate = null;
+
+    this.dragDeleteItem = new DragDeleteItem(this, this.board, this.eventNamespace());
+  }
+
+  eventNamespace() {
+    throw "Not Implemented";
+  }
+
+  buildTemplate() {
+    throw "Not Implemented";
+  }
+
+  updateTemplate(template) {
+    throw "Not Implemented";
+  }
+
+  snapCursor(point, cell) {
+    return new Vector2(Geometry.getNearestCellIntersection(point.toArray(), this.board.drawingSettings.cellSize));
+  }
+
+  buildOptions() {
     this.options.add(this.toolManager.sharedTool("templateColor"));
-  },
+  }
 
-  optionsChanged: function() {
+  optionsChanged() {
     this.color = this.options.get("color").value;
-  },
-  enable: function () {
-    var board = this.board;
-    var self = this;
-    board.event_manager.on('dragstart.Measure', function (mapEvt) {
-      self.startCell = mapEvt.mapPointCell;
+  }
+
+  enable() {
+    this.board.event_manager.on(`mousemove.${this.eventNamespace()}`, mapEvt => {
+      this.cursor = this.snapCursor(new Vector2(mapEvt.mapPoint), new Vector2(mapEvt.mapPointCell));
     });
 
-    board.event_manager.on('drag.Measure', function (mapEvt) {
-      self.currentCell = mapEvt.mapPointCell;
-    });
-
-    board.event_manager.on('dragstop.Measure', function (mapEvt) {
-      self.saveAction();
-      self.startCell = null;
-      self.currentCell = null;
-    });
-  },
-
-  disable: function () {
-    this.board.event_manager.off(".Measure");
-  },
-
-  draw: function() {
-    if (this.startCell && this.currentCell) {
-      if (this.startCell[0] == this.currentCell[0] && this.startCell[1] == this.currentCell[1]) {
-        return;
+    this.board.event_manager.on(`dragstart.${this.eventNamespace()}`, mapEvt => {
+      if (!this.dragDeleteItem.selectedItem) {
+        this.cursorStart = this.snapCursor(new Vector2(mapEvt.mapPoint), new Vector2(mapEvt.mapPointCell));
+        this.tempTemplate = this.buildTemplate();
+        this.board.templateLayer.addTemplate(this.tempTemplate);
       }
+    });
 
-      var template = Geometry.getMovementPath(this.startCell, this.currentCell);
-      var border = Geometry.getBorder(template, this.board.drawing.cellSize);
+    this.board.event_manager.on(`drag.${this.eventNamespace()}`, mapEvt => {
+      if (this.tempTemplate) {
+        this.cursor = this.snapCursor(new Vector2(mapEvt.mapPoint), new Vector2(mapEvt.mapPointCell));
+        this.updateTemplate(this.tempTemplate);
+      }
+    });
 
-      this.board.drawing.drawTemplate(template, border, this.color);
-      this.board.drawing.drawMovementLine(this.startCell, this.currentCell, this.board.getZoom());
+    this.board.event_manager.on(`dragstop.${this.eventNamespace()}`, mapEvt => {
+      if (this.tempTemplate) {
+        this.saveAction();
+        this.board.templateLayer.removeTemplate(this.tempTemplate.uid);
+      }
+      this.tempTemplate = null;
+      this.cursorStart = null;
+    });
+
+    this.dragDeleteItem.enable();
+  }
+
+  disable() {
+    this.board.event_manager.off(`.${this.eventNamespace()}`);
+    this.dragDeleteItem.disable();
+  }
+
+  saveAction() {
+    const action = this.tempTemplate.clone(generateActionId()).toAction();
+    const undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
+    this.board.addAction(action, undoAction, true);
+  }
+
+  draw() {
+    this.dragDeleteItem.draw();
+    this.drawCross(this.cursor);
+
+    if (this.cursorStart) {
+      this.drawCross(this.cursorStart);
     }
-  },
 
-  saveAction: function() {
-    if (this.startCell && this.currentCell) {
-      var action = {actionType: "movementTemplateAction", start: this.startCell, end: this.currentCell, color: this.color, uid: generateActionId()};
-      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
+    if (this.tempTemplate && this.shouldDrawMeasure) {
+      this.drawMeasure();
     }
   }
-});
 
-function RadialTemplate(manager) {
-  Tool.call(this, manager);
-  this.super = Tool.prototype;
-  this.color = null;
-  this.dragging = false;
-  this.center = null;
-  this.radiusPoint = null;
-}
-RadialTemplate.prototype = _.extend(RadialTemplate.prototype, Tool.prototype, {
-  buildOptions: function() {
-    this.options.add(this.toolManager.sharedTool("templateColor"));
-  },
-
-  optionsChanged: function() {
-    this.color = this.options.get("color").value;
-  },
-  saveAction: function() {},
-  toolName: function() { return "Radial"; },
-  getCells: function(centerCell, endCell, distance) { return []; },
-  enable: function () {
-    var board = this.board;
-    var self = this;
-    var cellSize = this.board.drawing.cellSize;
-
-    board.event_manager.on('mousemove.' + this.toolName(), function(mapEvt) {
-      if (!self.dragging) {
-        self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-      }
-    });
-
-    board.event_manager.on('dragstart.' + this.toolName(), function (mapEvt) {
-      self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-      self.dragging = true;
-    });
-
-    board.event_manager.on('drag.' + this.toolName(), function (mapEvt) {
-      self.radiusPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-    });
-
-    board.event_manager.on('dragstop.' + this.toolName(), function (mapEvt) {
-      self.saveAction();
-      self.radiusPoint = null;
-      self.dragging = false;
-      self.center = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-    });
-  },
-
-  draw: function() {
-
-    if (this.center) {
-      this.drawCross(this.center);
+  cursorDelta() {
+    if (this.cursorStart === null) {
+      return new Vector2(0, 0);
     }
+    const cell1 = Geometry.getCell(this.cursorStart.toArray(), this.board.drawingSettings.cellSize);
+    const cell2 = Geometry.getCell(this.cursor.toArray(), this.board.drawingSettings.cellSize);
 
-    if (this.radiusPoint) {
-      this.drawCross(this.radiusPoint);
-    }
+    return new Vector2(cell2).subtract(new Vector2(cell1));
+  }
 
-    if (this.center && this.radiusPoint) {
-      var centerCell = [this.center[0] / this.board.drawing.cellSize, this.center[1] / this.board.drawing.cellSize];
-      var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
-      var distance = Geometry.getCellDistance(centerCell, endCell);
-
-      var template = this.getCells(centerCell, endCell, distance);
-      var border = Geometry.getBorder(template, this.board.drawing.cellSize);
-
-      this.board.drawing.drawTemplate(template, border, this.color);
-
-      this.board.drawing.drawMeasureLine(this.center, this.radiusPoint, distance * 5, null, null, this.board.getZoom());
-    }
-  },
-
-  disable: function () {
-    this.board.event_manager.off('.' + this.toolName());
-  },
-
-  drawCross: function(point) {
+  drawCross(point) {
     var crossSize = 10;
     var lines = [
-      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
-      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
+      {start: [point.x - crossSize, point.y], end: [point.x + crossSize, point.y]},
+      {start: [point.x, point.y - crossSize], end: [point.x, point.y + crossSize]}
     ];
     this.board.drawing.drawLines("black", 3, lines);
   }
-});
 
-function RadiusTemplate(manager) {
-  RadialTemplate.call(this, manager);
-  this.super = RadialTemplate.prototype;
+  drawMeasure() {
+    const cell1 = Geometry.getCell(this.cursorStart.toArray(), this.board.drawingSettings.cellSize);
+    const cell2 = Geometry.getCell(this.cursor.toArray(), this.board.drawingSettings.cellSize);
+    const distance = Geometry.getCellDistance(cell1, cell2) * this.board.drawingSettings.cellSizeFeet;
+
+    this.board.drawing.drawMeasureLine(this.cursorStart.toArray(), this.cursor.toArray(), `${distance}'`, null, null, this.board.drawingSettings.zoom);
+  }
 }
-RadiusTemplate.prototype = _.extend(RadiusTemplate.prototype, RadialTemplate.prototype, {
-  toolName: function() { return "Radius"; },
 
-  getCells: function(centerCell, endCell, distance) {
-    return Geometry.getCellsInRadius(centerCell, distance);
-  },
+class Measure extends TemplateTool {
+  constructor(manager) {
+    super(manager);
+    this.shouldDrawMeasure = false;
+  }
 
-  saveAction: function() {
-    if (this.center && this.radiusPoint) {
-      var centerCell = [this.center[0] / this.board.drawing.cellSize, this.center[1] / this.board.drawing.cellSize];
-      var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
-      var distance = Geometry.getCellDistance(centerCell, endCell);
+  eventNamespace() {
+    return "Measure";
+  }
 
-      var action = {actionType: "radiusTemplateAction", intersection: centerCell, radius: distance, color: this.color, uid: generateActionId()};
-      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
+  buildTemplate() {
+    return new PathfinderMovementTemplate(generateActionId(), this.board, this.cursorStart, this.color, this.cursorDelta());
+  }
+
+  updateTemplate(template) {
+    template.updateProperties({
+      color: this.color,
+      position: this.cursorStart,
+      cellDelta: this.cursorDelta()
+    });
+  }
+
+  snapCursor(point, cell) {
+    return new Vector2(Geometry.getCellMidpoint(cell.toArray(), this.board.drawingSettings.cellSize));
+  }
+}
+
+class RadiusTemplate extends TemplateTool {
+  constructor(manager) {
+    super(manager);
+  }
+
+  eventNamespace() {
+    return "Radius";
+  }
+
+  buildTemplate() {
+    return new PathfinderRadiusTemplate(generateActionId(), this.board, this.cursorStart, this.color, Geometry.getCellDistance([0, 0], this.cursorDelta().toArray()));
+  }
+
+  updateTemplate(template) {
+    template.updateProperties({
+      color: this.color,
+      position: this.cursorStart,
+      cellRadius: Geometry.getCellDistance([0, 0], this.cursorDelta().toArray())
+    });
+  }
+}
+
+class ConeTemplate extends TemplateTool {
+  constructor(manager) {
+    super(manager);
+  }
+
+  eventNamespace() {
+    return "Cone";
+  }
+
+  buildTemplate() {
+    return new PathfinderConeTemplate(generateActionId(), this.board, this.cursorStart, this.color, Geometry.getCellDistance([0, 0], this.cursorDelta().toArray()), this.getAngle());
+  }
+
+  updateTemplate(template) {
+    template.updateProperties({
+      color: this.color,
+      position: this.cursorStart,
+      cellRadius: Geometry.getCellDistance([0, 0], this.cursorDelta().toArray()),
+      angle: this.getAngle()
+    });
+  }
+
+  getAngle() {
+    let cursorAngle = Math.atan2(this.cursor.x - this.cursorStart.x, -1 * (this.cursor.y - this.cursorStart.y)) * (180 / Math.PI);
+    return (cursorAngle + 360 - 90) % 360;
+  }
+}
+
+class LineTemplate extends TemplateTool {
+  constructor(manager) {
+    super(manager);
+  }
+
+  eventNamespace() {
+    return "Line";
+  }
+
+  buildTemplate() {
+    return new PathfinderLineTemplate(generateActionId(), this.board, this.cursorStart, this.color, this.cursorDelta().scale(this.board.drawingSettings.cellSize));
+  }
+
+  updateTemplate(template) {
+    template.updateProperties({
+      color: this.color,
+      position: this.cursorStart,
+      delta: this.cursorDelta().scale(this.board.drawingSettings.cellSize)
+    });
+  }
+}
+
+class RectangleTemplate extends TemplateTool {
+  constructor(manager) {
+    super(manager);
+  }
+
+  eventNamespace() {
+    return "RectangleTemplate";
+  }
+
+  buildTemplate() {
+    return new PathfinderRectangleTemplate(generateActionId(), this.board, this.cursorStart, this.color, this.cursorDelta());
+  }
+
+  updateTemplate(template) {
+    template.updateProperties({
+      color: this.color,
+      position: this.cursorStart,
+      cellDelta: this.cursorDelta()
+    });
+  }
+
+  drawMeasure() {
+    var cellDelta = this.cursorDelta();
+    var xDist = Math.abs(cellDelta.x) * this.board.drawingSettings.cellSizeFeet;
+    var yDist = Math.abs(cellDelta.y) * this.board.drawingSettings.cellSizeFeet;
+
+    var xRange = [Math.min(this.cursorStart.x, this.cursor.x), Math.max(this.cursorStart.x, this.cursor.x)];
+    var yRange = [Math.min(this.cursorStart.y, this.cursor.y), Math.max(this.cursorStart.y, this.cursor.y)];
+
+    if (xDist > 0) {
+      this.board.drawing.drawMeasureLine([xRange[0], yRange[0] - 30], [xRange[1], yRange[0] - 30], xDist, null, null, this.board.getZoom());
+    }
+
+    if (yDist > 0) {
+      this.board.drawing.drawMeasureLine([xRange[1] + 30, yRange[0]], [xRange[1] + 30, yRange[1]], yDist, null, null, this.board.getZoom());
     }
   }
-});
-
-function ConeTemplate(manager) {
-  RadialTemplate.call(this, manager);
-  this.super = RadialTemplate.prototype;
 }
-ConeTemplate.prototype = _.extend(ConeTemplate.prototype, RadialTemplate.prototype, {
-  toolName: function() { return "Cone"; },
-
-  getCells: function(centerCell, endCell, distance) {
-    var cursorAngle = Math.atan2(this.radiusPoint[0] - this.center[0], -1 * (this.radiusPoint[1] - this.center[1])) * (180 / Math.PI);
-    cursorAngle = (cursorAngle + 360 - 90) % 360;
-
-    return Geometry.getCellsInCone(centerCell, distance, cursorAngle);
-  },
-
-  saveAction: function() {
-    if (this.center && this.radiusPoint) {
-      var centerCell = [this.center[0] / this.board.drawing.cellSize, this.center[1] / this.board.drawing.cellSize];
-      var endCell = [this.radiusPoint[0] / this.board.drawing.cellSize, this.radiusPoint[1] / this.board.drawing.cellSize];
-      var distance = Geometry.getCellDistance(centerCell, endCell);
-      var cursorAngle = Math.atan2(this.radiusPoint[0] - this.center[0], -1 * (this.radiusPoint[1] - this.center[1])) * (180 / Math.PI);
-      cursorAngle = (cursorAngle + 360 - 90) % 360;
-
-      var action = {actionType: "coneTemplateAction", intersection: centerCell, radius: distance, angle: cursorAngle, color: this.color, uid: generateActionId()};
-      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
-    }
-  }
-});
-
-function LineTemplate(manager) {
-  Tool.call(this, manager);
-  this.super = Tool.prototype;
-  this.color = null;
-  this.dragging = false;
-  this.startPoint = null;
-  this.currentPoint = null;
-}
-LineTemplate.prototype = _.extend(LineTemplate.prototype, Tool.prototype, {
-  buildOptions: function() {
-    this.options.add(this.toolManager.sharedTool("templateColor"));
-  },
-
-  optionsChanged: function() {
-    this.color = this.options.get("color").value;
-  },
-  enable: function () {
-    var board = this.board;
-    var self = this;
-    var cellSize = this.board.drawing.cellSize;
-
-    board.event_manager.on('mousemove.LineTemplate', function(mapEvt) {
-      if (!self.dragging) {
-        self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-      }
-    });
-
-    board.event_manager.on('dragstart.LineTemplate', function (mapEvt) {
-      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-      self.dragging = true;
-    });
-
-    board.event_manager.on('drag.LineTemplate', function (mapEvt) {
-      self.currentPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize); //mapEvt.mapPoint;
-    });
-
-    board.event_manager.on('dragstop.LineTemplate', function (mapEvt) {
-      self.saveAction();
-      self.currentPoint = null;
-      self.dragging = false;
-      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-    });
-  },
-
-  disable: function () {
-    this.board.event_manager.off(".LineTemplate");
-  },
-
-  draw: function() {
-
-    if (this.startPoint) {
-      this.drawCross(this.startPoint);
-    }
-
-    if (this.currentPoint) {
-      this.drawCross(this.currentPoint);
-    }
-
-    if (this.startPoint && this.currentPoint) {
-      if (this.startPoint[0] == this.currentPoint[0] && this.startPoint[1] == this.currentPoint[1]) {
-        return;
-      }
-
-      var cellSize = this.board.drawing.cellSize;
-      var template = Geometry.getCellsOnLine(this.startPoint, this.currentPoint, cellSize);
-      var border = Geometry.getBorder(template, this.board.drawing.cellSize);
-
-      var startCell = Geometry.getCell(this.startPoint, cellSize);
-      var endCell = Geometry.getCell(this.currentPoint, cellSize);
-      var distance = Geometry.getCellDistance(startCell, endCell) * 5;
-
-      this.board.drawing.drawTemplate(template, border, this.color);
-      this.board.drawing.drawMeasureLine(this.startPoint, this.currentPoint, distance, null, null, this.board.getZoom());
-    }
-  },
-
-  drawCross: function(point) {
-    var crossSize = 10;
-    var lines = [
-      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
-      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
-    ];
-    this.board.drawing.drawLines("black", 3, lines);
-  },
-
-  saveAction: function() {
-    if (this.startPoint && this.currentPoint) {
-      var action = {actionType: "lineTemplateAction", start: this.startPoint, end: this.currentPoint, color: this.color, uid: generateActionId()};
-      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
-    }
-  }
-});
-
-function RectangleTemplate(manager) {
-  Tool.call(this, manager);
-  this.super = Tool.prototype;
-  this.color = null;
-  this.dragging = false;
-  this.startPoint = null;
-  this.currentPoint = null;
-}
-RectangleTemplate.prototype = _.extend(RectangleTemplate.prototype, Tool.prototype, {
-  buildOptions: function() {
-    this.options.add(this.toolManager.sharedTool("templateColor"));
-  },
-
-  optionsChanged: function() {
-    this.color = this.options.get("color").value;
-  },
-  enable: function () {
-    var board = this.board;
-    var self = this;
-    var cellSize = this.board.drawing.cellSize;
-
-    board.event_manager.on('mousemove.RectangleTemplate', function(mapEvt) {
-      if (!self.dragging) {
-        self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-      }
-    });
-
-    board.event_manager.on('dragstart.RectangleTemplate', function (mapEvt) {
-      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-      self.dragging = true;
-    });
-
-    board.event_manager.on('drag.RectangleTemplate', function (mapEvt) {
-      self.currentPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize); //mapEvt.mapPoint;
-    });
-
-    board.event_manager.on('dragstop.RectangleTemplate', function (mapEvt) {
-      self.saveAction();
-      self.currentPoint = null;
-      self.dragging = false;
-      self.startPoint = Geometry.getNearestCellIntersection(mapEvt.mapPoint, cellSize);
-    });
-  },
-
-  disable: function () {
-    this.board.event_manager.off(".RectangleTemplate");
-  },
-
-  canDraw: function() {
-    // Both exist and both x and y are different
-    return (this.startPoint && this.currentPoint) && (this.startPoint[0] != this.currentPoint[0] && this.startPoint[1] != this.currentPoint[1]);
-  },
-
-  topLeft: function() {
-    var cellSize = this.board.drawing.cellSize;
-    return [Math.min(this.startPoint[0], this.currentPoint[0]) / cellSize, Math.min(this.startPoint[1], this.currentPoint[1]) / cellSize];
-  },
-
-  bottomRight: function() {
-    var cellSize = this.board.drawing.cellSize;
-    return [Math.max(this.startPoint[0], this.currentPoint[0]) / cellSize, Math.max(this.startPoint[1], this.currentPoint[1]) / cellSize];
-  },
-
-  draw: function() {
-
-    if (this.startPoint) {
-      this.drawCross(this.startPoint);
-    }
-
-    if (this.currentPoint) {
-      this.drawCross(this.currentPoint);
-    }
-
-    if (this.canDraw()) {
-      var cellSize = this.board.drawing.cellSize;
-      var topLeft = this.topLeft();
-      var bottomRight = this.bottomRight();
-      var template = Geometry.getCellsInRectangle(topLeft, bottomRight);
-
-      var border = Geometry.getBorder(template, cellSize);
-
-      var xDist = Math.abs(topLeft[0] - bottomRight[0]) * 5;
-      var yDist = Math.abs(topLeft[1] - bottomRight[1]) * 5;
-
-      this.board.drawing.drawTemplate(template, border, this.color);
-      this.board.drawing.drawMeasureLine([topLeft[0] * cellSize, (topLeft[1] * cellSize) - 30], [bottomRight[0] * cellSize, (topLeft[1] * cellSize) - 30], xDist, null, null, this.board.getZoom());
-      this.board.drawing.drawMeasureLine([(bottomRight[0] * cellSize) + 30, topLeft[1] * cellSize], [(bottomRight[0] * cellSize) + 30, bottomRight[1] * cellSize], yDist, null, null, this.board.getZoom());
-    }
-  },
-
-  drawCross: function(point) {
-    var crossSize = 10;
-    var lines = [
-      {start: [point[0] - crossSize, point[1]], end: [point[0] + crossSize, point[1]]},
-      {start: [point[0], point[1] - crossSize], end: [point[0], point[1] + crossSize]}
-    ];
-    this.board.drawing.drawLines("black", 3, lines);
-  },
-
-  saveAction: function() {
-    if (this.canDraw()) {
-      var action = {actionType: "rectangleTemplateAction", topLeft: this.topLeft(), bottomRight: this.bottomRight(), color: this.color, uid: generateActionId()};
-      var undoAction = {actionType: "removeTemplateAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
-    }
-  }
-});

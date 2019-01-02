@@ -51,6 +51,9 @@ class Vector2 {
   }
 
   scale(x, y) {
+    if (y === undefined) {
+      y = x;
+    }
     var m = TransformMatrix.Identity.scale(x, y);
 
     return this.matrixMultiply(m);
@@ -69,6 +72,10 @@ class Vector2 {
     cY = Math.min(rect.bottom(), cY);
 
     return new Vector2(cX, cY);
+  }
+
+  magnitude() {
+    return Math.sqrt(this.x ** 2 + this.y ** 2);
   }
 }
 

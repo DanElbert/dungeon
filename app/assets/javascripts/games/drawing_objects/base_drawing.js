@@ -28,7 +28,7 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
     return new Rectangle(new Vector2(0, 0), 0, 0);
   },
 
-  clearBounds: function() {
+  clearDrawing: function() {
     this._bounds = null;
   },
 
@@ -79,7 +79,7 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
   invalidateHandler: function(changeFn) {
     var originalBounds = this.bounds();
     changeFn();
-    this.clearBounds();
+    this.clearDrawing();
     var newBounds = this.bounds();
 
     if (this.canInvalidateByBounds) {
@@ -90,12 +90,21 @@ BaseDrawing.prototype = _.extend(BaseDrawing.prototype, {
   },
 
   invalidate: function() {
-    this.clearBounds();
+    this.clearDrawing();
     if (this.canInvalidateByBounds) {
       this.board.invalidate(this.bounds(), this.isFog);
     } else {
       this.board.invalidate();
     }
+  },
+
+  updateProperties: function(props) {
+    this.invalidateHandler(() => {
+      for (let key in props) {
+        this[key] = props[key];
+      }
+    });
+    return this;
   },
 
   draw: function(drawing, drawBounds, level) {

@@ -46,15 +46,6 @@ TokenDrawing.prototype = _.extend(TokenDrawing.prototype, BaseDrawing.prototype,
     return this;
   },
 
-  updateProperties: function(props) {
-    this.invalidateHandler(() => {
-      for (let key in props) {
-        this[key] = props[key];
-      }
-    });
-    return this;
-  },
-
   calculateBounds: function() {
     const diameter = (this.tokenCellSize * this.cellSize);
     const offset = this.cellSize / 2;
