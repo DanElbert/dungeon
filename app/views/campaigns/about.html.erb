@@ -1,80 +1,85 @@
+<h1 class="title">
+  Help / About
+</h1>
 
-<div class="row">
-  <div class="col-12">
+<div class="content">
 
-    <div class="page-header">
-      <h1>Help / About</h1>
-    </div>
+  <h4>Touch Controls</h4>
 
-    <h3>Touch Controls</h3>
+  <ul>
+    <li>Use two fingers to pan (or one finger with Pointer tool)</li>
+    <li>Pinch to zoom</li>
+    <li>Double tap to ping (any tool)</li>
+  </ul>
 
-    <ul>
-      <li>Use two fingers to pan (or one finger with Pointer tool)</li>
-      <li>Pinch to zoom</li>
-      <li>Double tap to ping (any tool)</li>
-    </ul>
+  <h4>Mouse Controls</h4>
 
-    <h3>Mouse Controls</h3>
+  <ul>
+    <li>Scroll wheel zooms</li>
+    <li>Drag with right button to pan (or left button with Pointer tool)</li>
+    <li>Double click to ping (any tool)</li>
+  </ul>
 
-    <ul>
-      <li>Scroll wheel zooms</li>
-      <li>Drag with right button to pan (or left button with Pointer tool)</li>
-      <li>Double click to ping (any tool)</li>
-    </ul>
+  <h4>Keyboard Shortcuts</h4>
 
-    <h3>Keyboard Shortcuts</h3>
+  <ul>
+    <li><kbd>ctrl</kbd> + <kbd>z</kbd> Undo</li>
+    <li><kbd>shift</kbd> Snaps drawing tools to cell intersections</li>
+    <li><kbd>ctrl</kbd> Snaps drawing tools to cell centers</li>
+    <li><kbd>ctrl</kbd> + <kbd>shift</kbd> Snaps drawing tools to cell quadrants</li>
+    <li><kbd>s</kbd> Hold to save current viewport; release to snap back OR press to 'remember' viewport; press again to revert</li>
+    <li><kbd>f</kbd> Toggle fullscreen</li>
+  </ul>
 
-    <ul>
-      <li><kbd>ctrl + z</kbd> Undo</li>
-      <li><kbd>shift</kbd> Snaps drawing tools to cell intersections</li>
-      <li><kbd>ctrl</kbd> Snaps drawing tools to cell centers</li>
-      <li><kbd>ctrl + shift</kbd> Snaps drawing tools to cell quadrants</li>
-      <li><kbd>s</kbd> Hold to save current viewport; release to snap back OR press to 'remember' viewport; press again to revert</li>
-      <li><kbd>f</kbd> Toggle fullscreen</li>
-    </ul>
+  <h4>Editing Templates</h4>
 
-    <h3>Editing Templates</h3>
+  <p>
+    Once a template is created, it can be manipulated with the pointer tool.
+    Click a template to select it.  Click and drag to move a selected template.
+    Press delete key (or long tap with touch) to remove a template
+  </p>
 
-    <p>
-      Once a template is created, it can be manipulated with the pointer tool.
-      Click a template to select it.  Click and drag to move a selected template.
-      Press delete key (or long tap with touch) to remove a template
-    </p>
+  <h4>Fog</h4>
 
-    <h3>Fog</h3>
+  <p>
+    The owner of a campaign is considered to be the GM and fog is rendered as a grey overlay on the map.
+    For all other players the fog completely hides the drawing layer. Note that only the drawing layer is
+    obscured by fog.  The background, pings, and templates will still be visible.
+  </p>
 
-    <p>
-      The owner of a campaign is considered to be the GM and fog is rendered as a grey overlay on the map.
-      For all other players the fog completely hides the drawing layer. Note that only the drawing layer is
-      obscured by fog.  The background, pings, and templates will still be visible.
-    </p>
+  <h4>Drawing Layers</h4>
+  <p>
+    There are two drawing layers in the map: a GM layer and a PC layer.  The GM layer follows all the rules of fog as
+    above.  The PC layer is drawn over the fog and is always visible.  When the GM view toggle is off (<span class="icon has-text-white has-background-primary"><i class="fa fa-binoculars"></i></span>),
+    all drawing actions made by the GM are on the GM layer.  When the view toggle is on (<span class="icon has-text-white has-background-danger"><i class="fa fa-binoculars"></i></span>),
+    all drawing actions are on the PC layer.  For non-GM users all drawing actions are on the PC layer.
+  </p>
 
-    <h3>Tokens</h3>
-    <p>
-      To add a token, use the token tool
-    </p>
+  <h4>Tokens</h4>
+  <p>
+    To add a token, use the token tool
+  </p>
 
-    <h3>About</h3>
-    <p>
-      Dungeon is designed as a multi-user web based dry erase board.  Distances and templates are calculated using 
-      Pathfinder rules.  Technology used includes
-    </p>
+  <h4>About</h4>
+  <p>
+    Dungeon is designed as a multi-user web based dry erase board.  Distances and templates are calculated using
+    Pathfinder rules.  Technology used includes
+  </p>
 
-    <ul>
-      <li>Ruby on Rails</li>
-      <li>HTML5 WebSockets</li>
-      <li>HTML5 Canvas</li>
-      <li>Faye</li>
-      <li>Redis</li>
-      <li>PostgreSQL</li>
-      <li>Bootstrap</li>
-      <li>jQuery</li>
-      <li>Hammer.js</li>
-    </ul>
+  <ul>
+    <li>Ruby on Rails</li>
+    <li>HTML5 WebSockets</li>
+    <li>HTML5 Canvas</li>
+    <li>Faye</li>
+    <li>Redis</li>
+    <li>PostgreSQL</li>
+    <li>Bulma</li>
+    <li>Vue.js</li>
+    <li>Hammer.js</li>
+  </ul>
 
-    <p>
-      The source code is released under the MIT license and is available on <a href="https://github.com/DanElbert/dungeon"><span class="fa fa-github"></span> Github</a>
-    </p>
-
-  </div>
+  <p>
+    The source code is released under the MIT license and is available on <a href="https://github.com/DanElbert/dungeon"><span class="fab fa-github"></span> Github</a>
+  </p>
 </div>
+
