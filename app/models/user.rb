@@ -3,6 +3,7 @@ class User < ApplicationRecord
   SYSTEM_USER_EMAIL = 'dungeon@system.com'
 
   has_many :campaigns
+  has_many :campaign_users, inverse_of: :user, dependent: :delete_all
 
   has_secure_password
 

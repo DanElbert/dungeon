@@ -2,6 +2,7 @@ class Campaign < ApplicationRecord
   has_many :games
   belongs_to :user
   has_many :campaign_images, dependent: :delete_all
+  has_many :campaign_users, inverse_of: :campaign, dependent: :delete_all
 
   before_destroy :check_for_games
 

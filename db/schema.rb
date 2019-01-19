@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_15_194832) do
+ActiveRecord::Schema.define(version: 2019_01_17_040618) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -49,12 +49,21 @@ ActiveRecord::Schema.define(version: 2018_12_15_194832) do
     t.string "template_type"
   end
 
+  create_table "campaign_users", force: :cascade do |t|
+    t.integer "campaign_id", null: false
+    t.integer "user_id", null: false
+    t.boolean "is_gm"
+    t.index ["campaign_id"], name: "index_campaign_users_on_campaign_id"
+    t.index ["user_id"], name: "index_campaign_users_on_user_id"
+  end
+
   create_table "campaigns", force: :cascade do |t|
     t.string "name"
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "use_x_letters"
+    t.boolean "requires_authorization"
   end
 
   create_table "games", force: :cascade do |t|
