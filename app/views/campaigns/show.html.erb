@@ -43,7 +43,7 @@
 <div class="columns mt-3">
   <div class="column">
     <% if if_owner(@campaign) %>
-      <%= link_to 'Change Campaign Name', edit_campaign_path(@campaign), class: 'button is-primary' %>
+      <%= link_to 'Edit Campaign', edit_campaign_path(@campaign), class: 'button is-primary' %>
       <%= link_to 'Add Game', new_campaign_game_path(@campaign), class: 'button is-primary' %>
     <% end %>
     <%= link_to 'Back to Lobby', campaigns_path, class: 'button is-primary' %>

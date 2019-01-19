@@ -15,7 +15,17 @@
       </label>
     </div>
   </div>
-  
+
+  <div class="field">
+    <div class="control">
+      <label class="checkbox">
+        <%= f.check_box :requires_authorization %> Require Authorization
+      </label>
+    </div>
+  </div>
+
+  <div data-campaign-users data-attributes="<%= {inputName: 'campaign[campaign_users_attributes]', availableUsers: User.visible, campaignUsers: @campaign.campaign_users }.to_json %>"></div>
+  <br>
 
   <div class="actions">
     <%= f.submit class: 'button is-primary' %>

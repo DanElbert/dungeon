@@ -1,0 +1,15 @@
+
+two_susannah:
+  campaign: two
+  user: susannah
+  is_gm: false
+
+two_eddie:
+  campaign: two
+  user: eddie
+  is_gm: true
+
+three_susannah:
+  campaign: three
+  user: susannah
+  is_gm: false

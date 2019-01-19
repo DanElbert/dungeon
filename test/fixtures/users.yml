@@ -11,6 +11,11 @@ eddie:
   password_digest: $2a$10$.OES.WDG.J279jemQ6929O5eJbM56SBPHCBzW2tN7PfceTyXhFoZm #qwerty2
   name: Eddie Dean
 
+susannah:
+  email: susannah@tet.com
+  password_digest: $2a$10$.OES.WDG.J279jemQ6929O5eJbM56SBPHCBzW2tN7PfceTyXhFoZm #qwerty2
+  name: Susannah Dean
+
 system:
   email: dungeon@system.com
   password_digest: junkjunk

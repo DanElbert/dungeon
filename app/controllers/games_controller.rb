@@ -1,7 +1,6 @@
 class GamesController < ApplicationController
-
-  before_action :ensure_valid_user
-  before_action :set_game, only: [:show, :edit, :update, :destroy]
+  after_action :verify_authorized
+  before_action :set_game, except: [:new, :create]
   before_action :set_campaign, only: [:new, :create]
 
   def show
@@ -9,7 +8,6 @@ class GamesController < ApplicationController
   end
 
   def get_game_data
-    @game = Game.includes(:campaign, :initiatives, {:board => :board_actions}).find(params[:id])
     render :json => Oj.dump(@game.as_json(:current_user_id => current_user.id))
   end
 
@@ -31,40 +29,34 @@ class GamesController < ApplicationController
   end
 
   def edit
-    ensure_owner(@game)
   end
 
   def update
-    ensure_owner(@game) do
-      respond_to do |format|
-        if @game.update_attributes(game_params)
-          format.html { redirect_to campaign_path(@game.campaign), notice: 'Game was successfully updated.' }
-          format.json { head :no_content }
-        else
-          format.html { render action: "edit" }
-          format.json { render json: @game.errors, status: :unprocessable_entity }
-        end
+    respond_to do |format|
+      if @game.update_attributes(game_params)
+        format.html { redirect_to campaign_path(@game.campaign), notice: 'Game was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @game.errors, status: :unprocessable_entity }
       end
     end
   end
 
   def destroy
-    ensure_owner(@game) do
-      @game.status = Game::STATUS[:deleted]
-      @game.save!
-      flash[:notice] = 'Game deleted'
-      redirect_to campaign_path(@game.campaign)
-    end
+    @game.status = Game::STATUS[:deleted]
+    @game.save!
+    flash[:notice] = 'Game deleted'
+    redirect_to campaign_path(@game.campaign)
   end
 
   def initiative
-    @game = Game.includes(:initiatives).find(params[:id])
     @initiative_json = @game.as_json[:initiative].to_json
   end
 
   def initiative_names
-    histories = InitiativeHistory.where(game_id: params[:id]).order(use_count: :desc).limit(10)
-    init_names = Initiative.where(game_id: params[:id]).select(:name).group(:name).pluck(:name)
+    histories = InitiativeHistory.where(game: @game).order(use_count: :desc).limit(10)
+    init_names = Initiative.where(game: @game).select(:name).group(:name).pluck(:name)
 
     if init_names.length > 0
       histories = histories.where('name NOT IN (?)', init_names)
@@ -80,11 +72,11 @@ class GamesController < ApplicationController
   private
 
   def set_game
-    @game = Game.find(params[:id])
+    @game = authorize Game.find(params[:id])
   end
 
   def set_campaign
-    @campaign = Campaign.find(params[:campaign_id])
+    @campaign = authorize(Campaign.find(params[:campaign_id]), :update?)
   end
 
   def game_params

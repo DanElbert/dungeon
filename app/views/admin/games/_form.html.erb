@@ -18,8 +18,8 @@
 
   <%= f.fields_for :board do |board_form| %>
     <div class="field">
-      <%= board_form.label :background_image %>
-      <%= board_form.select :background_image, get_background_image_options(board_form.object.background_image) %>
+      <%= board_form.label :background_image, class: 'label' %>
+      <div data-image-picker data-attributes="<%= { inputName: 'game[board_attributes][background_image_id]', images: BackgroundImage.order(:filename), selectedId: board_form.object.background_image_id }.to_json %>"></div>
     </div>
   <% end %>
 
@@ -28,9 +28,3 @@
   </div>
 <% end %>
 
-<script type="text/javascript">
-  $(document).ready(function() {
-    var $select = $("#game_board_attributes_background_image");
-    $select.imagepicker();
-  });
-</script>

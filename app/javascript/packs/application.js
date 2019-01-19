@@ -21,6 +21,7 @@ import "../lib/TouchTapDirective";
 import * as formatting from "../lib/Formatting";
 
 import VueResize from 'vue-resize'
+import AppCampaignUsers from "../components/AppCampaignUsers";
 import AppColorPicker from "../components/AppColorPicker";
 import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
@@ -73,6 +74,7 @@ function installComponent(element, component, opts, attrs) {
 
 window.VUE_COMPONENTS = {
   install: installComponent,
+  AppCampaignUsers,
   AppColorPicker,
   AppImagePicker,
   BoardToolMenu,
@@ -84,12 +86,16 @@ Vue.use(VueResize);
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  for (let el of document.body.querySelectorAll("[data-image-picker]")) {
-    installComponent(el, AppImagePicker);
-  }
+  const map = {
+    "image-picker": AppImagePicker,
+    "color-picker": AppColorPicker,
+    "campaign-users": AppCampaignUsers
+  };
 
-  for (let el of document.body.querySelectorAll("[data-color-picker]")) {
-    installComponent(el, AppColorPicker);
+  for (let dataAttr in map) {
+    for (let el of document.body.querySelectorAll(`[data-${dataAttr}]`)) {
+      installComponent(el, map[dataAttr]);
+    }
   }
 
 });

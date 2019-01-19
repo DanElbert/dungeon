@@ -14,23 +14,23 @@ module Admin
     end
 
     test "should show game" do
-      get :show, id: @game
+      get :show, params: {id: @game}
       assert_response :success
     end
 
     test "should get edit" do
-      get :edit, id: @game
+      get :edit, params: {id: @game}
       assert_response :success
     end
 
     test "should update game" do
-      put :update, id: @game, game: { status: @game.status }
+      put :update, params: {id: @game, game: { status: @game.status }}
       assert_redirected_to admin_game_path(assigns(:game))
     end
 
     test "should destroy game" do
       assert_difference('Game.count', -1) do
-        delete :destroy, id: @game
+        delete :destroy, params: {id: @game}
       end
 
       assert_redirected_to admin_games_path

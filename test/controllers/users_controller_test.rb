@@ -12,19 +12,19 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "can log in" do
-    post :verify_login, {:email => @user.email, :password => "qwerty"}
+    post :verify_login, params: {:email => @user.email, :password => "qwerty"}
     assert_redirected_to lobby_path
     assert_equal users(:roland).id, session[:user_id]
   end
 
   test "should get create user screen" do
-    get :create_user
+    get :new
     assert_response :success
   end
 
   test "should create user" do
     assert_difference('User.count') do
-      post :submit_user, user: { email: "somethingnew@blah.com", name: "Name", password: "qwerty1", password_confirmation: "qwerty1" }
+      post :create, params: {user: { email: "somethingnew@blah.com", name: "Name", password: "qwerty1", password_confirmation: "qwerty1" }}
     end
 
     assert_redirected_to lobby_path

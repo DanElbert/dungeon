@@ -14,6 +14,7 @@ gem 'redis-rails', '~> 5.0.2'
 gem 'webpacker', '>= 4.0.0-rc.2'
 gem 'font-awesome-sass', '~> 5.6.1'
 gem 'bcrypt', '~> 3.1.12'
+gem 'pundit', '~> 2.0.0'
 
 gem 'sassc-rails',   '~> 2.1.0'
 gem 'uglifier', '>= 1.0.3'
@@ -24,6 +25,7 @@ gem 'exception_notification', '~> 4.3.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.13'
+  gem 'therubyracer'
 end
 
 group :development do
@@ -33,4 +35,5 @@ end
 
 group :test do
   gem 'minitest-reporters'
+  gem 'rails-controller-testing'
 end

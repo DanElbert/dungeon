@@ -5,7 +5,10 @@ require "minitest/reporters"
 
 MiniTest::Reporters.use!
 
+Dir[Rails.root.join("test/support/**/*.rb")].each { |f| require f }
+
 class ActiveSupport::TestCase
+  include CustomAssertions
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
   #
   # Note: You'll currently still have to declare fixtures explicitly in integration tests

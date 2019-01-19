@@ -17,5 +17,7 @@ module Dungeon
     # -- all .rb files in that directory are automatically loaded.
 
     config.middleware.insert_after Rack::Sendfile, Rack::Deflater
+
+    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = true
   end
 end

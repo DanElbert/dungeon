@@ -40,6 +40,14 @@ class Game < ApplicationRecord
     current_user_id == self.campaign.user_id
   end
 
+  def is_gm?(user)
+    self.campaign.is_gm?(user)
+  end
+
+  def is_pc?(user)
+    self.campaign.is_pc?(user)
+  end
+
   def user_id
     self.campaign.user_id if self.campaign
   end

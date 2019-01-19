@@ -54,6 +54,11 @@ ul.game-list {
 
   line-height: 1.2;
 
+  li {
+    padding: .75rem;
+    margin-bottom: 1rem;
+  }
+
   .game-label {
     display: inline-block;
   }

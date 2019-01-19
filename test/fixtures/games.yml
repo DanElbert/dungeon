@@ -3,7 +3,9 @@
 one:
   status: MyString
   name: one
+  campaign: one
 
 two:
   status: MyString
   name: two
+  campaign: one

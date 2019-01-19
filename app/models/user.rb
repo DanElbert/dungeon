@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :campaigns
   has_many :campaign_users, inverse_of: :user, dependent: :delete_all
 
+  scope :visible, -> { where("users.email <> ?", SYSTEM_USER_EMAIL) }
+
   has_secure_password
 
   validates :email,
@@ -33,6 +35,14 @@ class User < ApplicationRecord
 
   def set_auth_token
     self.auth_token = SecureRandom.uuid
+  end
+
+  def as_json(opts = {})
+    {
+        id: self.id,
+        name: self.name,
+        username: self.username
+    }
   end
 
 end
