@@ -39,7 +39,7 @@ class Campaign < ApplicationRecord
   end
 
   def is_pc?(user)
-    pc_users.include?(user)
+    !self.requires_authorization || pc_users.include?(user)
   end
 
   private

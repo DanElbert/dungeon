@@ -9,6 +9,7 @@ class Board < ApplicationRecord
   belongs_to :background_image
   has_many :board_actions, -> { order(:created_at) }, :dependent => :destroy
 
+  validates :background_image, :presence => true
   validates :grid_color, format: { with: /\Argba\((\s*\d+\s*,\s*){3}\d(\.\d+)?\s*\)|rgb\((\s*\d+\s*,\s*){2}\d+\s*\)\z/, message: 'must be in "rbg(r,g,b)" or "rgba(r,g,b,a)" format', allow_blank: true }
   validates :cell_size_pixels, numericality: { only_integer: true, greater_than_or_equal_to: 25, less_than_or_equal_to: 250, allow_blank: true }
   validates :cell_size_feet, numericality: { only_integer: true, greater_than_or_equal_to: 3, less_than_or_equal_to: 52800, allow_blank: true }

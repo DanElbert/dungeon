@@ -22,9 +22,10 @@
         <%= f.check_box :requires_authorization %> Require Authorization
       </label>
     </div>
+    <p class="help">If checked, only those users listed below can view the campaign</p>
   </div>
 
-  <div data-campaign-users data-attributes="<%= {inputName: 'campaign[campaign_users_attributes]', availableUsers: User.visible, campaignUsers: @campaign.campaign_users }.to_json %>"></div>
+  <div data-campaign-users data-attributes="<%= {inputName: 'campaign[campaign_users_attributes]', availableUsers: User.visible.where('id <> ?', @campaign.user_id), campaignUsers: @campaign.campaign_users }.to_json %>"></div>
   <br>
 
   <div class="actions">
