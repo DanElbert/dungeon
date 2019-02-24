@@ -1,7 +1,11 @@
 class ProcessImageJob < ApplicationJob
   queue_as :default
 
-  def perform(id)
+  def process(id)
+    self.class.process_image(id)
+  end
+
+  def self.process_image(id)
 
     # Put image onto disk
     #
@@ -41,7 +45,9 @@ class ProcessImageJob < ApplicationJob
     begin
       i.calculate_size!
 
-      root_path = Rails.root.join('public', 'images', i.id.to_s).to_s
+      images_directory = Rails.root.join('public', 'images')
+      FileUtils.mkdir_p images_directory.to_s
+      root_path = images_directory.join(i.id.to_s).to_s
 
       File.binwrite("#{root_path}.#{i.extension}", i.data)
 
@@ -82,7 +88,7 @@ class ProcessImageJob < ApplicationJob
     end
   end
 
-  def build_tiles(image, level, path)
+  def self.build_tiles(image, level, path)
 
     scaled_tile = image.tile_size / level.scale
 

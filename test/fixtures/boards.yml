@@ -1,5 +1,10 @@
 
 empty_board:
   name: empty
-  created_at: <%= Time.now %>
-  game_id: <%= ActiveRecord::FixtureSet.identify(:one) %>
+  game: one
+  background_image: bg
+
+empty_board2:
+  name: empty
+  game: two
+  background_image: bg

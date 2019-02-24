@@ -25,11 +25,8 @@ class ImagesController < ApplicationController
       not_found
     end
 
-    render :nothing => true, :status => 420
-
-    # FileUtils.mkdir_p Rails.root.join('public', 'images')
-    # File.binwrite(Rails.root.join('public', 'images', "#{@image.id}.#{@image.extension}").to_s, @image.data)
-    # send_data @image.data, filename: @image.filename, disposition: 'inline'
+    Rails.logger.warn "No processed image data found for #{@image.id}"
+    head 420
   end
 
   # GET /images/new
@@ -81,7 +78,7 @@ class ImagesController < ApplicationController
   end
 
   def set_campaign
-    @campaign = Campaign.where(id: params[:campaign_id]).first
+    @campaign = authorize(Campaign.find(params[:campaign_id]), :update?)
   end
 
   def type

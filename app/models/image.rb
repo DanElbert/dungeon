@@ -79,10 +79,14 @@ class Image < ApplicationRecord
 
   end
 
-  def process!
+  def process!(now = false)
     self.status = STATUS[:queued]
     self.save!
-    ProcessImageJob.perform_later(self.id)
+    if now
+      ProcessImageJob.process_image(self.id)
+    else
+      ProcessImageJob.perform_later(self.id)
+    end
   end
 
   def self.process_all

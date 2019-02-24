@@ -40,7 +40,7 @@ class ApplicationPolicy
     !@user.nil?
   end
 
-  def admin?
+  def administrator?
     authenticated? && @user.is_admin?
   end
 

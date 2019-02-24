@@ -1,0 +1,8 @@
+bg:
+  type: BackgroundImage
+  name: bg
+  filename: bg.jpg
+  width: 10
+  height: 10
+  is_tiled: false
+  status: processed

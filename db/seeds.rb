@@ -19,6 +19,7 @@ end
 Dir[Rails.root.join('db', 'seed_data', 'background_images', '*')].each do |file|
   name = File.basename file
   unless BackgroundImage.where(filename: name).exists?
-    BackgroundImage.create!({filename: name, data: File.binread(file)})
+    i = BackgroundImage.create!({filename: name, data: File.binread(file)})
+    i.process!(true)
   end
 end

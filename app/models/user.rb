@@ -12,8 +12,11 @@ class User < ApplicationRecord
   validates :email,
             presence: true,
             format: { with: /\A.+@.+\z/, message: 'must be a valid email', allow_blank: true},
-            uniqueness: { case_sensitive: false, allow_blank: true },
-            exclusion: { in: [SYSTEM_USER_EMAIL], message: "email '%{value}' is reserved.", allow_blank: true }
+            uniqueness: { case_sensitive: false, allow_blank: true }
+
+  validates :email,
+            exclusion: { in: [SYSTEM_USER_EMAIL], message: "email '%{value}' is reserved.", allow_blank: true },
+            if: :new_record?
 
   validates :username,
             format: { with: /\A[\w._-]+\z/, message: 'may only contain word characters, \'.\', \'_\', or \'-\'', allow_blank: true},

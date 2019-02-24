@@ -4,17 +4,17 @@ gem 'rails', '5.2.2'
 
 gem 'pg', '~> 1.1.4'
 
-gem 'oj', '~> 3.7.7'
+gem 'oj', '~> 3.7.9'
 
 gem 'thin', '~> 1.7.2'
 gem 'faye', '1.2.4', :require => false #, path: '/Users/delbert/Development/faye'
 gem 'faye-redis', '~> 0.2.0', :require => false
 gem 'redis-rails', '~> 5.0.2'
 
-gem 'webpacker', '>= 4.0.0-rc.2'
+gem 'webpacker', '>= 4.0.0-rc.7'
 gem 'font-awesome-sass', '~> 5.6.1'
 gem 'bcrypt', '~> 3.1.12'
-gem 'pundit', '~> 2.0.0'
+gem 'pundit', '~> 2.0.1'
 
 gem 'sassc-rails',   '~> 2.1.0'
 gem 'uglifier', '>= 1.0.3'

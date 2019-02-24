@@ -2,8 +2,7 @@ require 'test_helper'
 
 class GameTest < ActiveSupport::TestCase
   test 'update initiative counts' do
-    game = Game.new(name: 'test game', board: Board.new())
-    game.save!
+    game = games(:two)
 
     assert game.initiative_histories.size == 0
 

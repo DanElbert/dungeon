@@ -1,7 +1,6 @@
 module Admin
-  class BackgroundImagesController < ApplicationController
-    layout 'admin'
-    before_action :ensure_admin_user
+  class BackgroundImagesController < AdminController
+
     before_action :set_background_image, only: [:show, :destroy]
 
     def index

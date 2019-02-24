@@ -14,7 +14,7 @@ class GamesControllerTest < ActionController::TestCase
 
   test "should create game" do
     assert_difference('Game.count') do
-      post :create, params: { campaign_id: @campaign, game: { status: @game.status, name: @game.name, board_attributes: {background_image: 'junk.jpg'} } }
+      post :create, params: { campaign_id: @campaign, game: { status: @game.status, name: @game.name, board_attributes: {background_image_id: images(:bg).id} } }
     end
 
     assert_redirected_to game_path(assigns(:game))
@@ -27,7 +27,7 @@ class GamesControllerTest < ActionController::TestCase
 
   test "should not allow create for unauthorized campaign" do
     assert_no_difference('Game.count') do
-      post :create, params: { campaign_id: campaigns(:three), game: { status: @game.status, name: @game.name, board_attributes: {background_image: 'junk.jpg'} } }
+      post :create, params: { campaign_id: campaigns(:three), game: { status: @game.status, name: @game.name, board_attributes: {background_image_id: images(:bg).id} } }
     end
 
     assert_redirected_to root_path

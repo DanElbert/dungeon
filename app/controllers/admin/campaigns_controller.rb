@@ -1,8 +1,6 @@
 module Admin
-  class CampaignsController < ApplicationController
+  class CampaignsController < AdminController
 
-    layout 'admin'
-    before_action :ensure_admin_user
 
     def index
       @campaigns = Campaign.all

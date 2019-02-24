@@ -9,7 +9,7 @@ class CampaignTest < ActiveSupport::TestCase
 
     c = Campaign.new({name: 'test'})
     c.save!
-    c.games << Game.new({name: 'test', board: Board.new({})})
+    c.games << games(:one)
 
     refute c.destroy
     assert Campaign.find(c.id)

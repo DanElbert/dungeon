@@ -1,8 +1,5 @@
 module Admin
-  class UsersController < ApplicationController
-
-    layout 'admin'
-    before_action :ensure_admin_user
+  class UsersController < AdminController
 
     # GET /users
     # GET /users.json

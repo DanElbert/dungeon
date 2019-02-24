@@ -1,8 +1,5 @@
 module Admin
-  class GamesController < ApplicationController
-
-    layout 'admin'
-    before_action :ensure_admin_user
+  class GamesController < AdminController
 
     def index
       @games = Game.includes(:campaign).joins(:campaign).order('campaigns.name, games.name').all

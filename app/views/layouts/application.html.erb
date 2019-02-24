@@ -37,7 +37,19 @@
     <div class="navbar-end">
 
       <%= if_admin do %>
-        <%= link_to "Admin", admin_path, class: 'navbar-item' %>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            Admin
+          </a>
+
+          <div class="navbar-dropdown">
+            <%= link_to "Users", admin_users_path, class: 'navbar-item' %>
+            <%= link_to "Games", admin_games_path, class: 'navbar-item' %>
+            <%= link_to "Campaigns", admin_campaigns_path, class: 'navbar-item' %>
+            <%= link_to "Background Images", admin_background_images_path, class: 'navbar-item' %>
+
+          </div>
+        </div>
       <% end %>
       <% if current_user %>
         <%= link_to "About", about_path, class: 'navbar-item' %>
@@ -55,7 +67,7 @@
 
 <section class="section">
   <div class="container">
-    <%= yield %>
+    <%= content_for?(:content) ? yield(:content) : yield %>
   </div>
 </section>
 

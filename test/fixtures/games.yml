@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  status: MyString
+  status: active
   name: one
   campaign: one
 
 two:
-  status: MyString
+  status: active
   name: two
   campaign: one

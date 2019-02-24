@@ -3,7 +3,10 @@ class UsersController < ApplicationController
   before_action :ensure_valid_user, except: [:login, :verify_login, :new, :create]
 
   def login
-
+    if current_user
+      flash[:notice] = 'Already logged in'
+      return redirect_to root_path
+    end
   end
 
   def logout
