@@ -93,12 +93,15 @@ CopyTool.prototype = _.extend(CopyTool.prototype, Tool.prototype, {
     formData.append("image[filename]", "copied_data.png");
     formData.append("image[data]", data);
 
-    Api.postFormData(ROOT_URL + 'copied_images.json', formData).then(data => {
-      console.log(data);
-      self.board.setCopiedArea(data.url);
-      self.getOptions().get("copiedImage").url = data.url;
-      self.toolManager.setOptions();
-    });
+    Api.postFormData(ROOT_URL + 'copied_images.json', formData)
+      .then(data => {
+        self.board.setCopiedArea(data.url);
+        self.getOptions().get("copiedImage").url = data.url;
+      })
+      .catch(err => {
+        console.log(err);
+        flashMessage('danger', "Error!  Could not store image data");
+      });
 
     // $.ajax({
     //   url: ROOT_URL + 'copied_images.json',

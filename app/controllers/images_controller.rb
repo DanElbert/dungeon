@@ -78,7 +78,10 @@ class ImagesController < ApplicationController
   end
 
   def set_campaign
-    @campaign = authorize(Campaign.find(params[:campaign_id]), :update?)
+    @campaign = Campaign.find_by_id(params[:campaign_id])
+    if @campaign
+      authorize(@campaign, :update?)
+    end
   end
 
   def type

@@ -1,11 +1,11 @@
 class ProcessImageJob < ApplicationJob
   queue_as :default
 
-  def process(id)
-    self.class.process_image(id)
+  def perform(id)
+    ProcessImageJob.output_image_data(id)
   end
 
-  def self.process_image(id)
+  def self.output_image_data(id)
 
     # Put image onto disk
     #

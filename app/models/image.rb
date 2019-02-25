@@ -83,7 +83,7 @@ class Image < ApplicationRecord
     self.status = STATUS[:queued]
     self.save!
     if now
-      ProcessImageJob.process_image(self.id)
+      ProcessImageJob.output_image_data(self.id)
     else
       ProcessImageJob.perform_later(self.id)
     end

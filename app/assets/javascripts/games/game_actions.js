@@ -175,15 +175,33 @@ _.extend(actionTypes, {
     }
   }),
 
-  pasteAction: createActionType("PasteAction", DrawingAction, {
-    draw: function(drawing) {
-      drawing.drawImage(this.properties.topLeft[0], this.properties.topLeft[1], this.properties.url)
-    },
+  pasteAction: createActionType("PasteAction", Action, {
+    isPersistent: function() { return true; },
+    apply: function(board) {
+      var center = new Vector2(
+        this.properties.topLeft[0] + this.properties.width / 2,
+        this.properties.topLeft[1] + this.properties.height / 2,
+      );
+      var drawing = ImageDrawing.getImageDrawing(
+        this.uid,
+        board,
+        this.properties.url,
+        new Vector2(this.properties.width, this.properties.height),
+        center,
+        1,
+        0
+      );
 
-    calculateBounds: function() {
-      var topLeft = this.properties.topLeft;
-      return [topLeft, [topLeft[0] + this.properties.width, topLeft[1] + this.properties.height]];
+      board.drawingLayer.addAction(drawing);
     },
+    // draw: function(drawing) {
+    //   drawing.drawImage(this.properties.topLeft[0], this.properties.topLeft[1], this.properties.url)
+    // },
+    //
+    // calculateBounds: function() {
+    //   var topLeft = this.properties.topLeft;
+    //   return [topLeft, [topLeft[0] + this.properties.width, topLeft[1] + this.properties.height]];
+    // },
 
     validateData: function() {
       this.ensureFields(["uid", "url", "topLeft", "width", "height"]);

@@ -38,7 +38,8 @@ class Api {
   }
 
   postFormData(url, data) {
-    return this.performRequest(url, "POST", data).then(response => {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    return this.performRequest(url, "POST", data, {"X-CSRF-Token": csrfToken}).then(response => {
       if (response.ok) {
         return response.json();
       } else {
