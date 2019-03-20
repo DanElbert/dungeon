@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@rails/webpacker": "4.0.0-rc.7",
+    "@rails/webpacker": "4.0.2",
     "@tweenjs/tween.js": "^17.2.0",
     "bulma": "^0.7.2",
     "bulma-tooltip": "^2.0.2",
