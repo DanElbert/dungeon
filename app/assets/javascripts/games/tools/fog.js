@@ -24,6 +24,7 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
     var self = this;
     this.board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
+      self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();
       self.lineBuffer = [];
@@ -55,6 +56,26 @@ AddFogPen.prototype = _.extend(AddFogPen.prototype, DrawTool.prototype, {
   }
 });
 
+function AddFogRectangle(manager) {
+  ShapeTool.call(this, manager);
+  this.super = ShapeTool.prototype;
+}
+
+AddFogRectangle.prototype = _.extend(AddFogRectangle.prototype, ShapeTool.prototype, {
+  eventNamespace: function() {
+    return "ShapePen";
+  },
+  isFog: function() {
+    return true;
+  },
+  buildOptions() {
+    this.super.buildOptions.apply(this);
+    for (let o of this.options) {
+      o.visible = false;
+    }
+  }
+});
+
 function RemoveFogPen(manager) {
   DrawTool.call(this, manager);
   this.super = DrawTool.prototype;
@@ -81,6 +102,7 @@ RemoveFogPen.prototype = _.extend(RemoveFogPen.prototype, DrawTool.prototype, {
     var self = this;
     this.board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
+      self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();
       self.lineBuffer = [];

@@ -24,6 +24,12 @@ class ToolOptions extends Eventer {
   clear() {
     this.options = [];
   }
+
+  *[Symbol.iterator]() {
+    for (let o of this.options) {
+      yield o;
+    }
+  }
 }
 
 export default ToolOptions;

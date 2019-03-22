@@ -1,13 +1,13 @@
 <template>
 
-  <div class="option-dropdown">
+  <div class="option-dropdown" v-catch-external-click="externalClick">
     <div v-if="selectedItem" class="dropdown-wrapper" @click="itemClick(selectedItem.value)">
       <slot :item="selectedItem">
         {{ selectedItem.name }}
       </slot>
     </div>
 
-    <div class="popup" v-if="isOpen" v-catch-external-click="externalClick">
+    <div class="popup" v-if="isOpen">
       <div class="item-wrapper" v-for="i in list" :key="i.value" @click="itemClick(i.value)">
         <slot :item="i">
           {{ i.name }}

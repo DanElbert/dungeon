@@ -27,16 +27,21 @@ DrawTool.prototype = _.extend(DrawTool.prototype, Tool.prototype, {
       this.previous_point = location;
     }
   },
+  ensureDrawingObject() {
+    if (this.drawingObject === null) {
+      this.drawingObject = this.createDrawingObject();
+      if (this.isFog()) {
+        this.board.drawingLayer.addFogAction(this.drawingObject);
+      } else {
+        this.board.drawingLayer.addAction(this.drawingObject);
+      }
+    }
+  },
   enable: function() {
     var self = this;
     this.board.event_manager.on('dragstart.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
-      self.drawingObject = self.createDrawingObject();
-      if (self.isFog()) {
-        self.board.drawingLayer.addFogAction(self.drawingObject);
-      } else {
-        self.board.drawingLayer.addAction(self.drawingObject);
-      }
+      self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
     });
 
@@ -132,6 +137,7 @@ Eraser.prototype = _.extend(Eraser.prototype, DrawTool.prototype, {
     var self = this;
     this.board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
       self.previous_point = null;
+      self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();
       self.lineBuffer = [];
