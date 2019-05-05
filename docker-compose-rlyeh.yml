@@ -44,21 +44,6 @@ services:
       traefik.docker.network: traefik
       traefik.frontend.rule: 'Host:${HOSTNAME}'
 
-  web2:
-    <<: *web
-    environment:
-      - DB_MIGRATE=false
-
-  web3:
-    <<: *web
-    environment:
-      - DB_MIGRATE=false
-
-  web4:
-    <<: *web
-    environment:
-      - DB_MIGRATE=false
-
   worker:
     image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
     restart: unless-stopped
