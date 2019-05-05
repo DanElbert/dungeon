@@ -6,9 +6,7 @@ gem 'pg', '~> 1.1.4'
 
 gem 'oj', '~> 3.7.12'
 
-gem 'thin', '~> 1.7.2'
-gem 'faye', '1.2.4', :require => false #, path: '/Users/delbert/Development/faye'
-gem 'faye-redis', '~> 0.2.0', :require => false
+gem 'puma', '~> 3.12.1'
 gem 'redis-rails', '~> 5.0.2'
 
 gem 'webpacker', '>= 4.0.2'
