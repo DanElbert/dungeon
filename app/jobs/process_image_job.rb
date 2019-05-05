@@ -72,6 +72,8 @@ class ProcessImageJob < ApplicationJob
 
       `rm -rf #{root_path}.dzi #{root_path}_files`
 
+      File.write("#{root_path}.json", i.to_json)
+
       # i.level_data.each_with_index do |level, idx|
       #   level_path = root_path + "/#{idx + 1}"
       #   `mkdir -p #{level_path}`
