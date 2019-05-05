@@ -43,6 +43,43 @@ services:
       traefik.enable: 'true'
       traefik.docker.network: traefik
       traefik.frontend.rule: 'Host:${HOSTNAME}'
+      traefik.backend: 'dungeon'
+
+  web2:
+    <<: *web
+    environment:
+      - DB_MIGRATE=false
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
+
+  web3:
+    <<: *web
+    environment:
+      - DB_MIGRATE=false
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
+
+  web4:
+    <<: *web
+    environment:
+      - DB_MIGRATE=false
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
 
   worker:
     image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
