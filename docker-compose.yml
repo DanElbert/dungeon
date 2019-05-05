@@ -1,6 +1,19 @@
 version: '3'
 
 services:
+  traefik:
+    image: traefik:1.7.9
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - '80:80'
+      - '8888:8888'
+    command:
+      - --api
+      - --docker
+      - --defaultentrypoints=http
+      - --entryPoints=Name:http Address::80
+
   postgres:
     image: postgres:9.5
     environment:
@@ -11,34 +24,78 @@ services:
 
   redis:
     image: redis:latest
+    restart: unless-stopped
 
-  web1:
+  nginx:
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
     build: .
-    image: 'registry.elbert.us/dungeon'
-    ports:
-      - "3000:3000"
-    environment:
-      - RAILS_ENV=docker
-      - DB_MIGRATE=true
+    restart: unless-stopped
     volumes:
       - images:/dungeon/public/images/
+    command: ["nginx", "-g", "daemon off;"]
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: traefik
+      traefik.frontend.rule: 'Host:${HOSTNAME};Path:/assets,/packs,/favicon.ico,/robots.txt'
+
+  web1: &web
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
+    restart: unless-stopped
+    environment:
+      - DB_MIGRATE=true
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
+
+    volumes:
+      - images:/dungeon/public/images/
+      - /var/log/dungeon:/dungeon/log/
     links:
       - redis
-      - postgres
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: traefik
+      traefik.frontend.rule: 'Host:${HOSTNAME}'
 
-  resque_worker:
-    build: .
-    image: 'registry.elbert.us/dungeon'
+  web2:
+    <<: *web
     environment:
-      - RAILS_ENV=docker
-      - QUEUE=*
-      - INTERVAL=1.0
+      - DB_MIGRATE=false
+
+  web3:
+    <<: *web
+    environment:
+      - DB_MIGRATE=false
+
+  web4:
+    <<: *web
+    environment:
+      - DB_MIGRATE=false
+
+  worker:
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
+    restart: unless-stopped
     volumes:
       - images:/dungeon/public/images/
+      - /var/log/dungeon:/dungeon/log/
+    environment:
+      - QUEUE=*
+      - INTERVAL=1.0
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
     command: 'bundle exec rake resque:work'
     links:
       - redis
-      - postgres
+
 
 volumes:
   sql-data:

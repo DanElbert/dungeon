@@ -5,80 +5,82 @@ services:
     image: redis:latest
     restart: unless-stopped
 
-  proxy:
-    image: 'nginx:latest'
+  nginx:
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
     restart: unless-stopped
     volumes:
-      - ./dungeon_nginx:/etc/nginx/conf.d/
-      - assets:/dungeon/public/assets/
       - images:/dungeon/public/images/
-      - packs:/dungeon/public/packs/
-    links:
-      - web1
-      - web2
-      - web3
-      - web4
     networks:
-      - default
       - traefik
+    command: ["nginx", "-g", "daemon off;"]
     labels:
       traefik.enable: 'true'
       traefik.docker.network: traefik
-      traefik.frontend.rule: 'Host:dungeon.elbert.us'
+      traefik.frontend.rule: 'Host:${HOSTNAME};Path:/assets,/packs,/favicon.ico,/robots.txt'
 
-  web1:
-    image: 'registry.elbert.us/dungeon:production'
+  web1: &web
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
     restart: unless-stopped
-    env_file: /etc/default/dungeon
     environment:
-      - COPY_ASSETS=true
       - DB_MIGRATE=true
-    volumes:
-      - assets:/dungeon_assets/
-      - images:/dungeon/public/images/
-      - packs:/dungeon_packs/
-      - /var/log/dungeon:/dungeon/log/
-    links:
-      - redis
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
 
-  web2: &web
-    image: 'registry.elbert.us/dungeon:production'
-    restart: unless-stopped
-    env_file: /etc/default/dungeon
     volumes:
       - images:/dungeon/public/images/
       - /var/log/dungeon:/dungeon/log/
     links:
       - redis
+    networks:
+      - traefik
+      - default
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: traefik
+      traefik.frontend.rule: 'Host:${HOSTNAME}'
+
+  web2:
+    <<: *web
+    environment:
+      - DB_MIGRATE=false
 
   web3:
     <<: *web
+    environment:
+      - DB_MIGRATE=false
 
   web4:
     <<: *web
+    environment:
+      - DB_MIGRATE=false
 
   worker:
-    image: 'registry.elbert.us/dungeon:production'
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
     restart: unless-stopped
-    env_file: /etc/default/dungeon
     volumes:
       - images:/dungeon/public/images/
       - /var/log/dungeon:/dungeon/log/
     environment:
       - QUEUE=*
       - INTERVAL=1.0
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
     command: 'bundle exec rake resque:work'
     links:
     - redis
 
 volumes:
-  assets:
-    driver: local
-
   images:
-    driver: local
-
-  packs:
     driver: local
 
 networks:

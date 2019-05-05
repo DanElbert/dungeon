@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.2.2.1'
+gem 'rails', '5.2.3'
 
 gem 'pg', '~> 1.1.4'
 
-gem 'oj', '~> 3.7.9'
+gem 'oj', '~> 3.7.12'
 
 gem 'thin', '~> 1.7.2'
 gem 'faye', '1.2.4', :require => false #, path: '/Users/delbert/Development/faye'

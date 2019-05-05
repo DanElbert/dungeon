@@ -1,6 +1,6 @@
-FROM ruby:2.5.3-stretch
+FROM ruby:2.6.3-stretch
 
-RUN curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list && \
     apt-get update && apt-get install -y \
@@ -11,12 +11,14 @@ RUN curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
     libvips-tools \
     nodejs \
     yarn \
+    nginx \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem update --system && gem install bundler
 
-RUN mkdir -p /dungeon_assets/
+RUN rm /etc/nginx/sites-enabled/default
+
 RUN mkdir -p /dungeon/
 WORKDIR /dungeon
 COPY Gemfile Gemfile.lock ./
@@ -32,6 +34,7 @@ RUN chmod a+x /dungeon/docker/web_boot.sh
 RUN bundle exec rake compile
 RUN env RAILS_ENV=production bundle exec rake assets:clobber assets:precompile
 
-EXPOSE 3000
-VOLUME /dungeon_assets
+COPY docker/nginx/dungeon.conf /etc/nginx/sites-enabled/
+
+EXPOSE 80
 CMD ["/dungeon/docker/web_boot.sh"]
