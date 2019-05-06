@@ -2,6 +2,7 @@
   "dependencies": {
     "@rails/webpacker": "4.0.2",
     "@tweenjs/tween.js": "^17.2.0",
+    "actioncable": "^5.2.3",
     "bulma": "^0.7.2",
     "bulma-tooltip": "^2.0.2",
     "css-loader": "^2.1.0",

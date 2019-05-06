@@ -1,20 +1,9 @@
-require 'faye/redis'
-
 Rails.application.configure do
 
   RELATIVE_ROOT = "/"
 
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # Add Faye to the middleware stack
-  config.middleware.insert_before ActionDispatch::Executor, GameServerMiddleware,
-                                 mount: '/game_server',
-                                 timeout: 35,
-                                 ping: 30,
-                                 engine: {
-                                     type: Faye::Redis,
-                                     uri: "redis://redis:6379/0/faye"
-                                 }
 
   # Code is not reloaded between requests.
   config.cache_classes = true

@@ -1,15 +1,15 @@
 function Board(canvas, cameraApi) {
 
-  this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
-  this.gameServerClient.addExtension(
-      {
-        outgoing: function(message, callback) {
-          message['ext'] = message['ext'] || {};
-          message['ext']['user_id'] = USER_ID;
-          message['ext']['auth_token'] = USER_AUTH_TOKEN;
-          callback(message);
-        }
-      });
+  // this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
+  // this.gameServerClient.addExtension(
+  //     {
+  //       outgoing: function(message, callback) {
+  //         message['ext'] = message['ext'] || {};
+  //         message['ext']['user_id'] = USER_ID;
+  //         message['ext']['auth_token'] = USER_AUTH_TOKEN;
+  //         callback(message);
+  //       }
+  //     });
 
   this.gameId = GAME_ID;
   this.invalid = true;
@@ -37,8 +37,8 @@ function Board(canvas, cameraApi) {
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
-  this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), this.gameServerClient, this.gameId);
-  this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, this.gameServerClient);
+  this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), null, this.gameId);
+  this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, null);
 
   this.isOwner = false;
   this.pcMode = false;
@@ -66,32 +66,31 @@ function Board(canvas, cameraApi) {
   // Used in events
   var self = this;
 
-  this.gameServerClient.on('transport:down', function() {
-    // the client is offline
-    var alarmFunc = function() {
-      if (self.networkDown) {
-        flashMessage("error", "Cannot Connect to Dungeon Server!!");
-        setTimeout(alarmFunc, 5000);
-      }
-    };
-    self.networkDown = true;
-    alarmFunc();
-  });
+  // this.gameServerClient.on('transport:down', function() {
+  //   // the client is offline
+  //   var alarmFunc = function() {
+  //     if (self.networkDown) {
+  //       flashMessage("error", "Cannot Connect to Dungeon Server!!");
+  //       setTimeout(alarmFunc, 5000);
+  //     }
+  //   };
+  //   self.networkDown = true;
+  //   alarmFunc();
+  // });
+  //
+  // this.gameServerClient.on('transport:up', function() {
+  //   if (self.networkDown) {
+  //     self.networkDown = false;
+  //     flashMessage("notice", "Connection to Dungeon Server Restored.");
+  //   }
+  // });
 
-  this.gameServerClient.on('transport:up', function() {
-    if (self.networkDown) {
-      self.networkDown = false;
-      flashMessage("notice", "Connection to Dungeon Server Restored.");
-    }
-  });
-
-  this.addActionManager = new ActionMessenger(this.gameServerClient, '/game/' + this.gameId + '/add_action', function(message) {
+  this.addActionManager = new ActionMessenger("GameActionChannel", { game_id: this.gameId }, function(message) {
     self.handleAddActionMessage(message);
   });
 
 
 
-  this.addActionManager.connect();
 
   this.event_manager.on('mousemove', function(mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);

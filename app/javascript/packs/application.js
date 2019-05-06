@@ -19,6 +19,7 @@ import { Vector2, TransformMatrix, Rectangle, Geometry } from "../lib/geometry";
 import "../lib/Directives";
 import "../lib/TouchTapDirective";
 import * as formatting from "../lib/Formatting";
+import { ActionMessenger } from "../lib/ActionMessenger";
 
 import VueResize from 'vue-resize'
 import AppCampaignUsers from "../components/AppCampaignUsers";
@@ -29,6 +30,7 @@ import Initiative from "../components/Initiative";
 import InitiativeData from "../lib/InitiativeData";
 
 
+window.ActionMessenger = ActionMessenger;
 window.ToolMenuItem = ToolMenuItem;
 window.ToolMenuGroup = ToolMenuGroup;
 window.ZoomMenuItem = ZoomMenuItem;

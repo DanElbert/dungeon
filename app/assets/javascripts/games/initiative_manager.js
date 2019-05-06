@@ -7,11 +7,10 @@ class InitiativeManager extends Eventer {
 
     this.data.on("changed", () => this.handleDataChanged());
 
-    this.initiativeActionManager = new ActionMessenger(gameServerClient, '/game/' + gameId + '/update_initiative', message => {
+    this.initiativeActionManager = new ActionMessenger("InitiativeChannel", { game_id: gameId }, message => {
       this.handleAddActionMessage(message);
     });
     this.initiativeActionManager.ignoreReflections = false;
-    this.initiativeActionManager.connect();
 
     this.element = document.createElement("div");
     this.container.appendChild(this.element);
