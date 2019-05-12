@@ -5,7 +5,7 @@ Some board game project.  It's boring.
 
 Dungeon is released under the MIT License.
 
-Copyright (C) 2015  Dan Elbert
+Copyright (c) 2013-2019 Dan Elbert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

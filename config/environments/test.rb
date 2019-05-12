@@ -4,7 +4,6 @@ Rails.application.configure do
 
   GAME_SERVER_PORT = 9292
   GAME_SERVER_HOST = "localhost"
-  GAME_SERVER_URL = "http://#{GAME_SERVER_HOST}:#{GAME_SERVER_PORT}/games"
 
   config.active_job.queue_adapter = :inline
 

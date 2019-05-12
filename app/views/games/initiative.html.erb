@@ -1,7 +1,5 @@
 <% content_for :header do %>
   <%= javascript_include_tag "games/index" %>
-  <%= javascript_include_tag "/game_server/client.js" %>
-  <%= javascript_include_tag "initiative_screen" %>
 <% end %>
 
 <div id="game_board_container">
@@ -10,10 +8,12 @@
 </div>
 
 <script type="text/javascript">
-  GAME_SERVER_URL = '/game_server';
-  GAME_ID = <%= @game.id %>;
-  USER_ID = <%= current_user.id %>;
-  USER_AUTH_TOKEN = '<%= current_user.auth_token %>';
-  INITIAL_DATA = <%= raw(@initiative_json) %>;
-  INITIATIVE_URL = '<%= initiative_names_game_path(@game) %>';
+  const gameId = <%= @game.id %>;
+  const initial_data = <%= raw(@initiative_json) %>;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const initiative = new InitiativeManager(document.getElementById("init_box"), gameId, true);
+    initiative.update(initial_data.initiative, initial_data.initiative_names);
+  });
+
 </script>

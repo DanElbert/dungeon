@@ -1,16 +1,5 @@
 function Board(canvas, cameraApi) {
 
-  // this.gameServerClient = new Faye.Client(GAME_SERVER_URL);
-  // this.gameServerClient.addExtension(
-  //     {
-  //       outgoing: function(message, callback) {
-  //         message['ext'] = message['ext'] || {};
-  //         message['ext']['user_id'] = USER_ID;
-  //         message['ext']['auth_token'] = USER_AUTH_TOKEN;
-  //         callback(message);
-  //       }
-  //     });
-
   this.gameId = GAME_ID;
   this.invalid = true;
   this.networkDown = false;
@@ -32,12 +21,12 @@ function Board(canvas, cameraApi) {
   this.drawing = new Drawing(this.context, this.drawingSettings);
   // To account for device pixel ratios that are not 1:1, we transform the identity matrix to match
   this.pixelRatio = 1;
-  this.identityTransform = function() { this.context.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0) };
+  this.identityTransform = () => { this.context.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0) };
 
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
-  this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), null, this.gameId);
+  this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), this.gameId);
   this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, null);
 
   this.isOwner = false;
@@ -66,28 +55,28 @@ function Board(canvas, cameraApi) {
   // Used in events
   var self = this;
 
-  // this.gameServerClient.on('transport:down', function() {
-  //   // the client is offline
-  //   var alarmFunc = function() {
-  //     if (self.networkDown) {
-  //       flashMessage("error", "Cannot Connect to Dungeon Server!!");
-  //       setTimeout(alarmFunc, 5000);
-  //     }
-  //   };
-  //   self.networkDown = true;
-  //   alarmFunc();
-  // });
-  //
-  // this.gameServerClient.on('transport:up', function() {
-  //   if (self.networkDown) {
-  //     self.networkDown = false;
-  //     flashMessage("notice", "Connection to Dungeon Server Restored.");
-  //   }
-  // });
-
   this.addActionManager = new ActionMessenger("GameActionChannel", { game_id: this.gameId }, function(message) {
     self.handleAddActionMessage(message);
   });
+
+  this.addActionManager.onDisconnected = function() {
+    // the client is offline
+    var alarmFunc = function() {
+      if (self.networkDown) {
+        flashMessage("error", "Cannot Connect to Dungeon Server!!");
+        setTimeout(alarmFunc, 5000);
+      }
+    };
+    self.networkDown = true;
+    alarmFunc();
+  };
+
+  this.addActionManager.onConnected = function() {
+    if (self.networkDown) {
+      self.networkDown = false;
+      flashMessage("notice", "Connection to Dungeon Server Restored.");
+    }
+  };
 
 
 

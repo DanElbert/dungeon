@@ -51,7 +51,12 @@ class GamesController < ApplicationController
   end
 
   def initiative
-    @initiative_json = @game.as_json[:initiative].to_json
+    game_json = @game.as_json
+
+    @initiative_json = {
+        initiative: game_json[:initiative],
+        initiative_names: game_json[:initiative_names]
+    }.to_json
   end
 
   def initiative_names

@@ -1,6 +1,6 @@
 
 class InitiativeManager extends Eventer {
-  constructor(container, gameServerClient, gameId, disableFloating) {
+  constructor(container, gameId, disableFloating) {
     super();
     this.container = container;
     this.data = new InitiativeData();
