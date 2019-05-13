@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.8.2",
     "@rails/webpacker": "4.0.2",
     "@tweenjs/tween.js": "^17.2.0",
     "actioncable": "^5.2.3",

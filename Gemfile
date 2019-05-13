@@ -9,12 +9,10 @@ gem 'oj', '~> 3.7.12'
 gem 'puma', '~> 3.12.1'
 gem 'redis-rails', '~> 5.0.2'
 
-gem 'webpacker', '>= 4.0.2'
-gem 'font-awesome-sass', '~> 5.6.1'
+gem 'webpacker', '4.0.2'
 gem 'bcrypt', '~> 3.1.12'
 gem 'pundit', '~> 2.0.1'
 
-gem 'sassc-rails',   '~> 2.1.0'
 gem 'uglifier', '>= 1.0.3'
 
 gem 'resque', '~> 2.0.0'

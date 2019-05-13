@@ -3,6 +3,12 @@
 @import "~bulma";
 @import "~bulma-tooltip/src/sass/index";
 @import "spacelab_overrides";
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+@import "flash_messages";
+@import "games";
 
 html.noscroll {
   overflow: hidden;
@@ -22,6 +28,32 @@ html.noscroll {
   }
 }
 
+
+
+
+
+h1, h2, h3 {
+  small {
+    font-size: 65%;
+  }
+}
+
+
+div.thumbnail {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+
+  img{
+    max-width: none;
+  }
+}
+
+.tooltip-inner {
+  width: 150px;
+}
+
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -31,4 +63,33 @@ input[type=number]::-webkit-outer-spin-button {
 
 input[type=number] {
   -moz-appearance:textfield;
+}
+
+ul.game-list {
+
+  line-height: 1.2;
+
+  li {
+    padding: .75rem;
+    margin-bottom: 1rem;
+  }
+
+  .game-label {
+    display: inline-block;
+  }
+
+  .name {
+    font-size: 1.3rem;
+  }
+
+  .timestamp {
+    font-size: 0.75rem;
+    color: #bbbbbb;
+  }
+
+  .controls {
+    padding-top: 5px;
+    display: inline-block;
+    float: right;
+  }
 }
