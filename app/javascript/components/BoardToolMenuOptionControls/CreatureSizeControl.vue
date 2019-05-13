@@ -10,7 +10,7 @@
 
 <script>
 
-  import BoardToolMenuOptionMixin from "../../lib/BoardToolMenuOptionMixin";
+  import BoardToolMenuOptionMixin from "../../lib/tool_menu/BoardToolMenuOptionMixin";
 
   var creatureSizes = [
     {name: "Small", value: "small"},

@@ -31,7 +31,7 @@
 
 <script>
 
-  import _ from "underscore";
+  import debounce from "lodash/debounce";
   import Vue from 'vue';
 
   export default {
@@ -96,7 +96,7 @@
       },
 
       debouncedUpdateOptions() {
-        return _.debounce(this.updateOptions, this.debounce);
+        return debounce(this.updateOptions, this.debounce);
       }
     },
 

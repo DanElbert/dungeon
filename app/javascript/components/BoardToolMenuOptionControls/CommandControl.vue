@@ -6,7 +6,7 @@
 
 <script>
 
-  import BoardToolMenuOptionMixin from "../../lib/BoardToolMenuOptionMixin";
+  import BoardToolMenuOptionMixin from "../../lib/tool_menu/BoardToolMenuOptionMixin";
 
   export default {
     mixins: [

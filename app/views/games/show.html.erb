@@ -10,10 +10,12 @@
 </div>
 
 <script type="text/javascript">
-  BOARD_DATA_URL = '<%= get_game_data_game_path(@game) %>';
   GAME_ID = <%= @game.id %>;
   CAMPAIGN_ID = <%= @game.campaign_id %>;
 
-  startGameBoard();
+  document.addEventListener('DOMContentLoaded', function() {
+    const gameBoard = new GameBoard(<%= @game.id %>, document.getElementById("game_board"));
+    gameBoard.start();
+  });
 
 </script>

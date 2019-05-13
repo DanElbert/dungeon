@@ -8,7 +8,7 @@
 
 <script>
 
-  import BoardToolMenuOptionMixin from "../../lib/BoardToolMenuOptionMixin";
+  import BoardToolMenuOptionMixin from "../../lib/tool_menu/BoardToolMenuOptionMixin";
 
   const availableShapes = [
     { name: 'Rectangle', value: 'rectangle'},

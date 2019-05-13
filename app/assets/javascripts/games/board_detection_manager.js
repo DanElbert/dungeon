@@ -152,60 +152,61 @@ _.extend(BoardDetectionManager.prototype, {
   }
 });
 
-
-// =================================================
-// New Action Types
-// =================================================
-var BoardDetectionAction = createActionType("BoardDetectionAction", Action, {
-  isBoardDetection: function() {
-    return true;
-  }
-});
-
-
-_.extend(actionTypes, {
-  initializeBoardDetectionAction: createActionType("InitializeBoardDetectionAction", BoardDetectionAction, {
-    apply: function (board) {
-      board.boardDetectionManager.initializeAction(this);
-    },
-    validateData: function() {
-      this.ensureFields(["uid"]);
-    }
-  }),
-
-  submitBoardDetectionGeometryAction: createActionType("SubmitBoardDetectionGeometryAction", BoardDetectionAction, {
-    apply: function (board) {
-      board.boardDetectionManager.submitGeometryAction(this);
-    },
-    validateDate: function() {
-      this.ensureFields(["uid", "origin_x", "origin_y", "width", "height", "pattern_size", "pattern_dimension"]);
-    }
-  }),
-
-  captureBoardDetectionImageAction: createActionType("CaptureBoardDetectionImageAction", BoardDetectionAction, {
-    apply: function(board) {
-      board.boardDetectionManager.captureAction(this);
-    },
-    validateDate: function() {
-      this.ensureFields(["uid", "image_data", "image_orientation"]);
-    }
-  }),
-
-  boardDetectionResultsAction: createActionType("BoardDetectionResultsAction", BoardDetectionAction, {
-    apply: function(board) {
-      board.boardDetectionManager.detectionResultsAction(this);
-    },
-    validateDate: function() {
-      this.ensureFields(["uid", "results"]);
-    }
-  }),
-
-  finishBoardDetectionAction: createActionType("FinishBoardDetectionAction", BoardDetectionAction, {
-    apply: function(board) {
-      board.boardDetectionManager.finishAction(this);
-    },
-    validateDate: function() {
-      this.ensureFields(["uid"]);
-    }
-  })
-});
+//
+//
+// // =================================================
+// // New Action Types
+// // =================================================
+// var BoardDetectionAction = createActionType("BoardDetectionAction", Action, {
+//   isBoardDetection: function() {
+//     return true;
+//   }
+// });
+//
+//
+// _.extend(actionTypes, {
+//   initializeBoardDetectionAction: createActionType("InitializeBoardDetectionAction", BoardDetectionAction, {
+//     apply: function (board) {
+//       board.boardDetectionManager.initializeAction(this);
+//     },
+//     validateData: function() {
+//       this.ensureFields(["uid"]);
+//     }
+//   }),
+//
+//   submitBoardDetectionGeometryAction: createActionType("SubmitBoardDetectionGeometryAction", BoardDetectionAction, {
+//     apply: function (board) {
+//       board.boardDetectionManager.submitGeometryAction(this);
+//     },
+//     validateDate: function() {
+//       this.ensureFields(["uid", "origin_x", "origin_y", "width", "height", "pattern_size", "pattern_dimension"]);
+//     }
+//   }),
+//
+//   captureBoardDetectionImageAction: createActionType("CaptureBoardDetectionImageAction", BoardDetectionAction, {
+//     apply: function(board) {
+//       board.boardDetectionManager.captureAction(this);
+//     },
+//     validateDate: function() {
+//       this.ensureFields(["uid", "image_data", "image_orientation"]);
+//     }
+//   }),
+//
+//   boardDetectionResultsAction: createActionType("BoardDetectionResultsAction", BoardDetectionAction, {
+//     apply: function(board) {
+//       board.boardDetectionManager.detectionResultsAction(this);
+//     },
+//     validateDate: function() {
+//       this.ensureFields(["uid", "results"]);
+//     }
+//   }),
+//
+//   finishBoardDetectionAction: createActionType("FinishBoardDetectionAction", BoardDetectionAction, {
+//     apply: function(board) {
+//       board.boardDetectionManager.finishAction(this);
+//     },
+//     validateDate: function() {
+//       this.ensureFields(["uid"]);
+//     }
+//   })
+// });

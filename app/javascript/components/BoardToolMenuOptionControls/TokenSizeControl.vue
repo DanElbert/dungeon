@@ -8,7 +8,7 @@
 
 <script>
 
-  import BoardToolMenuOptionMixin from "../../lib/BoardToolMenuOptionMixin";
+  import BoardToolMenuOptionMixin from "../../lib/tool_menu/BoardToolMenuOptionMixin";
 
   const sizes = [
     {value: 1, name: "1x1"},

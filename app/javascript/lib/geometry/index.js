@@ -2,6 +2,7 @@ import Vector2 from "./vector2";
 import TransformMatrix from "./matrix";
 import Rectangle from "./rectangle";
 import reachData from "./reach";
+import uniqBy from "lodash/uniqBy";
 
 const Geometry = {
 
@@ -112,13 +113,13 @@ const Geometry = {
     var cell = Geometry.getCell(point, cellSize);
     var cellAnchor = [cell[0] - Math.floor(data.size / 2), cell[1] - Math.floor(data.size / 2)];
 
-    var mapper = function(p) {
+    var mapper = p => {
       return [p[0] + cellAnchor[0], p[1] + cellAnchor[1]];
     };
 
     return {
-      creature: _.map(data.creature, mapper),
-      threat: _.map(isReach ? data.reach : data.threat, mapper)
+      creature: data.creature.map(mapper),
+      threat: (isReach ? data.reach : data.threat).map(mapper)
     };
   },
 
@@ -176,9 +177,7 @@ const Geometry = {
       return cellGrid[cell[0]] && cellGrid[cell[0]][cell[1]];
     };
 
-    _.each(cells, function(c) {
-      addCell(c[0], c[1]);
-    });
+    cells.forEach(c => addCell(c[0], c[1]));
 
     var lines = [];
 
@@ -245,7 +244,7 @@ const Geometry = {
     }
 
     // Octants can overlap; remove any duplicate cells
-    template = _.uniq(template, false, function(p) { return p[0] + "|" + p[1]; });
+    template = uniqBy(template, p => p[0] + "|" + p[1]);
 
     return template;
   },
@@ -291,7 +290,7 @@ const Geometry = {
     }
 
     // Octants can overlap; remove any duplicate cells
-    template = _.uniq(template, false, function(p) { return p[0] + "|" + p[1]; });
+    template = uniqBy(template, p => p[0] + "|" + p[1]);
 
     return template;
   },
@@ -367,15 +366,11 @@ const Geometry = {
   },
 
   mirrorX: function(points, axis) {
-    return _.map(points, function(p) {
-      return [p[0], axis - (p[1] - axis) - 1];
-    });
+    return points.map(p => [p[0], axis - (p[1] - axis) - 1]);
   },
 
   mirrorY: function(points, axis) {
-    return _.map(points, function(p) {
-      return [axis - (p[0] - axis) - 1, p[1]];
-    });
+    return points.map(p => [axis - (p[0] - axis) - 1, p[1]])
   },
 
   // Given a line segment defined by endpoints p1 and p2, return a list of cells through which the line passes
@@ -408,12 +403,12 @@ const Geometry = {
 
         var total = 0;
 
-        _.map([
+        [
           [realX, realY],
           [realX + cellSize, realY],
           [realX, realY + cellSize],
           [realX + cellSize, realY + cellSize]
-        ], function(p) {
+        ].forEach(p => {
           var isLeft = Geometry.isLeft(p1, p2, p);
           if (isLeft > 0) isLeft = 1;
           if (isLeft < 0) isLeft = -1;

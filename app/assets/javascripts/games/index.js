@@ -1,20 +1,10 @@
-//= require ./fullscreen
-//= require ./initiative_manager
-//= require ./animation
-//= require ./drawing_objects
-//= require ./drawing
-//= require ./board_events
-//= require ./background_layer
-//= require ./board
-//= require ./game_actions
-//= require ./drawing_layer
-//= require ./ping_layer
-//= require ./token_layer
-//= require ./template_layer
-//= require ./tools
-//= require ./view_port_labels
-//= require ./board_detection_manager
-//= require ./view_port_manager
-//= require ./image_cache
-//= require ./main_menu
-//= require ./game_board
+
+
+
+
+
+
+
+
+
+
