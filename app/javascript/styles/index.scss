@@ -30,6 +30,12 @@ html.noscroll {
 }
 
 
+kbd {
+  @extend .has-text-white;
+  @extend .has-background-grey-dark;
+  padding: 0 0.25rem 0 0.25rem;
+  border-radius: 0.25em;
+}
 
 
 
