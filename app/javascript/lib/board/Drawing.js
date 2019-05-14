@@ -1,3 +1,6 @@
+import { Geometry } from "../geometry";
+import { feetToText } from "../Formatting";
+
 export class Drawing {
   constructor(context, drawingSettings) {
     this.context = context;
@@ -32,7 +35,7 @@ export class Drawing {
 
     var totalMovement = Geometry.getCellDistance(start, end) * this.cellSizeFeet;
 
-    this.drawMeasureLine(startPoint, endPoint, window.Formatting.feetToText(totalMovement), null, null, zoom);
+    this.drawMeasureLine(startPoint, endPoint, feetToText(totalMovement), null, null, zoom);
   }
 
   drawMeasureLine(start, end, label, color, width, zoom) {
@@ -173,7 +176,7 @@ export class Drawing {
 
       this.context.translate(width / 2, 0);
       this.context.rotate(-rads);
-      var text = window.Formatting.feetToText(width / (this.drawingSettings.cellSize / this.drawingSettings.cellSizeFeet));
+      var text = feetToText(width / (this.drawingSettings.cellSize / this.drawingSettings.cellSizeFeet));
       this.drawLabel([0,0], text, "black", "black", "white", 20 / this.drawingSettings.zoom);
     }
 

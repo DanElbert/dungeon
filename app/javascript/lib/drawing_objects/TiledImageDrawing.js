@@ -1,6 +1,7 @@
 import Api from "../Api";
 import { DrawingCollection } from "./DrawingCollection";
-import { Geometry, Rectangle, Vector2 } from "../geometry";
+import { Geometry, Rectangle, TransformMatrix, Vector2 } from "../geometry";
+import { generateActionId } from "../Actions";
 
 class TiledImageDrawing extends DrawingCollection {
   constructor(uid, board, url, size, position, scale, angle) {

@@ -1,4 +1,5 @@
 import Eventer from "../Eventer";
+import { Geometry, Vector2 } from "../geometry";
 import { generateActionId } from "../Actions";
 
 export class DragDeleteItem extends Eventer {

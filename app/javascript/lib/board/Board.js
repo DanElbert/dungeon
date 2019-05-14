@@ -1,3 +1,4 @@
+import { ActionMessenger } from "../ActionMessenger";
 import { AnimationManager } from "./Animation";
 import { BackgroundLayer } from "./BackgroundLayer";
 import { BoardEvents } from "./BoardEvents";
@@ -13,6 +14,7 @@ import { ToolManager } from "../tools/ToolManager";
 import { ViewPortLabels } from "./ViewPortLabels";
 import { ViewPortManager } from "./ViewPortManager";
 import { toggleDungeonFullscreen } from "./Fullscreen";
+import { generateActionId, attachActionMethods } from "../Actions";
 
 export function Board(canvas, gameId) {
 

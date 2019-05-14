@@ -1,3 +1,4 @@
+import TransformMatrix from "./matrix";
 
 class Vector2 {
   constructor(x, y) {

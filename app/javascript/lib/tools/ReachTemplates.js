@@ -1,3 +1,4 @@
+import { Geometry } from "../geometry";
 import { Tool } from "./Tool";
 import { generateActionId } from "../Actions";
 

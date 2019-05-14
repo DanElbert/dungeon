@@ -37,3 +37,5 @@ function flashMessage(flashType, message) {
 export {
   flashMessage
 }
+
+window.flashMessage = flashMessage;

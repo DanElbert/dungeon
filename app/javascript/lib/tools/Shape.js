@@ -1,4 +1,7 @@
+import { Geometry, Vector2 } from "../geometry";
 import { Tool } from "./Tool";
+import { feetToText } from "../Formatting";
+import { generateActionId } from "../Actions";
 
 export class ShapeTool extends Tool {
   constructor(manager) {
@@ -146,8 +149,8 @@ export class ShapeTool extends Tool {
       var xDist = Math.round((Math.abs(topLeft[0] - bottomRight[0]) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
       var yDist = Math.round((Math.abs(topLeft[1] - bottomRight[1]) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
 
-      this.board.drawing.drawMeasureLine([topLeft[0], topLeft[1] - 30], [bottomRight[0], topLeft[1] - 30], window.Formatting.feetToText(xDist), null, null, this.board.getZoom());
-      this.board.drawing.drawMeasureLine([bottomRight[0] + 30, topLeft[1]], [bottomRight[0] + 30, bottomRight[1]], window.Formatting.feetToText(yDist), null, null, this.board.getZoom());
+      this.board.drawing.drawMeasureLine([topLeft[0], topLeft[1] - 30], [bottomRight[0], topLeft[1] - 30], feetToText(xDist), null, null, this.board.getZoom());
+      this.board.drawing.drawMeasureLine([bottomRight[0] + 30, topLeft[1]], [bottomRight[0] + 30, bottomRight[1]], feetToText(yDist), null, null, this.board.getZoom());
     }
   }
 

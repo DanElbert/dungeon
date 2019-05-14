@@ -1,4 +1,5 @@
 import { BaseDrawing } from "./BaseDrawing";
+import { Rectangle, Vector2, Geometry } from "../geometry";
 
 // =======================
 // BaseTemplate

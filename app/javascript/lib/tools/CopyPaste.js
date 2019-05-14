@@ -1,4 +1,5 @@
 import Api from "../Api";
+import { Geometry } from "../geometry";
 import { Tool } from "./Tool";
 import { generateActionId } from "../Actions";
 

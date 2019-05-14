@@ -1,3 +1,4 @@
+import ToolOptions from "../tool_menu/BoardToolOptions";
 
 export class Tool {
   constructor(manager) {

@@ -1,3 +1,5 @@
+import { Geometry } from "../geometry";
+
 export class ViewPortLabels {
   constructor(board, useXLetters) {
     this.board = board;

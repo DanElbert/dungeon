@@ -1,3 +1,4 @@
+import { Geometry, Vector2 } from "../geometry";
 import { Tool } from "./Tool";
 import { generateActionId } from "../Actions";
 

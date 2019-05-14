@@ -1,3 +1,4 @@
+import { Geometry, Vector2, Rectangle } from "../geometry";
 import { BaseDrawing } from "./BaseDrawing";
 
 class ImageDrawing extends BaseDrawing {

@@ -39,6 +39,7 @@ services:
 
   web1: &web
     image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
+    build: .
     restart: unless-stopped
     environment:
       - DB_MIGRATE=true

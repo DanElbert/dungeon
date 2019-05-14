@@ -1,4 +1,5 @@
 import { preventGhosts } from "../AntiGhostClick";
+import { Geometry } from "../geometry";
 import Hammer from "hammerjs";
 import Eventer from "../Eventer";
 

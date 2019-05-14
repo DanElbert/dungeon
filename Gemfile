@@ -13,20 +13,16 @@ gem 'webpacker', '4.0.2'
 gem 'bcrypt', '~> 3.1.12'
 gem 'pundit', '~> 2.0.1'
 
-#gem 'uglifier', '>= 1.0.3'
-
 gem 'resque', '~> 2.0.0'
 gem 'ruby-vips', '~> 2.0.13'
 gem 'exception_notification', '~> 4.3.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.13'
-  #gem 'therubyracer'
 end
 
 group :development do
   gem 'listen', '~> 3.1.5'
-  gem 'pry'
 end
 
 group :test do

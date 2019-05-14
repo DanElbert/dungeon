@@ -1,3 +1,4 @@
+import { Geometry, Vector2, Rectangle } from "../geometry";
 
 export class DrawingLayer {
   constructor(drawingSettings) {

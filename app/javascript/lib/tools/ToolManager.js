@@ -1,4 +1,5 @@
 import Eventer from "../Eventer";
+import { ToolMenuGroup, ToolMenuItem, CheckMenuItem, ZoomMenuItem } from "../tool_menu/BoardTools";
 import { ToolRenderer } from "./ToolRenderer";
 import { CopyTool, PasteTool } from "./CopyPaste";
 import { Eraser, Pen } from "./Drawing";
@@ -13,6 +14,7 @@ import { ReachTemplateTool } from "./ReachTemplates";
 import { ShapeTool } from "./Shape";
 import { ConeTemplate, LineTemplate, Measure, RadiusTemplate, RectangleTemplate } from "./Templates";
 import { TokenTool } from "./Tokens";
+import { generateActionId } from "../Actions";
 
 export class ToolManager extends Eventer {
   

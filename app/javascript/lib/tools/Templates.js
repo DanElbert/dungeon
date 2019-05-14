@@ -1,4 +1,5 @@
 import { DragDeleteItem } from "./DragDeleteItem";
+import { Geometry, Vector2 } from "../geometry";
 import { PathfinderRectangleTemplate, PathfinderReachTemplate, PathfinderRadiusTemplate, PathfinderMovementTemplate, PathfinderLineTemplate, PathfinderConeTemplate } from "../drawing_objects";
 import { Tool } from "./Tool";
 import { generateActionId } from "../Actions";

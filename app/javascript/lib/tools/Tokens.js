@@ -1,5 +1,6 @@
 import { DragDeleteItem } from "./DragDeleteItem";
 import { Tool } from "./Tool";
+import { Geometry, Vector2 } from "../geometry";
 import { generateActionId } from "../Actions";
 
 export class TokenTool extends Tool {

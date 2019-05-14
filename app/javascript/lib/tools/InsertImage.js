@@ -1,3 +1,4 @@
+import { Geometry, Rectangle, Vector2} from "../geometry";
 import { ImageDrawing } from "../drawing_objects";
 import { Tool } from "./Tool";
 import { generateActionId } from "../Actions";

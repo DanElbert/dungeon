@@ -1,15 +1,17 @@
+import _has from "lodash/has";
+
 class ToolMenuItem {
   constructor(name, options) {
     this.name = name;
     this.label = options.label;
     this.tooltip = options.tooltip;
-    this.visible = _.has(options, "visible") ? options.visible : true;
-    this.selected = _.has(options, "selected") ? options.selected : false;
-    this.noClickthrough = _.has(options, "noClickthrough") ? options.noClickthrough : false;
+    this.visible = _has(options, "visible") ? options.visible : true;
+    this.selected = _has(options, "selected") ? options.selected : false;
+    this.noClickthrough = _has(options, "noClickthrough") ? options.noClickthrough : false;
     this.glyph = options.glyph;
     this.children = options.children;
     this.handler = options.handler;
-    this.type = _.has(options, "type") ? options.type : "button";
+    this.type = _has(options, "type") ? options.type : "button";
     this.active = false;
 
     if (this.children) {

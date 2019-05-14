@@ -1,3 +1,4 @@
+import Vector2 from "./vector2";
 
 class Rectangle {
   constructor(topLeft, width, height) {

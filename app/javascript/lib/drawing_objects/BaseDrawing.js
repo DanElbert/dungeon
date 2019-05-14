@@ -1,4 +1,6 @@
-
+import { Geometry, Vector2, Rectangle } from "../geometry";
+import _min from "lodash/min";
+import _max from "lodash/max";
 
 class BaseDrawing {
   constructor(uid, board, position, scale, angle, isPcLayer) {
@@ -66,10 +68,10 @@ class BaseDrawing {
     var xVals = points.map(p => p.x);
     var yVals = points.map(p => p.y);
 
-    var left = _.min(xVals);
-    var right = _.max(xVals);
-    var top = _.min(yVals);
-    var bottom = _.max(yVals);
+    var left = _min(xVals);
+    var right = _max(xVals);
+    var top = _min(yVals);
+    var bottom = _max(yVals);
 
     return new Rectangle(
       new Vector2(left, top),
