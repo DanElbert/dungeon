@@ -8,7 +8,7 @@ class GamesController < ApplicationController
   end
 
   def get_game_data
-    render :json => Oj.dump(@game.as_json(:current_user_id => current_user.id))
+    render :json => @game.as_json(:current_user_id => current_user.id)
   end
 
   def new

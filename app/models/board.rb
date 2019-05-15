@@ -36,9 +36,11 @@ class Board < ApplicationRecord
   end
 
   def as_json(options={})
+    background_json = BackgroundImage.without_data.find(background_image_id).as_json
+
     {
         actions: actions,
-        board_images: board_images,
+        board_images: [background_json],
         cell_size: cell_size_pixels.present? ? cell_size_pixels : 50,
         cell_size_pixels: cell_size_pixels.present? ? cell_size_pixels : 50,
         cell_size_feet: cell_size_feet.present? ? cell_size_feet : 5,
@@ -46,7 +48,7 @@ class Board < ApplicationRecord
         template_type: template_type.present? ? template_type : 'pathfinder',
         grid_color: grid_color,
         id: id,
-        background_image: background_image.as_json
+        background_image: background_json
     }
   end
 

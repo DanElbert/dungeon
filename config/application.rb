@@ -1,7 +1,7 @@
 require_relative 'boot'
-require 'oj'
-Oj.mimic_JSON
 require 'rails/all'
+require 'oj'
+Oj.optimize_rails()
 
 
 # Require the gems listed in Gemfile, including any gems

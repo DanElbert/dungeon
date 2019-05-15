@@ -13,6 +13,8 @@ class Image < ApplicationRecord
   OVERLAP = 2
   TILE_SIZE = 256
 
+  scope :without_data, -> { select(:id, :campaign_id, :filename, :type, :name, :is_tiled, :tile_size, :levels, :status, :width, :height, :created_at, :updated_at).readonly }
+
   def self.types
     ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage']
   end

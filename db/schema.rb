@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_17_040618) do
+ActiveRecord::Schema.define(version: 2019_05_14_193513) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(version: 2019_01_17_040618) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "board_id"
+    t.index ["board_id"], name: "index_board_actions_on_board_id"
+    t.index ["uid"], name: "index_board_actions_on_uid"
   end
 
   create_table "board_detection_sessions", force: :cascade do |t|
@@ -89,6 +91,8 @@ ActiveRecord::Schema.define(version: 2019_01_17_040618) do
     t.string "status"
     t.integer "width"
     t.integer "height"
+    t.index ["campaign_id"], name: "index_images_on_campaign_id"
+    t.index ["type"], name: "index_images_on_type"
   end
 
   create_table "initiative_histories", force: :cascade do |t|

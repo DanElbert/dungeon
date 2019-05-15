@@ -46,7 +46,6 @@ GEM
     arel (9.0.0)
     bcrypt (3.1.12)
     builder (3.2.3)
-    coderay (1.1.2)
     concurrent-ruby (1.1.5)
     crass (1.0.4)
     erubi (1.8.0)
@@ -87,9 +86,6 @@ GEM
       mini_portile2 (~> 2.4.0)
     oj (3.7.12)
     pg (1.1.4)
-    pry (0.12.2)
-      coderay (~> 1.1.0)
-      method_source (~> 0.9.0)
     puma (3.12.1)
     pundit (2.0.1)
       activesupport (>= 3.0.0)
@@ -199,7 +195,6 @@ DEPENDENCIES
   minitest-reporters
   oj (~> 3.7.12)
   pg (~> 1.1.4)
-  pry
   puma (~> 3.12.1)
   pundit (~> 2.0.1)
   rails (= 5.2.3)
