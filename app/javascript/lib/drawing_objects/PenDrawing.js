@@ -2,9 +2,9 @@ import { BaseDrawing } from "./BaseDrawing";
 import { Geometry, Rectangle, Vector2 } from "../geometry";
 
 class PenDrawing extends BaseDrawing {
-  constructor(uid, board, lines, width, color, isPcLayer) {
+  constructor(uid, board, points, width, color, isPcLayer) {
     super(uid, board, new Vector2(0, 0), 1, 0, isPcLayer);
-    this.lines = lines;
+    this.points = points;
     this.width = width;
     this.color = color;
     this.isFog = true;
@@ -13,17 +13,12 @@ class PenDrawing extends BaseDrawing {
   calculateBounds() {
     var l, t, r, b;
     var margin = (this.width / 2) + 2;
-    const points = [];
-    this.lines.forEach(line => {
-      points.push(line.start);
-      points.push(line.end);
-    });
 
-    points.forEach(p => {
-      if (l == null || p[0] < l) l = p[0];
-      if (t == null || p[1] < t) t = p[1];
-      if (r == null || p[0] > r) r = p[0];
-      if (b == null || p[1] > b) b = p[1];
+    this.points.forEach(p => {
+      if (l == null || p.x < l) l = p.x;
+      if (t == null || p.y < t) t = p.y;
+      if (r == null || p.x > r) r = p.x;
+      if (b == null || p.y > b) b = p.y;
     });
 
 
@@ -32,17 +27,17 @@ class PenDrawing extends BaseDrawing {
       b - t + (margin * 2));
   }
 
-  setLines(newLines) {
+  setPoints(newPoints) {
     this.invalidateHandler(() => {
-      this.lines = newLines;
+      this.points = newPoints;
     });
   }
 
   executeDraw(drawing, drawBounds) {
     if (this.color === -1) {
-      drawing.eraseLines(this.width, this.lines);
+      drawing.erasePointsLine(this.width, this.points);
     } else {
-      drawing.drawLines(this.color, this.width, this.lines);
+      drawing.drawPointsLine(this.color, this.width, this.points);
     }
   }
 }

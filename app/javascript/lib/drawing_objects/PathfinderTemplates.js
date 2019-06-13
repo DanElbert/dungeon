@@ -153,7 +153,7 @@ class PathfinderRectangleTemplate extends BaseCellTemplate {
   }
 
   calculateCells(cellSize) {
-    var rect = new Rectangle(new Vector2(Geometry.getCell([this.position.x, this.position.y], this.cellSize)), this.cellDelta.x, this.cellDelta.y);
+    var rect = new Rectangle(new Vector2(Geometry.getCell([this.position.x, this.position.y], cellSize)), this.cellDelta.x, this.cellDelta.y);
     return Geometry.getCellsInRectangle(rect.topLeft().toArray(), rect.bottomRight().toArray());
   }
 

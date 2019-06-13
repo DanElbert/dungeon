@@ -79,6 +79,10 @@ class BaseCellTemplate extends BaseTemplate {
 
   calculateBounds() {
     this.ensureCells();
+    if (this.cells.length === 0) {
+      return new Rectangle(new Vector2(0, 0), 0, 0);
+    }
+
     var l, t, r, b;
     for (var c of this.cells) {
       var cl, ct, cr, cb;

@@ -3,6 +3,7 @@ import { Tool } from "./Tool";
 import { PenDrawing } from "../drawing_objects";
 import { ShapeTool } from "./Shape";
 import { generateActionId } from "../Actions";
+import simplify from "simplify-js";
 
 export class AddFogPen extends DrawTool {
   constructor(manager) {
@@ -21,7 +22,7 @@ export class AddFogPen extends DrawTool {
   eventNamespace() { return "AddFog"; }
   isFog() { return true; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, "black");
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, "black");
   }
   enable() {
     super.enable();
@@ -32,7 +33,7 @@ export class AddFogPen extends DrawTool {
       self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();
-      self.lineBuffer = [];
+      self.pointBuffer = [];
     });
   }
   disable() {
@@ -43,7 +44,7 @@ export class AddFogPen extends DrawTool {
 
     var cursorColor = "#FFFFFF";
 
-    if (this.lineBuffer.length > 0) {
+    if (this.pointBuffer.length > 0) {
       cursorColor = "#000000";
     }
 
@@ -53,8 +54,8 @@ export class AddFogPen extends DrawTool {
     }
   }
   saveAction() {
-    if (this.lineBuffer.length > 0) {
-      var action = {actionType: "addFogPenAction", width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+    if (this.pointBuffer.length > 0) {
+      var action = {actionType: "addFogPenAction", version: 1, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeFogAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -67,7 +68,7 @@ export class AddFogRectangle extends ShapeTool {
   }
 
   eventNamespace() {
-    return "ShapePen";
+    return "AddFogRectangle";
   }
   isFog() {
     return true;
@@ -75,9 +76,29 @@ export class AddFogRectangle extends ShapeTool {
   buildOptions() {
     super.buildOptions();
     for (let o of this.options) {
-      o.visible = false;
+      if (o.name !== "shape") {
+        //o.visible = false;
+      }
     }
   }
+
+  get backgroundColor() {
+    return "#000000";
+  }
+
+  set backgroundColor(v) {}
+
+  get color() {
+    return "#000000";
+  }
+
+  set color(v) {}
+
+  get width() {
+    return 2;
+  }
+
+  set width(v) {}
 }
 
 
@@ -98,7 +119,7 @@ export class RemoveFogPen extends DrawTool {
   eventNamespace() { return "AddFog"; }
   isFog() { return true; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, -1);
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, -1);
   }
   enable() {
     super.enable();
@@ -109,7 +130,7 @@ export class RemoveFogPen extends DrawTool {
       self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();
-      self.lineBuffer = [];
+      self.pointBuffer = [];
     });
   }
   disable() {
@@ -120,7 +141,7 @@ export class RemoveFogPen extends DrawTool {
 
     var cursorColor = "#FFFFFF";
 
-    if (this.lineBuffer.length > 0) {
+    if (this.pointBuffer.length > 0) {
       cursorColor = "#000000";
     }
 
@@ -130,8 +151,8 @@ export class RemoveFogPen extends DrawTool {
     }
   }
   saveAction() {
-    if (this.lineBuffer.length > 0) {
-      var action = {actionType: "removeFogPenAction", width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+    if (this.pointBuffer.length > 0) {
+      var action = {actionType: "removeFogPenAction", version: 1, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeFogAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

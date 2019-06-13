@@ -68,30 +68,60 @@ class LabelAction extends DrawingAction {
 
 class PenAction extends PersistentAction {
   apply(board) {
-    board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, this.properties.color, this.properties.isPcLayer));
+    let points;
+    if (this.version === 0) {
+      points = this.properties.lines.map(l => new Vector2(l.start));
+      points.push(new Vector2(this.properties.lines[this.properties.lines.length - 1].end));
+    } else {
+      points = this.properties.points.map(p => new Vector2(p));
+    }
+    board.drawingLayer.addAction(new PenDrawing(this.uid, board, points, this.properties.width, this.properties.color, this.properties.isPcLayer));
   }
 
   validateData() {
-    this.ensureFields(["color", "width", "lines", "uid"]);
+    this.ensureVersionedFields({
+      0: ["color", "width", "lines", "uid"],
+      1: ["color", "width", "points", "uid"]
+    });
   }
 }
 
 class AddFogPenAction extends PersistentAction {
   apply(board) {
-    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, "black", false));
+    let points;
+    if (this.version === 0) {
+      points = this.properties.lines.map(l => new Vector2(l.start));
+      points.push(new Vector2(this.properties.lines[this.properties.lines.length - 1].end));
+    } else {
+      points = this.properties.points.map(p => new Vector2(p));
+    }
+    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, points, this.properties.width, "black", false));
   }
   validateData() {
-    this.ensureFields(["width", "lines", "uid"]);
+    this.ensureVersionedFields({
+      0: ["width", "lines", "uid"],
+      1: ["width", "points", "uid"]
+    });
   }
 }
 
   // An remove fog action consists of a width, and a collection of lines that are to be drawn on the fog layer
 class RemoveFogPenAction extends PersistentAction {
   apply(board) {
-    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1, false));
+    let points;
+    if (this.version === 0) {
+      points = this.properties.lines.map(l => new Vector2(l.start));
+      points.push(new Vector2(this.properties.lines[this.properties.lines.length - 1].end));
+    } else {
+      points = this.properties.points.map(p => new Vector2(p));
+    }
+    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, points, this.properties.width, -1, false));
   }
   validateData() {
-    this.ensureFields(["width", "lines", "uid"]);
+    this.ensureVersionedFields({
+      0: ["width", "lines", "uid"],
+      1: ["width", "points", "uid"]
+    });
   }
 }
 
@@ -216,11 +246,21 @@ class InsertImageAction extends PersistentAction {
   // An erase action consists of a width and a collection of lines
 class EraseAction extends PersistentAction {
   apply(board) {
-    board.drawingLayer.addAction(new PenDrawing(this.uid, board, this.properties.lines, this.properties.width, -1, this.properties.isPcLayer));
+    let points;
+    if (this.version === 0) {
+      points = this.properties.lines.map(l => new Vector2(l.start));
+      points.push(new Vector2(this.properties.lines[this.properties.lines.length - 1].end));
+    } else {
+      points = this.properties.points.map(p => new Vector2(p));
+    }
+    board.drawingLayer.addAction(new PenDrawing(this.uid, board, points, this.properties.width, -1, this.properties.isPcLayer));
   }
 
   validateData() {
-    this.ensureFields(["width", "lines", "uid"]);
+    this.ensureVersionedFields({
+      0: ["width", "lines", "uid"],
+      1: ["width", "points", "uid"]
+    });
   }
 }
 

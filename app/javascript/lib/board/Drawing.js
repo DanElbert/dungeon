@@ -196,9 +196,55 @@ export class Drawing {
         this.context.moveTo(start[0], start[1]);
       }
       this.context.lineTo(end[0], end[1]);
+      this.context.moveTo(end[0], end[1]);
     }
 
     this.context.stroke();
+  }
+
+  drawPointsLine(color, width, points) {
+    if (points.length === 1) {
+      this.drawCircle(points[0].x, points[0].y, width / 2.0, 1, null, color);
+    }
+
+    this.context.beginPath();
+    this.context.lineWidth = this.checkWidth(width);
+    this.context.strokeStyle = color;
+    this.context.lineCap = 'round';
+
+    this.context.moveTo(points[0].x, points[0].y);
+
+    for (let i = 1; i < points.length; i++) {
+      this.context.lineTo(points[i].x, points[i].y);
+      this.context.moveTo(points[i].x, points[i].y);
+    }
+
+    this.context.stroke();
+  }
+
+  erasePointsLine(width, points) {
+    var originalCompositeOperation = this.context.globalCompositeOperation;
+    this.context.globalCompositeOperation = 'destination-out';
+
+    if (points.length === 1) {
+      this.drawCircle(points[0].x, points[0].y, width / 2.0, 1, null, 'rgba(0, 0, 0, 1.0)');
+    }
+
+    this.context.beginPath();
+    this.context.lineWidth = width;
+    this.context.strokeStyle = 'rgba(0, 0, 0, 1.0)';
+    this.context.lineCap = 'round';
+
+    this.context.moveTo(points[0].x, points[0].y);
+
+    for (let i = 1; i < points.length; i++) {
+      this.context.lineTo(points[i].x, points[i].y);
+      this.context.moveTo(points[i].x, points[i].y);
+    }
+
+    this.context.stroke();
+
+    this.context.globalCompositeOperation = originalCompositeOperation;
   }
 
   drawSquare(topLeft, bottomRight, color, bgColor, width, lineCap) {
@@ -221,37 +267,9 @@ export class Drawing {
     this.context.stroke();
   }
 
-  eraseLines(width, lines) {
-
-    var originalCompositeOperation = this.context.globalCompositeOperation;
-    this.context.globalCompositeOperation = 'destination-out';
-
-    this.context.beginPath();
-    this.context.lineWidth = width;
-    this.context.strokeStyle = 'rgba(0, 0, 0, 1.0)';
-    this.context.lineCap = 'round';
-
-    for (var x = 0; x < lines.length; x++) {
-      var start = lines[x].start;
-      var end = lines[x].end;
-      var distance = Geometry.getDistance(start, end);
-
-      // for 0 length lines, draw a 1 pixel line (since the intention is probably a dot)
-      if (distance == 0) {
-        start = [start[0] + 1, start[1] + 1];
-      }
-      this.context.moveTo(start[0], start[1]);
-      this.context.lineTo(end[0], end[1]);
-    }
-
-    this.context.stroke();
-
-    this.context.globalCompositeOperation = originalCompositeOperation;
-  }
 
   drawCircle(x, y, radius, width, color, fill) {
     this.context.lineWidth = this.checkWidth(width);
-    this.context.strokeStyle = color;
     this.context.beginPath();
     // For some reason, some browsers draw filled squares when the angle is 2.0 * PI; this fixes it without visual issues
     this.context.arc(x, y, radius, 0, 1.95 * Math.PI, false);
@@ -262,7 +280,10 @@ export class Drawing {
       this.context.fill();
     }
 
-    this.context.stroke();
+    if (color) {
+      this.context.strokeStyle = color;
+      this.context.stroke();
+    }
   }
 
   drawCross(x, y, size, lineWidth, color) {

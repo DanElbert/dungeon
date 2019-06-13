@@ -1,14 +1,14 @@
 import { Geometry, Vector2 } from "../geometry";
 import { Tool } from "./Tool";
 import { generateActionId } from "../Actions";
+import simplify from "simplify-js";
 
 export class DrawTool extends Tool {
   constructor(manager) {
     super(manager);
 
-    this.lineBuffer = [];
+    this.pointBuffer = [];
     this.drawingObject = null;
-    this.previous_point = null;
     this.cursor = null;
   }
 
@@ -19,17 +19,8 @@ export class DrawTool extends Tool {
   createDrawingObject() { }
   handleMouseMove(location) {
     location = this.roundPoint(location);
-    if (this.previous_point == null) {
-      this.previous_point = location;
-    }
-
-    var distance = Geometry.getDistance(this.previous_point, location);
-
-    if (distance >= this.minimumLineDistance()) {
-      this.lineBuffer.push({start: this.previous_point, end: location});
-      this.drawingObject.setLines(this.lineBuffer);
-      this.previous_point = location;
-    }
+    this.pointBuffer.push(new Vector2(location));
+    this.drawingObject.setPoints(simplify(this.pointBuffer, 1, false));
   }
   ensureDrawingObject() {
     if (this.drawingObject === null) {
@@ -44,7 +35,6 @@ export class DrawTool extends Tool {
   enable() {
     var self = this;
     this.board.event_manager.on('dragstart.' + this.eventNamespace(), function(mapEvt) {
-      self.previous_point = null;
       self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
     });
@@ -59,7 +49,7 @@ export class DrawTool extends Tool {
 
     this.board.event_manager.on('dragstop.' + this.eventNamespace(), function(mapEvt) {
       self.saveAction();
-      self.lineBuffer = [];
+      self.pointBuffer = [];
       self.removeDrawingObject();
     });
   }
@@ -67,7 +57,7 @@ export class DrawTool extends Tool {
   disable() {
     this.saveAction();
     this.removeDrawingObject();
-    this.lineBuffer = [];
+    this.pointBuffer = [];
     this.board.event_manager.off("." + this.eventNamespace());
   }
 
@@ -99,7 +89,7 @@ export class Pen extends DrawTool {
   minimumLineDistance() { return this.width / 2; }
   eventNamespace() { return "Pen"; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, this.color, this.board.pcMode);
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, this.color, this.board.pcMode);
   }
   draw() {
     if (this.cursor) {
@@ -107,8 +97,8 @@ export class Pen extends DrawTool {
     }
   }
   saveAction() {
-    if (this.lineBuffer.length > 0) {
-      var action = {actionType: "penAction", isPcLayer: this.board.pcMode, color: this.color, width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+    if (this.pointBuffer.length > 0) {
+      var action = {actionType: "penAction", version: 1, isPcLayer: this.board.pcMode, color: this.color, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -132,18 +122,17 @@ export class Eraser extends DrawTool {
   minimumLineDistance() { return 0; }
   eventNamespace() { return "Eraser"; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.lineBuffer, this.width, -1, this.board.pcMode);
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, -1, this.board.pcMode);
   }
   enable() {
     super.enable();
     this.setCursor('none');
     var self = this;
     this.board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
-      self.previous_point = null;
       self.ensureDrawingObject();
       self.handleMouseMove(mapEvt.mapPoint);
       self.saveAction();
-      self.lineBuffer = [];
+      self.pointBuffer = [];
     });
   }
   disable() {
@@ -154,7 +143,7 @@ export class Eraser extends DrawTool {
 
     var cursorColor = "#FFFFFF";
 
-    if (this.lineBuffer.length > 0) {
+    if (this.pointBuffer.length > 0) {
       cursorColor = "#000000";
     }
 
@@ -164,8 +153,8 @@ export class Eraser extends DrawTool {
     }
   }
   saveAction() {
-    if (this.lineBuffer.length > 0) {
-      var action = {actionType: "eraseAction", isPcLayer: this.board.pcMode, width: this.width, lines: this.lineBuffer, uid: generateActionId()};
+    if (this.pointBuffer.length > 0) {
+      var action = {actionType: "eraseAction", version: 1, isPcLayer: this.board.pcMode, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

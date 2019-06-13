@@ -33,8 +33,9 @@ export class Animation {
 
 
     if (durationPercent >= 1) {
-      this.finalValue = scaledValue;
+      this.finalValue = this.max;
       this.finished = true;
+      return this.finalValue;
     }
 
     return scaledValue;

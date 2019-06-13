@@ -2,15 +2,17 @@ import TransformMatrix from "./matrix";
 
 class Vector2 {
   constructor(x, y) {
-    if (Array.isArray(x)) {
+    if ((typeof x) === "number") {
+      this.x = x;
+      this.y = y;
+    } else if (Array.isArray(x)) {
       this.x = x[0];
       this.y = x[1];
-    } else if (x instanceof Vector2) {
+    } else if ("x" in x && "y" in x) {
       this.x = x.x;
       this.y = x.y;
     } else {
-      this.x = x;
-      this.y = y;
+      throw new Error("Invalid Vector2 constructor params");
     }
   }
 
@@ -38,7 +40,7 @@ class Vector2 {
 
   rotate(angle, point) {
 
-    var m = TransformMatrix.Identity;
+    let m = TransformMatrix.Identity;
 
     if (point) {
       m = m.translate(point.x, point.y);

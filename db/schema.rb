@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 2019_05_14_193513) do
     t.integer "cell_size_pixels"
     t.integer "cell_size_feet"
     t.string "template_type"
+    t.index ["game_id"], name: "index_boards_on_game_id"
   end
 
   create_table "campaign_users", force: :cascade do |t|
@@ -75,6 +76,7 @@ ActiveRecord::Schema.define(version: 2019_05_14_193513) do
     t.string "name"
     t.integer "user_id"
     t.integer "campaign_id"
+    t.index ["campaign_id"], name: "index_games_on_campaign_id"
   end
 
   create_table "images", force: :cascade do |t|

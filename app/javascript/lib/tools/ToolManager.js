@@ -3,7 +3,7 @@ import { ToolMenuGroup, ToolMenuItem, CheckMenuItem, ZoomMenuItem } from "../too
 import { ToolRenderer } from "./ToolRenderer";
 import { CopyTool, PasteTool } from "./CopyPaste";
 import { Eraser, Pen } from "./Drawing";
-import { AddFogPen, RemoveFogPen} from "./Fog";
+import { AddFogPen, RemoveFogPen, AddFogRectangle} from "./Fog";
 import { GlobalShortCuts } from "./GlobalShortcuts";
 import { InsertImageTool } from "./InsertImage";
 import { LabelTool } from "./Label";
@@ -49,6 +49,7 @@ export class ToolManager extends Eventer {
       "overland_measure_template": new OverlandMeasureTemplateTool(this),
       "ping": new PingTool(this),
       "add_fog": new AddFogPen(this),
+      "add_fog_shape": new AddFogRectangle(this),
       "remove_fog": new RemoveFogPen(this),
       "label": new LabelTool(this),
       "copy": new CopyTool(this),
@@ -234,6 +235,13 @@ export class ToolManager extends Eventer {
           glyph: "fas fa-cloud",
           handler: function() { self.setTool("add_fog"); }
         }),
+
+        // new ToolMenuItem("add_fog_shape", {
+        //   label: "Add Fog Shape",
+        //   tooltip: "Draw shapes to add fog",
+        //   glyph: "fas fa-square",
+        //   handler: function() { self.setTool("add_fog_shape"); }
+        // }),
 
         new ToolMenuItem("remove_fog", {
           label: "Remove Fog",
