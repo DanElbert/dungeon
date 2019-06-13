@@ -9,7 +9,7 @@ gem 'oj', '~> 3.7.12'
 gem 'puma', '~> 3.12.1'
 gem 'redis-rails', '~> 5.0.2'
 
-gem 'webpacker', '4.0.2'
+gem 'webpacker', '4.0.7'
 gem 'bcrypt', '~> 3.1.12'
 gem 'pundit', '~> 2.0.1'
 
