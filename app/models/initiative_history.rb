@@ -4,4 +4,9 @@ class InitiativeHistory < ApplicationRecord
 
   validates :game, presence: true
   validates :use_count, presence: true
+
+  def normalized_name
+    self.name.downcase
+  end
+
 end

@@ -34,7 +34,7 @@ class InitiativeChannel < ApplicationCable::Channel
       init_attrs.reject! { |i| i[:id] == -1}
 
       history_attrs = init_attrs.select { |i| !i[:_destroy] }.map { |i| i[:name] }.map do |n|
-        extant_history = game.initiative_histories.detect { |h| h.name.downcase == n.downcase }
+        extant_history = game.initiative_histories.detect { |h| h.name == n }
         {
             id: extant_history ? extant_history.id : nil,
             name: n,
@@ -46,9 +46,8 @@ class InitiativeChannel < ApplicationCable::Channel
       game.update!({initiatives_attributes: init_attrs, initiative_histories_attributes: history_attrs})
 
       game.initiatives.reload
-      game.initiative_histories.reload
       action_data['initiative'] = game.initiatives.as_json
-      action_data['initiative_names'] = game.initiative_histories.map(&:name)
+      action_data['initiative_names'] = game.initiative_history_names
 
     end
 

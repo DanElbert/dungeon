@@ -563,3 +563,6 @@ actionTypes["addTokenAction"] = AddTokenAction;
 actionTypes["removeTokenAction"] = RemoveTokenAction;
 actionTypes["setTokensAction"] = SetTokensAction;
 actionTypes["viewPortSyncAction"] = ViewPortSyncAction;
+
+// defunct actions
+actionTypes["clearTokensAction"] = Action;

@@ -52,6 +52,13 @@ class Game < ApplicationRecord
     self.campaign.user_id if self.campaign
   end
 
+  def initiative_history_names
+    histories = InitiativeHistory.where(game: Game.where(campaign_id: self.campaign_id))
+    name_map = Hash.new { |h, k| h[k] = 0 }
+    histories.each { |h| name_map[h.name] += h.use_count }
+    name_map.sort_by { |k, v| -v }.map { |kv| kv[0] }
+  end
+
   def as_json(options = {})
     {
         :name => name,
@@ -59,7 +66,7 @@ class Game < ApplicationRecord
         :is_owner => is_owner(options[:current_user_id]),
         :board => board.as_json(),
         :initiative => initiatives.to_a.map { |i| {:id => i.id, :name => i.name, :value => i.value} },
-        :initiative_names => initiative_histories.order(use_count: :desc).pluck(:name),
+        :initiative_names => initiative_history_names,
         :campaign_images => campaign.campaign_images.without_data.to_a.map(&:as_json),
         :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters
     }
