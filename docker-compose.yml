@@ -43,7 +43,7 @@ services:
     restart: unless-stopped
     environment:
       - DB_MIGRATE=true
-      - RAILS_ENV=${RAILS_ENV}
+      - RAILS_ENV=docker
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
       - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
       - DUNGEON_PG_USER=${DUNGEON_PG_USER}
@@ -70,7 +70,7 @@ services:
     environment:
       - QUEUE=*
       - INTERVAL=1.0
-      - RAILS_ENV=${RAILS_ENV}
+      - RAILS_ENV=docker
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
       - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
       - DUNGEON_PG_USER=${DUNGEON_PG_USER}

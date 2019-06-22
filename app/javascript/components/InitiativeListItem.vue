@@ -38,31 +38,23 @@
     methods: {
       startEdit() {
         this.editValue = this.value.value;
-        this.editMode = true;
-        this.$nextTick(() => {
-          this.$refs.editInput.focus();
-        })
+        requestAnimationFrame(() => {
+          this.editMode = true;
+
+          this.$nextTick(() => {
+            this.$refs.editInput.focus();
+            this.$refs.editInput.select();
+          });
+        });
       },
 
       saveEdit() {
-        if (this.editValue !== this.value) {
+        if (this.editValue !== this.value.value) {
           this.$emit("input", {id: this.value.id, name: this.value.name, value: this.editValue});
         }
         this.editMode = false;
         this.editValue = null;
-      },
-
-      attachEventHandlers() {
-
-      },
-
-      detachEventHandlers() {
-
       }
-    },
-
-    beforeDestroy() {
-      this.detachEventHandlers();
     }
   }
 

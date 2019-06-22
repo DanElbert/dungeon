@@ -45,7 +45,7 @@ class Ping {
     this.point = point;
     this.finished = false;
 
-    this.animation = new Animation(duration, EasingFactory.pulse(pulseCount));
+    this.animation = new Animation(duration, EasingFactory.pulse(pulseCount), 0, 1, 0);
   }
 
   draw(drawing, board) {

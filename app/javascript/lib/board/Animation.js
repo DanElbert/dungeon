@@ -1,13 +1,13 @@
 
 export class Animation {
-  constructor(duration, easing, min, max) {
+  constructor(duration, easing, min, max, final) {
     this.duration = duration;
     this.easing = easing;
     this.startTime = new Date();
     this.finished = false;
     this.min = min == null ? 0 : min;
     this.max = max == null ? 1 : max;
-    this.finalValue = null;
+    this.finalValue = final == null ? this.max : final;
   }
 
   calculateEasing() {
@@ -16,7 +16,6 @@ export class Animation {
     }
 
     if (this.duration == 0) {
-      this.finalValue = this.max;
       this.finished = true;
       return this.finalValue;
     }
@@ -33,7 +32,6 @@ export class Animation {
 
 
     if (durationPercent >= 1) {
-      this.finalValue = this.max;
       this.finished = true;
       return this.finalValue;
     }
