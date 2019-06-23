@@ -4,6 +4,7 @@ export class MainMenu {
 
     this.buttons = [
       {name: 'Tools', handler: this.toolToggle},
+      {name: 'Compass', handler: this.compassToggle},
       {name: 'Initiative', handler: this.initToggle},
       {name: 'Exit', handler: function() { window.location.href = "/campaigns/" + CAMPAIGN_ID; }}
     ];
@@ -42,6 +43,10 @@ export class MainMenu {
 
   initToggle() {
     this.board.initiative.toggleDisplay();
+  }
+
+  compassToggle() {
+    this.board.compass.toggleDisplay();
   }
 
   getInitiativeContainer() {

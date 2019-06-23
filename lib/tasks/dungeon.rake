@@ -3,6 +3,7 @@ task :compile do |t|
   Rake::Task['board_detector:build'].invoke
 end
 
+desc 'Re-processes all images'
 task :update_images => :environment do
   Image.process_all
 end

@@ -16,6 +16,7 @@
     "vue-color": "^2.7.0",
     "vue-loader": "^15.4.2",
     "vue-resize": "^0.4.4",
+    "vue-svg-loader": "^0.12.0",
     "vue-template-compiler": "^2.5.21",
     "webpack": "^4.28.1",
     "webpack-bundle-analyzer": "^3.3.2",

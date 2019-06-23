@@ -22,6 +22,7 @@ import AppCampaignUsers from "../components/AppCampaignUsers";
 import AppColorPicker from "../components/AppColorPicker";
 import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
+import CompassRose from "../components/CompassRose";
 import Initiative from "../components/Initiative";
 
 
@@ -59,6 +60,7 @@ window.VUE_COMPONENTS = {
   AppColorPicker,
   AppImagePicker,
   BoardToolMenu,
+  CompassRose,
   Initiative
 };
 

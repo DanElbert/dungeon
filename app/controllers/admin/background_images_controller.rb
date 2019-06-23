@@ -23,6 +23,7 @@ module Admin
         @background_image.data = io.read
 
         @background_image.save!
+        @background_image.process!
 
         redirect_to admin_background_images_path
       else

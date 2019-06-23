@@ -2,6 +2,7 @@ import { ActionMessenger } from "../ActionMessenger";
 import { AnimationManager } from "./Animation";
 import { BackgroundLayer } from "./BackgroundLayer";
 import { BoardEvents } from "./BoardEvents";
+import { CompassManager } from "./CompassManager";
 import { Drawing } from "./Drawing";
 import { DrawingLayer } from "./DrawingLayer";
 import { ImageCache } from "./ImageCache";
@@ -45,6 +46,7 @@ export function Board(canvas, gameId) {
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
   this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), this.gameId);
+  this.compass = new CompassManager(this.mainMenu.getInitiativeContainer());
   //this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, null);
 
   this.isOwner = false;
