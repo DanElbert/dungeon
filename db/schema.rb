@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_14_193513) do
+ActiveRecord::Schema.define(version: 2019_06_29_003457) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 2019_05_14_193513) do
     t.integer "cell_size_pixels"
     t.integer "cell_size_feet"
     t.string "template_type"
+    t.integer "compass_rotation"
     t.index ["game_id"], name: "index_boards_on_game_id"
   end
 

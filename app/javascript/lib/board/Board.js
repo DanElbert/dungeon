@@ -46,7 +46,7 @@ export function Board(canvas, gameId) {
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
   this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), this.gameId);
-  this.compass = new CompassManager(this.mainMenu.getInitiativeContainer());
+  this.compassManager = new CompassManager(this.mainMenu.getInitiativeContainer());
   //this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, null);
 
   this.isOwner = false;
@@ -223,6 +223,8 @@ export function Board(canvas, gameId) {
     this.drawingSettings.cellSizeFeet = data.board.cell_size_feet;
 
     this.toolManager.setTemplateSet(data.board.template_type);
+
+    this.compassManager.setRotation(data.board.compass_rotation);
 
     if (!this.isOwner) {
       this.toolManager.hideFogTools();

@@ -46,7 +46,7 @@ export class MainMenu {
   }
 
   compassToggle() {
-    this.board.compass.toggleDisplay();
+    this.board.compassManager.toggleDisplay();
   }
 
   getInitiativeContainer() {

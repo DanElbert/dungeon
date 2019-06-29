@@ -32,6 +32,11 @@
     </div>
 
     <div class="field">
+      <%= board_form.label :compass_rotation, class: 'label' %>
+      <%= board_form.text_field :compass_rotation, class: 'input' %>
+    </div>
+
+    <div class="field">
       <%= board_form.label :template_type, class: 'label' %>
       <div class="select">
         <%= board_form.select :template_type, Board::TEMPLATE_TYPES.keys %>
