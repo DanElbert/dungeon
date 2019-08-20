@@ -25,6 +25,7 @@ export class DrawTool extends Tool {
   ensureDrawingObject() {
     if (this.drawingObject === null) {
       this.drawingObject = this.createDrawingObject();
+      this.drawingObject.isFog = this.isFog();
       if (this.isFog()) {
         this.board.drawingLayer.addFogAction(this.drawingObject);
       } else {

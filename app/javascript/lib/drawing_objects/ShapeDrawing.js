@@ -88,12 +88,12 @@ class CircleDrawing extends ShapeDrawing {
       endPoint = this.position.translate(this.radius, 0).rotate(-30, this.position);
     }
 
-    drawing.drawMeasureLine(this.position.toArray(), endPoint.toArray(), pathfinderDistance, null, null, this.board.getZoom());
+    this.board.drawing.drawMeasureLine(this.position.toArray(), endPoint.toArray(), pathfinderDistance, null, null, this.board.getZoom());
   }
 
   executeDraw(drawing, drawBounds) {
     if (this.color === -1) {
-      // Implement erase circle
+      drawing.eraseCircle(this.position.x, this.position.y, this.radius);
     } else {
       drawing.drawCircle(this.position.x, this.position.y, this.radius, this.width, this.color, this.backgroundColor);
     }
@@ -135,13 +135,13 @@ class SquareDrawing extends ShapeDrawing {
     var xDist = Math.round((Math.abs(rec.width()) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
     var yDist = Math.round((Math.abs(rec.height()) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
 
-    drawing.drawMeasureLine(rec.topLeft().translate(0, -30).toArray(), rec.topRight().translate(0, -30).toArray(), feetToText(xDist), null, null, this.board.getZoom());
-    drawing.drawMeasureLine(rec.topRight().translate(30, 0).toArray(), rec.bottomRight().translate(30, 0).toArray(), feetToText(yDist), null, null, this.board.getZoom());
+    this.board.drawing.drawMeasureLine(rec.topLeft().translate(0, -30).toArray(), rec.topRight().translate(0, -30).toArray(), feetToText(xDist), null, null, this.board.getZoom());
+    this.board.drawing.drawMeasureLine(rec.topRight().translate(30, 0).toArray(), rec.bottomRight().translate(30, 0).toArray(), feetToText(yDist), null, null, this.board.getZoom());
   }
 
   executeDraw(drawing, drawBounds) {
     if (this.color === -1) {
-      // Implement erase square
+      drawing.eraseSquare(this.rectangle.topLeft().toArray(), this.rectangle.bottomRight().toArray());
     } else {
       drawing.drawSquare(this.rectangle.topLeft().toArray(), this.rectangle.bottomRight().toArray(), this.color, this.backgroundColor, this.width);
     }
@@ -174,13 +174,21 @@ class LineDrawing extends ShapeDrawing {
     });
   }
 
+  drawMeasure(drawing) {
+    const length = this.position.distance(this.endPoint);
+    var pathfinderDistance = Math.round((length / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
+
+    this.board.drawing.drawMeasureLine(this.position.toArray(), this.endPoint.toArray(), pathfinderDistance, this.color, 5, this.board.getZoom());
+  }
+
   executeDraw(drawing, drawBounds) {
-    super.executeDraw(drawing, drawBounds);
     if (this.color === -1) {
       drawing.erasePointsLine(this.width, [this.position, this.endPoint]);
     } else {
       drawing.drawPointsLine(this.color, this.width, [this.position, this.endPoint]);
     }
+
+    super.executeDraw(drawing, drawBounds);
   }
 
   calculateBounds() {

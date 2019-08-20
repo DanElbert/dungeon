@@ -39,7 +39,6 @@
 
     methods: {
       buildColorObject(colorStr) {
-        console.log(colorStr);
 
         let r = 0, g = 0, b = 0, a = 1;
 

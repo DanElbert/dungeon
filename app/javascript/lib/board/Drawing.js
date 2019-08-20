@@ -248,9 +248,26 @@ export class Drawing {
     this.context.globalCompositeOperation = originalCompositeOperation;
   }
 
+  eraseCircle(x, y, radius) {
+    var originalCompositeOperation = this.context.globalCompositeOperation;
+    this.context.globalCompositeOperation = 'destination-out';
+
+    this.drawCircle(x, y, radius, 1, null, "rbga(0, 0, 0, 1.0)");
+
+    this.context.globalCompositeOperation = originalCompositeOperation;
+  }
+
+  eraseSquare(topLeft, bottomRight) {
+    var originalCompositeOperation = this.context.globalCompositeOperation;
+    this.context.globalCompositeOperation = 'destination-out';
+
+    this.drawSquare(topLeft, bottomRight, null, "rbga(0, 0, 0, 1.0)", 1);
+
+    this.context.globalCompositeOperation = originalCompositeOperation;
+  }
+
   drawSquare(topLeft, bottomRight, color, bgColor, width, lineCap) {
     this.context.lineWidth = this.checkWidth(width);
-    this.context.strokeStyle = color;
     this.context.lineCap = lineCap || "round";
 
     this.context.beginPath();
@@ -265,7 +282,10 @@ export class Drawing {
       this.context.fill();
     }
 
-    this.context.stroke();
+    if (color) {
+      this.context.strokeStyle = color;
+      this.context.stroke();
+    }
   }
 
 

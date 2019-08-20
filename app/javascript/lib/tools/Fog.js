@@ -67,26 +67,25 @@ export class AddFogShape extends ShapeTool {
     super(manager);
   }
 
+  buildOptions() {
+    this.options.add({type: "shapes", label: "Shape", name: "shape", value: "rectangle"});
+    this.options.add({type: "size", name: "width", label: "Width", sizes: [25, 50, 75, 100, 150, 200], value: 75 });
+  }
+
+  optionsChanged() {
+    this.width = this.options.get("width").value;
+    this.shape = this.options.get("shape").value;
+
+    if (this.shape === "line") {
+      this.options.get("width").visible = true;
+    } else {
+      this.options.get("width").visible = false;
+      this.width = 0;
+    }
+  }
+
   eventNamespace() {
     return "AddFogShape";
-  }
-
-  enable() {
-    super.enable();
-    for (let o of this.options) {
-      if (o.name !== "shape") {
-        o.visible = false;
-      }
-    }
-  }
-
-  disable() {
-    super.disable();
-    for (let o of this.options) {
-      if (o.name !== "shape") {
-        o.visible = true;
-      }
-    }
   }
 
   isFog() {
@@ -104,12 +103,6 @@ export class AddFogShape extends ShapeTool {
   }
 
   set color(v) {}
-
-  get width() {
-    return 2;
-  }
-
-  set width(v) {}
 }
 
 
@@ -168,4 +161,47 @@ export class RemoveFogPen extends DrawTool {
       this.board.addAction(action, undoAction, true);
     }
   }
+}
+
+export class RemoveFogShape extends ShapeTool {
+  constructor(manager) {
+    super(manager);
+  }
+
+  buildOptions() {
+    this.options.add({type: "shapes", label: "Shape", name: "shape", value: "rectangle"});
+    this.options.add({type: "size", name: "width", label: "Width", sizes: [25, 50, 75, 100, 150, 200], value: 75 });
+  }
+
+  optionsChanged() {
+    this.width = this.options.get("width").value;
+    this.shape = this.options.get("shape").value;
+
+    if (this.shape === "line") {
+      this.options.get("width").visible = true;
+    } else {
+      this.options.get("width").visible = false;
+      this.width = 0;
+    }
+  }
+
+  eventNamespace() {
+    return "RemoveFogShape";
+  }
+
+  isFog() {
+    return true;
+  }
+
+  get backgroundColor() {
+    return -1;
+  }
+
+  set backgroundColor(v) {}
+
+  get color() {
+    return -1;
+  }
+
+  set color(v) {}
 }

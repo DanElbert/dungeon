@@ -95,24 +95,16 @@ class ImageDrawing extends BaseDrawing {
       var destBox = sourceBox.scale(this.scale, this.scale).translate(this.position.x - (dWidth / 2), this.position.y - (dHeight / 2)).roundValues();
       sourceBox = sourceBox.roundValues();
 
-      try {
-        ctx.drawImage(
-          this.transformedImage,
-          sourceBox.left(),
-          sourceBox.top(),
-          sourceBox.width(),
-          sourceBox.height(),
-          destBox.left(),
-          destBox.top(),
-          destBox.width(),
-          destBox.height());
-      } catch(ex) {
-        console.log(this.transformedImage);
-        console.log(sourceBox);
-        console.log(destBox);
-        console.log(ex);
-        throw ex;
-      }
+      ctx.drawImage(
+        this.transformedImage,
+        sourceBox.left(),
+        sourceBox.top(),
+        sourceBox.width(),
+        sourceBox.height(),
+        destBox.left(),
+        destBox.top(),
+        destBox.width(),
+        destBox.height());
 
       //  ctx.save();
       //  ctx.strokeStyle = 'red';

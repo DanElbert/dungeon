@@ -123,6 +123,7 @@ export class ShapeTool extends Tool {
     if (this.drawingObject === null) {
       this.drawingObject = this.createDrawingObject(point);
       this.drawingObject.setMeasure(true);
+      this.drawingObject.isFog = this.isFog();
       if (this.isFog()) {
         this.board.drawingLayer.addFogAction(this.drawingObject);
       } else {

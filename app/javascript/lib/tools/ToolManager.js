@@ -3,7 +3,7 @@ import { ToolMenuGroup, ToolMenuItem, CheckMenuItem, ZoomMenuItem } from "../too
 import { ToolRenderer } from "./ToolRenderer";
 import { CopyTool, PasteTool } from "./CopyPaste";
 import { Eraser, Pen } from "./Drawing";
-import { AddFogPen, RemoveFogPen, AddFogShape} from "./Fog";
+import { AddFogPen, RemoveFogPen, AddFogShape, RemoveFogShape } from "./Fog";
 import { GlobalShortCuts } from "./GlobalShortcuts";
 import { InsertImageTool } from "./InsertImage";
 import { LabelTool } from "./Label";
@@ -51,6 +51,7 @@ export class ToolManager extends Eventer {
       "add_fog": new AddFogPen(this),
       "add_fog_shape": new AddFogShape(this),
       "remove_fog": new RemoveFogPen(this),
+      "remove_fog_shape": new RemoveFogShape(this),
       "label": new LabelTool(this),
       "copy": new CopyTool(this),
       "paste": new PasteTool(this),
@@ -236,18 +237,25 @@ export class ToolManager extends Eventer {
           handler: function() { self.setTool("add_fog"); }
         }),
 
-        // new ToolMenuItem("add_fog_shape", {
-        //   label: "Add Fog Shape",
-        //   tooltip: "Draw shapes to add fog",
-        //   glyph: "fas fa-square",
-        //   handler: function() { self.setTool("add_fog_shape"); }
-        // }),
+        new ToolMenuItem("add_fog_shape", {
+          label: "Add Shape",
+          tooltip: "Draw shapes to add fog",
+          glyph: "fas fa-square",
+          handler: function() { self.setTool("add_fog_shape"); }
+        }),
 
         new ToolMenuItem("remove_fog", {
           label: "Remove Fog",
           tooltip: "Draw to remove fog",
           glyph: "fas fa-eye",
           handler: function() { self.setTool("remove_fog"); }
+        }),
+
+        new ToolMenuItem("remove_fog_shape", {
+          label: "Remove Shape",
+          tooltip: "Draw shapes to remove fog",
+          glyph: "fas fa-minus-square",
+          handler: function() { self.setTool("remove_fog_shape"); }
         }),
 
         new ToolMenuItem("fog_all", {
