@@ -95,6 +95,10 @@ class ImageDrawing extends BaseDrawing {
       var destBox = sourceBox.scale(this.scale, this.scale).translate(this.position.x - (dWidth / 2), this.position.y - (dHeight / 2)).roundValues();
       sourceBox = sourceBox.roundValues();
 
+      if (sourceBox.width() === 0 || sourceBox.height() === 0 || destBox.height() === 0 || destBox.width() === 0) {
+        return;
+      }
+
       ctx.drawImage(
         this.transformedImage,
         sourceBox.left(),
