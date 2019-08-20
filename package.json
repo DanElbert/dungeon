@@ -8,7 +8,7 @@
     "bulma-tooltip": "^2.0.2",
     "css-loader": "^2.1.0",
     "hammerjs": "^2.0.8",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "rails-ujs": "^5.2.3",
     "regenerator-runtime": "^0.13.2",
     "simplify-js": "^1.2.3",
