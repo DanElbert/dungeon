@@ -3,7 +3,7 @@ import { ToolMenuGroup, ToolMenuItem, CheckMenuItem, ZoomMenuItem } from "../too
 import { ToolRenderer } from "./ToolRenderer";
 import { CopyTool, PasteTool } from "./CopyPaste";
 import { Eraser, Pen } from "./Drawing";
-import { AddFogPen, RemoveFogPen, AddFogRectangle} from "./Fog";
+import { AddFogPen, RemoveFogPen, AddFogShape} from "./Fog";
 import { GlobalShortCuts } from "./GlobalShortcuts";
 import { InsertImageTool } from "./InsertImage";
 import { LabelTool } from "./Label";
@@ -49,7 +49,7 @@ export class ToolManager extends Eventer {
       "overland_measure_template": new OverlandMeasureTemplateTool(this),
       "ping": new PingTool(this),
       "add_fog": new AddFogPen(this),
-      "add_fog_shape": new AddFogRectangle(this),
+      "add_fog_shape": new AddFogShape(this),
       "remove_fog": new RemoveFogPen(this),
       "label": new LabelTool(this),
       "copy": new CopyTool(this),

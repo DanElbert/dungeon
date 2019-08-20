@@ -6,6 +6,7 @@ import { ImageDrawing } from "./ImageDrawing";
 import { OverlandMeasureTemplate } from "./OverlandTemplates";
 import { PathfinderRectangleTemplate, PathfinderReachTemplate, PathfinderRadiusTemplate, PathfinderMovementTemplate, PathfinderLineTemplate, PathfinderConeTemplate} from "./PathfinderTemplates";
 import { PenDrawing } from "./PenDrawing";
+import { CircleDrawing, LineDrawing, SquareDrawing } from "./ShapeDrawing";
 import { TiledImageDrawing } from "./TiledImageDrawing";
 import { TokenDrawing } from "./TokenDrawing";
 
@@ -31,8 +32,10 @@ export {
   BaseDrawing,
   BaseTemplate,
   BaseCellTemplate,
+  CircleDrawing,
   DrawingCollection,
   ImageDrawing,
+  LineDrawing,
   OverlandMeasureTemplate,
   PathfinderConeTemplate,
   PathfinderLineTemplate,
@@ -41,6 +44,7 @@ export {
   PathfinderReachTemplate,
   PathfinderRectangleTemplate,
   PenDrawing,
+  SquareDrawing,
   TiledImageDrawing,
   TokenDrawing
 };

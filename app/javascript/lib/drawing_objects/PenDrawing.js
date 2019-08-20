@@ -7,7 +7,6 @@ class PenDrawing extends BaseDrawing {
     this.points = points;
     this.width = width;
     this.color = color;
-    this.isFog = true;
   }
 
   calculateBounds() {

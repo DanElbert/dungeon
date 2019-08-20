@@ -62,24 +62,35 @@ export class AddFogPen extends DrawTool {
   }
 }
 
-export class AddFogRectangle extends ShapeTool {
+export class AddFogShape extends ShapeTool {
   constructor(manager) {
     super(manager);
   }
 
   eventNamespace() {
-    return "AddFogRectangle";
+    return "AddFogShape";
   }
-  isFog() {
-    return true;
-  }
-  buildOptions() {
-    super.buildOptions();
+
+  enable() {
+    super.enable();
     for (let o of this.options) {
       if (o.name !== "shape") {
-        //o.visible = false;
+        o.visible = false;
       }
     }
+  }
+
+  disable() {
+    super.disable();
+    for (let o of this.options) {
+      if (o.name !== "shape") {
+        o.visible = true;
+      }
+    }
+  }
+
+  isFog() {
+    return true;
   }
 
   get backgroundColor() {

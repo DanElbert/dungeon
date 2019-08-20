@@ -2,6 +2,7 @@ import { Geometry, Vector2 } from "../geometry";
 import { Tool } from "./Tool";
 import { feetToText } from "../Formatting";
 import { generateActionId } from "../Actions";
+import { CircleDrawing, LineDrawing, SquareDrawing } from "../drawing_objects";
 
 export class ShapeTool extends Tool {
   constructor(manager) {
@@ -15,9 +16,9 @@ export class ShapeTool extends Tool {
     this.shiftDown = false;
     this.ctrlDown = false;
 
-    this.drag_start = null;
-    this.drag_current = null;
-    this.cursor = null;
+    this.mousePosition = null;
+
+    this.drawingObject = null;
   }
 
   buildOptions() {
@@ -48,8 +49,20 @@ export class ShapeTool extends Tool {
     }
   }
 
+  isFog() {
+    return false;
+  }
+
   eventNamespace() {
     return "ShapePen";
+  }
+
+  get cursor() {
+    if (this.mousePosition) {
+      return this.getPoint(this.mousePosition);
+    } else {
+      return null;
+    }
   }
 
   enable() {
@@ -60,37 +73,35 @@ export class ShapeTool extends Tool {
     board.event_manager.on('keydown.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
-      self.cursor = self.getPoint(self.cursor);
     });
 
     board.event_manager.on('keyup.' + this.eventNamespace(), function(mapEvt) {
       self.shiftDown = mapEvt.isShift;
       self.ctrlDown = mapEvt.isCtrl;
-      self.cursor = self.getPoint(self.cursor);
     });
 
     board.event_manager.on('mousemove.' + this.eventNamespace(), function(mapEvt) {
-      self.cursor = self.getPoint(mapEvt.mapPoint);
+      self.mousePosition = mapEvt.mapPoint;
     });
 
     board.event_manager.on('dragstart.' + this.eventNamespace(), function(mapEvt) {
-      self.drag_start = self.roundPoint(self.getPoint(mapEvt.mapPoint));
+      self.ensureDrawingObject(mapEvt.mapPoint);
+      self.handleMouseMove(mapEvt.mapPoint);
     });
 
     board.event_manager.on('drag.' + this.eventNamespace(), function(mapEvt) {
-      self.drag_current = self.roundPoint(self.getPoint(mapEvt.mapPoint));
+      self.handleMouseMove(mapEvt.mapPoint);
     });
 
     board.event_manager.on('dragstop.' + this.eventNamespace(), function(mapEvt) {
       self.saveAction();
-
-      self.drag_start = null;
-      self.drag_current = null;
+      self.removeDrawingObject();
     });
   }
 
   disable() {
     this.saveAction();
+    this.removeDrawingObject();
     this.board.event_manager.off('.' + this.eventNamespace());
   }
 
@@ -103,108 +114,58 @@ export class ShapeTool extends Tool {
     this.board.drawing.drawLines("black", 3, lines);
   }
 
-  drawShape() {
+  handleMouseMove(location) {
+    location = this.roundPoint(this.getPoint(location));
+    this.drawingObject.updateFromCursorPosition(new Vector2(location));
+  }
+
+  ensureDrawingObject(point) {
+    if (this.drawingObject === null) {
+      this.drawingObject = this.createDrawingObject(point);
+      this.drawingObject.setMeasure(true);
+      if (this.isFog()) {
+        this.board.drawingLayer.addFogAction(this.drawingObject);
+      } else {
+        this.board.drawingLayer.addAction(this.drawingObject);
+      }
+    }
+  }
+
+  removeDrawingObject() {
+    if (this.drawingObject) {
+      this.board.drawingLayer.removeAction(this.drawingObject.uid);
+      this.drawingObject = null;
+    }
+  }
+
+  createDrawingObject(point) {
+    const position = new Vector2(this.roundPoint(this.getPoint(point)));
     switch(this.shape) {
       case "rectangle":
-        this.drawRectangle();
-        break;
+        return new SquareDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, new Vector2(0,0));
       case "circle":
-        this.drawCircle();
-        break;
+        return new CircleDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, 0);
       case "line":
-        this.drawLine();
-        break;
+        return new LineDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, position);
     }
   }
 
   saveAction() {
-    switch(this.shape) {
-      case "rectangle":
-        this.saveRectangle();
-        break;
-      case "circle":
-        this.saveCircle();
-        break;
-      case "line":
-        this.saveLine();
-        break;
+    if (this.drawingObject) {
+      const action = this.drawingObject.toAction(generateActionId());
+      if (this.isFog()) {
+        action.isFog = true;
+      }
+      const undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
+      this.board.addAction(action, undoAction, true);
+
+      this.removeDrawingObject();
     }
   }
 
   draw() {
     if (this.cursor) {
       this.drawCross(this.cursor);
-    }
-
-    this.drawShape();
-  }
-
-  drawRectangle() {
-    if (this.drag_start && this.drag_current) {
-      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]), Math.min(this.drag_start[1], this.drag_current[1])];
-      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]), Math.max(this.drag_start[1], this.drag_current[1])];
-
-      this.board.drawing.drawSquare(topLeft, bottomRight, this.color, this.backgroundColor, this.width);
-
-      var xDist = Math.round((Math.abs(topLeft[0] - bottomRight[0]) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
-      var yDist = Math.round((Math.abs(topLeft[1] - bottomRight[1]) / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
-
-      this.board.drawing.drawMeasureLine([topLeft[0], topLeft[1] - 30], [bottomRight[0], topLeft[1] - 30], feetToText(xDist), null, null, this.board.getZoom());
-      this.board.drawing.drawMeasureLine([bottomRight[0] + 30, topLeft[1]], [bottomRight[0] + 30, bottomRight[1]], feetToText(yDist), null, null, this.board.getZoom());
-    }
-  }
-
-  drawCircle() {
-    if (this.drag_start && this.drag_current) {
-      var center = this.drag_start;
-      var radius = Geometry.getDistance(this.drag_start, this.drag_current);
-
-      this.board.drawing.drawCircle(center[0], center[1], radius, this.width, this.color, this.backgroundColor);
-
-      var pathfinderDistance = Math.round((radius / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
-
-      this.board.drawing.drawMeasureLine(this.drag_start, this.drag_current, pathfinderDistance, null, null, this.board.getZoom());
-    }
-  }
-
-  drawLine() {
-    if (this.drag_start && this.drag_current) {
-
-      var length = Geometry.getDistance(this.drag_start, this.drag_current);
-      var pathfinderDistance = Math.round((length / this.board.drawing.cellSize) * this.board.drawing.cellSizeFeet);
-
-      this.board.drawing.drawMeasureLine(this.drag_start, this.drag_current, pathfinderDistance, this.color, this.width, this.board.getZoom());
-    }
-  }
-
-  saveRectangle() {
-    if (this.drag_start && this.drag_current) {
-      var topLeft = [Math.min(this.drag_start[0], this.drag_current[0]) >> 0, Math.min(this.drag_start[1], this.drag_current[1]) >> 0];
-      var bottomRight = [Math.max(this.drag_start[0], this.drag_current[0]) >> 0, Math.max(this.drag_start[1], this.drag_current[1]) >> 0];
-
-      var action = {actionType: "squarePenAction", isPcLayer: this.board.pcMode, color: this.color, backgroundColor: this.backgroundColor, width: this.width, topLeft: topLeft, bottomRight: bottomRight, uid: generateActionId()};
-      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
-    }
-  }
-
-  saveCircle() {
-    if (this.drag_start && this.drag_current) {
-      var center = this.roundPoint(this.drag_start);
-      var radius = Geometry.getDistance(this.drag_start, this.drag_current)>>0;
-
-      var action = {actionType: "circlePenAction", isPcLayer: this.board.pcMode, color: this.color, backgroundColor: this.backgroundColor, width: this.width, center: center, radius: radius, uid: generateActionId()};
-      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
-    }
-  }
-
-  saveLine() {
-    if (this.drag_start && this.drag_current) {
-
-      var action = {actionType: "linePenAction", isPcLayer: this.board.pcMode, color: this.color, width: this.width, start: this.drag_start, end: this.drag_current, uid: generateActionId()};
-      var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
-      this.board.addAction(action, undoAction, true);
     }
   }
 }

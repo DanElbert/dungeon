@@ -205,6 +205,7 @@ export class Drawing {
   drawPointsLine(color, width, points) {
     if (points.length === 1) {
       this.drawCircle(points[0].x, points[0].y, width / 2.0, 1, null, color);
+      return;
     }
 
     this.context.beginPath();

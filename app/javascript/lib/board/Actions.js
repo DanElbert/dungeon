@@ -1,6 +1,6 @@
 import { Vector2, TransformMatrix, Rectangle, Geometry } from "../geometry";
 import { Action, actionTypes } from "../Actions";
-import { ImageDrawing, OverlandMeasureTemplate, PathfinderConeTemplate, PathfinderLineTemplate, PathfinderMovementTemplate, PathfinderRadiusTemplate, PathfinderReachTemplate, PathfinderRectangleTemplate, PenDrawing, TokenDrawing } from "../drawing_objects";
+import { ImageDrawing, OverlandMeasureTemplate, PathfinderConeTemplate, PathfinderLineTemplate, PathfinderMovementTemplate, PathfinderRadiusTemplate, PathfinderReachTemplate, PathfinderRectangleTemplate, PenDrawing, TokenDrawing, SquareDrawing, CircleDrawing, LineDrawing } from "../drawing_objects";
 
 class RemovalAction extends Action {
   isRemoval() { return true; }
@@ -144,58 +144,84 @@ class FogNothingAction extends PersistentAction {
 }
 
   // Draws a square.  Requires topLeft, bottomRight, color, and width
-class SquarePenAction extends DrawingAction {
-  draw(drawing) {
-    drawing.drawSquare(this.properties.topLeft, this.properties.bottomRight, this.properties.color, this.properties.backgroundColor, this.properties.width);
-  }
+class SquarePenAction extends PersistentAction {
+  apply(board) {
+    let drawing = null;
 
-  calculateBounds() {
-    var margin = parseInt(this.properties.width / 2);
-    return [[this.properties.topLeft[0] - margin, this.properties.topLeft[1] - margin], [this.properties.bottomRight[0] + margin, this.properties.bottomRight[1] + margin]];
+    if (this.version === 0) {
+      const tl = new Vector2(this.properties.topLeft);
+      const br = new Vector2(this.properties.bottomRight);
+      drawing = new SquareDrawing(this.uid, board, this.properties.isPcLayer, tl, this.properties.color, this.properties.backgroundColor, this.properties.width, br.subtract(tl));
+    } else {
+      drawing = new SquareDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.position), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.size));
+    }
+
+    if (this.properties.isFog) {
+      board.drawingLayer.addFogAction(drawing);
+    } else {
+      board.drawingLayer.addAction(drawing);
+    }
+
   }
 
   validateData() {
-    this.ensureFields(["color", "width", "topLeft", "bottomRight", "uid"]);
+    this.ensureVersionedFields({
+      0: ["color", "width", "topLeft", "bottomRight", "uid"],
+      1: ["color", "width", "position", "size", "uid"]
+    });
   }
 }
 
   // Draws a circle.  Requires center, radius, color, and width
-class CirclePenAction extends DrawingAction {
-  draw(drawing) {
-    drawing.drawCircle(this.properties.center[0], this.properties.center[1], this.properties.radius, this.properties.width, this.properties.color, this.properties.backgroundColor);
-  }
+class CirclePenAction extends PersistentAction {
+  apply(board) {
+    let position = null;
 
-  calculateBounds() {
-    var center = this.properties.center;
-    var radius = this.properties.radius + parseInt(this.properties.width / 2);
-    return [[center[0] - radius, center[1] - radius], [center[0] + radius, center[1] + radius]];
+    if (this.version === 0) {
+      position = new Vector2(this.properties.center);
+    } else {
+      position = new Vector2(this.properties.position);
+    }
+    const drawing = new CircleDrawing(this.uid, board, this.properties.isPcLayer, position, this.properties.color, this.properties.backgroundColor, this.properties.width, this.properties.radius);
+
+    if (this.properties.isFog) {
+      board.drawingLayer.addFogAction(drawing);
+    } else {
+      board.drawingLayer.addAction(drawing);
+    }
   }
 
   validateData() {
-    this.ensureFields(["color", "width", "center", "radius", "uid"]);
+    this.ensureVersionedFields({
+      0: ["color", "width", "center", "radius", "uid"],
+      1: ["color", "width", "position", "radius", "uid"]
+    });
   }
 }
 
   // Draws a straight line.  Requires start, end, color, and width
-class LinePenAction extends DrawingAction {
-  draw(drawing) {
-    var lines = [{start: this.properties.start, end: this.properties.end}];
-    drawing.drawLines(this.properties.color, this.properties.width, lines);
-  }
+class LinePenAction extends PersistentAction {
 
-  calculateBounds() {
-    var start = this.properties.start;
-    var end = this.properties.end;
-    var margin = parseInt(this.properties.width / 2);
-    var t = Math.min(start[1], end[1]);
-    var l = Math.min(start[0], end[0]);
-    var b = Math.max(start[1], end[1]);
-    var r = Math.max(start[0], end[0]);
-    return [[l - margin, t - margin], [r + margin, b + margin]];
+  apply(board) {
+    let drawing = null;
+    if (this.version === 0) {
+      drawing = new LineDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.start), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.end));
+    } else {
+      drawing = new LineDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.position), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.end));
+    }
+
+    if (this.properties.isFog) {
+      board.drawingLayer.addFogAction(drawing);
+    } else {
+      board.drawingLayer.addAction(drawing);
+    }
   }
 
   validateData() {
-    this.ensureFields(["color", "width", "start", "end", "uid"]);
+    this.ensureVersionedFields({
+      0: ["color", "width", "start", "end", "uid"],
+      1: ["color", "width", "position", "end", "uid"]
+    });
   }
 }
 
