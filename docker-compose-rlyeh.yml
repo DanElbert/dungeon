@@ -16,7 +16,7 @@ services:
     labels:
       traefik.enable: 'true'
       traefik.docker.network: traefik
-      traefik.frontend.rule: 'Host:${HOSTNAME};PathPrefix:/assets/,/packs/,/images/,/favicon.ico,/robots.txt'
+      traefik.frontend.rule: 'Host:${HOSTNAME};PathPrefix:/assets/,/packs/,/images/,/favicon/,/favicon.ico,/robots.txt'
 
   web1: &web
     image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
