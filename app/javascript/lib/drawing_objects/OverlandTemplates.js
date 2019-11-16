@@ -1,5 +1,5 @@
 import { BaseTemplate } from "./BaseTemplate";
-import { Geometry, Rectangle, Vector2 } from "../geometry";
+import { Geometry, Rectangle, TransformMatrix, Vector2 } from "../geometry";
 
 class OverlandMeasureTemplate extends BaseTemplate {
   constructor(uid, board, position, color, delta) {
