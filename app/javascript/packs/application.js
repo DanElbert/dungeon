@@ -5,7 +5,6 @@ import 'vue-resize/dist/vue-resize.css'
 
 import Vue from "vue";
 import Rails from 'rails-ujs';
-import TWEEN from '@tweenjs/tween.js'
 
 
 import "../lib/BulmaGlue";
@@ -25,16 +24,6 @@ import BoardToolMenu from "../components/BoardToolMenu";
 import CompassRose from "../components/CompassRose";
 import Initiative from "../components/Initiative";
 
-
-
-
-
-// Setup global animation loop
-function animate () {
-  TWEEN.update();
-  requestAnimationFrame(animate);
-}
-animate();
 
 
 function installComponent(element, component, opts, attrs) {

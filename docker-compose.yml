@@ -6,7 +6,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - '80:80'
+      - '3000:80'
       - '8888:8888'
     command:
       - --api
@@ -56,6 +56,7 @@ services:
       - /var/log/dungeon:/dungeon/log/
     links:
       - redis
+      - postgres
     labels:
       traefik.enable: 'true'
       traefik.docker.network: traefik
@@ -80,6 +81,7 @@ services:
     command: 'bundle exec rake resque:work'
     links:
       - redis
+      - postgres
 
 
 volumes:

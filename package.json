@@ -2,7 +2,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.2",
     "@rails/webpacker": "4.0.7",
-    "@tweenjs/tween.js": "^17.2.0",
+    "@tweenjs/tween.js": "^18.3.1",
     "actioncable": "^5.2.3",
     "bulma": "^0.7.2",
     "bulma-tooltip": "^2.0.2",

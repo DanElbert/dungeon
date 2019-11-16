@@ -362,6 +362,7 @@ export function Board(canvas, gameId) {
     this.executeActions();
     this.viewPortManager.update();
     this.drawingSettings.zoom = this.getZoom();
+    this.animations.update();
 
     if (this.displayCapturePattern) {
       this.renderCapturePattern();

@@ -1,4 +1,5 @@
 import {  Animation, EasingFactory } from "./Animation";
+import { attachActionMethods, generateActionId } from "../Actions";
 import debounce from "lodash/debounce";
 
 export class ViewPortManager {

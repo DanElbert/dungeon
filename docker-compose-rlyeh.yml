@@ -14,9 +14,14 @@ services:
       - traefik
     command: ["nginx", "-g", "daemon off;"]
     labels:
-      traefik.enable: 'true'
-      traefik.docker.network: traefik
-      traefik.frontend.rule: 'Host:${HOSTNAME};PathPrefix:/assets/,/packs/,/images/,/favicon.ico,/robots.txt'
+      traefik.enable: "true"
+      traefik.http.routers.dungeon.rule: "Host(`${HOSTNAME}`) && PathPrefix(`/assets/`, `/packs/`, `/images/`, `/favicon/`, `/favicon.ico`, `/robots.txt`)"
+      traefik.http.routers.dungeon.entrypoints: websecure
+      traefik.http.routers.dungeon.tls: "true"
+      traefik.http.routers.dungeon.tls.certResolver: cert-resolver
+      traefik.http.routers.dungeon-redirect.rule: "Host(`${HOSTNAME}`)"
+      traefik.http.routers.dungeon-redirect.entrypoints: web
+      traefik.http.routers.dungeon-redirect.middlewares: redirect@file
 
   web1: &web
     image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
@@ -40,9 +45,13 @@ services:
       - traefik
       - default
     labels:
-      traefik.enable: 'true'
+      traefik.enable: "true"
       traefik.docker.network: traefik
-      traefik.frontend.rule: 'Host:${HOSTNAME}'
+      traefik.http.routers.dungeon-app.rule: "Host(`${HOSTNAME}`)"
+      traefik.http.routers.dungeon-app.entrypoints: websecure
+      traefik.http.routers.dungeon-app.middlewares: sslHeader@file
+      traefik.http.routers.dungeon-app.tls: "true"
+      traefik.http.routers.dungeon-app.tls.certResolver: cert-resolver
 
   worker:
     image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'

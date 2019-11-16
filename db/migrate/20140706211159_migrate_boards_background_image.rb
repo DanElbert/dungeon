@@ -15,8 +15,7 @@ class MigrateBoardsBackgroundImage < ActiveRecord::Migration[4.2]
     Dir[Rails.root.join('db', 'seed_data', 'background_images', '*')].each do |file|
       name = File.basename file
       unless Image.where(filename: name, type: 'BackgroundImage').exists?
-        i = Image.create!({filename: name, type: 'BackgroundImage', data: File.binread(file)})
-        i.process!(true)
+        Image.create!({filename: name, type: 'BackgroundImage', data: File.binread(file)})
       end
     end
 

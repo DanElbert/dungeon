@@ -1,5 +1,5 @@
 import { preventGhosts } from "../AntiGhostClick";
-import { Geometry } from "../geometry";
+import { Geometry, Vector2 } from "../geometry";
 import Hammer from "hammerjs";
 import Eventer from "../Eventer";
 
@@ -137,14 +137,19 @@ export class BoardEvents extends Eventer {
       });
 
       var now = Date.now();
-      if (mouseState.previousClick && (now - mouseState.previousClick < 500)) {
-        this.trigger(mouseState.eventPrefix + 'dblclick', {
-          mapPoint: mapPoint,
-          mapPointCell: cell
-        });
+      if (mouseState.previousClick) {
+        var distance = new Vector2(mouseState.previousClick.mapPoint).distance(new Vector2(mapPoint));
+        if ((now - mouseState.previousClick.time < 500) && (distance < 10)) {
+          this.trigger(mouseState.eventPrefix + 'dblclick', {
+            mapPoint: mapPoint,
+            mapPointCell: cell
+          });
+          mouseState.previousClick = null;
+        }
+        mouseState.previousClick = { time: now, mapPoint: mapPoint };
+      } else {
+        mouseState.previousClick = { time: now, mapPoint: mapPoint };
       }
-
-      mouseState.previousClick = now;
     }
 
     mouseState.dragStart = null;

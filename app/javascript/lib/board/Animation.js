@@ -1,4 +1,6 @@
 
+import TWEEN from "@tweenjs/tween.js/dist/tween.esm";
+
 export class Animation {
   constructor(duration, easing, min, max, final) {
     this.duration = duration;
@@ -70,6 +72,19 @@ export const EasingFactory = {
     }
   },
 
+  circularOut: function() {
+    return function(p) {
+      p = p - 1;
+      return Math.sqrt(1 - (p * p));
+    }
+  },
+
+  exponentOut: function() {
+    return function(p) {
+      return (p >= 1) ? 1 : (-Math.pow(2, -10 * p) + 1);
+    }
+  },
+
   linear: function() {
     return function(p) {
       return p;
@@ -81,6 +96,11 @@ export class AnimationManager {
   constructor() {
     this.maxDuration = 10000;
     this.animations = {};
+    this.wasAnimating = false;
+  }
+
+  update() {
+    TWEEN.update();
   }
 
   begin(id) {
@@ -100,6 +120,17 @@ export class AnimationManager {
       }
     }
 
-    return Object.keys(this.animations).length > 0;
+    const current = Object.keys(this.animations).length > 0 || TWEEN.getAll().length > 0;
+    if (this.wasAnimating && current) {
+      return true;
+    } else if (current) {
+      this.wasAnimating = true;
+      return true;
+    } else if (this.wasAnimating) {
+      this.wasAnimating = false;
+      return true;
+    } else {
+      return false;
+    }
   }
 }
