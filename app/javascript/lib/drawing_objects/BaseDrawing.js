@@ -15,6 +15,7 @@ class BaseDrawing {
     this.isPcLayer = !!isPcLayer;
     this.selectable = false;
     this.canInvalidateByBounds = true;
+    this.level = null;
 
     this._bounds = null;
   }

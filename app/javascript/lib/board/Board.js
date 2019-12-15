@@ -4,7 +4,7 @@ import { BackgroundLayer } from "./BackgroundLayer";
 import { BoardEvents } from "./BoardEvents";
 import { CompassManager } from "./CompassManager";
 import { Drawing } from "./Drawing";
-import { DrawingLayer } from "./DrawingLayer";
+import { MultiLevelDrawingLayer } from "./MultiLevelDrawingLayer";
 import { ImageCache } from "./ImageCache";
 import { InitiativeManager } from "./InitiativeManager";
 import { MainMenu } from "./MainMenu";
@@ -57,7 +57,7 @@ export function Board(canvas, gameId) {
   this.pending_action_queue = [];
   this.undo_stack = [];
 
-  this.drawingLayer = new DrawingLayer(this.drawingSettings);
+  this.drawingLayer = new MultiLevelDrawingLayer(this.drawingSettings);
   this.pingLayer = new PingLayer(this);
   this.tokenLayer = new TokenLayer(this);
   this.labelLayer = new ViewPortLabels(this, true);
@@ -157,6 +157,18 @@ export function Board(canvas, gameId) {
       size[0],
       size[1]
     );
+  };
+
+  this.getLevel = function() {
+    return this.drawingLayer.getLevel()
+  };
+
+  this.setLevel = function(newLevel) {
+    this.drawingLayer.setLevel(newLevel);
+  };
+
+  this.getLevelData = function() {
+    return this.drawingLayer.getLevelData();
   };
 
   this.handleAddActionMessage = function(message) {

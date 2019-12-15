@@ -15,6 +15,7 @@ import { ShapeTool } from "./Shape";
 import { ConeTemplate, LineTemplate, Measure, RadiusTemplate, RectangleTemplate } from "./Templates";
 import { TokenTool } from "./Tokens";
 import { generateActionId } from "../Actions";
+import {LevelTool} from "./LevelTool";
 
 export class ToolManager extends Eventer {
   
@@ -56,7 +57,8 @@ export class ToolManager extends Eventer {
       "copy": new CopyTool(this),
       "paste": new PasteTool(this),
       "insert_image": new InsertImageTool(this),
-      "tokens": new TokenTool(this)
+      "tokens": new TokenTool(this),
+      "levels": new LevelTool(this)
     };
 
     this.templateGroups = {
@@ -84,6 +86,12 @@ export class ToolManager extends Eventer {
           label: "Zoom",
           glyph: "fas fa-search-plus",
           handler: function(zoom) { self.changeZoom(zoom); }
+        }),
+
+        new ToolMenuItem("levels", {
+          label: "Levels",
+          glyph: "fas fa-layer-group",
+          handler: () => this.setTool("levels")
         }),
 
         new ToolMenuItem("tokens", {

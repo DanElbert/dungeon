@@ -21,11 +21,13 @@
   import BoardToolMenuItem from "./BoardToolMenuItem";
 
   import BooleanControl from "./BoardToolMenuOptionControls/BooleanControl";
+  import ButtonControl from "./BoardToolMenuOptionControls/ButtonControl";
   import ColorControl from "./BoardToolMenuOptionControls/ColorControl";
   import CommandControl from "./BoardToolMenuOptionControls/CommandControl";
   import CopiedImageControl from "./BoardToolMenuOptionControls/CopiedImageControl";
   import CreatureSizeControl from "./BoardToolMenuOptionControls/CreatureSizeControl";
   import ImageControl from "./BoardToolMenuOptionControls/ImageControl";
+  import LevelControl from "./BoardToolMenuOptionControls/LevelControl";
   import ShapesControl from "./BoardToolMenuOptionControls/ShapesControl";
   import SizeControl from "./BoardToolMenuOptionControls/SizeControl";
   import TextControl from "./BoardToolMenuOptionControls/TextControl";
@@ -77,8 +79,12 @@
 
       optionComponent(opt) {
         switch (opt.type) {
+          case "button":
+            return "button-control";
           case "color":
             return "color-control";
+          case "level":
+            return "level-control";
           case "shapes":
             return "shapes-control";
           case "size":
@@ -119,11 +125,13 @@
       BoardToolMenuItem,
 
       BooleanControl,
+      ButtonControl,
       ColorControl,
       CommandControl,
       CopiedImageControl,
       CreatureSizeControl,
       ImageControl,
+      LevelControl,
       ShapesControl,
       SizeControl,
       TextControl,
