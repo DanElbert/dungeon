@@ -87,7 +87,8 @@ GEM
       mini_portile2 (~> 2.4.0)
     oj (3.7.12)
     pg (1.1.4)
-    puma (3.12.2)
+    puma (4.3.1)
+      nio4r (~> 2.0)
     pundit (2.0.1)
       activesupport (>= 3.0.0)
     rack (2.0.8)
@@ -197,7 +198,7 @@ DEPENDENCIES
   minitest-reporters
   oj (~> 3.7.12)
   pg (~> 1.1.4)
-  puma (~> 3.12.1)
+  puma (~> 4.3.1)
   pundit (~> 2.0.1)
   rails (= 5.2.3)
   rails-controller-testing

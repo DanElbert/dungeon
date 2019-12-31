@@ -6,7 +6,7 @@ gem 'pg', '~> 1.1.4'
 
 gem 'oj', '~> 3.7.12'
 
-gem 'puma', '~> 3.12.1'
+gem 'puma', '~> 4.3.1'
 gem 'redis-rails', '~> 5.0.2'
 
 gem 'webpacker', '4.0.7'
