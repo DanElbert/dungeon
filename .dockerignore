@@ -5,3 +5,4 @@ tmp/
 public/assets
 public/images
 lib/board_detector/build
+node_modules/

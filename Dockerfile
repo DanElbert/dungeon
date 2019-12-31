@@ -1,9 +1,9 @@
-FROM ruby:2.6.3-stretch
+FROM ruby:2.6.5-buster
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && apt-get install -y \
+    apt-get update && apt-get dist-upgrade -y && apt-get install -y \
     rsync \
     cmake \
     libopencv-dev \

@@ -67,10 +67,10 @@ std::vector<ImageManipulator> ImageManipulator::cut_into_quadrants()
   return quadrants;
 }
 
-ImageManipulator ImageManipulator::warp(vector<Point2f>& corners, int gutter, int output_width, int output_height)
+ImageManipulator ImageManipulator::warp(std::vector<Point2f>& corners, int gutter, int output_width, int output_height)
 {
-  vector<Point2f> source(4, Point2f(0,0));
-  vector<Point2f> destination(4, Point2f(0,0));
+  std::vector<Point2f> source(4, Point2f(0,0));
+  std::vector<Point2f> destination(4, Point2f(0,0));
 
   source[0] = corners[0];
   source[1] = corners[1];
@@ -130,7 +130,7 @@ void ImageManipulator::mask_pattern(int pattern_dimension, int gutter_size)
 }
 
 bool ImageManipulator::debugging = false;
-string ImageManipulator::window_name = "test";
+std::string ImageManipulator::window_name = "test";
 
 void ImageManipulator::debug(bool half, std::vector<Point2f>* points, std::vector<KeyPoint>* key_points)
 {

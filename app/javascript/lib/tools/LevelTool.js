@@ -38,15 +38,16 @@ export class LevelTool extends Tool {
   updateOptions() {
     const levels = this.board.getLevelData();
     const curLevel = this.board.getLevel();
+
     this.levelOption.levels = levels;
-    this.levelOption.value = curLevel;
-    this.updateLevelNameOption.value = levels[curLevel].name;
+    this.levelOption.value = curLevel.id;
+    this.updateLevelNameOption.value = curLevel.name;
 
     this.addLevelOption.visible = this.board.isOwner;
     this.removeLevelOption.visible = this.board.isOwner && levels.length > 1;
     this.updateLevelNameOption.visible = this.board.isOwner;
-    this.moveLevelUpOption.visible = this.board.isOwner && curLevel < (levels.length - 1);
-    this.moveLevelDownOption.visible = this.board.isOwner && curLevel > 0;
+    this.moveLevelUpOption.visible = this.board.isOwner && curLevel.index < (levels.length - 1);
+    this.moveLevelDownOption.visible = this.board.isOwner && curLevel.index > 0;
   }
 
   enable() {
@@ -73,37 +74,40 @@ export class LevelTool extends Tool {
   }
 
   addLevel() {
-    console.log('here');
     const levels = this.board.getLevelData();
 
     var action = {
       actionType: "addLevelAction",
-      index: levels.length,
+      id: generateActionId(),
       name: `Level ${levels.length + 1}`,
-      uid: generateActionId()};
+      uid: generateActionId()
+    };
 
 
     this.board.addAction(action, null, true);
   }
 
   removeLevel() {
+    const curLevel = this.board.getLevel();
+
     var action = {
       actionType: "removeLevelAction",
-      index: this.board.getLevel(),
-      uid: generateActionId()};
+      id: curLevel.id,
+      uid: generateActionId()
+    };
 
     this.board.addAction(action, null, true);
   }
 
   moveLevelUp() {
-    const levels = this.board.getLevelData();
     const curLevel = this.board.getLevel();
 
     const action = {
       actionType: "updateLevelAction",
-      index: curLevel,
-      newIndex: curLevel + 1,
-      newName: levels[curLevel].name
+      id: curLevel.id,
+      newIndex: curLevel.index + 1,
+      newName: curLevel.name,
+      uid: generateActionId()
     };
 
     this.board.addAction(action, null, true);
@@ -115,23 +119,24 @@ export class LevelTool extends Tool {
 
     const action = {
       actionType: "updateLevelAction",
-      index: curLevel,
-      newIndex: curLevel - 1,
-      newName: levels[curLevel].name
+      id: curLevel.id,
+      newIndex: curLevel.index - 1,
+      newName: curLevel.name,
+      uid: generateActionId()
     };
 
     this.board.addAction(action, null, true);
   }
 
   updateLevelName() {
-    const levels = this.board.getLevelData();
     const curLevel = this.board.getLevel();
 
     const action = {
       actionType: "updateLevelAction",
-      index: curLevel,
-      newIndex: curLevel,
-      newName: this.updateLevelNameOption.value
+      id: curLevel.id,
+      newIndex: curLevel.index,
+      newName: this.updateLevelNameOption.value,
+      uid: generateActionId()
     };
 
     this.board.addAction(action, null, true);

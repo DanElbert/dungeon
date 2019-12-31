@@ -560,12 +560,12 @@ class SetTokensAction extends Action {
 class AddLevelAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    board.drawingLayer.addLevel(this.properties.index, this.properties.name);
+    board.drawingLayer.addLevel(this.properties.id, this.properties.name);
   }
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "index", "name"]
+      0: ["uid", "id", "name"]
     });
   }
 }
@@ -573,12 +573,12 @@ class AddLevelAction extends Action {
 class RemoveLevelAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    board.drawingLayer.removeLevel(this.properties.index);
+    board.drawingLayer.removeLevel(this.properties.id);
   }
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "index"]
+      0: ["uid", "id"]
     });
   }
 }
@@ -586,12 +586,12 @@ class RemoveLevelAction extends Action {
 class UpdateLevelAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    board.drawingLayer.updateLevel(this.properties.index, this.properties.newIndex, this.properties.newName);
+    board.drawingLayer.updateLevel(this.properties.id, this.properties.newIndex, this.properties.newName);
   }
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "index", "newName", "newIndex"]
+      0: ["uid", "id", "newName", "newIndex"]
     });
   }
 }
@@ -634,7 +634,7 @@ actionTypes["setTokensAction"] = SetTokensAction;
 actionTypes["viewPortSyncAction"] = ViewPortSyncAction;
 actionTypes["addLevelAction"] = AddLevelAction;
 actionTypes["removeLevelAction"] = RemoveLevelAction;
-actionTypes["updateLevelActon"] = UpdateLevelAction;
+actionTypes["updateLevelAction"] = UpdateLevelAction;
 
 // defunct actions
 actionTypes["clearTokensAction"] = Action;

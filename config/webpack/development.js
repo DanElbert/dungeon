@@ -1,5 +1,8 @@
-process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-const environment = require('./environment')
+const util = require('util');
+const environment = require('./environment');
 
-module.exports = environment.toWebpackConfig()
+var wpc = environment.toWebpackConfig();
+//console.log(util.inspect(wpc, {showHidden: false, depth: null}));
+module.exports = wpc;

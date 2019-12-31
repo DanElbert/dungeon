@@ -1,11 +1,12 @@
 #include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/calib3d/calib3d.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/features2d.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+
 
 #include "image_manipulator.h"
 #include "detector.h"
@@ -17,7 +18,7 @@ int main( int argc, char** argv )
   if (argc < 6) { return -1; }
 
   cv::Mat src_image;
-  src_image = imread( argv[1] );
+  src_image = cv::imread( argv[1] );
 
   if( !src_image.data )
     { return -1; }
@@ -53,13 +54,13 @@ int main( int argc, char** argv )
   parameters.maxThreshold = 200;
   parameters.thresholdStep = 4;
 
-  cv::SimpleBlobDetector blob_detector(parameters);
+  cv::Ptr<cv::SimpleBlobDetector> blob_detector = cv::SimpleBlobDetector::create(parameters);
 
 //  int minHessian = 400;
 //  cv::SurfFeatureDetector blob_detector( minHessian );
 
   vector<cv::KeyPoint> keypoints;
-  blob_detector.detect(warped.get_image(), keypoints);
+  blob_detector->detect(warped.get_image(), keypoints);
 
   warped.debug(false, NULL, &keypoints);
 

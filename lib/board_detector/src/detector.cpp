@@ -1,5 +1,7 @@
 #include "detector.h"
 
+using namespace cv;
+
 Detector::Detector(int pattern_size, Mat& src) : image(ImageManipulator(src)), pattern_size(pattern_size)
 {
 }
@@ -8,7 +10,7 @@ float Detector::distance(Point2f a, Point2f b) {
   return norm(a - b);
 }
 
-Point2f Detector::find_closest_point(const vector<Point2f>& points, const Point2f& target) {
+Point2f Detector::find_closest_point(const std::vector<Point2f>& points, const Point2f& target) {
   Point2f closest;
   float closest_distance = 999999;
 
@@ -51,12 +53,12 @@ std::vector<Point2f> Detector::calculate_board_corners()
   // convert image to B&W
   ImageManipulator greyscale = image.get_grey_scale();
 
-  vector<ImageManipulator> quads = greyscale.cut_into_quadrants();
+  std::vector<ImageManipulator> quads = greyscale.cut_into_quadrants();
 
   for (int x = 0; x < 4; x++) {
     ImageManipulator quad = quads[x];
     Size size(pattern_size - 1, pattern_size - 1);
-    vector<Point2f> pattern_corners;
+    std::vector<Point2f> pattern_corners;
     bool found = false;
     int attempts = 0;
 
