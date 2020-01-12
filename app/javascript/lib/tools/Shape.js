@@ -143,11 +143,11 @@ export class ShapeTool extends Tool {
     const position = new Vector2(this.roundPoint(this.getPoint(point)));
     switch(this.shape) {
       case "rectangle":
-        return new SquareDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, new Vector2(0,0));
+        return new SquareDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, new Vector2(0,0), this.board.getLevel().id);
       case "circle":
-        return new CircleDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, 0);
+        return new CircleDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, 0, this.board.getLevel().id);
       case "line":
-        return new LineDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, position);
+        return new LineDrawing(generateActionId(), this.board, this.board.pcMode, position, this.color, this.backgroundColor, this.width, position, this.board.getLevel().id);
     }
   }
 

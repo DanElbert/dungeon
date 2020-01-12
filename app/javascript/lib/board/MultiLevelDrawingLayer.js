@@ -6,14 +6,6 @@ class Level {
     this.levelManager = levelManager;
     this.name = name;
     this.id = id;
-    this._drawingLayer = null;
-  }
-
-  get drawingLayer() {
-    if (this._drawingLayer === null) {
-      this._drawingLayer = new DrawingLayer(this.levelManager.drawingSettings);
-    }
-    return this._drawingLayer;
   }
 
   get index() {
@@ -26,8 +18,7 @@ class Level {
 }
 
 class LevelManager {
-  constructor(drawingSettings) {
-    this.drawingSettings = drawingSettings;
+  constructor() {
     this.levels = [];
     this._currentIndex = 0;
     this.defaultLevel = new Level(this, "0001", "Level 1");
@@ -75,9 +66,7 @@ class LevelManager {
       this.levels.splice(idx, 1);
     }
 
-    if (this._currentIndex >= this.levels.length) {
-      this._currentIndex = 0;
-    }
+    this._currentIndex = Math.min(this._currentIndex, this.levels.length - 1);
   }
 
   moveLevel(levelId, newIndex) {
@@ -85,6 +74,10 @@ class LevelManager {
     const lvl = this.levels[index];
     this.levels.splice(index, 1);
     this.levels.splice(newIndex, 0, lvl);
+
+    if (index === this._currentIndex) {
+      this._currentIndex = lvl.index;
+    }
   }
 }
 
@@ -93,7 +86,10 @@ export class MultiLevelDrawingLayer extends Eventer {
   constructor(drawingSettings) {
     super();
 
-    this.levelManager = new LevelManager(drawingSettings);
+    this.drawingSettings = drawingSettings;
+    this.levelManager = new LevelManager();
+    this.drawingLayers = {};
+    this.isOwner = false;
   }
 
   getLevel() {
@@ -125,8 +121,9 @@ export class MultiLevelDrawingLayer extends Eventer {
       if (newName) {
         lvl.name = newName;
       }
+
+      this.trigger("change");
     }
-    this.trigger("change");
   }
 
   getLevelData() {
@@ -134,33 +131,42 @@ export class MultiLevelDrawingLayer extends Eventer {
   }
 
   forEachLevel(func) {
-    for (let x = 0; x < this.levelManager.levels; x++) {
+    for (let x = 0; x < this.levelManager.levels.length; x++) {
       let level = this.levelManager.levels[x];
       func.call(this, level, x);
     }
   }
 
   getDrawingLayer(action) {
+    let id = null;
+
     if (action === undefined) {
-      return this.levelManager.currentLevel.drawingLayer;
+      id = this.levelManager.currentLevel.id;
     } else {
-      let id = action.level;
+      id = action.level;
 
       if (id === null || id === undefined) {
         id = this.levelManager.defaultLevel.id;
       }
+    }
 
-      let lvl = this.levelManager.levelForId(id);
+    if (!this.drawingLayers[id]) {
+      const lvl = this.levelManager.levelForId(id);
+
       if (lvl) {
-        return lvl.drawingLayer;
-      } else {
-        return null;
+        this.drawingLayers[id] = new DrawingLayer(this.drawingSettings);
+        this.drawingLayers[id].setOwner(this.isOwner);
       }
     }
+
+    return this.drawingLayers[id] || null;
   }
 
-  resetFog(shouldCover) {
-    this.getDrawingLayer().resetFog(shouldCover);
+  resetFog(level, shouldCover) {
+    const dl = this.getDrawingLayer({level: level});
+    if (dl) {
+      dl.resetFog(shouldCover);
+    }
   }
 
   addAction(a) {
@@ -179,19 +185,29 @@ export class MultiLevelDrawingLayer extends Eventer {
 
   removeAction(id) {
     this.forEachLevel(level => {
-      level.drawingLayer.removeAction(id);
+      const dl = this.drawingLayers[level.id];
+      if (dl) {
+        dl.removeAction(id);
+      }
     });
   }
 
   invalidateRectangle(rect, includeFog) {
     this.forEachLevel(level => {
-      level.drawingLayer.invalidateRectangle(rect, includeFog);
+      const dl = this.drawingLayers[level.id];
+      if (dl) {
+        dl.invalidateRectangle(rect, includeFog);
+      }
     });
   }
 
   setOwner(isOwner) {
+    this.isOwner = isOwner;
     this.forEachLevel(level => {
-      level.drawingLayer.setOwner(isOwner);
+      const dl = this.drawingLayers[level.id];
+      if (dl) {
+        dl.setOwner(isOwner);
+      }
     });
   }
 

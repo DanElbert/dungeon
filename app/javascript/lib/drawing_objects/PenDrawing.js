@@ -2,8 +2,8 @@ import { BaseDrawing } from "./BaseDrawing";
 import { Geometry, Rectangle, Vector2 } from "../geometry";
 
 class PenDrawing extends BaseDrawing {
-  constructor(uid, board, points, width, color, isPcLayer) {
-    super(uid, board, new Vector2(0, 0), 1, 0, isPcLayer);
+  constructor(uid, board, points, width, color, isPcLayer, level) {
+    super(uid, board, new Vector2(0, 0), 1, 0, isPcLayer, level);
     this.points = points;
     this.width = width;
     this.color = color;

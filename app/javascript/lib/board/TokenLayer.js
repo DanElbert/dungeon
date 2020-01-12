@@ -7,6 +7,7 @@ export class TokenLayer {
 
   draw(drawing) {
     for (let t of this.tokens.values()) {
+      if (!t.level || this.board.getLevel().id === t.level)
       t.draw(drawing);
     }
   }

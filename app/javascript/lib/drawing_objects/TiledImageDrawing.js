@@ -4,8 +4,8 @@ import { Geometry, Rectangle, TransformMatrix, Vector2 } from "../geometry";
 import { generateActionId } from "../Actions";
 
 class TiledImageDrawing extends DrawingCollection {
-  constructor(uid, board, url, size, position, scale, angle) {
-    super(uid, board, position, scale, angle, false);
+  constructor(uid, board, url, size, position, scale, angle, level) {
+    super(uid, board, position, scale, angle, false, level);
 
     this.url = url;
     this.board = board;
@@ -109,7 +109,8 @@ class TiledImageDrawing extends DrawingCollection {
               new Vector2(tileWidth, tileHeight),
               tileCenter,
               1 / level.scale,
-              0
+              0,
+              this.level
             );
 
             imgDrw.level = level.number;

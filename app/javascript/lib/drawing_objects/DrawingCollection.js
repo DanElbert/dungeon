@@ -1,8 +1,8 @@
 import { BaseDrawing } from "./BaseDrawing";
 
 class DrawingCollection extends BaseDrawing {
-  constructor(uid, board, position, scale, angle, isPcLayer) {
-    super(uid, board, position, scale, angle, isPcLayer);
+  constructor(uid, board, position, scale, angle, isPcLayer, level) {
+    super(uid, board, position, scale, angle, isPcLayer, level);
 
     this.children = [];
   }

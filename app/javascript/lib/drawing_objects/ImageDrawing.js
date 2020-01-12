@@ -2,8 +2,8 @@ import { Geometry, Vector2, Rectangle } from "../geometry";
 import { BaseDrawing } from "./BaseDrawing";
 
 class ImageDrawing extends BaseDrawing {
-  constructor(uid, board, url, size, position, scale, angle) {
-    super(uid, board, position, scale, angle, false);
+  constructor(uid, board, url, size, position, scale, angle, level) {
+    super(uid, board, position, scale, angle, false, level);
 
     this.url = url;
     this.size = size;
@@ -123,11 +123,11 @@ class ImageDrawing extends BaseDrawing {
 
   }
 
-  static getImageDrawing(uid, board, url, size, position, scale, angle) {
+  static getImageDrawing(uid, board, url, size, position, scale, angle, level) {
     if (/\.json($|\?|#)/.test(url)) {
-      return new TiledImageDrawing(uid, board, url, size, position, scale, angle *  Math.PI / 180);
+      return new TiledImageDrawing(uid, board, url, size, position, scale, angle *  Math.PI / 180, level);
     } else {
-      return new ImageDrawing(uid, board, url, size, position, scale, angle *  Math.PI / 180);
+      return new ImageDrawing(uid, board, url, size, position, scale, angle *  Math.PI / 180, level);
     }
   }
 }

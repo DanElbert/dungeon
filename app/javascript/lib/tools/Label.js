@@ -73,6 +73,8 @@ export class LabelTool extends Tool {
     if (this.cursor && this.text && this.text.length) {
 
       var action = {
+        version: 1,
+        level: this.board.getLevel().id,
         actionType: "labelAction",
         isPcLayer: this.board.pcMode,
         point: this.cursor,

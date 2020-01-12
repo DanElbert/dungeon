@@ -43,5 +43,3 @@ export function preventGhosts(element) {
   attachEvents(mouseEvents, POINTER_TYPE.MOUSE);
   attachEvents(touchEvents, POINTER_TYPE.TOUCH);
 }
-
-window.preventGhosts = preventGhosts;

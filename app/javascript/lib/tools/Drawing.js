@@ -90,7 +90,7 @@ export class Pen extends DrawTool {
   minimumLineDistance() { return this.width / 2; }
   eventNamespace() { return "Pen"; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, this.color, this.board.pcMode);
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, this.color, this.board.pcMode, this.board.getLevel().id);
   }
   draw() {
     if (this.cursor) {
@@ -99,7 +99,7 @@ export class Pen extends DrawTool {
   }
   saveAction() {
     if (this.pointBuffer.length > 0) {
-      var action = {actionType: "penAction", version: 1, isPcLayer: this.board.pcMode, color: this.color, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
+      var action = {actionType: "penAction", version: 2, level: this.board.getLevel().id, isPcLayer: this.board.pcMode, color: this.color, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -123,7 +123,7 @@ export class Eraser extends DrawTool {
   minimumLineDistance() { return 0; }
   eventNamespace() { return "Eraser"; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, -1, this.board.pcMode);
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, -1, this.board.pcMode, this.board.getLevel().id);
   }
   enable() {
     super.enable();
@@ -155,7 +155,7 @@ export class Eraser extends DrawTool {
   }
   saveAction() {
     if (this.pointBuffer.length > 0) {
-      var action = {actionType: "eraseAction", version: 1, isPcLayer: this.board.pcMode, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
+      var action = {actionType: "eraseAction", version: 2, level: this.board.getLevel().id, isPcLayer: this.board.pcMode, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeDrawingAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

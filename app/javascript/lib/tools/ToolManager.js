@@ -272,7 +272,7 @@ export class ToolManager extends Eventer {
           glyph: "fas fa-square",
           handler: function() {
             if (confirm("Are you sure?  This cannot be undone")) {
-              var action = {actionType: "fogEverythingAction", uid: generateActionId()};
+              var action = {actionType: "fogEverythingAction", uid: generateActionId(), version: 1, level: self.board.getLevel().id};
               self.board.addAction(action, null, true);
             }
           }
@@ -284,7 +284,7 @@ export class ToolManager extends Eventer {
           glyph: "far fa-lightbulb",
           handler: function() {
             if (confirm("Are you sure?  This cannot be undone")) {
-              var action = {actionType: "fogNothingAction", uid: generateActionId()};
+              var action = {actionType: "fogNothingAction", uid: generateActionId(), version: 1, level: self.board.getLevel().id};
               self.board.addAction(action, null, true);
             }
           }

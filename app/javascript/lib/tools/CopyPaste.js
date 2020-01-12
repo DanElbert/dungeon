@@ -246,6 +246,8 @@ export class PasteTool extends Tool {
         var height = imgObj.height;
 
         var action = {
+          version: 1,
+          level: this.board.getLevel().id,
           actionType: "pasteAction",
           isPcLayer: this.board.pcMode,
           url: this.board.copiedArea,

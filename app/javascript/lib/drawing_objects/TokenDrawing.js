@@ -2,8 +2,8 @@ import { BaseDrawing } from "./BaseDrawing";
 import { Geometry, Rectangle, Vector2 } from "../geometry";
 
 class TokenDrawing extends BaseDrawing {
-  constructor(uid, board, position, tokenCellSize, color, fontColor, fontSize, text) {
-    super(uid, board, position, 1, 0, false);
+  constructor(uid, board, position, tokenCellSize, color, fontColor, fontSize, text, level) {
+    super(uid, board, position, 1, 0, false, level);
     this.selectable = true;
     this.canInvalidateByBounds = false;
     this.color = color;
@@ -25,12 +25,13 @@ class TokenDrawing extends BaseDrawing {
   }
 
   clone(uid) {
-    return new TokenDrawing(uid, this.board, this.position, this.tokenCellSize, this.color, this.fontColor, this.fontSize, this.text);
+    return new TokenDrawing(uid, this.board, this.position, this.tokenCellSize, this.color, this.fontColor, this.fontSize, this.text, this.level);
   }
 
   toAction(newUid) {
     return {
-      version: 1,
+      version: 2,
+      level: this.level,
       actionType: "addTokenAction",
       uid: newUid || this.uid,
       position: this.position.toArray(),

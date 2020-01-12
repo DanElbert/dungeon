@@ -200,8 +200,8 @@ export function Board(canvas, gameId) {
     }
   };
 
-  this.resetFog = function(fillFog) {
-    this.drawingLayer.resetFog(fillFog);
+  this.resetFog = function(level, fillFog) {
+    this.drawingLayer.resetFog(level, fillFog);
   };
 
   this.setPcMode = function(mode) {

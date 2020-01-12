@@ -3,7 +3,7 @@ import _min from "lodash/min";
 import _max from "lodash/max";
 
 class BaseDrawing {
-  constructor(uid, board, position, scale, angle, isPcLayer) {
+  constructor(uid, board, position, scale, angle, isPcLayer, level) {
     if (!uid) throw "Invalid UID";
     if (!board) throw "board cannot be null";
     this.uid = uid;
@@ -15,7 +15,7 @@ class BaseDrawing {
     this.isPcLayer = !!isPcLayer;
     this.selectable = false;
     this.canInvalidateByBounds = true;
-    this.level = null;
+    this.level = level || null;
 
     this._bounds = null;
   }

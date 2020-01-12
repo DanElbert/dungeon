@@ -3,8 +3,8 @@ import { Geometry, Rectangle, Vector2 } from "../geometry";
 import { feetToText } from "../Formatting";
 
 class ShapeDrawing extends BaseDrawing {
-  constructor(uid, board, isPcLayer, position, color, backgroundColor, width) {
-    super(uid, board, position, 1, 0, isPcLayer);
+  constructor(uid, board, isPcLayer, position, color, backgroundColor, width, level) {
+    super(uid, board, position, 1, 0, isPcLayer, level);
     this.color = color;
     this.backgroundColor = backgroundColor;
     this.width = width;
@@ -53,20 +53,21 @@ class ShapeDrawing extends BaseDrawing {
 
   toAction(newUid) {
     return {
-      version: 1,
+      version: 2,
       uid: newUid || this.uid,
       position: this.position.toArray(),
       isPcLayer: this.isPcLayer,
       color: this.color,
       backgroundColor: this.backgroundColor,
-      width: this.width
+      width: this.width,
+      level: this.level
     }
   }
 }
 
 class CircleDrawing extends ShapeDrawing {
-  constructor(uid, board, isPcLayer, position, color, backgroundColor, width, radius) {
-    super(uid, board, isPcLayer, position, color, backgroundColor, width);
+  constructor(uid, board, isPcLayer, position, color, backgroundColor, width, radius, level) {
+    super(uid, board, isPcLayer, position, color, backgroundColor, width, level);
     this.radius = radius;
     this.lastCursor = null;
   }
@@ -115,8 +116,8 @@ class CircleDrawing extends ShapeDrawing {
 }
 
 class SquareDrawing extends ShapeDrawing {
-  constructor(uid, board, isPcLayer, position, color, backgroundColor, width, size) {
-    super(uid, board, isPcLayer, position, color, backgroundColor, width);
+  constructor(uid, board, isPcLayer, position, color, backgroundColor, width, size, level) {
+    super(uid, board, isPcLayer, position, color, backgroundColor, width, level);
     this.size = size;
   }
 
@@ -163,8 +164,8 @@ class SquareDrawing extends ShapeDrawing {
 }
 
 class LineDrawing extends ShapeDrawing {
-  constructor(uid, board, isPcLayer, position, color, backgroundColor, width, endPoint) {
-    super(uid, board, isPcLayer, position, color, backgroundColor, width);
+  constructor(uid, board, isPcLayer, position, color, backgroundColor, width, endPoint, level) {
+    super(uid, board, isPcLayer, position, color, backgroundColor, width, level);
     this.endPoint = endPoint;
   }
 

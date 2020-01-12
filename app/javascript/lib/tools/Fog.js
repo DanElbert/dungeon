@@ -22,7 +22,7 @@ export class AddFogPen extends DrawTool {
   eventNamespace() { return "AddFog"; }
   isFog() { return true; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, "black");
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, "black", false, this.board.getLevel().id);
   }
   enable() {
     super.enable();
@@ -55,7 +55,7 @@ export class AddFogPen extends DrawTool {
   }
   saveAction() {
     if (this.pointBuffer.length > 0) {
-      var action = {actionType: "addFogPenAction", version: 1, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
+      var action = {actionType: "addFogPenAction", version: 2, level: this.board.getLevel().id, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeFogAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }
@@ -123,7 +123,7 @@ export class RemoveFogPen extends DrawTool {
   eventNamespace() { return "AddFog"; }
   isFog() { return true; }
   createDrawingObject() {
-    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, -1);
+    return new PenDrawing(generateActionId(), this.board, this.pointBuffer, this.width, -1, false, this.board.getLevel().id);
   }
   enable() {
     super.enable();
@@ -156,7 +156,7 @@ export class RemoveFogPen extends DrawTool {
   }
   saveAction() {
     if (this.pointBuffer.length > 0) {
-      var action = {actionType: "removeFogPenAction", version: 1, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
+      var action = {actionType: "removeFogPenAction", version: 2, level: this.board.getLevel().id, width: this.width, points: simplify(this.pointBuffer, 1, true).map(p => [p.x, p.y]), uid: generateActionId()};
       var undoAction = {actionType: "removeFogAction", actionId: action.uid, uid: generateActionId()};
       this.board.addAction(action, undoAction, true);
     }

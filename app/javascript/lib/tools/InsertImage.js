@@ -35,7 +35,8 @@ export class InsertImageTool extends Tool {
         new Vector2(this.image.width, this.image.height),
         new Vector2(0,0),
         this.scale,
-        this.angle);
+        this.angle,
+        this.board.getLevel().id);
       this.board.drawingLayer.addAction(this.imageDrawing);
     }
   }
@@ -148,6 +149,8 @@ export class InsertImageTool extends Tool {
     var img = this.imageDrawing;
     if (img) {
       var action = {
+        version: 1,
+        level: this.board.getLevel().id,
         actionType: "insertImageAction",
         url: this.image.url,
         center: this.cursor,

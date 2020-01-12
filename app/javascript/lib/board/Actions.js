@@ -66,7 +66,10 @@ class LabelAction extends DrawingAction {
     return this.properties.bound;
   }
   validateData() {
-    this.ensureFields(["color", "text", "point", "bound", "uid"]);
+    this.ensureVersionedFields({
+      0: ["color", "text", "point", "bound", "uid"],
+      1: ["color", "text", "point", "bound", "uid", "level"]
+    });
   }
 }
 
@@ -79,13 +82,14 @@ class PenAction extends PersistentAction {
     } else {
       points = this.properties.points.map(p => new Vector2(p));
     }
-    board.drawingLayer.addAction(new PenDrawing(this.uid, board, points, this.properties.width, this.properties.color, this.properties.isPcLayer));
+    board.drawingLayer.addAction(new PenDrawing(this.uid, board, points, this.properties.width, this.properties.color, this.properties.isPcLayer, this.properties.level));
   }
 
   validateData() {
     this.ensureVersionedFields({
       0: ["color", "width", "lines", "uid"],
-      1: ["color", "width", "points", "uid"]
+      1: ["color", "width", "points", "uid"],
+      2: ["color", "width", "points", "uid", "level"],
     });
   }
 }
@@ -99,17 +103,18 @@ class AddFogPenAction extends PersistentAction {
     } else {
       points = this.properties.points.map(p => new Vector2(p));
     }
-    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, points, this.properties.width, "black", false));
+    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, points, this.properties.width, "black", false, this.properties.level));
   }
   validateData() {
     this.ensureVersionedFields({
       0: ["width", "lines", "uid"],
-      1: ["width", "points", "uid"]
+      1: ["width", "points", "uid"],
+      2: ["width", "points", "uid", "level"]
     });
   }
 }
 
-  // An remove fog action consists of a width, and a collection of lines that are to be drawn on the fog layer
+  // A remove fog action consists of a width, and a collection of lines that are to be drawn on the fog layer
 class RemoveFogPenAction extends PersistentAction {
   apply(board) {
     let points;
@@ -119,31 +124,38 @@ class RemoveFogPenAction extends PersistentAction {
     } else {
       points = this.properties.points.map(p => new Vector2(p));
     }
-    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, points, this.properties.width, -1, false));
+    board.drawingLayer.addFogAction(new PenDrawing(this.uid, board, points, this.properties.width, -1, false, this.properties.level));
   }
   validateData() {
     this.ensureVersionedFields({
       0: ["width", "lines", "uid"],
-      1: ["width", "points", "uid"]
+      1: ["width", "points", "uid"],
+      2: ["width", "points", "uid", "level"]
     });
   }
 }
 
 class FogEverythingAction extends PersistentAction {
   apply(board) {
-    board.resetFog(true);
+    board.resetFog(this.properties.level, true);
   }
   validateData() {
-    this.ensureFields(["uid"]);
+    this.ensureVersionedFields({
+      0: ["uid"],
+      1: ["uid", "level"]
+    });
   }
 }
 
 class FogNothingAction extends PersistentAction {
   apply(board) {
-    board.resetFog(false);
+    board.resetFog(this.properties.level, false);
   }
   validateData() {
-    this.ensureFields(["uid"]);
+    this.ensureVersionedFields({
+      0: ["uid"],
+      1: ["uid", "level"]
+    });
   }
 }
 
@@ -155,9 +167,9 @@ class SquarePenAction extends PersistentAction {
     if (this.version === 0) {
       const tl = new Vector2(this.properties.topLeft);
       const br = new Vector2(this.properties.bottomRight);
-      drawing = new SquareDrawing(this.uid, board, this.properties.isPcLayer, tl, this.properties.color, this.properties.backgroundColor, this.properties.width, br.subtract(tl));
+      drawing = new SquareDrawing(this.uid, board, this.properties.isPcLayer, tl, this.properties.color, this.properties.backgroundColor, this.properties.width, br.subtract(tl), this.properties.level);
     } else {
-      drawing = new SquareDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.position), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.size));
+      drawing = new SquareDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.position), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.size), this.properties.level);
     }
 
     if (this.properties.isFog) {
@@ -171,7 +183,8 @@ class SquarePenAction extends PersistentAction {
   validateData() {
     this.ensureVersionedFields({
       0: ["color", "width", "topLeft", "bottomRight", "uid"],
-      1: ["color", "width", "position", "size", "uid"]
+      1: ["color", "width", "position", "size", "uid"],
+      2: ["color", "width", "position", "size", "uid", "level"]
     });
   }
 }
@@ -186,7 +199,7 @@ class CirclePenAction extends PersistentAction {
     } else {
       position = new Vector2(this.properties.position);
     }
-    const drawing = new CircleDrawing(this.uid, board, this.properties.isPcLayer, position, this.properties.color, this.properties.backgroundColor, this.properties.width, this.properties.radius);
+    const drawing = new CircleDrawing(this.uid, board, this.properties.isPcLayer, position, this.properties.color, this.properties.backgroundColor, this.properties.width, this.properties.radius, this.properties.level);
 
     if (this.properties.isFog) {
       board.drawingLayer.addFogAction(drawing);
@@ -198,7 +211,8 @@ class CirclePenAction extends PersistentAction {
   validateData() {
     this.ensureVersionedFields({
       0: ["color", "width", "center", "radius", "uid"],
-      1: ["color", "width", "position", "radius", "uid"]
+      1: ["color", "width", "position", "radius", "uid"],
+      2: ["color", "width", "position", "radius", "uid", "level"]
     });
   }
 }
@@ -209,9 +223,9 @@ class LinePenAction extends PersistentAction {
   apply(board) {
     let drawing = null;
     if (this.version === 0) {
-      drawing = new LineDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.start), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.end));
+      drawing = new LineDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.start), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.end), this.properties.level);
     } else {
-      drawing = new LineDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.position), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.end));
+      drawing = new LineDrawing(this.uid, board, this.properties.isPcLayer, new Vector2(this.properties.position), this.properties.color, this.properties.backgroundColor, this.properties.width, new Vector2(this.properties.end), this.properties.level);
     }
 
     if (this.properties.isFog) {
@@ -224,7 +238,8 @@ class LinePenAction extends PersistentAction {
   validateData() {
     this.ensureVersionedFields({
       0: ["color", "width", "start", "end", "uid"],
-      1: ["color", "width", "position", "end", "uid"]
+      1: ["color", "width", "position", "end", "uid"],
+      2: ["color", "width", "position", "end", "uid", "level"]
     });
   }
 }
@@ -242,14 +257,18 @@ class PasteAction extends PersistentAction {
       new Vector2(this.properties.width, this.properties.height),
       center,
       1,
-      0
+      0,
+      this.properties.level
     );
 
     board.drawingLayer.addAction(drawing);
   }
 
   validateData() {
-    this.ensureFields(["uid", "url", "topLeft", "width", "height"]);
+    this.ensureVersionedFields({
+      0: ["uid", "url", "topLeft", "width", "height"],
+      1: ["uid", "url", "topLeft", "width", "height", "level"]
+    });
   }
 }
 
@@ -262,14 +281,18 @@ class InsertImageAction extends PersistentAction {
       new Vector2(this.properties.width, this.properties.height),
       new Vector2(this.properties.center[0], this.properties.center[1]),
       this.properties.scale,
-      this.properties.angle
+      this.properties.angle,
+      this.properties.level
     );
 
     board.drawingLayer.addAction(drawing);
   }
 
   validateData() {
-    this.ensureFields(["uid", "url", "center", "width", "height", "scale", "angle"]);
+    this.ensureVersionedFields({
+      0: ["uid", "url", "center", "width", "height", "scale", "angle"],
+      1: ["uid", "url", "center", "width", "height", "scale", "angle", "level"]
+    });
   }
 }
 
@@ -283,13 +306,14 @@ class EraseAction extends PersistentAction {
     } else {
       points = this.properties.points.map(p => new Vector2(p));
     }
-    board.drawingLayer.addAction(new PenDrawing(this.uid, board, points, this.properties.width, -1, this.properties.isPcLayer));
+    board.drawingLayer.addAction(new PenDrawing(this.uid, board, points, this.properties.width, -1, this.properties.isPcLayer, this.properties.level));
   }
 
   validateData() {
     this.ensureVersionedFields({
       0: ["width", "lines", "uid"],
-      1: ["width", "points", "uid"]
+      1: ["width", "points", "uid"],
+      2: ["width", "points", "uid", "level"]
     });
   }
 }
@@ -535,14 +559,16 @@ class AddTokenAction extends Action {
       this.properties.color,
       this.properties.fontColor,
       this.properties.fontSize,
-      this.properties.text
+      this.properties.text,
+      this.properties.level
     );
     board.tokenLayer.addToken(t);
   }
   validateData() {
     this.ensureVersionedFields({
       0: ["uid", "cell", "height", "width", "color", "text", "fontSize", "fontColor"],
-      1: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text"]
+      1: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text"],
+      2: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "level"]
     });
   }
 }
@@ -560,12 +586,12 @@ class SetTokensAction extends Action {
 class AddLevelAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    board.drawingLayer.addLevel(this.properties.id, this.properties.name);
+    board.drawingLayer.addLevel(this.properties.levelId, this.properties.name);
   }
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "id", "name"]
+      0: ["uid", "levelId", "name"]
     });
   }
 }
@@ -573,12 +599,12 @@ class AddLevelAction extends Action {
 class RemoveLevelAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    board.drawingLayer.removeLevel(this.properties.id);
+    board.drawingLayer.removeLevel(this.properties.levelId);
   }
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "id"]
+      0: ["uid", "levelId"]
     });
   }
 }
@@ -586,12 +612,12 @@ class RemoveLevelAction extends Action {
 class UpdateLevelAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    board.drawingLayer.updateLevel(this.properties.id, this.properties.newIndex, this.properties.newName);
+    board.drawingLayer.updateLevel(this.properties.levelId, this.properties.newIndex, this.properties.newName);
   }
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "id", "newName", "newIndex"]
+      0: ["uid", "levelId", "newName", "newIndex"]
     });
   }
 }

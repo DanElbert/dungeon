@@ -15,7 +15,7 @@ export class LevelTool extends Tool {
 
   buildOptions() {
     this.levelOption = {type: "level", name: "level", label: "Level", levels: [], value: 0};
-    this.updateLevelNameOption = {type: "text", name: "updateLevelName", label: "Level Name", value: ""};
+    this.updateLevelNameOption = {type: "text", name: "updateLevelName", label: "Level Name", confirmMode: true, value: ""};
     this.addLevelOption = {type: "button", name: "addLevel", label: "Add Level", glyph: "fas fa-plus-circle", handler: () => {this.addLevel()}};
     this.removeLevelOption = {type: "button", name: "removeLevel", label: "Remove Level", glyph: "fas fa-minus-circle", handler: () => {this.removeLevel()}};
     this.moveLevelUpOption = {type: "button", name: "moveLevelUp", label: "Move Level Up", glyph: "fas fa-arrow-circle-up", handler: () => {this.moveLevelUp()}};
@@ -30,8 +30,15 @@ export class LevelTool extends Tool {
   }
 
   optionsChanged() {
-    if (this.board.getLevel && this.board.getLevel() !== this.levelOption.value) {
-      this.board.setLevel(this.levelOption.value);
+    if (this.board.getLevel) {
+
+      const level = this.board.getLevel();
+
+      if (level.id !== this.levelOption.value) {
+        this.board.setLevel(this.levelOption.value);
+      } else if (level.name !== this.updateLevelNameOption.value && this.updateLevelNameOption.value !== null && this.updateLevelNameOption.value !== "") {
+        this.updateLevelName();
+      }
     }
   }
 
@@ -46,8 +53,8 @@ export class LevelTool extends Tool {
     this.addLevelOption.visible = this.board.isOwner;
     this.removeLevelOption.visible = this.board.isOwner && levels.length > 1;
     this.updateLevelNameOption.visible = this.board.isOwner;
-    this.moveLevelUpOption.visible = this.board.isOwner && curLevel.index < (levels.length - 1);
-    this.moveLevelDownOption.visible = this.board.isOwner && curLevel.index > 0;
+    this.moveLevelUpOption.visible = this.board.isOwner && curLevel.index > 0;
+    this.moveLevelDownOption.visible = this.board.isOwner && curLevel.index < (levels.length - 1);
   }
 
   enable() {
@@ -78,7 +85,7 @@ export class LevelTool extends Tool {
 
     var action = {
       actionType: "addLevelAction",
-      id: generateActionId(),
+      levelId: generateActionId(),
       name: `Level ${levels.length + 1}`,
       uid: generateActionId()
     };
@@ -92,7 +99,7 @@ export class LevelTool extends Tool {
 
     var action = {
       actionType: "removeLevelAction",
-      id: curLevel.id,
+      levelId: curLevel.id,
       uid: generateActionId()
     };
 
@@ -104,8 +111,8 @@ export class LevelTool extends Tool {
 
     const action = {
       actionType: "updateLevelAction",
-      id: curLevel.id,
-      newIndex: curLevel.index + 1,
+      levelId: curLevel.id,
+      newIndex: curLevel.index - 1,
       newName: curLevel.name,
       uid: generateActionId()
     };
@@ -114,13 +121,12 @@ export class LevelTool extends Tool {
   }
 
   moveLevelDown() {
-    const levels = this.board.getLevelData();
     const curLevel = this.board.getLevel();
 
     const action = {
       actionType: "updateLevelAction",
-      id: curLevel.id,
-      newIndex: curLevel.index - 1,
+      levelId: curLevel.id,
+      newIndex: curLevel.index + 1,
       newName: curLevel.name,
       uid: generateActionId()
     };
@@ -133,7 +139,7 @@ export class LevelTool extends Tool {
 
     const action = {
       actionType: "updateLevelAction",
-      id: curLevel.id,
+      levelId: curLevel.id,
       newIndex: curLevel.index,
       newName: this.updateLevelNameOption.value,
       uid: generateActionId()
