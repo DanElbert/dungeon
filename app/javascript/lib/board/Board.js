@@ -165,6 +165,7 @@ export function Board(canvas, gameId) {
 
   this.setLevel = function(newLevel) {
     this.drawingLayer.setLevel(newLevel);
+    this.invalidate();
   };
 
   this.getLevelData = function() {

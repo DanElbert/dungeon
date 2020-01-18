@@ -6,6 +6,7 @@ class Level {
     this.levelManager = levelManager;
     this.name = name;
     this.id = id;
+    this.isVisible = true;
   }
 
   get index() {
@@ -111,7 +112,7 @@ export class MultiLevelDrawingLayer extends Eventer {
     this.trigger("change");
   }
 
-  updateLevel(levelId, newIndex, newName) {
+  updateLevel(levelId, newIndex, newName, newIsVisible) {
     const lvl = this.levelManager.levelForId(levelId);
     if (lvl) {
       if (lvl.index !== newIndex) {
@@ -120,6 +121,10 @@ export class MultiLevelDrawingLayer extends Eventer {
 
       if (newName) {
         lvl.name = newName;
+      }
+
+      if (newIsVisible !== undefined && newIsVisible !== null) {
+        lvl.isVisible = newIsVisible;
       }
 
       this.trigger("change");

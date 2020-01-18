@@ -16,6 +16,10 @@
     ],
 
     computed: {
+      visibleLevels() {
+        return this.option.levels.filter(l => l.isVisible);
+      },
+
       selectedLevel: {
         get() {
           return this.option.value;

@@ -612,12 +612,13 @@ class RemoveLevelAction extends Action {
 class UpdateLevelAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    board.drawingLayer.updateLevel(this.properties.levelId, this.properties.newIndex, this.properties.newName);
+    board.drawingLayer.updateLevel(this.properties.levelId, this.properties.newIndex, this.properties.newName, this.properties.newIsVisible);
   }
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "levelId", "newName", "newIndex"]
+      0: ["uid", "levelId", "newName", "newIndex"],
+      1: ["uid", "levelId", "newName", "newIndex", "newIsVisible"]
     });
   }
 }
