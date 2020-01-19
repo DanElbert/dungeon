@@ -403,7 +403,9 @@ export function Board(canvas, gameId) {
     this.hovered_cell = [x, y];
   };
 
-  this.copyArea = function(x, y, height, width) {
+  this.drawIntoNewCanvas = function(x, y, width, height, level) {
+    const oldLevel = this.getLevel();
+    this.setLevel(level);
     var canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
@@ -413,7 +415,13 @@ export function Board(canvas, gameId) {
     context.translate(-1 * x, -1 * y);
     this.drawingLayer.draw(x, y, width, height, drawing, 1, true);
     context.restore();
-    return canvas.toDataURL().slice("data:image/png;base64,".length)
+    this.setLevel(oldLevel.id);
+    return canvas;
+  };
+
+  this.copyArea = function(x, y, width, height) {
+    const canvas = this.drawIntoNewCanvas(x, y, width, height, this.getLevel().id);
+    return canvas.toDataURL().slice("data:image/png;base64,".length);
   };
 
   this.setCopiedArea = function(url) {

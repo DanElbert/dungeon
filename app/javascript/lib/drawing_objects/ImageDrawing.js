@@ -1,5 +1,6 @@
 import { Geometry, Vector2, Rectangle } from "../geometry";
 import { BaseDrawing } from "./BaseDrawing";
+import { TiledImageDrawing } from "./TiledImageDrawing";
 
 class ImageDrawing extends BaseDrawing {
   constructor(uid, board, url, size, position, scale, angle, level) {

@@ -2,6 +2,7 @@ import { Geometry, Vector2 } from "../geometry";
 import { Tool } from "./Tool";
 import { generateActionId } from "../Actions";
 import simplify from "simplify-js";
+import { PenDrawing } from "../drawing_objects";
 
 export class DrawTool extends Tool {
   constructor(manager) {

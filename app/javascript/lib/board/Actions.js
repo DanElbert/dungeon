@@ -1,6 +1,21 @@
 import { Vector2, TransformMatrix, Rectangle, Geometry } from "../geometry";
 import { Action, actionTypes } from "../Actions";
-import { ImageDrawing, OverlandMeasureTemplate, PathfinderConeTemplate, PathfinderLineTemplate, PathfinderMovementTemplate, PathfinderRadiusTemplate, PathfinderReachTemplate, PathfinderRectangleTemplate, PenDrawing, TokenDrawing, SquareDrawing, CircleDrawing, LineDrawing } from "../drawing_objects";
+import {
+  ImageDrawing,
+  OverlandMeasureTemplate,
+  PathfinderConeTemplate,
+  PathfinderLineTemplate,
+  PathfinderMovementTemplate,
+  PathfinderRadiusTemplate,
+  PathfinderReachTemplate,
+  PathfinderRectangleTemplate,
+  PenDrawing,
+  TokenDrawing,
+  SquareDrawing,
+  CircleDrawing,
+  LineDrawing,
+  LevelHoleDrawing
+} from "../drawing_objects";
 
 class RemovalAction extends Action {
   isRemoval() { return true; }
@@ -623,6 +638,21 @@ class UpdateLevelAction extends Action {
   }
 }
 
+class LevelHoleAction extends PersistentAction {
+  apply(board) {
+    const p = new Vector2(this.properties.position);
+    const s = new Vector2(this.properties.size);
+    const a = new LevelHoleDrawing(this.properties.uid, board, p, s, this.properties.level);
+    board.drawingLayer.addAction(a);
+  }
+
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "position", "size", "level"]
+    });
+  }
+}
+
 class ViewPortSyncAction extends Action {
   apply(board) {
     board.viewPortManager.handleViewPortAction(this);
@@ -662,6 +692,7 @@ actionTypes["viewPortSyncAction"] = ViewPortSyncAction;
 actionTypes["addLevelAction"] = AddLevelAction;
 actionTypes["removeLevelAction"] = RemoveLevelAction;
 actionTypes["updateLevelAction"] = UpdateLevelAction;
+actionTypes["levelHoleAction"] = LevelHoleAction;
 
 // defunct actions
 actionTypes["clearTokensAction"] = Action;

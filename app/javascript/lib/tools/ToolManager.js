@@ -16,6 +16,7 @@ import { ConeTemplate, LineTemplate, Measure, RadiusTemplate, RectangleTemplate 
 import { TokenTool } from "./Tokens";
 import { generateActionId } from "../Actions";
 import {LevelTool} from "./LevelTool";
+import { LevelHole } from "./LevelHole";
 
 export class ToolManager extends Eventer {
   
@@ -58,7 +59,8 @@ export class ToolManager extends Eventer {
       "paste": new PasteTool(this),
       "insert_image": new InsertImageTool(this),
       "tokens": new TokenTool(this),
-      "levels": new LevelTool(this)
+      "levels": new LevelTool(this),
+      "level_hole": new LevelHole(this)
     };
 
     this.templateGroups = {
@@ -166,6 +168,13 @@ export class ToolManager extends Eventer {
           tooltip: "Insert an image",
           glyph: "far fa-image",
           handler: function() { self.setTool("insert_image"); }
+        }),
+
+        new ToolMenuItem("level_hole", {
+          label: "Level Hole",
+          tooltip: "Create a translucent hole in this level",
+          glyph: "fas fa-border-style",
+          handler: function() { self.setTool("level_hole") }
         }),
 
         new ToolMenuItem("copy", {
@@ -299,10 +308,6 @@ export class ToolManager extends Eventer {
           self.board.setPcMode(!self.board.pcMode);
         }
       }),
-
-      //new ToolMenuGroup("tokens_group", [
-      //
-      //]),
 
       new ToolMenuItem("undo", {
         label: "Undo",

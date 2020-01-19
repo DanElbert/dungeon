@@ -112,11 +112,11 @@ class BaseDrawing {
     return this;
   }
 
-  draw(drawing, drawBounds, level) {
-    this.executeDraw(drawing, drawBounds, level);
+  draw(drawing, drawBounds, detailLevel) {
+    this.executeDraw(drawing, drawBounds, detailLevel);
   }
 
-  executeDraw(drawing, drawBounds, level) {
+  executeDraw(drawing, drawBounds, detailLevel) {
   }
 }
 

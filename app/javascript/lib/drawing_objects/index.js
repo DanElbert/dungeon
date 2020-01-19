@@ -9,24 +9,7 @@ import { PenDrawing } from "./PenDrawing";
 import { CircleDrawing, LineDrawing, SquareDrawing } from "./ShapeDrawing";
 import { TiledImageDrawing } from "./TiledImageDrawing";
 import { TokenDrawing } from "./TokenDrawing";
-
-Object.assign(window, {
-  BaseDrawing,
-  BaseTemplate,
-  BaseCellTemplate,
-  DrawingCollection,
-  ImageDrawing,
-  OverlandMeasureTemplate,
-  PathfinderConeTemplate,
-  PathfinderLineTemplate,
-  PathfinderMovementTemplate,
-  PathfinderRadiusTemplate,
-  PathfinderReachTemplate,
-  PathfinderRectangleTemplate,
-  PenDrawing,
-  TiledImageDrawing,
-  TokenDrawing
-});
+import { LevelHoleDrawing } from "./LevelHoleDrawing";
 
 export {
   BaseDrawing,
@@ -46,5 +29,6 @@ export {
   PenDrawing,
   SquareDrawing,
   TiledImageDrawing,
-  TokenDrawing
+  TokenDrawing,
+  LevelHoleDrawing
 };

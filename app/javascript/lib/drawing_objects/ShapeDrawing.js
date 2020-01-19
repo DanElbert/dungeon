@@ -206,6 +206,7 @@ class LineDrawing extends ShapeDrawing {
 }
 
 export {
+  ShapeDrawing,
   CircleDrawing,
   SquareDrawing,
   LineDrawing

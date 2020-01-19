@@ -92,7 +92,7 @@ export class CopyTool extends Tool {
     var height = bottomRight[1] - topLeft[1];
     var width = bottomRight[0] - topLeft[0];
 
-    var data = this.board.copyArea(topLeft[0], topLeft[1], height, width);
+    var data = this.board.copyArea(topLeft[0], topLeft[1], width, height);
 
     var formData = new FormData();
     formData.append("image[filename]", "copied_data.png");
