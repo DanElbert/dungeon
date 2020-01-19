@@ -8,7 +8,7 @@ class ImageDrawing extends BaseDrawing {
     this.url = url;
     this.size = size;
     this.loading = false;
-    this.level = null;
+    this.detailLevel = null;
     this.fallbackImage = null;
 
     this.transformedImage = null;
@@ -29,8 +29,8 @@ class ImageDrawing extends BaseDrawing {
     return this.getRotatedRecBounds(rec, this.angle);
   }
 
-  executeDraw(drawing, drawBounds, level) {
-    if (!this.bounds().overlaps(drawBounds) || (this.level !== null && this.level !== level)) {
+  executeDraw(drawing, drawBounds, detailLevel) {
+    if (!this.bounds().overlaps(drawBounds) || (this.detailLevel !== null && this.detailLevel !== detailLevel)) {
       return;
     }
 

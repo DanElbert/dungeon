@@ -113,7 +113,7 @@ class TiledImageDrawing extends DrawingCollection {
               this.level
             );
 
-            imgDrw.level = level.number;
+            imgDrw.detailLevel = level.number;
             imgDrw.fallbackImageWriter = (img, ctx) => this.generateFallbackImage(img, ctx);
             imgDrw.fallbackImage = this.fallbackImage;
             imgDrw.tiledImageDrawingInnerPosition = tileCenter;
