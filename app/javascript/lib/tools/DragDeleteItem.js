@@ -1,6 +1,7 @@
 import Eventer from "../Eventer";
 import { Geometry, Vector2 } from "../geometry";
 import { generateActionId } from "../Actions";
+import { TokenDrawing } from "../drawing_objects";
 
 export class DragDeleteItem extends Eventer {
   constructor(parentTool, board, eventNamespace) {

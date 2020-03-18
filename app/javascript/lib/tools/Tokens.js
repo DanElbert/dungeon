@@ -2,6 +2,7 @@ import { DragDeleteItem } from "./DragDeleteItem";
 import { Tool } from "./Tool";
 import { Geometry, Vector2 } from "../geometry";
 import { generateActionId } from "../Actions";
+import { TokenDrawing } from "../drawing_objects";
 
 export class TokenTool extends Tool {
   constructor(manager) {
