@@ -71,6 +71,7 @@ services:
     links:
       - redis
     networks:
+      - default
       - db
 
 volumes:
