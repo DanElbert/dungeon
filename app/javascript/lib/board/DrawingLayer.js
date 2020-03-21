@@ -131,7 +131,7 @@ class DrawingLevel {
       var tileRect = tile.rectangle;
 
       var tileActions = actions.filter(a => tileRect.overlaps(a.bounds()));
-      var tileFogActions = fogActions.filter(a => tileRect.overlaps(a.bounds()))
+      var tileFogActions = fogActions.filter(a => tileRect.overlaps(a.bounds()));
 
       tile.draw(this.number, this.scale, tileActions, tileFogActions, disableFog);
       var tileCanvas = tile.canvas;

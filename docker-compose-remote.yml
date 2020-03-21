@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+
+  nginx:
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
+    restart: unless-stopped
+    volumes:
+      - images:/dungeon/public/images/
+    networks:
+      - traefik
+    command: ["nginx", "-g", "daemon off;"]
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.dungeon.rule: "Host(`${HOSTNAME}`) && PathPrefix(`/assets/`, `/packs/`, `/images/`, `/favicon/`, `/favicon.ico`, `/robots.txt`)"
+      traefik.http.routers.dungeon.entrypoints: websecure
+      traefik.http.routers.dungeon.tls: "true"
+      traefik.http.routers.dungeon.tls.certResolver: cert-resolver
+
+  web1: &web
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
+    restart: unless-stopped
+    environment:
+      - DB_MIGRATE=true
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
+
+    volumes:
+      - images:/dungeon/public/images/
+      - ./log:/dungeon/log/
+    links:
+      - redis
+    networks:
+      - traefik
+      - default
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik
+      traefik.http.routers.dungeon-app.rule: "Host(`${HOSTNAME}`)"
+      traefik.http.routers.dungeon-app.entrypoints: websecure
+      traefik.http.routers.dungeon-app.middlewares: sslHeader@file
+      traefik.http.routers.dungeon-app.tls: "true"
+      traefik.http.routers.dungeon-app.tls.certResolver: cert-resolver
+
+  worker:
+    image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
+    restart: unless-stopped
+    volumes:
+      - images:/dungeon/public/images/
+      - ./log:/dungeon/log/
+    environment:
+      - QUEUE=*
+      - INTERVAL=1.0
+      - RAILS_ENV=${RAILS_ENV}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DUNGEON_PG_HOST=${DUNGEON_PG_HOST}
+      - DUNGEON_PG_USER=${DUNGEON_PG_USER}
+      - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD='${SMTP_PASSWORD}'
+    command: 'bundle exec rake resque:work'
+    links:
+    - redis
+
+volumes:
+  images:
+    driver: local
+
+networks:
+  traefik:
+    external: true
+  db:
+    external: true

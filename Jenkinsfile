@@ -23,5 +23,11 @@ node {
                 deploy("dungeon", "./docker-compose-rlyeh.yml")
             }
         }
+
+        if (env.BRANCH_NAME == "remote") {
+            stage("Deploy") {
+                remote_deploy("remote.dungeon.elbert.us", "remote_dungeon", "./docker-compose-remote.yml")
+            }
+        }
     }
 }
