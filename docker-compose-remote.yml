@@ -40,6 +40,7 @@ services:
       - redis
     networks:
       - traefik
+      - db
       - default
     labels:
       traefik.enable: "true"
@@ -68,7 +69,9 @@ services:
       - SMTP_PASSWORD='${SMTP_PASSWORD}'
     command: 'bundle exec rake resque:work'
     links:
-    - redis
+      - redis
+    networks:
+      - db
 
 volumes:
   images:
