@@ -5,7 +5,7 @@ class ImagesController < ApplicationController
 
   # GET /campaigns/1/images
   def index
-    @images = @campaign.campaign_images
+    @images =  @campaign.campaign_images.without_data
   end
 
   # GET /images/1

@@ -38,14 +38,23 @@ class ImageDrawing extends BaseDrawing {
     var ctx;
 
     if (this.transformedImage === null) {
-      var self = this;
-      var imgObj = drawing.imageCache.getImage(this.url, function() {
-        self.loading = false;
-        self.transformedImage = null;
-        self.invalidate();
-      });
+      var imgObj = drawing.imageCache.getImage(this.url);
 
-      this.loading = imgObj === null;
+      if (imgObj === null) {
+        this.loading = true;
+        drawing.imageCache.getImageAsync(this.url)
+          .then(i => {
+            this.loading = false;
+            this.transformedImage = null;
+            this.invalidate();
+          })
+          .catch(e => {
+            this.loading = false;
+            this.transformedImage = null;
+            this.invalidate();
+            throw e;
+          });
+      }
 
       if (imgObj && this.angle === 0) {
         this.transformedImage = imgObj;

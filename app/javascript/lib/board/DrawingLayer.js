@@ -2,7 +2,7 @@ import { Geometry, Vector2, Rectangle } from "../geometry";
 
 export class DrawingLayer {
   constructor(drawingSettings) {
-    this.tileSize = 1024;
+    this.tileSize = 256;
     this.isOwner = false;
     this.fogCover = false;
     this.drawingSettings = drawingSettings;

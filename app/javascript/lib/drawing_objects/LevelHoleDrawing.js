@@ -48,10 +48,10 @@ class LevelHoleDrawing extends ShapeDrawing {
     if (lvlIdx !== -1 && lvlIdx < levels.length - 1) {
       const lvl = levels[lvlIdx + 1];
       const canvas = this.board.drawIntoNewCanvas(this.position.x, this.position.y, this.size.x, this.size.y, lvl.id);
-      stackBlurCanvasRGB(canvas, 0, 0, this.size.x, this.size.y, 5);
       drawing.context.save();
       drawing.context.clearRect(rectangle.topLeft().x, rectangle.topLeft().y, this.size.x, this.size.y);
       drawing.context.globalAlpha = 0.75;
+      drawing.context.filter = "blur(2px)";
       drawing.context.drawImage(canvas, rectangle.topLeft().x, rectangle.topLeft().y);
       drawing.context.restore();
     } else {

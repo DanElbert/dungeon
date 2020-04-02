@@ -7,11 +7,16 @@ class ImageCacheItem {
     this.image = null;
     this.loaded = false;
     this.callbacks = [];
+    this.failbacks = [];
     this.lastTouch = Date.now();
   }
 
   addCallback(cb) {
     this.callbacks.push(cb);
+  }
+
+  addFailback(fb) {
+    this.failbacks.push(fb);
   }
 
   touch() {
@@ -27,12 +32,22 @@ class ImageCacheItem {
         this.image.onload = () => {
           this.loaded = true;
           for (let cb of this.callbacks) {
-            cb(this.image)
+            cb(this.image);
           }
+          this.callbacks = [];
+          this.failbacks = [];
           resolve(this);
         };
 
-        this.image.onerror = e => reject(e);
+        this.image.onerror = e => {
+          for (let fb of this.failbacks) {
+            fb(e);
+          }
+          this.callbacks = [];
+          this.failbacks = [];
+          reject(e);
+        };
+
         this.image.src = this.url;
       });
     }
@@ -79,11 +94,14 @@ export class ImageCache extends Eventer {
     }
   }
 
-  addImage(url) {
-    var self = this;
+  addImage(url, priority) {
+    if (priority === undefined || priority === null) {
+      priority = 0;
+    }
+
     var imageData = this.images[url];
     if (!imageData) {
-      imageData = new ImageCacheItem(url);
+      imageData = new ImageCacheItem(url, priority);
       this.images[url] = imageData;
       this.loadingQueue.push(imageData);
       this.runQueue();
@@ -92,7 +110,9 @@ export class ImageCache extends Eventer {
   }
 
   runQueue() {
-    if (this.loadingQueue.length === 0) { return; }
+    if (this.loadingQueue.length === 0 || Object.keys(this.loadingUrls).length >= this.maxLoading) {
+      return;
+    }
 
     this.loadingQueue.sort((a, b) => a.compareTo(b));
 
@@ -113,20 +133,34 @@ export class ImageCache extends Eventer {
     }
   }
 
-  // callback will only be called if image not immidiately available
-  getImage(url, callback) {
+  getImageAsync(url, priority) {
     var imageData = this.images[url];
     if (!imageData) {
-      imageData = this.addImage(url);
+      imageData = this.addImage(url, priority);
+    }
+    imageData.touch();
+
+    if (imageData.loaded) {
+      return Promise.resolve(imageData.image);
+    } else {
+      return new Promise((resolve, reject) => {
+        imageData.addCallback(i => resolve(i));
+        imageData.addFailback(e => reject(e));
+      });
+    }
+  }
+
+  // callback will only be called if image not immidiately available
+  getImage(url, priority) {
+    var imageData = this.images[url];
+    if (!imageData) {
+      imageData = this.addImage(url, priority);
     }
     imageData.touch();
 
     if (imageData.loaded) {
       return imageData.image;
     } else {
-      if (callback) {
-        imageData.addCallback(callback);
-      }
       return null;
     }
   }

@@ -15,21 +15,44 @@ export class BackgroundLayer {
     this.dimmedImage = null;
 
     this.viewPort = {};
+    this.isLoading = false;
+    this.isLoaded = false;
   }
 
   draw() {
+    if (this.isLoading) {
+      return;
+    }
+
+    var image = this.board.board_data.background_image;
+
+    if (!this.isLoaded) {
+      this.isLoading = true;
+      this.imageCache.getImageAsync(image.raw_url)
+        .then(() => {
+          this.isLoading = false;
+          this.isLoaded = true;
+          this.board.invalidate();
+        })
+        .catch(e => {
+          this.isLoaded = false;
+          this.isLoading = false;
+          throw e;
+        });
+
+      return;
+    }
 
     var coords = this.board.getViewPortCoordinates();
     var size = this.board.getViewPortSize();
     var zoom = this.board.getZoom();
-    var image = this.board.board_data.background_image;
+
     var self = this;
-    var imageObj = this.imageCache.getImage(image.raw_url, function() {
-      self.board.invalidate();
-    });
+    var imageObj = this.imageCache.getImage(image.raw_url);
 
     if (imageObj === null) {
       this.viewPort = {};
+      this.isLoaded = false;
       return;
     }
 

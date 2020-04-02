@@ -51,20 +51,19 @@ class TiledImageDrawing extends DrawingCollection {
           return lvl;
         };
 
-        var hasFallbackImage = function(img) {
-          self.fallbackImage = img;
-          self.imageJsonFetching = false;
-          self.imageJson = data;
-          self.buildActions();
-          self.invalidate();
-        };
-
         var fallbackLevel = calculateFallbackLevel(data.tile_size, self.size.x, self.size.y);
         var fallbackUrl = "/images/" + data.id + "/" + fallbackLevel + "/0_0." + data.extension;
-        var fallback = self.board.imageCache.getImage(fallbackUrl, hasFallbackImage);
-        if (fallback !== null) {
-          hasFallbackImage(fallback);
-        }
+        self.board.imageCache.getImageAsync(fallbackUrl, -1)
+          .then(i => {
+            self.fallbackImage = i;
+            self.imageJsonFetching = false;
+            self.imageJson = data;
+            self.buildActions();
+            self.invalidate();
+          })
+          .catch(e => {
+            throw e;
+          });
       });
     }
 
