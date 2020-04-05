@@ -26,6 +26,10 @@ export class TokenLayer {
     return [...this.tokens.values()].filter(t => t.selectable !== false && t.containsPoint(point));
   }
 
+  getToken(uid) {
+    return this.tokens.get(uid);
+  }
+
   clearTokens() {
     this.tokens = new Map();
     this.board.invalidate();

@@ -353,6 +353,23 @@ class RemoveTemplateAction extends RemovalAction {
   }
 }
 
+class UpdateTemplateAction extends Action {
+  isPersistent() { return true; }
+  apply(board) {
+    const t = board.templateLayer.getTemplate(this.properties.actionId);
+    if (t) {
+      if ("position" in this.properties) {
+        t.setPosition(new Vector2(this.properties.position))
+      }
+    }
+  }
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "actionId"]
+    });
+  }
+}
+
 class MovementTemplateAction extends PersistentAction {
   apply(board) {
     var p, delta;
@@ -595,6 +612,23 @@ class RemoveTokenAction extends RemovalAction {
   }
 }
 
+class UpdateTokenAction extends Action {
+  isPersistent() { return true; }
+  apply(board) {
+    const t = board.tokenLayer.getToken(this.properties.actionId);
+    if (t) {
+      if ("position" in this.properties) {
+        t.setPosition(new Vector2(this.properties.position))
+      }
+    }
+  }
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "actionId"]
+    });
+  }
+}
+
 class SetTokensAction extends Action {
 }
 
@@ -677,6 +711,7 @@ actionTypes["eraseAction"] = EraseAction;
 actionTypes["removeDrawingAction"] = RemoveDrawingAction;
 actionTypes["removeFogAction"] = RemoveFogAction;
 actionTypes["removeTemplateAction"] = RemoveTemplateAction;
+actionTypes["updateTemplateAction"] = UpdateTemplateAction;
 actionTypes["movementTemplateAction"] = MovementTemplateAction;
 actionTypes["radiusTemplateAction"] = RadiusTemplateAction;
 actionTypes["lineTemplateAction"] = LineTemplateAction;
@@ -687,6 +722,7 @@ actionTypes["overlandMeasureTemplateAction"] = OverlandMeasureTemplateAction;
 actionTypes["pingAction"] = PingAction;
 actionTypes["addTokenAction"] = AddTokenAction;
 actionTypes["removeTokenAction"] = RemoveTokenAction;
+actionTypes["updateTokenAction"] = UpdateTokenAction;
 actionTypes["setTokensAction"] = SetTokensAction;
 actionTypes["viewPortSyncAction"] = ViewPortSyncAction;
 actionTypes["addLevelAction"] = AddLevelAction;

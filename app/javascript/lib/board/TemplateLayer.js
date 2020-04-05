@@ -12,6 +12,10 @@ export class TemplateLayer {
     this.templates.delete(id);
   }
 
+  getTemplate(id) {
+    return this.templates.get(id);
+  }
+
   templateAt(point) {
     return [...this.templates.values()].filter(t => t.selectable !== false && t.containsPoint(point));
   }
