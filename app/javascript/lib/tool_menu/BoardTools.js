@@ -12,7 +12,7 @@ class ToolMenuItem {
     this.children = options.children;
     this.handler = options.handler;
     this.type = _has(options, "type") ? options.type : "button";
-    this.active = false;
+    this.active = _has(options, "active") ? !!options.active : false;
 
     if (this.children) {
       this.children.forEach(c => c.parent = this);

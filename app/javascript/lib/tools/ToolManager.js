@@ -314,6 +314,15 @@ export class ToolManager extends Eventer {
         tooltip: "Undo",
         glyph: "fa fa-undo",
         handler: function() { self.board.undo(); }
+      }),
+
+      new ToolMenuItem("connection_warning", {
+        label: "Connection Error",
+        tooltip: "Connection Error",
+        glyph: "fas fa-bolt",
+        visible: true,
+        active: true,
+        handler: () => {}
       })
     ];
 
@@ -432,6 +441,13 @@ export class ToolManager extends Eventer {
   setPcModeActiveState(state) {
     this.getMenuItem("toggle_pc_mode").active = state;
     this.render();
+  }
+
+  setErrorState(enabled, msg) {
+    let i = this.getMenuItem("connection_warning");
+    i.visible = enabled;
+    i.label = msg;
+    i.tooltip = msg;
   }
 
   setTemplateSet(type) {

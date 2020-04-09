@@ -81,21 +81,25 @@ export function Board(canvas, gameId) {
 
   this.addActionManager.onDisconnected = function() {
     // the client is offline
-    var alarmFunc = function() {
-      if (self.networkDown) {
-        flashMessage("error", "Cannot Connect to Dungeon Server!!");
-        setTimeout(alarmFunc, 5000);
-      }
-    };
+    self.toolManager.setErrorState(true, "Cannot connect to Dungeon server");
     self.networkDown = true;
-    alarmFunc();
+    // var alarmFunc = function() {
+    //   if (self.networkDown) {
+    //     flashMessage("error", "Cannot Connect to Dungeon Server!!");
+    //     setTimeout(alarmFunc, 5000);
+    //   }
+    // };
+    // self.networkDown = true;
+    // alarmFunc();
   };
 
   this.addActionManager.onConnected = function() {
-    if (self.networkDown) {
-      self.networkDown = false;
-      flashMessage("notice", "Connection to Dungeon Server Restored.");
-    }
+    self.toolManager.setErrorState(false, "Connection restored");
+    self.networkDown = false;
+    // if (self.networkDown) {
+    //   self.networkDown = false;
+    //   flashMessage("notice", "Connection to Dungeon Server Restored.");
+    // }
   };
 
 
