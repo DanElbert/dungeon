@@ -43,6 +43,7 @@ services:
       - redis
     networks:
       - traefik
+      - db
       - default
     labels:
       traefik.enable: "true"
@@ -72,6 +73,9 @@ services:
     command: 'bundle exec rake resque:work'
     links:
     - redis
+    networks:
+      - default
+      - db
 
 volumes:
   images:
@@ -79,5 +83,7 @@ volumes:
 
 networks:
   traefik:
+    external: true
+  db:
     external: true
 

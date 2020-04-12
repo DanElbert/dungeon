@@ -8,6 +8,9 @@ class LevelHoleDrawing extends ShapeDrawing {
     super(uid, board, false, position, null, null, 0, level);
 
     this.size = size;
+    this.underCanvasCache = null;
+    this.lastDraw = null;
+    this.refreshInvalidateTimer = null;
   }
 
   setSize(newSize) {
@@ -47,7 +50,7 @@ class LevelHoleDrawing extends ShapeDrawing {
 
     if (lvlIdx !== -1 && lvlIdx < levels.length - 1) {
       const lvl = levels[lvlIdx + 1];
-      const canvas = this.board.drawIntoNewCanvas(this.position.x, this.position.y, this.size.x, this.size.y, lvl.id);
+      const canvas = this.getUnderCanvas(drawing, lvl); // this.board.drawIntoNewCanvas(this.position.x, this.position.y, this.size.x, this.size.y, lvl.id);
       drawing.context.save();
       drawing.context.clearRect(rectangle.topLeft().x, rectangle.topLeft().y, this.size.x, this.size.y);
       //drawing.context.globalAlpha = 0.75;
@@ -61,6 +64,34 @@ class LevelHoleDrawing extends ShapeDrawing {
     //drawing.drawSquare(rectangle.topLeft().toArray(), rectangle.bottomRight().toArray(), "red", null, 5, null);
 
     super.executeDraw(drawing, drawBounds);
+  }
+
+  getUnderCanvas(drawing, level) {
+    const loopKey = `${this.uid}_key`;
+    let redraw = true;
+
+    if (this.underCanvasCache !== null) {
+      if (drawing.loopCache[loopKey] === true) {
+        redraw = false;
+      } else if (this.refreshInvalidateTimer !== null) {
+        redraw = false;
+      } else if (this.lastDraw !== null && (Date.now() - this.lastDraw) < 500) {
+        redraw = false;
+        this.refreshInvalidateTimer = setTimeout(() => {
+          this.underCanvasCache = null;
+          this.refreshInvalidateTimer = null;
+          this.lastDraw = null;
+          this.invalidate();
+        }, 500);
+      }
+    }
+
+    if (redraw) {
+      this.underCanvasCache = this.board.drawIntoNewCanvas(this.position.x, this.position.y, this.size.x, this.size.y, level.id);
+      drawing.loopCache[loopKey] = true;
+      this.lastDraw = Date.now();
+    }
+    return this.underCanvasCache;
   }
 
   calculateBounds() {

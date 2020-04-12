@@ -21,6 +21,13 @@ export class Drawing {
     return this.drawingSettings.cellSizeFeet;
   }
 
+  get loopCache() {
+    if (this.drawingSettings.loopCache === null || this.drawingSettings.loopCache === undefined) {
+      this.drawingSettings.loopCache = {};
+    }
+    return this.drawingSettings.loopCache;
+  }
+
   checkWidth(width) {
     return Math.max(width, this.minWidth);
   }

@@ -20,7 +20,7 @@ node {
 
         if (env.BRANCH_NAME == "production") {
             stage("Deploy") {
-                deploy("dungeon", "./docker-compose-rlyeh.yml")
+                remote_deploy("azathoth.thenever", "dungeon", "./docker-compose-rlyeh.yml")
             }
         }
 

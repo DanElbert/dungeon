@@ -401,6 +401,8 @@ export function Board(canvas, gameId) {
         this.validate();
       }
     }
+
+    this.drawingSettings.loopCache = null;
   };
 
   this.cellHover = function(x, y) {
