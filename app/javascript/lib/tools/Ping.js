@@ -9,7 +9,7 @@ export class PingTool extends Tool {
   }
 
   buildOptions() {
-    this.options.add({type: "color", name: "color", label: "Color", value: "#EE204D"});
+    this.options.add(this.toolManager.sharedTool("pingColor"));
   }
 
   optionsChanged() {

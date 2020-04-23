@@ -44,7 +44,7 @@ export class DragDeleteItem extends Eventer {
 
       var t = board.tokenLayer.tokenAt(mapEvt.mapPoint);
       if (t.length !== 0) {
-        self.selectedItem = t[0];
+        self.selectedItem = t[t.length - 1];
         return;
       }
 

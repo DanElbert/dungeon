@@ -70,7 +70,8 @@ export class GlobalShortCuts extends Tool {
     });
 
     this.board.event_manager.on('dblclick.GlobalShortcuts', function(mapEvt) {
-      var action = {actionType: "pingAction", point: mapEvt.mapPoint, color: "#EE204D", uid: generateActionId()};
+      let color = self.toolManager.sharedTool("pingColor").value;
+      var action = {actionType: "pingAction", point: mapEvt.mapPoint, color: color, uid: generateActionId()};
       self.board.addAction(action, null, true);
     });
   }

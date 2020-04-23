@@ -29,6 +29,7 @@ export class ToolManager extends Eventer {
     var self = this;
 
     this.sharedToolOptions = {
+      pingColor: ({type: "color", label: "Color", name: "color", value: "#EE204D"}),
       drawingColor: ({type: "color", label: "Color", name: "color", value: "#000000"}),
       drawingBackgroundColor: ({type: "color", label: "Background Color", name: "backgroundColor", includeClear: true, value: null}),
       drawingWidth: ({type: "size", name: "width", label: "Width", sizes: [5, 7, 10, 15, 20, 30], value: 7 }),
