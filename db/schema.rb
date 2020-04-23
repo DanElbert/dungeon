@@ -10,16 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_29_003457) do
+ActiveRecord::Schema.define(version: 2020_04_23_194618) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
     t.string "uid"
-    t.text "properties"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "board_id"
+    t.json "properties"
     t.index ["board_id"], name: "index_board_actions_on_board_id"
+    t.index ["created_at"], name: "index_board_actions_on_created_at"
     t.index ["uid"], name: "index_board_actions_on_uid"
   end
 
@@ -50,6 +51,7 @@ ActiveRecord::Schema.define(version: 2019_06_29_003457) do
     t.integer "cell_size_feet"
     t.string "template_type"
     t.integer "compass_rotation"
+    t.index ["game_id"], name: "index_boards_on_game_id"
   end
 
   create_table "campaign_users", force: :cascade do |t|
@@ -76,6 +78,7 @@ ActiveRecord::Schema.define(version: 2019_06_29_003457) do
     t.string "name"
     t.integer "user_id"
     t.integer "campaign_id"
+    t.index ["campaign_id"], name: "index_games_on_campaign_id"
   end
 
   create_table "images", force: :cascade do |t|

@@ -18,14 +18,6 @@ class Board < ApplicationRecord
   validates :template_type, inclusion: { in: TEMPLATE_TYPES.keys.map(&:to_s), allow_blank: true }
   validate :template_type_cell_size
 
-  def board_images
-    [background_image].compact.map { |i| i.as_json }
-  end
-
-  def actions
-    board_actions.map { |a| a.as_json }
-  end
-
   def template_type_cell_size
     if self.cell_size_feet != 5 && self.template_type == 'pathfinder'
       errors.add(:template_type, "pathfinder templates only work with 5' cells")
@@ -38,6 +30,7 @@ class Board < ApplicationRecord
 
   def as_json(options={})
     background_json = BackgroundImage.without_data.find(background_image_id).as_json
+    actions = self.board_actions.readonly.to_a.as_json
 
     {
         actions: actions,
