@@ -1,4 +1,4 @@
-import cable from "actioncable";
+import * as cable from "@rails/actioncable";
 
 let actioncableConsumer = null;
 

@@ -4,7 +4,7 @@ import "../styles";
 import 'vue-resize/dist/vue-resize.css'
 
 import Vue from "vue";
-import Rails from 'rails-ujs';
+import Rails from '@rails/ujs';
 
 
 import "../lib/BulmaGlue";

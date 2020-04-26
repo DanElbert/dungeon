@@ -1,15 +1,15 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.2.4.2'
+gem 'rails', '6.0.2.2'
 
-gem 'pg', '~> 1.2.0'
+gem 'pg', '~> 1.2.3'
 
-gem 'oj', '~> 3.10.0'
+gem 'oj', '~> 3.10.6'
 
 gem 'puma', '~> 4.3.3'
 gem 'redis-rails', '~> 5.0.2'
 
-gem 'webpacker', '4.2.2'
+gem 'webpacker', '5.1.1'
 gem 'bcrypt', '~> 3.1.13'
 gem 'pundit', '~> 2.1.0'
 
