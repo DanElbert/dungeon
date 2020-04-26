@@ -18,6 +18,7 @@ export class TokenTool extends Tool {
 
   buildOptions() {
     var self = this;
+    this.options.add({type: "tokenImage", name: "image", label: "Image", value: null});
     this.options.add({type: "color", name: "color", label: "Color", value: "#1CAC78"});
     this.options.add({type: "tokenSize", name: "size", label: "Token Size", value: "1"});
     this.options.add({type: "color", name: "fontColor", label: "Font Color", value: "#000000"});
@@ -33,7 +34,7 @@ export class TokenTool extends Tool {
 
   createCurrentToken() {
     if (this.currentToken === null) {
-      this.currentToken = new TokenDrawing(generateActionId(), this.board, new Vector2(0, 0), 1, "#000000", "#FFFFFF", 20, "");
+      this.currentToken = new TokenDrawing(generateActionId(), this.board, new Vector2(0, 0), 1, "#000000", "#FFFFFF", 20, "", null);
       this.currentToken.selectable = false;
       this.board.tokenLayer.addToken(this.currentToken);
     }
@@ -41,19 +42,23 @@ export class TokenTool extends Tool {
   }
 
   syncCurrentToken() {
+    const img = this.options.get("image").value;
     this.currentToken.updateProperties({
       position: new Vector2(this.cursor),
       tokenCellSize: parseInt(this.options.get("size").value),
       color: this.options.get("color").value,
       fontColor: this.options.get("fontColor").value,
       fontSize: this.options.get("fontSize").value,
-      text: this.options.get("text").value
+      text: this.options.get("text").value,
+      imageUrl: img ? img.raw_url : null
     })
   }
 
   enable() {
     var self = this;
     var board = this.board;
+
+    this.options.get("image").images = this.board.token_images;
 
     this.createCurrentToken();
 

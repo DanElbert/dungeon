@@ -14,7 +14,7 @@ class GamesController < ApplicationController
   def new
     @game = Game.new
     @game.campaign = @campaign
-    @game.board = Board.new(default_zoom: 100, cell_size_pixels: 50, cell_size_feet: 5)
+    @game.board = Board.new
   end
 
   def create

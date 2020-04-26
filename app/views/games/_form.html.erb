@@ -50,7 +50,7 @@
 
     <div class="field">
       <%= board_form.label :background_image, class: 'label' %>
-      <div data-image-picker data-attributes="<%= { inputName: 'game[board_attributes][background_image_id]', images: BackgroundImage.order(:filename), selectedId: board_form.object.background_image_id }.to_json %>"></div>
+      <div data-image-picker data-attributes="<%= { inputName: 'game[board_attributes][background_image_id]', images: BackgroundImage.for_campaign(@game.campaign), selectedId: board_form.object.background_image_id }.to_json %>"></div>
     </div>
   <% end %>
 

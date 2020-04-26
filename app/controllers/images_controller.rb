@@ -5,7 +5,7 @@ class ImagesController < ApplicationController
 
   # GET /campaigns/1/images
   def index
-    @campaign_images = @campaign.campaign_images.without_data
+    @drawing_images = @campaign.drawing_images.without_data
     @token_images = @campaign.token_images.without_data
     @background_images = @campaign.background_images.without_data
   end
@@ -37,9 +37,7 @@ class ImagesController < ApplicationController
 
   # POST /images
   def create
-    @image = type_class.new(image_params)
-    @image.campaign = @campaign
-    @image.status = Image::STATUS[:unprocessed]
+    @image = type_class.new(image_params.merge(campaign: @campaign, status: Image::STATUS[:unprocessed], user: current_user))
 
     if params[:image] && params[:image][:data]
       @image.data = Base64.decode64(params[:image][:data])

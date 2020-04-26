@@ -2,12 +2,12 @@ Rails.application.routes.draw do
 
   resources :campaigns do
     resources :games, :only => [:new, :create]
-    resources :drawing_images, controller: :images, only: %i(new create), type: 'CampaignImage'
+    resources :drawing_images, controller: :images, only: %i(new create), type: 'DrawingImage'
     resources :token_images, controller: :images, only: %i(new create), type: 'TokenImage'
     resources :background_images, controller: :images, only: %i(new create), type: 'BackgroundImage'
   end
 
-  get 'campaigns/:campaign_id/images', to: 'images#index', as: :images
+  get 'campaigns/:campaign_id/images', to: 'images#index', as: :campaign_images
   get '/images/:id(/:level/:tile).:format', to: 'images#show', constraints: { format: /\w+/ }, as: :image
   #resources :images, only: %i(edit update destroy)
 

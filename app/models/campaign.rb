@@ -4,7 +4,7 @@ class Campaign < ApplicationRecord
 
   has_many :games
   belongs_to :user
-  has_many :campaign_images, dependent: :delete_all
+  has_many :drawing_images, dependent: :delete_all
   has_many :token_images, dependent: :delete_all
   has_many :background_images, dependent: :delete_all
   has_many :campaign_users, -> { includes(:user) }, inverse_of: :campaign, dependent: :delete_all

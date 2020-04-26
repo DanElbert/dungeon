@@ -1,3 +1,5 @@
 class CopiedImage < Image
-  belongs_to :campaign
+
+  validates :campaign_id, presence: true
+
 end

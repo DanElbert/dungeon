@@ -339,14 +339,6 @@ export class Drawing {
     this.context.restore();
   }
 
-  drawToken(col, row, width, height, color, text, fontColor, fontSize, highlight) {
-    this.drawCircleTiles(col, row, width, height, color, highlight);
-    var fontPoint = [col * this.cellSize, row * this.cellSize];
-    fontPoint[0] += (width * this.cellSize) / 2;
-    fontPoint[1] += (height * this.cellSize) / 2;
-    this.drawText(text, fontPoint, fontSize, fontColor);
-  }
-
   // Low level drawing function; places an ellipse in the context path
   // but does not stroke or fill
   drawEllipse(x, y, w, h) {

@@ -230,7 +230,8 @@ export function Board(canvas, gameId) {
     this.initiative.update(data.initiative, data.initiative_names);
     this.board_data = data.board;
     this.isOwner = data.is_owner;
-    this.campaign_images = data.campaign_images;
+    this.campaign_images = data.drawing_images;
+    this.token_images = data.token_images;
     this.setPcMode(!this.isOwner);
     this.drawingLayer.setOwner(this.isOwner);
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";

@@ -592,6 +592,7 @@ class AddTokenAction extends Action {
       this.properties.fontColor,
       this.properties.fontSize,
       this.properties.text,
+      this.properties.imageUrl,
       this.properties.level
     );
     board.tokenLayer.addToken(t);

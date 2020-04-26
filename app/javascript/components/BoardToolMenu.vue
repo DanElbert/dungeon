@@ -31,6 +31,7 @@
   import ShapesControl from "./BoardToolMenuOptionControls/ShapesControl";
   import SizeControl from "./BoardToolMenuOptionControls/SizeControl";
   import TextControl from "./BoardToolMenuOptionControls/TextControl";
+  import TokenImageControl from "./BoardToolMenuOptionControls/TokenImageControl";
   import TokenSizeControl from "./BoardToolMenuOptionControls/TokenSizeControl";
 
   export default {
@@ -101,6 +102,8 @@
             return "text-control";
           case "command":
             return "command-control";
+          case "tokenImage":
+            return "token-image-control";
           case "tokenSize":
             return "token-size-control";
           default:
@@ -135,6 +138,7 @@
       ShapesControl,
       SizeControl,
       TextControl,
+      TokenImageControl,
       TokenSizeControl
     }
   }

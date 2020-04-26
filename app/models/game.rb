@@ -67,7 +67,8 @@ class Game < ApplicationRecord
         :board => board.as_json(),
         :initiative => initiatives.to_a.map { |i| {:id => i.id, :name => i.name, :value => i.value} },
         :initiative_names => initiative_history_names,
-        :campaign_images => campaign.campaign_images.without_data.to_a.map(&:as_json),
+        :drawing_images => campaign.drawing_images.without_data.to_a.map(&:as_json),
+        :token_images => campaign.token_images.without_data.to_a.map(&:as_json),
         :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters
     }
   end

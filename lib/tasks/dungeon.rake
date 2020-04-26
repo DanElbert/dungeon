@@ -33,7 +33,7 @@ namespace :debug do
     # i.save!
     # i.process!(true)
 
-    i = CampaignImage.last
+    i = DrawingImage.last
 
     Dir[Rails.root.join('public', 'images', i.id.to_s  , '**/*.jpg').to_s].each do |img|
       if (m = img.match(/(\d+)\/(\d+)_(\d+)\.jpg$/))

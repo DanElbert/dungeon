@@ -14,12 +14,15 @@ class Image < ApplicationRecord
   OVERLAP = 2
   TILE_SIZE = 256
 
+  belongs_to :campaign, optional: true
+  belongs_to :user, optional: true
+
   scope :without_data, -> { select(:id, :campaign_id, :user_id, :visible, :filename, :type, :name, :is_tiled, :tile_size, :levels, :status, :width, :height, :created_at, :updated_at).readonly }
 
   default_values visible: false
 
   def self.types
-    ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage', 'TokenImage']
+    ['Image', 'DrawingImage', 'CopiedImage', 'BackgroundImage', 'TokenImage']
   end
 
   def as_json(opts = {})

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_26_054243) do
+ActiveRecord::Schema.define(version: 2020_04_26_185548) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"

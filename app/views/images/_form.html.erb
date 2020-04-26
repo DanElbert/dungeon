@@ -1,16 +1,25 @@
 <%= form_for([@campaign, @image], as: :image) do |f| %>
-    <%= render partial: 'shared/error_list', locals: {model: @image} %>
+  <%= render partial: 'shared/error_list', locals: {model: @image} %>
 
+  <div class="field">
+    <%= f.label :name, class: 'label' %>
+    <%= f.text_field :name, class: 'input', autofocus: true %>
+  </div>
+
+  <% if @image.is_a?(TokenImage) %>
     <div class="field">
-      <%= f.label :name, class: 'label' %>
-      <%= f.text_field :name, class: 'input', autofocus: true %>
+      <%= f.label :visible, class: 'checkbox' do %>
+        <%= f.check_box :visible, class: 'checkbox' %>
+        Visible to PCs?
+      <% end %>
     </div>
+  <% end %>
 
-    <div class="field">
-      <div class="file">
-        <label class="file-label">
-          <%= f.file_field :filename, class: 'file-input' %>
-          <span class="file-cta">
+  <div class="field">
+    <div class="file">
+      <label class="file-label">
+        <%= f.file_field :filename, class: 'file-input' %>
+        <span class="file-cta">
             <span class="file-icon">
               <i class="fas fa-upload"></i>
             </span>
@@ -18,16 +27,16 @@
               Choose a file…
             </span>
           </span>
-          <span class="file-name">
+        <span class="file-name">
 
           </span>
-        </label>
-      </div>
+      </label>
     </div>
+  </div>
 
-    <div class="actions">
-      <%= f.submit class: 'button is-primary' %>
-    </div>
+  <div class="actions">
+    <%= f.submit class: 'button is-primary' %>
+  </div>
 <% end %>
 
 <script type="text/javascript">

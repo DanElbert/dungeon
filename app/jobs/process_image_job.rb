@@ -30,7 +30,7 @@ class ProcessImageJob < ApplicationJob
     should_process = false
 
     Image.transaction do
-      i = Image.lock.select(:id, :status, :type, :campaign_id, :name).find(id)
+      i = Image.lock.select(:id, :status, :type, :campaign_id, :user_id, :name).find(id)
       if i.status == 'queued'
         i.status = Image::STATUS[:processing]
         i.save!
