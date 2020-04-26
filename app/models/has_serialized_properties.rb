@@ -2,7 +2,6 @@ module HasSerializedProperties
   extend ActiveSupport::Concern
 
   included do
-    serialize :properties
     after_initialize :properties_initializer
   end
 
