@@ -1,7 +1,6 @@
 # require File.expand_path('../../../lib/board_detector', __FILE__)
 #
-# module GameServer
-#   class BoardDetectionHandler < Handler
+  class BoardDetectionChannel < ApplicationCable::Channel
 #
 #     CHANNEL_REGEX = /^\/game\/(\d+)\/board_detection/
 #
@@ -85,5 +84,4 @@
 #       end
 #
 #     end
-#   end
-# end
+  end

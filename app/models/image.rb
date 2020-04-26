@@ -1,4 +1,5 @@
 class Image < ApplicationRecord
+  include DefaultValues
 
   Layer = Struct.new(:number, :scale, :width, :height, :x_tiles, :y_tiles)
 
@@ -13,7 +14,9 @@ class Image < ApplicationRecord
   OVERLAP = 2
   TILE_SIZE = 256
 
-  scope :without_data, -> { select(:id, :campaign_id, :filename, :type, :name, :is_tiled, :tile_size, :levels, :status, :width, :height, :created_at, :updated_at).readonly }
+  scope :without_data, -> { select(:id, :campaign_id, :user_id, :visible, :filename, :type, :name, :is_tiled, :tile_size, :levels, :status, :width, :height, :created_at, :updated_at).readonly }
+
+  default_values visible: false
 
   def self.types
     ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage', 'TokenImage']

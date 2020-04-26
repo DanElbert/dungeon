@@ -1,25 +1,12 @@
 <h2 class="title">Campaign Images</h2>
 
-<table class="table is-striped">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Status</th>
-    <th></th>
-  </tr>
-  </thead>
-  <tbody>
-  <% @images.each do |image| %>
-      <tr>
-        <td><%= link_to image.name, image.url %></td>
-        <td><%= image.status %></td>
-        <td></td>
-      </tr>
-  <% end %>
-  </tbody>
-</table>
+<%= render partial: 'image_list', locals: { label: 'Drawing', images: @campaign_images, new_image_link: new_campaign_image_path } %>
+
+<%= render partial: 'image_list', locals: { label: 'Token', images: @token_images, new_image_link: new_campaign_token_image_path } %>
+
+<%= render partial: 'image_list', locals: { label: 'Background', images: @background_images, new_image_link: new_campaign_background_image_path } %>
 
 <br>
 
-<%= link_to 'New Image', new_campaign_image_path, class: 'button is-primary' %>
+
 <%= link_to 'Back to Campaign', campaign_path(@campaign), class: 'button is-primary' %>

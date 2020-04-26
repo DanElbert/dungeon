@@ -5,15 +5,16 @@ class ImagesController < ApplicationController
 
   # GET /campaigns/1/images
   def index
-    @images =  @campaign.campaign_images.without_data
+    @campaign_images = @campaign.campaign_images.without_data
+    @token_images = @campaign.token_images.without_data
+    @background_images = @campaign.background_images.without_data
   end
 
   # GET /images/1
   def show
     if params[:format] == 'json'
       if @image.is_tiled
-        render json: @image.to_json
-        return
+        return render json: @image.as_json
       else
         not_found
       end
@@ -98,6 +99,6 @@ class ImagesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def image_params
-    params.require(:image).permit(:name)
+    params.require(:image).permit(:name, :visible, :user_id)
   end
 end

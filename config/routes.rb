@@ -2,11 +2,14 @@ Rails.application.routes.draw do
 
   resources :campaigns do
     resources :games, :only => [:new, :create]
-    resources :images, except: [:show], type: 'CampaignImage'
-    resources :token_images, controller: :images, only: %i(index new create edit update), type: 'TokenImage'
+    resources :drawing_images, controller: :images, only: %i(new create), type: 'CampaignImage'
+    resources :token_images, controller: :images, only: %i(new create), type: 'TokenImage'
+    resources :background_images, controller: :images, only: %i(new create), type: 'BackgroundImage'
   end
 
+  get 'campaigns/:campaign_id/images', to: 'images#index', as: :images
   get '/images/:id(/:level/:tile).:format', to: 'images#show', constraints: { format: /\w+/ }, as: :image
+  #resources :images, only: %i(edit update destroy)
 
   resources :copied_images, only: [:create], controller: 'images', type: 'CopiedImage'
 

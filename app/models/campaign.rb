@@ -5,6 +5,8 @@ class Campaign < ApplicationRecord
   has_many :games
   belongs_to :user
   has_many :campaign_images, dependent: :delete_all
+  has_many :token_images, dependent: :delete_all
+  has_many :background_images, dependent: :delete_all
   has_many :campaign_users, -> { includes(:user) }, inverse_of: :campaign, dependent: :delete_all
 
   scope :for_user, ->(user) { where("campaigns.requires_authorization = :false OR campaigns.requires_authorization IS NULL OR campaigns.user_id = :user OR :user IN (SELECT user_id FROM campaign_users WHERE campaign_users.campaign_id = campaigns.id)", user: user, false: false) }

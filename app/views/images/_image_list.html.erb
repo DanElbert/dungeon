@@ -1,0 +1,29 @@
+
+<h4 class="title is-4"><%= label %> Images</h4>
+
+<%= link_to "New #{label} Image", new_image_link, class: 'button is-primary is-small' %>
+
+<table class="table is-striped">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Status</th>
+    <th>Size</th>
+    <th>Tiled?</th>
+    <th>Visible?</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% images.each do |image| %>
+    <tr>
+      <td><%= link_to image.name, image.url(true) %></td>
+      <td><%= image.status %></td>
+      <td><%= image.width %>x<%= image.height %></td>
+      <td><%= image.is_tiled %></td>
+      <td><%= image.visible %></td>
+      <td></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
