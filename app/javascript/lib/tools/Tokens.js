@@ -22,7 +22,7 @@ export class TokenTool extends Tool {
     this.options.add({type: "tokenSize", name: "size", label: "Token Size", value: "1"});
     this.options.add({type: "color", name: "fontColor", label: "Font Color", value: "#000000"});
     this.options.add({type: "size", name: "fontSize", label: "Font Size", sizes: [12, 18, 24, 30, 40], value: 24});
-    this.options.add({type: "text", name: "text", label: "Text", value: "", width: 'narrow'});
+    this.options.add({type: "text", name: "text", label: "Text", value: "", width: 'narrow', placeholder: 'Token Label'});
   }
 
   optionsChanged() {

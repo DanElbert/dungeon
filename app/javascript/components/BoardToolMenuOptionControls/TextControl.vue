@@ -1,7 +1,7 @@
 <template>
   <div class="field has-addons">
     <div class="control">
-      <input type="text" class="input is-small" :value="currentValue" @input="valueChanged" />
+      <input type="text" class="input is-small" :value="currentValue" @input="valueChanged" :placeholder="placeholderText" />
     </div>
     <div class="control" v-if="showSave">
       <a class="button is-primary is-small" @click="confirmChange">
@@ -29,6 +29,10 @@
     computed: {
       confirmMode() {
         return this.option.confirmMode === true;
+      },
+
+      placeholderText() {
+        return this.option.placeholder || "";
       },
 
       currentValue() {

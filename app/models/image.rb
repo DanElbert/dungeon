@@ -16,7 +16,7 @@ class Image < ApplicationRecord
   scope :without_data, -> { select(:id, :campaign_id, :filename, :type, :name, :is_tiled, :tile_size, :levels, :status, :width, :height, :created_at, :updated_at).readonly }
 
   def self.types
-    ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage']
+    ['Image', 'CampaignImage', 'CopiedImage', 'BackgroundImage', 'TokenImage']
   end
 
   def as_json(opts = {})

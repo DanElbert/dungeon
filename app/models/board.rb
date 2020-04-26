@@ -1,4 +1,5 @@
 class Board < ApplicationRecord
+  include DefaultValues
 
   TEMPLATE_TYPES = {
       pathfinder: 'Pathfinder',
@@ -17,6 +18,11 @@ class Board < ApplicationRecord
   validates :compass_rotation, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 359, allow_blank: true }
   validates :template_type, inclusion: { in: TEMPLATE_TYPES.keys.map(&:to_s), allow_blank: true }
   validate :template_type_cell_size
+
+  default_values cell_size_pixels: 50,
+                 cell_size_feet: 5,
+                 default_zoom: 100,
+                 template_type: 'pathfinder'
 
   def template_type_cell_size
     if self.cell_size_feet != 5 && self.template_type == 'pathfinder'

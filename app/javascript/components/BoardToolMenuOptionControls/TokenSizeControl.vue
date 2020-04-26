@@ -13,7 +13,8 @@
   const sizes = [
     {value: 1, name: "1x1"},
     {value: 2, name: "2x2"},
-    {value: 3, name: "3x3"}
+    {value: 3, name: "3x3"},
+    {value: 4, name: "4x4"}
   ];
 
   export default {
