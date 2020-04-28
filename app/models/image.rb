@@ -39,7 +39,8 @@ class Image < ApplicationRecord
       tile_size: self.tile_size,
       overlap: OVERLAP,
       levels: self.levels,
-      level_data: self.level_data.map(&:as_json)
+      level_data: self.level_data.map(&:as_json),
+      visible: self.visible
     }
   end
 
@@ -95,6 +96,19 @@ class Image < ApplicationRecord
     else
       ProcessImageJob.perform_later(self.id)
     end
+  end
+
+  def mark_as_processed!
+    self.status = Image::STATUS[:processed]
+    save!
+
+    if self.campaign_id
+      action = BoardAction.build_action_hash('addCampaignImageAction', nil, {image: self.as_json, imageType: self.class.to_s})
+      Game.where(campaign_id: self.campaign_id).each do |g|
+        GameActionChannel.broadcast_to(g, action)
+      end
+    end
+
   end
 
   def self.process_all

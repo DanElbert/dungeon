@@ -1,7 +1,7 @@
 class ImagesController < ApplicationController
-  before_action :set_image, only: [:show, :destroy]
-  before_action :set_campaign, only: [:new, :create, :index]
   before_action :set_type, only: [:new, :create]
+  before_action :set_campaign, only: [:new, :create, :index]
+  before_action :set_image, only: [:show, :destroy]
 
   # GET /campaigns/1/images
   def index
@@ -77,9 +77,9 @@ class ImagesController < ApplicationController
   end
 
   def set_campaign
-    @campaign = Campaign.find_by_id(params[:campaign_id])
-    if @campaign
-      authorize(@campaign, :update?)
+    if params[:campaign_id].present?
+      @campaign = Campaign.find(params[:campaign_id])
+      authorize(@campaign, "create_#{type_class.name.underscore}?")
     end
   end
 
@@ -97,6 +97,6 @@ class ImagesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def image_params
-    params.require(:image).permit(:name, :visible, :user_id)
+    params.require(:image).permit(:name, :visible)
   end
 end

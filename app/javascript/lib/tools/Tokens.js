@@ -59,6 +59,8 @@ export class TokenTool extends Tool {
     var board = this.board;
 
     this.options.get("image").images = this.board.token_images;
+    this.options.get("image").campaign_id = this.board.campaign_id;
+    this.options.get("image").isOwner = this.board.isOwner;
 
     this.createCurrentToken();
 

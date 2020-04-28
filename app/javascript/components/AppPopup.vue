@@ -1,6 +1,6 @@
 <template>
   <app-floater class="modal" :class="{'is-active': isOpen}" role="dialog" :floating="floating" :start-position="startPosition" drag-selector=".modal-card-head">
-
+    <div class="modal-background" v-if="useBackground"></div>
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">{{ title }}</p>
@@ -38,14 +38,25 @@
         required: false,
         type: Boolean,
         default: false
+      },
+
+      startPosition: {
+        required: false,
+        type: Object,
+        default: () => new Vector2(-15, 15)
+      },
+
+      useBackground: {
+        required: false,
+        type: Boolean,
+        default: false
       }
     },
 
     data() {
       return {
         modal: null,
-        isOpen: this.alwaysOpen,
-        startPosition: new Vector2(-15, 15)
+        isOpen: this.alwaysOpen
       };
     },
 
@@ -65,6 +76,16 @@
         this.isOpen = !this.isOpen;
       },
 
+    },
+
+    watch: {
+      isOpen(val) {
+        if (val) {
+          this.$emit("open");
+        } else {
+          this.$emit("close");
+        }
+      }
     },
 
     mounted() {

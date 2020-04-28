@@ -29,7 +29,8 @@ export function Board(canvas, gameId) {
     imageCache: this.imageCache,
     zoom: 1,
     cellSize: 50,
-    cellSizeFeet: 5
+    cellSizeFeet: 5,
+    isOwner: false
   };
   this.campaign_images = null;
 
@@ -230,6 +231,7 @@ export function Board(canvas, gameId) {
     this.initiative.update(data.initiative, data.initiative_names);
     this.board_data = data.board;
     this.isOwner = data.is_owner;
+    this.campaign_id = data.campaign_id;
     this.campaign_images = data.drawing_images;
     this.token_images = data.token_images;
     this.setPcMode(!this.isOwner);
@@ -239,6 +241,7 @@ export function Board(canvas, gameId) {
     this.setZoom(data.board.default_zoom / 100.0, null, true);
     this.drawingSettings.cellSize = data.board.cell_size_pixels;
     this.drawingSettings.cellSizeFeet = data.board.cell_size_feet;
+    this.drawingSettings.isOwner = this.isOwner;
 
     this.toolManager.setTemplateSet(data.board.template_type);
 

@@ -20,6 +20,22 @@ class CampaignPolicy < ApplicationPolicy
     !record.nil? && record.user == user
   end
 
+  def create_image?
+    gm_access
+  end
+
+  def create_drawing_image?
+    gm_access
+  end
+
+  def create_token_image?
+    pc_access
+  end
+
+  def create_background_image?
+    gm_access
+  end
+
   private
 
   def gm_access

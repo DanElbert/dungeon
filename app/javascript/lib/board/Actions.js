@@ -697,6 +697,21 @@ class ViewPortSyncAction extends Action {
   }
 }
 
+class AddCampaignImageAction extends Action {
+  apply(board) {
+    if (this.properties.imageType === "DrawingImage") {
+      board.campaign_images.push(this.properties.image);
+    } else if (this.properties.imageType === "TokenImage") {
+      board.token_images.push(this.properties.image);
+    }
+  }
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "imageType", "image"]
+    })
+  }
+}
+
 actionTypes["labelAction"] = LabelAction;
 actionTypes["penAction"] = PenAction;
 actionTypes["addFogPenAction"] = AddFogPenAction;
@@ -730,6 +745,7 @@ actionTypes["addLevelAction"] = AddLevelAction;
 actionTypes["removeLevelAction"] = RemoveLevelAction;
 actionTypes["updateLevelAction"] = UpdateLevelAction;
 actionTypes["levelHoleAction"] = LevelHoleAction;
+actionTypes["addCampaignImageAction"] = AddCampaignImageAction
 
 // defunct actions
 actionTypes["clearTokensAction"] = Action;

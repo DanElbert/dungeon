@@ -62,6 +62,7 @@ class Game < ApplicationRecord
   def as_json(options = {})
     {
         :name => name,
+        :campaign_id => self.campaign_id,
         :status => status,
         :is_owner => is_owner(options[:current_user_id]),
         :board => board.as_json(),

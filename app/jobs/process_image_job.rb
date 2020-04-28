@@ -52,8 +52,7 @@ class ProcessImageJob < ApplicationJob
       File.binwrite("#{root_path}.#{i.extension}", i.data)
 
       if !i.is_tiled
-        i.status = Image::STATUS[:processed]
-        i.save!
+        i.mark_as_processed!
         return
       end
 
@@ -80,8 +79,7 @@ class ProcessImageJob < ApplicationJob
       #   build_tiles(i, level, level_path)
       # end
 
-      i.status = Image::STATUS[:processed]
-      i.save!
+      i.mark_as_processed!
 
     rescue
       i.status = Image::STATUS[:error]
