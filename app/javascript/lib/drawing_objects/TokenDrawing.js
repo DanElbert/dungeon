@@ -16,6 +16,8 @@ class TokenDrawing extends BaseDrawing {
     this.loadedImage = null;
     this.loadedImageUrl = null;
     this.loadedCellSize = null;
+
+    this.imageCacheSizeFactor = 4;
   }
 
   containsPoint(point) {
@@ -99,7 +101,8 @@ class TokenDrawing extends BaseDrawing {
           this.loading = false;
           this.invalidate();
 
-          const size = this.tokenCellSize * drawing.drawingSettings.cellSize;
+          const size = this.tokenCellSize * drawing.drawingSettings.cellSize * this.imageCacheSizeFactor;
+          const sourceRectangle = new Rectangle(new Vector2(0, 0), i.width, i.height).centeredSquare();
 
           this.loadedImage = document.createElement("canvas");
           this.loadedImage.width = size;
@@ -113,7 +116,7 @@ class TokenDrawing extends BaseDrawing {
           ctx.fill();
           ctx.globalCompositeOperation = "source-in";
 
-          ctx.drawImage(i, 0, 0, i.width, i.height, 0, 0, size, size);
+          ctx.drawImage(i, sourceRectangle.left(), sourceRectangle.top(), sourceRectangle.width(), sourceRectangle.height(), 0, 0, size, size);
         })
         .catch(e => {
           this.loading = false;
@@ -123,7 +126,7 @@ class TokenDrawing extends BaseDrawing {
     }
 
     if (this.loadedImage !== null) {
-      drawing.context.drawImage(this.loadedImage, this.position.x, this.position.y);
+      drawing.context.drawImage(this.loadedImage, this.position.x, this.position.y, this.loadedImage.width / this.imageCacheSizeFactor, this.loadedImage.height / this.imageCacheSizeFactor);
     }
   }
 }

@@ -59,6 +59,23 @@ class Rectangle {
     );
   }
 
+  // Returns the largest square that can fit in this rectangle, centered
+  centeredSquare() {
+    const sqrSize = Math.min(this.width(), this.height());
+    let left = this.left();
+    let top = this.top();
+
+    if (this.width() > sqrSize) {
+      left = left + ((this.width() - sqrSize) / 2);
+    }
+
+    if (this.height() > sqrSize) {
+      top = top + ((this.height() - sqrSize) / 2);
+    }
+
+    return new Rectangle(new Vector2(left, top), sqrSize, sqrSize);
+  }
+
   // Snaps the rectangle to a multiple of the given param.
   // mode can be one one of: "closest" (default), "enlarge", "shrink"
   snapTo(multiple, mode) {
