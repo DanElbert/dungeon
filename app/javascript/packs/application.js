@@ -6,7 +6,6 @@ import 'vue-resize/dist/vue-resize.css'
 import Vue from "vue";
 import Rails from '@rails/ujs';
 
-
 import "../lib/BulmaGlue";
 import "../lib/AntiGhostClick";
 import "../lib/MouseWheelEvents";
@@ -19,12 +18,11 @@ import "../lib/board/Actions";
 import VueResize from 'vue-resize'
 import AppCampaignUsers from "../components/AppCampaignUsers";
 import AppColorPicker from "../components/AppColorPicker";
+import AppFilePicker from "../components/AppFilePicker";
 import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
 import CompassRose from "../components/CompassRose";
 import Initiative from "../components/Initiative";
-
-
 
 function installComponent(element, component, opts, attrs) {
   opts = opts || {};
@@ -47,6 +45,7 @@ window.VUE_COMPONENTS = {
   install: installComponent,
   AppCampaignUsers,
   AppColorPicker,
+  AppFilePicker,
   AppImagePicker,
   BoardToolMenu,
   CompassRose,
@@ -63,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const map = {
     "image-picker": AppImagePicker,
     "color-picker": AppColorPicker,
+    "file-picker": AppFilePicker,
     "campaign-users": AppCampaignUsers
   };
 

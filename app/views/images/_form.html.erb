@@ -1,4 +1,4 @@
-<%= form_for([@campaign, @image], as: :image) do |f| %>
+<%= form_for([@campaign, @image], as: :image, html: {multipart: true}) do |f| %>
   <%= render partial: 'shared/error_list', locals: {model: @image} %>
 
   <div class="field">
@@ -15,36 +15,19 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <div class="file">
-      <label class="file-label">
-        <%= f.file_field :filename, class: 'file-input' %>
-        <span class="file-cta">
-            <span class="file-icon">
-              <i class="fas fa-upload"></i>
-            </span>
-            <span class="file-label">
-              Choose a file…
-            </span>
-          </span>
-        <span class="file-name">
-
-          </span>
+  <% if @image.new_record? %>
+    <div class="field">
+      <div data-file-picker data-attributes="<%= {name: 'image[filename]'}.to_json %>"></div>
+    </div>
+  <% else %>
+    <div class="field">
+      <label class="label">
+        <%= @image.filename %>
       </label>
     </div>
-  </div>
+  <% end %>
 
   <div class="actions">
     <%= f.submit class: 'button is-primary' %>
   </div>
 <% end %>
-
-<script type="text/javascript">
-
-  document.addEventListener('DOMContentLoaded', function() {
-
-    document.querySelectorAll(".file-input");
-
-  });
-
-</script>

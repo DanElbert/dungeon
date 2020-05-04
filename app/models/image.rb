@@ -18,8 +18,10 @@ class Image < ApplicationRecord
   belongs_to :user, optional: true
 
   scope :without_data, -> { select(:id, :campaign_id, :user_id, :visible, :filename, :type, :name, :is_tiled, :tile_size, :levels, :status, :width, :height, :created_at, :updated_at).readonly }
+  scope :active, -> { where(is_deleted: false)}
 
-  default_values visible: false
+  default_values visible: false,
+                 is_deleted: false
 
   def self.types
     ['Image', 'DrawingImage', 'CopiedImage', 'BackgroundImage', 'TokenImage']

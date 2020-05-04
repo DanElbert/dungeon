@@ -17,7 +17,7 @@ class TokenDrawing extends BaseDrawing {
     this.loadedImageUrl = null;
     this.loadedCellSize = null;
 
-    this.imageCacheSizeFactor = 4;
+    this.imageCacheSizeFactor = 2;
   }
 
   containsPoint(point) {
@@ -111,7 +111,7 @@ class TokenDrawing extends BaseDrawing {
 
           ctx.fillStyle = "#000000";
           ctx.beginPath();
-          ctx.arc(size / 2, size / 2, (size / 2) - (2 * this.tokenCellSize), 0, 1.95 * Math.PI, false);
+          ctx.arc(size / 2, size / 2, (size / 2) - (3 * this.tokenCellSize), 0, 1.95 * Math.PI, false);
           ctx.closePath();
           ctx.fill();
           ctx.globalCompositeOperation = "source-in";

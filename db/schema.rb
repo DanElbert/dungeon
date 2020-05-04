@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_26_185548) do
+ActiveRecord::Schema.define(version: 2020_05_03_194748) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -97,6 +97,7 @@ ActiveRecord::Schema.define(version: 2020_04_26_185548) do
     t.integer "height"
     t.integer "user_id"
     t.boolean "visible"
+    t.boolean "is_deleted"
     t.index ["campaign_id"], name: "index_images_on_campaign_id"
     t.index ["type"], name: "index_images_on_type"
   end

@@ -22,7 +22,15 @@
       <td><%= image.width %>x<%= image.height %></td>
       <td><%= image.is_tiled %></td>
       <td><%= image.visible %></td>
-      <td></td>
+      <td>
+        <%= link_to edit_image_path(image), { class: 'button is-primary', title: 'Edit', data: {toggle: 'tooltip'}} do %>
+          <span class="fas fa-edit"></span>
+        <% end %>
+
+        <%= link_to image_path(image), { method: :delete, class: 'button is-danger', title: 'Delete', data: {confirm: 'Are you sure?', toggle: 'tooltip'}} do %>
+          <span class="fas fa-times fa-fw"></span>
+        <% end %>
+      </td>
     </tr>
   <% end %>
   </tbody>

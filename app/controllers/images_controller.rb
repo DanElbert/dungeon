@@ -1,13 +1,13 @@
 class ImagesController < ApplicationController
   before_action :set_type, only: [:new, :create]
   before_action :set_campaign, only: [:new, :create, :index]
-  before_action :set_image, only: [:show, :destroy]
+  before_action :set_image, only: [:show, :edit, :update, :destroy]
 
   # GET /campaigns/1/images
   def index
-    @drawing_images = @campaign.drawing_images.without_data
-    @token_images = @campaign.token_images.without_data
-    @background_images = @campaign.background_images.without_data
+    @drawing_images = @campaign.drawing_images.active.without_data
+    @token_images = @campaign.token_images.active.without_data
+    @background_images = @campaign.background_images.active.without_data
   end
 
   # GET /images/1
@@ -64,10 +64,23 @@ class ImagesController < ApplicationController
     end
   end
 
+  def edit
+    @campaign = @image.campaign
+  end
+
+  def update
+    if @image.update_attributes(image_params)
+      redirect_to campaign_images_path(@image.campaign_id), notice: 'Game was successfully updated.'
+    else
+      render action: 'edit'
+    end
+  end
+
   # DELETE /images/1
   def destroy
-    @image.destroy
-    redirect_to images_url, notice: 'Image was successfully destroyed.'
+    @image.update_attribute(:is_deleted, true)
+    url = @image.campaign_id.present? ? campaign_images_path(campaign_id: @image.campaign_id) : root_path
+    redirect_to url, notice: 'Image was successfully destroyed.'
   end
 
   private
@@ -97,6 +110,6 @@ class ImagesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def image_params
-    params.require(:image).permit(:name, :visible)
+    params.require(:image).permit(:name, :visible, :filename, :data)
   end
 end

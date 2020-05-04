@@ -1,4 +1,5 @@
 <h2 class="title">Campaign Images</h2>
+<%= link_to 'Back to Campaign', campaign_path(@campaign), class: 'button is-primary' %>
 
 <%= render partial: 'image_list', locals: { label: 'Drawing', images: @drawing_images, new_image_link: new_campaign_drawing_image_path } %>
 

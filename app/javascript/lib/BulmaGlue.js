@@ -23,28 +23,13 @@ function setupNavbarBurger(el) {
   });
 }
 
-function setupFileInput(el) {
-  el.addEventListener("change", () => {
-    const nameLabel = el.parentElement.querySelector(".file-name");
-    if (el.files.length > 0) {
-      nameLabel.innerHTML = el.files[0].name;
-    } else {
-      nameLabel.innerHTML = "";
-    }
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
 
   initEach('.navbar-burger', el => {
     setupNavbarBurger(el);
   });
 
-  initEach("input[type='file'].file-input", el => {
-    setupFileInput(el);
-  });
-
 });
 
 
-export { setupNavbarBurger, setupFileInput };
+export { setupNavbarBurger };

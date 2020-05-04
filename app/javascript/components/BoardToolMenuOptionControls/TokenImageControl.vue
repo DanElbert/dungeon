@@ -47,7 +47,6 @@
   import BoardToolMenuOptionMixin from "../../lib/tool_menu/BoardToolMenuOptionMixin";
   import { flashMessage } from "../../lib/FlashMessages";
   import { Vector2 } from "../../lib/geometry";
-  import { setupFileInput } from "../../lib/BulmaGlue";
 
   import AppPopup from "../AppPopup";
 
@@ -148,7 +147,7 @@
     },
 
     mounted() {
-      setupFileInput(this.$refs.fileInput);
+      //setupFileInput(this.$refs.fileInput);
     },
 
     components: {

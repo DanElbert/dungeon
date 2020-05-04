@@ -1,4 +1,3 @@
-import { Animation, EasingFactory } from "./Animation";
 import TWEEN from "@tweenjs/tween.js/dist/tween.esm";
 import { hexToRgb } from "../ColorUtil";
 import { Vector2 } from "../geometry";
@@ -43,7 +42,7 @@ class Ping {
   constructor(point, color, id, maxSize, pulseCount, duration) {
     this.id = id;
     this.maxSize = maxSize;
-    this.color = color;
+    this.color = hexToRgb(color);
     this.point = point;
     this.finished = false;
 
@@ -69,7 +68,7 @@ class Ping {
         .easing(TWEEN.Easing.Quintic.In)
         .delay(x * delay * 1000)
         .onUpdate(() => {
-          const rgbColor = hexToRgb(this.color);
+          const rgbColor = this.color;
           ringData.alphaColor = `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${ringData.opacity})`;
         })
         .onComplete(() => {
