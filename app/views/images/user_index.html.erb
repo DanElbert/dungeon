@@ -1,9 +1,8 @@
+<h2 class="title">Token Images</h2>
+<%= link_to 'Back to Profile', user_path, class: 'button is-primary' %>
+<br><br>
 
-<% if label.present? %>
-  <h4 class="title is-4"><%= label %> Images</h4>
-<% end %>
-
-<%= link_to "New #{label} Image", new_image_link, class: 'button is-primary is-small' %>
+<%= link_to "New Image", new_user_user_token_image_path, class: 'button is-primary is-small' %>
 
 <table class="table is-striped">
   <thead>
@@ -11,19 +10,15 @@
     <th>Name</th>
     <th>Status</th>
     <th>Size</th>
-    <th>Tiled?</th>
-    <th>Visible?</th>
     <th></th>
   </tr>
   </thead>
   <tbody>
-  <% images.each do |image| %>
+  <% @user_token_images.each do |image| %>
     <tr>
       <td><%= link_to image.name, image.url(true) %></td>
       <td><%= image.status %></td>
       <td><%= image.width %>x<%= image.height %></td>
-      <td><%= image.is_tiled %></td>
-      <td><%= image.visible %></td>
       <td>
         <%= link_to edit_image_path(image), { class: 'button is-primary', title: 'Edit', data: {toggle: 'tooltip'}} do %>
           <span class="fas fa-edit"></span>
@@ -37,3 +32,8 @@
   <% end %>
   </tbody>
 </table>
+
+<br>
+
+
+<%= link_to 'Back to Profile', edit_user_path, class: 'button is-primary' %>

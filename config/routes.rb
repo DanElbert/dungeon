@@ -29,7 +29,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :user, :except => [:show, :destroy]
+  resource :user, :except => [:show, :destroy] do
+    resources :user_token_images, controller: :images, except: :index, type: 'UserTokenImage'
+  end
+
+  get 'user/user_token_images', to: 'images#user_index', as: :user_token_images
 
   match '/lobby' => 'campaigns#index', :via => :get, :as => :lobby
 

@@ -1,4 +1,5 @@
 class ImagesController < ApplicationController
+  before_action :set_user
   before_action :set_type, only: [:new, :create]
   before_action :set_campaign, only: [:new, :create, :index]
   before_action :set_image, only: [:show, :edit, :update, :destroy]
@@ -8,6 +9,10 @@ class ImagesController < ApplicationController
     @drawing_images = @campaign.drawing_images.active.without_data
     @token_images = @campaign.token_images.active.without_data
     @background_images = @campaign.background_images.active.without_data
+  end
+
+  def user_index
+    @user_token_images = UserTokenImage.for_user(current_user.id).without_data
   end
 
   # GET /images/1
@@ -55,7 +60,7 @@ class ImagesController < ApplicationController
 
         @image.process!
 
-        format.html { redirect_to campaign_images_path(@campaign), notice: 'Image was successfully created.' }
+        format.html { redirect_to index_location, notice: 'Image was successfully created.' }
         format.json { render json: @image, status: :created }
       else
         format.html { render action: "new" }
@@ -70,7 +75,7 @@ class ImagesController < ApplicationController
 
   def update
     if @image.update_attributes(image_params)
-      redirect_to campaign_images_path(@image.campaign_id), notice: 'Game was successfully updated.'
+      redirect_to index_location, notice: 'Game was successfully updated.'
     else
       render action: 'edit'
     end
@@ -78,8 +83,9 @@ class ImagesController < ApplicationController
 
   # DELETE /images/1
   def destroy
+    params[:type] = @image.type
     @image.update_attribute(:is_deleted, true)
-    url = @image.campaign_id.present? ? campaign_images_path(campaign_id: @image.campaign_id) : root_path
+    url = index_location
     redirect_to url, notice: 'Image was successfully destroyed.'
   end
 
@@ -100,12 +106,25 @@ class ImagesController < ApplicationController
     Image.types.include?(params[:type]) ? params[:type] : "Image"
   end
 
+  def index_location
+    case self.type
+      when 'UserTokenImage'
+        user_token_images_path
+      else
+        campaign_images_path(@campaign)
+    end
+  end
+
   def type_class
     type.constantize
   end
 
   def set_type
     @type = type
+  end
+
+  def set_user
+    @user = current_user
   end
 
   # Only allow a trusted parameter "white list" through.

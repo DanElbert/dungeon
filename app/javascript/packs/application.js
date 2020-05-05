@@ -21,6 +21,7 @@ import AppColorPicker from "../components/AppColorPicker";
 import AppFilePicker from "../components/AppFilePicker";
 import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
+import AppToolColorPicker from "../components/AppToolColorPicker";
 import CompassRose from "../components/CompassRose";
 import Initiative from "../components/Initiative";
 
@@ -48,6 +49,7 @@ window.VUE_COMPONENTS = {
   AppFilePicker,
   AppImagePicker,
   BoardToolMenu,
+  AppToolColorPicker,
   CompassRose,
   Initiative
 };
@@ -63,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
     "image-picker": AppImagePicker,
     "color-picker": AppColorPicker,
     "file-picker": AppFilePicker,
-    "campaign-users": AppCampaignUsers
+    "campaign-users": AppCampaignUsers,
+    "tool-color-picker": AppToolColorPicker
   };
 
   for (let dataAttr in map) {

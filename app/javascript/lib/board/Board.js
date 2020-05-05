@@ -244,6 +244,7 @@ export function Board(canvas, gameId) {
     this.drawingSettings.isOwner = this.isOwner;
 
     this.toolManager.setTemplateSet(data.board.template_type);
+    this.toolManager.sharedToolOptions.pingColor.value = data.default_ping_color || "#EE204D";
 
     this.compassManager.setRotation(data.board.compass_rotation);
 

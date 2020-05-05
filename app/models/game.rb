@@ -60,6 +60,7 @@ class Game < ApplicationRecord
   end
 
   def as_json(options = {})
+    user = User.find(options[:current_user_id])
     {
         :name => name,
         :campaign_id => self.campaign_id,
@@ -69,8 +70,9 @@ class Game < ApplicationRecord
         :initiative => initiatives.to_a.map { |i| {:id => i.id, :name => i.name, :value => i.value} },
         :initiative_names => initiative_history_names,
         :drawing_images => campaign.drawing_images.active.without_data.to_a.map(&:as_json),
-        :token_images => campaign.token_images.active.without_data.to_a.map(&:as_json),
-        :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters
+        :token_images => UserTokenImage.for_user(options[:current_user_id]).without_data.to_a.map(&:as_json) + campaign.token_images.active.without_data.to_a.map(&:as_json),
+        :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters,
+        :default_ping_color => user.ping_color
     }
   end
 

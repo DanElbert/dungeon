@@ -19,12 +19,15 @@ class Image < ApplicationRecord
 
   scope :without_data, -> { select(:id, :campaign_id, :user_id, :visible, :filename, :type, :name, :is_tiled, :tile_size, :levels, :status, :width, :height, :created_at, :updated_at).readonly }
   scope :active, -> { where(is_deleted: false)}
+  scope :for_user, ->(user) { active.where(user: user) }
+
+  validates :data, presence: true, if: -> { has_attribute?(:data) }
 
   default_values visible: false,
                  is_deleted: false
 
   def self.types
-    ['Image', 'DrawingImage', 'CopiedImage', 'BackgroundImage', 'TokenImage']
+    ['Image', 'DrawingImage', 'CopiedImage', 'BackgroundImage', 'TokenImage', 'UserTokenImage']
   end
 
   def as_json(opts = {})
@@ -78,6 +81,11 @@ class Image < ApplicationRecord
 
   def calculate_size!
     @level_data = nil
+    if self.data.nil?
+      self.width = 0
+      self.height = 0
+      return
+    end
     self.width = image_vips.width
     self.height = image_vips.height
     self.is_tiled = height > 1800 && width > 1800
