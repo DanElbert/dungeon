@@ -281,7 +281,7 @@ export function Board(canvas, gameId) {
 
   this.renderCursor = function() {
     if (this.hovered_cell) {
-      this.drawing.colorCell(this.hovered_cell[0], this.hovered_cell[1], "rgba(0, 204, 0, 0.25)");
+      this.drawing.colorCell(this.hovered_cell[0], this.hovered_cell[1], "rgba(0, 204, 0, 0.125)");
     }
   };
 
@@ -393,6 +393,7 @@ export function Board(canvas, gameId) {
         context.clearRect(this.getViewPortCoordinates()[0], this.getViewPortCoordinates()[1], this.getViewPortSize()[0], this.getViewPortSize()[1]);
         this.renderBoardBackground();
         this.renderDrawing();
+        this.renderCursor();
         this.renderTemplates();
         this.renderTokens();
         this.renderTool();
@@ -400,7 +401,6 @@ export function Board(canvas, gameId) {
         this.renderPings();
         this.labelLayer.draw();
         this.renderBorder();
-        this.renderCursor();
 
         this.validate();
       }

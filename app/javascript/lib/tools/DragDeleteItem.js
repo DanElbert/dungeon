@@ -10,6 +10,7 @@ export class DragDeleteItem extends Eventer {
     this.board = board;
     this.eventNamespace = eventNamespace;
     this.enabled = false;
+    this.instantDrag = false;
 
     this._selectedItem = null;
     this.itemDragging = false;
@@ -30,6 +31,10 @@ export class DragDeleteItem extends Eventer {
     }
   }
 
+  enableInstantDrag() {
+    this.instantDrag = true;
+  }
+
   eventName(evt) {
     return evt + '.DragDeleteItem' + this.eventNamespace;
   }
@@ -40,21 +45,14 @@ export class DragDeleteItem extends Eventer {
     this.enabled = true;
 
     board.event_manager.on(this.eventName("click"), function(mapEvt) {
-      self.selectedItem = null;
-
-      var t = board.tokenLayer.tokenAt(mapEvt.mapPoint);
-      if (t.length !== 0) {
-        self.selectedItem = t[t.length - 1];
-        return;
-      }
-
-      var tmpl = board.templateLayer.templateAt(mapEvt.mapPoint);
-      if (tmpl.length !== 0) {
-        self.selectedItem = tmpl[0];
-      }
+      self.selectedItem = self.detectObject(mapEvt.mapPoint);
     });
 
     board.event_manager.on(this.eventName("dragstart"), function(mapEvt) {
+      if (self.instantDrag === true) {
+        self.selectedItem = self.detectObject(mapEvt.mapPoint);
+      }
+
       if (self.selectedItem && self.selectedItem.containsPoint(mapEvt.mapPoint)) {
         self.itemDragging = true;
         self.itemDragStartCell = mapEvt.mapPointCell;
@@ -95,6 +93,19 @@ export class DragDeleteItem extends Eventer {
   disable() {
     this.enabled = false;
     this.board.event_manager.off('.DragDeleteItem' + this.eventNamespace);
+  }
+
+  detectObject(mapPoint) {
+    let tokens = this.board.tokenLayer.tokenAt(mapPoint);
+    if (tokens.length !== 0) {
+      return tokens[tokens.length - 1];
+    }
+
+    let tmpl = this.board.templateLayer.templateAt(mapPoint);
+    if (tmpl.length !== 0) {
+      return tmpl[tmpl.length - 1];
+    }
+    return null;
   }
 
   draw() {

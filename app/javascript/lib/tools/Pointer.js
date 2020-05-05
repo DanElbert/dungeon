@@ -9,6 +9,7 @@ export class Pointer extends Tool {
 
     this.viewPortDragging = new ViewPortDragging(this, this.board, 'drag');
     this.dragDeleteItem = new DragDeleteItem(this, this.board, "Pointer");
+    this.dragDeleteItem.enableInstantDrag();
     this.dragDeleteItem.on("dragstart", () => this.viewPortDragging.disable());
     this.dragDeleteItem.on("dragstop", () => this.viewPortDragging.enable());
   }

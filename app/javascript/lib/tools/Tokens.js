@@ -12,6 +12,7 @@ export class TokenTool extends Tool {
     this.cursor = [0,0];
 
     this.dragDeleteItem = new DragDeleteItem(this, this.board, "Tokens");
+    this.dragDeleteItem.enableInstantDrag();
     this.dragDeleteItem.on("selected", () => this.suspendDrawing());
     this.dragDeleteItem.on("unselected", () => this.resumeDrawing());  
   }
