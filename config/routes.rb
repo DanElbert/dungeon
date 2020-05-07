@@ -25,7 +25,7 @@ Rails.application.routes.draw do
     member do
       get 'get_game_data'
       get 'initiative'
-      get 'initiative_names'
+      #get 'initiative_names'
     end
   end
 

@@ -51,28 +51,27 @@ class GamesController < ApplicationController
   end
 
   def initiative
-    game_json = @game.as_json
-
+    campaign = @game.campaign
     @initiative_json = {
-        initiative: game_json[:initiative],
-        initiative_names: game_json[:initiative_names]
+      'initiative' => campaign.initiatives.as_json,
+      'initiative_names' => campaign.initiative_history_names
     }.to_json
   end
 
-  def initiative_names
-    histories = InitiativeHistory.where(game: @game).order(use_count: :desc).limit(10)
-    init_names = Initiative.where(game: @game).select(:name).group(:name).pluck(:name)
-
-    if init_names.length > 0
-      histories = histories.where('name NOT IN (?)', init_names)
-    end
-
-    if params[:term].present?
-      histories = histories.where('name LIKE ?', "#{params[:term]}%")
-    end
-
-    render json: histories.map { |h| h.name }
-  end
+  # def initiative_names
+  #   histories = InitiativeHistory.where(game: @game).order(use_count: :desc).limit(10)
+  #   init_names = Initiative.where(game: @game).select(:name).group(:name).pluck(:name)
+  #
+  #   if init_names.length > 0
+  #     histories = histories.where('name NOT IN (?)', init_names)
+  #   end
+  #
+  #   if params[:term].present?
+  #     histories = histories.where('name LIKE ?', "#{params[:term]}%")
+  #   end
+  #
+  #   render json: histories.map { |h| h.name }
+  # end
 
   private
 

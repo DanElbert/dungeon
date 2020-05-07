@@ -46,7 +46,7 @@ export function Board(canvas, gameId) {
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
   this.mainMenu = new MainMenu(this);
-  this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), this.gameId);
+  this.initiative = null;
   this.compassManager = new CompassManager(this.mainMenu.getInitiativeContainer());
   //this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, null);
 
@@ -226,6 +226,10 @@ export function Board(canvas, gameId) {
 
     if (!data) {
       return;
+    }
+
+    if (this.initiative === null) {
+      this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), data.campaign_id);
     }
 
     this.initiative.update(data.initiative, data.initiative_names);

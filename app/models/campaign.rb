@@ -8,10 +8,14 @@ class Campaign < ApplicationRecord
   has_many :token_images, dependent: :delete_all
   has_many :background_images, dependent: :delete_all
   has_many :campaign_users, -> { includes(:user) }, inverse_of: :campaign, dependent: :delete_all
+  has_many :initiatives, -> { order(:sort_order) }, :dependent => :destroy, :inverse_of => :campaign
+  has_many :initiative_histories, -> { order(use_count: :desc) }, dependent: :destroy, :inverse_of => :campaign
 
   scope :for_user, ->(user) { where("campaigns.requires_authorization = :false OR campaigns.requires_authorization IS NULL OR campaigns.user_id = :user OR :user IN (SELECT user_id FROM campaign_users WHERE campaign_users.campaign_id = campaigns.id)", user: user, false: false) }
 
   accepts_nested_attributes_for :campaign_users, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :initiatives, allow_destroy: true
+  accepts_nested_attributes_for :initiative_histories
 
   def active_games
     self.games.to_a.select { |g| g.status == Game::STATUS[:active] }
@@ -43,6 +47,10 @@ class Campaign < ApplicationRecord
 
   def is_pc?(user)
     !self.requires_authorization || pc_users.include?(user)
+  end
+
+  def initiative_history_names
+    self.initiative_histories.map { |h| h.name }
   end
 
   private

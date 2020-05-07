@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_05_011812) do
+ActiveRecord::Schema.define(version: 2020_05_07_031136) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -103,22 +103,23 @@ ActiveRecord::Schema.define(version: 2020_05_05_011812) do
   end
 
   create_table "initiative_histories", force: :cascade do |t|
-    t.integer "game_id"
     t.string "name"
     t.integer "use_count"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["game_id"], name: "index_initiative_histories_on_game_id"
+    t.integer "campaign_id"
     t.index ["name"], name: "index_initiative_histories_on_name"
   end
 
   create_table "initiatives", force: :cascade do |t|
-    t.integer "game_id"
     t.string "name"
     t.integer "value"
     t.integer "sort_order"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string "bonus"
+    t.integer "campaign_id"
+    t.string "source"
   end
 
   create_table "users", force: :cascade do |t|

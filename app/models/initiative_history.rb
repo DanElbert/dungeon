@@ -1,8 +1,8 @@
 class InitiativeHistory < ApplicationRecord
 
-  belongs_to :game, :inverse_of => :initiative_histories
+  belongs_to :campaign, :inverse_of => :initiative_histories
 
-  validates :game, presence: true
+  validates :campaign, presence: true
   validates :use_count, presence: true
 
   def normalized_name

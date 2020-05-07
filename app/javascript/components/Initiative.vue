@@ -2,7 +2,15 @@
   <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup" :floating="floating" :always-open="!floating">
     <div class="columns is-mobile is-variable is-1" v-if="!isViewMode">
       <div class="column is-half">
-        <label>Name</label>
+        <label>
+          Name
+          <sup class="name-info has-tooltip-right" data-tooltip="<name> [+|-]<bonus>">
+            <span class="fa-stack">
+              <i class="fas fa-circle fa-stack-2x"></i>
+              <i class="fas fa-question fa-stack-1x fa-inverse"></i>
+            </span>
+          </sup>
+        </label>
       </div>
       <div class="column is-one-quarter">
         <label>Initiative</label>
@@ -34,6 +42,7 @@
     <template slot="footer">
       <button v-if="!isViewMode" @click="sort" class="button is-secondary is-small">Sort</button>
       <button v-if="!isViewMode" @click="clear" class="button is-secondary is-small">Clear</button>
+      <button v-if="!isViewMode" @click="roll" class="button is-secondary is-small">Roll</button>
       <button @click="toggleViewMode" class="button is-secondary is-small">
         <span v-if="!isViewMode">View Mode</span>
         <span v-else>Edit Mode</span>
@@ -112,6 +121,10 @@
         this.init.clear();
       },
 
+      roll() {
+        this.init.roll();
+      },
+
       toggleViewMode() {
         this.isViewMode = !this.isViewMode;
       },
@@ -125,8 +138,7 @@
       },
 
       addNewInitiative() {
-        if (this.newInitiative.name && this.newInitiative.value !== "") {
-          this.init.add(this.newInitiative.name, this.newInitiative.value);
+        if (this.init.add(this.newInitiative.name, this.newInitiative.value)) {
           this.newInitiative = initiativeFactory();
           this.$refs.nameInput.focus();
         }
@@ -144,6 +156,10 @@
 </script>
 
 <style lang="scss" scoped>
+
+  .name-info {
+    font-size: 0.4em;
+  }
 
   .initiative {
     width: 18rem;

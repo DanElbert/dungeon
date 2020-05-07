@@ -4,14 +4,14 @@ import InitiativeData from "../InitiativeData";
 import { generateActionId } from "../Actions";
 
 export class InitiativeManager extends Eventer {
-  constructor(container, gameId, disableFloating) {
+  constructor(container, campaign_id, disableFloating) {
     super();
     this.container = container;
     this.data = new InitiativeData();
 
     this.data.on("changed", () => this.handleDataChanged());
 
-    this.initiativeActionManager = new ActionMessenger("InitiativeChannel", { game_id: gameId }, message => {
+    this.initiativeActionManager = new ActionMessenger("InitiativeChannel", { campaign_id: campaign_id }, message => {
       this.handleAddActionMessage(message);
     });
     this.initiativeActionManager.ignoreReflections = false;

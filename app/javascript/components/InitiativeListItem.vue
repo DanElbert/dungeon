@@ -1,7 +1,9 @@
 <template>
   <div class="initiative-item field has-addons" :class="{'initiative-item-delete': deleting}">
     <p class="control name">
-      <span class="button">{{value.name}}</span>
+      <span class="button has-tooltip-top" :data-tooltip="value.source">
+        {{value.name}}<sup v-if="!!value.bonus"><i v-if="false" class="fas fa-dice-d20"></i>{{value.bonus}}</sup>
+      </span>
     </p>
     <p class="control" v-if="!editMode">
       <span @click="startEdit" class="button value">{{value.value}}</span>
@@ -61,6 +63,11 @@
 </script>
 
 <style lang="scss">
+
+  sup {
+    font-size: 60%;
+    padding-left: 0.33em;
+  }
 
   .initiative-item {
     width: 100%;

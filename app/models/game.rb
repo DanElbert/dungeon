@@ -4,13 +4,9 @@ class Game < ApplicationRecord
 
   has_one :board, :dependent => :destroy
   has_many :board_detection_sessions, :dependent => :destroy
-  has_many :initiatives, -> { order(:sort_order) }, :dependent => :destroy, :inverse_of => :game
-  has_many :initiative_histories, -> { order(use_count: :desc) }, dependent: :destroy, :inverse_of => :game
   belongs_to :campaign
 
   accepts_nested_attributes_for :board, update_only: true
-  accepts_nested_attributes_for :initiatives, allow_destroy: true
-  accepts_nested_attributes_for :initiative_histories
 
   validates :board, :presence => true
   validates :name, :presence => true
@@ -52,13 +48,6 @@ class Game < ApplicationRecord
     self.campaign.user_id if self.campaign
   end
 
-  def initiative_history_names
-    histories = InitiativeHistory.where(game: Game.where(campaign_id: self.campaign_id))
-    name_map = Hash.new { |h, k| h[k] = 0 }
-    histories.each { |h| name_map[h.name] += h.use_count }
-    name_map.sort_by { |k, v| -v }.map { |kv| kv[0] }
-  end
-
   def as_json(options = {})
     user = User.find(options[:current_user_id])
     {
@@ -67,8 +56,8 @@ class Game < ApplicationRecord
         :status => status,
         :is_owner => is_owner(options[:current_user_id]),
         :board => board.as_json(),
-        :initiative => initiatives.to_a.map { |i| {:id => i.id, :name => i.name, :value => i.value} },
-        :initiative_names => initiative_history_names,
+        :initiative => self.campaign.initiatives.as_json,
+        :initiative_names => self.campaign.initiative_history_names,
         :drawing_images => campaign.drawing_images.active.without_data.to_a.map(&:as_json),
         :token_images => UserTokenImage.for_user(options[:current_user_id]).without_data.to_a.map(&:as_json) + campaign.token_images.active.without_data.to_a.map(&:as_json),
         :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters,

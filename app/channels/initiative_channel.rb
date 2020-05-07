@@ -1,21 +1,21 @@
 class InitiativeChannel < ApplicationCable::Channel
 
   def subscribed
-    @game = Game.find(params[:game_id])
-    stream_for @game
+    @campaign = Campaign.find(params[:campaign_id])
+    stream_for @campaign
   end
 
   def add_action(data)
-    game = Game.includes(:board, :initiatives, :initiative_histories).find(@game.id)
+    campaign = Campaign.includes(:initiatives, :initiative_histories).find(@campaign.id)
     action_data = data
 
-    unless game
-      message['error'] = "Invalid Game Id"
+    unless campaign
+      message['error'] = "Invalid Campaign Id"
       return
     end
 
-    game.transaction do
-      extant_init_ids = game.initiatives.map(&:id)
+    campaign.transaction do
+      extant_init_ids = campaign.initiatives.map(&:id)
       sort_idx = 0
 
       init_attrs = action_data['initiative'].map do |i|
@@ -26,6 +26,8 @@ class InitiativeChannel < ApplicationCable::Channel
             id: id,
             name: i['name'],
             value: i['value'],
+            bonus: i['bonus'],
+            source: i['source'],
             sort_order: sort_idx += 1,
             _destroy: i['_destroy']
         }
@@ -34,7 +36,7 @@ class InitiativeChannel < ApplicationCable::Channel
       init_attrs.reject! { |i| i[:id] == -1}
 
       history_attrs = init_attrs.select { |i| !i[:_destroy] }.map { |i| i[:name] }.map do |n|
-        extant_history = game.initiative_histories.detect { |h| h.name == n }
+        extant_history = campaign.initiative_histories.detect { |h| h.name == n }
         {
             id: extant_history ? extant_history.id : nil,
             name: n,
@@ -43,15 +45,15 @@ class InitiativeChannel < ApplicationCable::Channel
       end
 
 
-      game.update!({initiatives_attributes: init_attrs, initiative_histories_attributes: history_attrs})
+      campaign.update!({initiatives_attributes: init_attrs, initiative_histories_attributes: history_attrs})
 
-      game.initiatives.reload
-      action_data['initiative'] = game.initiatives.as_json
-      action_data['initiative_names'] = game.initiative_history_names
+      campaign.initiatives.reload
+      action_data['initiative'] = campaign.initiatives.as_json
+      action_data['initiative_names'] = campaign.initiative_history_names
 
     end
 
-    InitiativeChannel.broadcast_to(@game, action_data)
+    InitiativeChannel.broadcast_to(@campaign, action_data)
   end
 
 end
