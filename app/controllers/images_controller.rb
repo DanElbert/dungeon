@@ -111,7 +111,7 @@ class ImagesController < ApplicationController
       when 'UserTokenImage'
         user_token_images_path
       else
-        campaign_images_path(@campaign)
+        campaign_images_path(@image.campaign)
     end
   end
 
