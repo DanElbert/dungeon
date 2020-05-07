@@ -15,7 +15,7 @@ services:
     command: ["nginx", "-g", "daemon off;"]
     labels:
       traefik.enable: "true"
-      traefik.http.routers.dungeon.rule: "Host(`${HOSTNAME}`) && PathPrefix(`/assets/`, `/packs/`, `/images/`, `/favicon/`, `/favicon.ico`, `/robots.txt`)"
+      traefik.http.routers.dungeon.rule: "Host(`${HOSTNAME}`) && Method(`GET`) && PathPrefix(`/assets/`, `/packs/`, `/images/`, `/favicon/`, `/favicon.ico`, `/robots.txt`)"
       traefik.http.routers.dungeon.entrypoints: websecure
       traefik.http.routers.dungeon.tls: "true"
       traefik.http.routers.dungeon.tls.certResolver: cert-resolver

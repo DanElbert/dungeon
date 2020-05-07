@@ -15,13 +15,10 @@ services:
     command: ["nginx", "-g", "daemon off;"]
     labels:
       traefik.enable: "true"
-      traefik.http.routers.dungeon.rule: "Host(`${HOSTNAME}`) && PathPrefix(`/assets/`, `/packs/`, `/images/`, `/favicon/`, `/favicon.ico`, `/robots.txt`)"
+      traefik.http.routers.dungeon.rule: "Host(`${HOSTNAME}`) && Method(`GET`) && PathPrefix(`/assets/`, `/packs/`, `/images/`, `/favicon/`, `/favicon.ico`, `/robots.txt`)"
       traefik.http.routers.dungeon.entrypoints: websecure
       traefik.http.routers.dungeon.tls: "true"
       traefik.http.routers.dungeon.tls.certResolver: cert-resolver
-      traefik.http.routers.dungeon-redirect.rule: "Host(`${HOSTNAME}`)"
-      traefik.http.routers.dungeon-redirect.entrypoints: web
-      traefik.http.routers.dungeon-redirect.middlewares: redirect@file
 
   web1: &web
     image: 'registry.elbert.us/dungeon:${IMAGE_TAG}'
