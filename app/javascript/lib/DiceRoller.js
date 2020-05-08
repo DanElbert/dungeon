@@ -1,28 +1,22 @@
-const poolSize = 250;
-const pool = new Uint16Array(poolSize);
-const poolIntMax = Math.pow(2, 16) - 1;
-let poolIndex = poolSize;
+const intMax16 = Math.pow(2, 16) - 1;
+const randomData16 = new Uint16Array(1);
 
-function getPoolNumber() {
-  if (poolIndex >= poolSize) {
-    poolIndex = 0;
-    window.crypto.getRandomValues(pool);
-  }
-
-  return pool[poolIndex++];
+function getRandomBits16() {
+  window.crypto.getRandomValues(randomData16);
+  return randomData16[0];
 }
 
 export function rollDie(sides) {
-    if (sides > 100 || sides < 2) {
-        throw `Invalid sides: ${sides}`;
-    }
+  if (sides > 100 || sides < 2) {
+    throw `Invalid sides: ${sides}`;
+  }
 
-    const maxInt = poolIntMax - (poolIntMax % sides);
+  const maxInt = intMax16 - (intMax16 % sides);
 
-    while(true) {
-        let r = getPoolNumber();
-        if (r < maxInt) {
-            return (r % sides) + 1;
-        }
+  while (true) {
+    let r = getRandomBits16();
+    if (r < maxInt) {
+      return (r % sides) + 1;
     }
+  }
 }
