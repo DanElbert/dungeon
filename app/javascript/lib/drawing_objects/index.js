@@ -10,6 +10,7 @@ import { CircleDrawing, LineDrawing, SquareDrawing } from "./ShapeDrawing";
 import { TiledImageDrawing } from "./TiledImageDrawing";
 import { TokenDrawing } from "./TokenDrawing";
 import { LevelHoleDrawing } from "./LevelHoleDrawing";
+import { MoveIndicatorDrawing } from "./MoveIndicatorDrawing";
 
 export {
   BaseDrawing,
@@ -19,6 +20,7 @@ export {
   DrawingCollection,
   ImageDrawing,
   LineDrawing,
+  MoveIndicatorDrawing,
   OverlandMeasureTemplate,
   PathfinderConeTemplate,
   PathfinderLineTemplate,

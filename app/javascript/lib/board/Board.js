@@ -8,6 +8,7 @@ import { MultiLevelDrawingLayer } from "./MultiLevelDrawingLayer";
 import { ImageCache } from "./ImageCache";
 import { InitiativeManager } from "./InitiativeManager";
 import { MainMenu } from "./MainMenu";
+import { MoveIndicatorLayer } from "./MoveIndicatorLayer";
 import { PingLayer } from "./PingLayer";
 import { TemplateLayer } from "./TemplateLayer";
 import { TokenLayer } from "./TokenLayer";
@@ -59,6 +60,7 @@ export function Board(canvas, gameId) {
   this.undo_stack = [];
 
   this.drawingLayer = new MultiLevelDrawingLayer(this.drawingSettings);
+  this.moveIndicatorLayer = new MoveIndicatorLayer(this);
   this.pingLayer = new PingLayer(this);
   this.tokenLayer = new TokenLayer(this);
   this.labelLayer = new ViewPortLabels(this, true);
@@ -403,6 +405,7 @@ export function Board(canvas, gameId) {
         this.renderTokens();
         this.renderTool();
         this.renderBoardGrid();
+        this.moveIndicatorLayer.draw(this.drawing);
         this.renderPings();
         this.labelLayer.draw();
         this.renderBorder();

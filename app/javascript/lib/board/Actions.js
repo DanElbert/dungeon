@@ -2,6 +2,7 @@ import { Vector2, TransformMatrix, Rectangle, Geometry } from "../geometry";
 import { Action, actionTypes } from "../Actions";
 import {
   ImageDrawing,
+  MoveIndicatorDrawing,
   OverlandMeasureTemplate,
   PathfinderConeTemplate,
   PathfinderLineTemplate,
@@ -712,6 +713,73 @@ class AddCampaignImageAction extends Action {
   }
 }
 
+class AddMoveIndicator extends Action {
+  apply(board) {
+    let target = null;
+
+    if (this.properties.targetType === "Token") {
+      target = board.tokenLayer.getToken(this.properties.targetUid);
+    } else if (this.properties.targetType === "Template") {
+      target = board.templateLayer.getTemplate(this.properties.targetUid);
+    }
+
+    if (target) {
+      const i = new MoveIndicatorDrawing(
+        this.uid,
+        board,
+        new Vector2(this.properties.startPosition),
+        new Vector2(this.properties.endPosition),
+        target,
+        null);
+
+      board.moveIndicatorLayer.add(i);
+    }
+  }
+
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "targetType", "targetUid", "startPosition", "endPosition"]
+    })
+  }
+}
+
+class UpdateMoveIndicator extends Action {
+  apply(board) {
+    const i = board.moveIndicatorLayer.get(this.properties.targetUid);
+    if (i) {
+      const props = {};
+      if ("endPosition" in this.properties) {
+        props.endPosition = new Vector2(this.properties.endPosition);
+      }
+
+      if ("startPosition" in this.properties) {
+        props.position = new Vector2(this.properties.startPosition);
+      }
+
+      i.touch();
+      i.updateProperties(props);
+    }
+  }
+
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "targetUid"]
+    })
+  }
+}
+
+class RemoveMoveIndicator extends Action {
+  apply(board) {
+    board.moveIndicatorLayer.remove(this.properties.targetUid);
+  }
+
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "targetUid"]
+    })
+  }
+}
+
 actionTypes["labelAction"] = LabelAction;
 actionTypes["penAction"] = PenAction;
 actionTypes["addFogPenAction"] = AddFogPenAction;
@@ -746,6 +814,9 @@ actionTypes["removeLevelAction"] = RemoveLevelAction;
 actionTypes["updateLevelAction"] = UpdateLevelAction;
 actionTypes["levelHoleAction"] = LevelHoleAction;
 actionTypes["addCampaignImageAction"] = AddCampaignImageAction
+actionTypes["addMoveIndicator"] = AddMoveIndicator;
+actionTypes["updateMoveIndicator"] = UpdateMoveIndicator;
+actionTypes["removeMoveIndicator"] = RemoveMoveIndicator;
 
 // defunct actions
 actionTypes["clearTokensAction"] = Action;

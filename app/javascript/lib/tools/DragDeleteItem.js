@@ -17,6 +17,7 @@ export class DragDeleteItem extends Eventer {
     this.itemDragging = false;
     this.itemDragStartCell = null;
     this.itemDragCurrentCell = null;
+    this.moveIndicatorId = null;
   }
 
   get selectedItem() {
@@ -24,8 +25,24 @@ export class DragDeleteItem extends Eventer {
   }
 
   set selectedItem(val) {
+    if (val === this._selectedItem) {
+      return;
+    }
+
+    if (this.moveIndicatorId) {
+      const action = { uid: generateActionId(), actionType: "removeMoveIndicator", targetUid: this.moveIndicatorId };
+      this.board.addAction(action, null, true);
+      this.moveIndicatorId = null;
+    }
+
     this._selectedItem = val;
+
     if (val) {
+      const targetType = (val instanceof TokenDrawing) ? "Token" : "Template";
+      const action = { uid: generateActionId(), actionType: "addMoveIndicator", targetType: targetType, targetUid: val.uid, startPosition: val.position.toArray(), endPosition: val.position.toArray() };
+      this.board.addAction(action, null, true);
+
+      this.moveIndicatorId = action.uid;
       this.selectedItemOriginalPosition = val.position;
       this.trigger("selected");
     } else {
@@ -67,6 +84,15 @@ export class DragDeleteItem extends Eventer {
     board.event_manager.on(this.eventName("drag"), function(mapEvt) {
       if (self.itemDragging) {
         self.itemDragCurrentCell = mapEvt.mapPointCell;
+
+        if (self.moveIndicatorId) {
+          const i = board.moveIndicatorLayer.get(self.moveIndicatorId);
+          const newPosition = self.calcCurrentPosition();
+          if (i && (i.endPosition.x !== newPosition.x || i.endPosition.y !== newPosition.y)) {
+            const action = { uid: generateActionId(), actionType: "updateMoveIndicator", targetUid: self.moveIndicatorId, endPosition: newPosition.toArray() };
+            self.board.addAction(action, null, true);
+          }
+        }
       }
     });
 
@@ -94,6 +120,7 @@ export class DragDeleteItem extends Eventer {
   }
 
   disable() {
+    this.selectedItem = null;
     this.enabled = false;
     this.board.event_manager.off('.DragDeleteItem' + this.eventNamespace);
   }
@@ -111,24 +138,32 @@ export class DragDeleteItem extends Eventer {
     return null;
   }
 
+  calcCurrentPosition() {
+    const dx = (this.itemDragCurrentCell[0] - this.itemDragStartCell[0]) * this.board.drawingSettings.cellSize;
+    const dy = (this.itemDragCurrentCell[1] - this.itemDragStartCell[1]) * this.board.drawingSettings.cellSize;
+
+    const originalPosition = this.selectedItemOriginalPosition;
+    return originalPosition.translate(dx, dy);
+  }
+
   draw() {
-    var offset = null;
-
-    if (this.itemDragging) {
-      var dx = this.itemDragCurrentCell[0] - this.itemDragStartCell[0];
-      var dy = this.itemDragCurrentCell[1] - this.itemDragStartCell[1];
-      offset = new Vector2(dx, dy);
-    } else if (this.selectedItem) {
-      offset = new Vector2(0, 0);
-    }
-
-    if (offset) {
-      this.selectedItem.drawHighlight(this.board.drawing, offset.scale(this.board.drawingSettings.cellSize, this.board.drawingSettings.cellSize));
-
-      if (offset.x !== 0 || offset.y !== 0) {
-        this.board.drawing.drawMovementLine(this.itemDragStartCell, this.itemDragCurrentCell, this.board.getZoom());
-      }
-    }
+    // var offset = null;
+    //
+    // if (this.itemDragging) {
+    //   var dx = this.itemDragCurrentCell[0] - this.itemDragStartCell[0];
+    //   var dy = this.itemDragCurrentCell[1] - this.itemDragStartCell[1];
+    //   offset = new Vector2(dx, dy);
+    // } else if (this.selectedItem) {
+    //   offset = new Vector2(0, 0);
+    // }
+    //
+    // if (offset) {
+    //   this.selectedItem.drawHighlight(this.board.drawing, offset.scale(this.board.drawingSettings.cellSize, this.board.drawingSettings.cellSize));
+    //
+    //   if (offset.x !== 0 || offset.y !== 0) {
+    //     this.board.drawing.drawMovementLine(this.itemDragStartCell, this.itemDragCurrentCell, this.board.getZoom());
+    //   }
+    // }
   }
 
   deleteCurrentItem() {
@@ -149,11 +184,8 @@ export class DragDeleteItem extends Eventer {
     if (this.selectedItem) {
       let actionType = (this.selectedItem instanceof TokenDrawing) ? "updateTokenAction" : "updateTemplateAction";
 
-      const dx = (this.itemDragCurrentCell[0] - this.itemDragStartCell[0]) * this.board.drawingSettings.cellSize;
-      const dy = (this.itemDragCurrentCell[1] - this.itemDragStartCell[1]) * this.board.drawingSettings.cellSize;
-
       const originalPosition = this.selectedItemOriginalPosition;
-      const newPosition = originalPosition.translate(dx, dy);
+      const newPosition = this.calcCurrentPosition();
 
       const moveAction = { uid: generateActionId(), actionType: actionType, actionId: this.selectedItem.uid, position: newPosition };
       const undoAction = { uid: generateActionId(), actionType: actionType, actionId: this.selectedItem.uid, position: originalPosition };

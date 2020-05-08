@@ -68,7 +68,7 @@ class TokenDrawing extends BaseDrawing {
     super.clearDrawing();
   }
 
-  executeDraw(drawing, drawBounds, level) {
+  executeDraw(drawing, drawBounds, detailLevel) {
     const cellPosition = Geometry.getCell(this.position.toArray(), this.cellSize);
     drawing.drawCircleTiles(cellPosition[0], cellPosition[1], this.tokenCellSize, this.tokenCellSize, this.color);
     //drawing.drawToken(cellPosition[0], cellPosition[1], this.tokenCellSize, this.tokenCellSize, this.color, this.text, this.fontColor, this.fontSize);
