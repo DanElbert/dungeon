@@ -26,5 +26,3 @@ export function rollDie(sides) {
         }
     }
 }
-
-window.__rollDie = rollDie;
