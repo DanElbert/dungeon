@@ -13,6 +13,7 @@ export class DragDeleteItem extends Eventer {
     this.instantDrag = false;
 
     this._selectedItem = null;
+    this.selectedItemOriginalPosition = null;
     this.itemDragging = false;
     this.itemDragStartCell = null;
     this.itemDragCurrentCell = null;
@@ -25,8 +26,10 @@ export class DragDeleteItem extends Eventer {
   set selectedItem(val) {
     this._selectedItem = val;
     if (val) {
+      this.selectedItemOriginalPosition = val.position;
       this.trigger("selected");
     } else {
+      this.selectedItemOriginalPosition = null;
       this.trigger("unselected")
     }
   }
@@ -149,33 +152,13 @@ export class DragDeleteItem extends Eventer {
       const dx = (this.itemDragCurrentCell[0] - this.itemDragStartCell[0]) * this.board.drawingSettings.cellSize;
       const dy = (this.itemDragCurrentCell[1] - this.itemDragStartCell[1]) * this.board.drawingSettings.cellSize;
 
-      const originalPosition = this.selectedItem.position;
+      const originalPosition = this.selectedItemOriginalPosition;
       const newPosition = originalPosition.translate(dx, dy);
 
       const moveAction = { uid: generateActionId(), actionType: actionType, actionId: this.selectedItem.uid, position: newPosition };
       const undoAction = { uid: generateActionId(), actionType: actionType, actionId: this.selectedItem.uid, position: originalPosition };
 
       this.board.addAction(moveAction, undoAction, true);
-
-      // let removeType = "removeTemplateAction";
-      // if (this.selectedItem instanceof TokenDrawing) {
-      //   removeType = "removeTokenAction";
-      // }
-      //
-      // const dx = (this.itemDragCurrentCell[0] - this.itemDragStartCell[0]) * this.board.drawingSettings.cellSize;
-      // const dy = (this.itemDragCurrentCell[1] - this.itemDragStartCell[1]) * this.board.drawingSettings.cellSize;
-      //
-      // const removeAction = {actionType: removeType, actionId: this.selectedItem.uid, uid: generateActionId()};
-      // const addAction = this.selectedItem.clone(generateActionId()).translate(dx, dy).toAction();
-      //
-      // const removeNew = {actionType: removeType, actionId: addAction.uid, uid: generateActionId()};
-      // const restoreOld = this.selectedItem.clone(generateActionId()).toAction();
-      //
-      // this.board.addAction(
-      //   {actionType: "compositeAction", actionList: [removeAction, addAction]},
-      //   {actionType: "compositeAction", actionList: [removeNew, restoreOld]},
-      //   true
-      // );
 
       this.selectedItem = null;
     }

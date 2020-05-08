@@ -1,4 +1,5 @@
 import Eventer from "./Eventer";
+import { rollDie } from "./DiceRoller";
 
 let idCounter = 0;
 
@@ -104,7 +105,7 @@ class InitiativeData extends Eventer {
   }
 
   rollForInitItem(i) {
-    const d20 = () => Math.floor(Math.random() * 20) + 1;
+    const d20 = () => rollDie(20);
     let diceRolls = [d20()];
     let diceFunc = Math.max;
     let bonus = i.bonus || 0;
