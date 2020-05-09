@@ -780,6 +780,23 @@ class RemoveMoveIndicator extends Action {
   }
 }
 
+class UpdateImageUrl extends PersistentAction {
+  apply(board) {
+    const image = board.drawingLayer.findAction(this.properties.targetUid);
+    if (image) {
+      setTimeout(() => {
+        image.updateUrl(this.properties.newUrl);
+      }, );
+    }
+  }
+
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["uid", "targetUid", "newUrl"]
+    })
+  }
+}
+
 actionTypes["labelAction"] = LabelAction;
 actionTypes["penAction"] = PenAction;
 actionTypes["addFogPenAction"] = AddFogPenAction;
@@ -817,6 +834,7 @@ actionTypes["addCampaignImageAction"] = AddCampaignImageAction
 actionTypes["addMoveIndicator"] = AddMoveIndicator;
 actionTypes["updateMoveIndicator"] = UpdateMoveIndicator;
 actionTypes["removeMoveIndicator"] = RemoveMoveIndicator;
+actionTypes["updateImageUrl"] = UpdateImageUrl;
 
 // defunct actions
 actionTypes["clearTokensAction"] = Action;

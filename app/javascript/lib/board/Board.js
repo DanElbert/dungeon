@@ -20,6 +20,11 @@ import { generateActionId, attachActionMethods } from "../Actions";
 
 export function Board(canvas, gameId) {
 
+  this.switchImageHack = (uid, newUrl) => {
+    const action = { uid: generateActionId(), actionType: "updateImageUrl", targetUid: uid, newUrl: newUrl };
+    this.addAction(action, null, true);
+  }
+
   this.gameId = gameId;
   this.invalid = true;
   this.networkDown = false;

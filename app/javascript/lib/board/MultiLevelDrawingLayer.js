@@ -197,6 +197,20 @@ export class MultiLevelDrawingLayer extends Eventer {
     });
   }
 
+  findAction(id) {
+    for (let x = 0; x < this.levelManager.levels.length; x++) {
+      let level = this.levelManager.levels[x];
+      let dl = this.drawingLayers[level.id];
+      if (dl) {
+        let a = dl.findAction(id);
+        if (a) {
+          return a;
+        }
+      }
+    }
+    return null;
+  }
+
   invalidateRectangle(rect, includeFog) {
     this.forEachLevel(level => {
       const dl = this.drawingLayers[level.id];

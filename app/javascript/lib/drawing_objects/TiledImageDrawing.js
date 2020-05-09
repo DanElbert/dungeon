@@ -12,12 +12,19 @@ class TiledImageDrawing extends DrawingCollection {
     this.board = board;
     this.size = size;
     this.imageJson = null;
-    this.imageJsonFetching = false;
+    this.isFetching = false;
     this.fallbackImage = null;
 
     this.imageDrawings = new Map();
 
     this.buildActions();
+  }
+
+  updateUrl(newUrl) {
+    this.invalidateHandler(() => {
+      this.url = newUrl;
+      this.forceBuildActions();
+    });
   }
 
   calculateBounds() {
@@ -34,41 +41,51 @@ class TiledImageDrawing extends DrawingCollection {
     return this.getRotatedRecBounds(rec, this.angle);
   }
 
-  buildActions() {
+  calculateFallbackLevel(tileSize, width, height) {
+    let dim = Math.max(width, height);
+    let lvl = 1;
+    while (dim > tileSize) {
+      lvl += 1;
+      dim = dim / 2;
+    }
+    return lvl;
+  }
 
-    if (this.imageJson === null && this.imageJsonFetching === false) {
-      this.imageJsonFetching = true;
-      var self = this;
+  forceBuildActions() {
+    this.imageJson = null;
+    this.fallbackImage = null;
+    this.imageDrawings = new Map();
+    this.children = [];
+    this.buildActions();
+  }
 
-      Api.getJson(this.url).then(data => {
-        var calculateFallbackLevel = function(tileSize, width, height) {
-          var dim = Math.max(width, height);
-          var lvl = 1;
-          while (dim > tileSize) {
-            lvl += 1;
-            dim = dim / 2;
-          }
-          return lvl;
-        };
-
-        var fallbackLevel = calculateFallbackLevel(data.tile_size, self.size.x, self.size.y);
-        var fallbackUrl = "/images/" + data.id + "/" + fallbackLevel + "/0_0." + data.extension;
-        self.board.imageCache.getImageAsync(fallbackUrl, -1)
-          .then(i => {
-            self.fallbackImage = i;
-            self.imageJsonFetching = false;
-            self.imageJson = data;
-            self.buildActions();
-            self.invalidate();
-          })
-          .catch(e => {
-            throw e;
-          });
-      });
+  async buildActions() {
+    if (this.isFetching === true) {
+      return;
     }
 
-    if (this.imageJson === null) {
-      return;
+    this.isFetching = true;
+    try {
+      const originalUrl = this.url;
+
+      const data = await Api.getJson(this.url);
+
+      const fallbackLevel = this.calculateFallbackLevel(data.tile_size, this.size.x, this.size.y);
+      const fallbackUrl = "/images/" + data.id + "/" + fallbackLevel + "/0_0." + data.extension;
+
+      const image = await this.board.imageCache.getImageAsync(fallbackUrl, -1);
+
+      if (originalUrl === this.url) {
+        this.imageJson = data;
+        this.fallbackImage = image;
+      } else {
+        // url has changed while loading; start over
+        setTimeout(() => this.buildActions(), 10);
+        return null;
+      }
+
+    } finally {
+      this.isFetching = false;
     }
 
     this.bounds();
@@ -130,6 +147,7 @@ class TiledImageDrawing extends DrawingCollection {
     }
 
     this.updateGeometry();
+    this.invalidate();
   }
 
   updateGeometry() {

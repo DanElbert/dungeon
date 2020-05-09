@@ -39,6 +39,10 @@ export class DrawingLayer {
     this.invalidateRectangle(a.bounds(), true);
   }
 
+  findAction(id) {
+    return this.drawingActions.get(id);
+  }
+
   removeAction(id) {
     let a = this.drawingActions.get(id);
     if (a) {

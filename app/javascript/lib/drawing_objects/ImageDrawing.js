@@ -16,6 +16,14 @@ class ImageDrawing extends BaseDrawing {
     this.fallbackImageWriter = null;
   }
 
+  updateUrl(newUrl) {
+    this.url = newUrl;
+    this.fallbackImage = null;
+    this.transformedImage = null;
+    this.fallbackImageWriter = null;
+    this.invalidate();
+  }
+
   calculateBounds() {
     this.transformedImage = null;
     var height = this.size.y * this.scale;
