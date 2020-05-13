@@ -36,13 +36,14 @@ export class Drawing {
     this.context.clearRect(0, 0, columns * this.cellSize, rows * this.cellSize);
   }
 
-  drawMovementLine(start, end, zoom) {
+  drawMovementLine(start, end, color, width, zoom) {
     var startPoint = Geometry.getCellMidpoint(start, this.cellSize);
     var endPoint = Geometry.getCellMidpoint(end, this.cellSize);
 
     var totalMovement = Geometry.getCellDistance(start, end) * this.cellSizeFeet;
 
-    this.drawMeasureLine(startPoint, endPoint, feetToText(totalMovement), null, null, zoom);
+    this.drawMeasureLine(startPoint, endPoint, feetToText(totalMovement), color, width, zoom);
+    return totalMovement;
   }
 
   drawMeasureLine(start, end, label, color, width, zoom) {
@@ -323,10 +324,10 @@ export class Drawing {
     this.drawLines(color, lineWidth, lines);
   }
 
-  drawCircleTiles(col, row, width, height, color, border) {
+  drawFilledEllipse(x, y, width, height, color, border) {
     this.context.save();
     this.context.fillStyle = color;
-    this.drawEllipse(col * this.cellSize, row * this.cellSize, width * this.cellSize, height * this.cellSize);
+    this.drawEllipse(x, y, width, height);
     this.context.fill();
 
     if (border) {

@@ -44,7 +44,9 @@ class User < ApplicationRecord
     {
         id: self.id,
         name: self.name,
-        username: self.username
+        username: self.username,
+        display_name: self.display_name,
+        ping_color: self.ping_color
     }
   end
 

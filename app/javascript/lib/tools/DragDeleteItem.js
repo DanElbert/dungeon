@@ -39,7 +39,16 @@ export class DragDeleteItem extends Eventer {
 
     if (val) {
       const targetType = (val instanceof TokenDrawing) ? "Token" : "Template";
-      const action = { uid: generateActionId(), actionType: "addMoveIndicator", targetType: targetType, targetUid: val.uid, startPosition: val.position.toArray(), endPosition: val.position.toArray() };
+      const action = {
+        uid: generateActionId(),
+        actionType: "addMoveIndicator",
+        targetType: targetType,
+        targetUid: val.uid,
+        startPosition: val.position.toArray(),
+        endPosition: val.position.toArray(),
+        label: this.board.user.display_name || this.board.user.username,
+        color: this.board.user.ping_color
+      };
       this.board.addAction(action, null, true);
 
       this.moveIndicatorId = action.uid;

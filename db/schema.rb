@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_07_031136) do
+ActiveRecord::Schema.define(version: 2020_05_13_052105) do
 
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 2020_05_07_031136) do
     t.string "auth_token"
     t.string "username"
     t.string "ping_color"
+    t.string "display_name"
     t.index ["email"], name: "index_users_on_email"
   end
 

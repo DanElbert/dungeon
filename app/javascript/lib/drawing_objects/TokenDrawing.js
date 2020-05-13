@@ -1,6 +1,12 @@
 import { BaseDrawing } from "./BaseDrawing";
 import { Geometry, Rectangle, Vector2 } from "../geometry";
 
+let stackOrderNumber = 0;
+
+function getNextStackOrder() {
+  return stackOrderNumber++;
+}
+
 class TokenDrawing extends BaseDrawing {
   constructor(uid, board, position, tokenCellSize, color, fontColor, fontSize, text, imageUrl, level) {
     super(uid, board, position, 1, 0, false, level);
@@ -16,8 +22,12 @@ class TokenDrawing extends BaseDrawing {
     this.loadedImage = null;
     this.loadedImageUrl = null;
     this.loadedCellSize = null;
-
     this.imageCacheSizeFactor = 2;
+    this.touch()
+  }
+
+  touch() {
+    this.sort = getNextStackOrder();
   }
 
   containsPoint(point) {
@@ -68,22 +78,41 @@ class TokenDrawing extends BaseDrawing {
     super.clearDrawing();
   }
 
-  executeDraw(drawing, drawBounds, detailLevel) {
-    const cellPosition = Geometry.getCell(this.position.toArray(), this.cellSize);
-    drawing.drawCircleTiles(cellPosition[0], cellPosition[1], this.tokenCellSize, this.tokenCellSize, this.color);
-    //drawing.drawToken(cellPosition[0], cellPosition[1], this.tokenCellSize, this.tokenCellSize, this.color, this.text, this.fontColor, this.fontSize);
-
-    if (this.imageUrl) {
-      this.drawTokenImage(drawing);
-    }
-
-    const fontPoint = [cellPosition[0] * this.cellSize, cellPosition[1] * this.cellSize];
-    fontPoint[0] += (this.tokenCellSize * this.cellSize) / 2;
-    fontPoint[1] += (this.tokenCellSize * this.cellSize) / 2;
-    drawing.drawText(this.text, fontPoint, this.fontSize, this.fontColor);
+  draw(drawing, otherLocationTokens) {
+    this.otherLocationTokens = otherLocationTokens;
+    super.draw(drawing);
   }
 
-  drawTokenImage(drawing) {
+  executeDraw(drawing, drawBounds, detailLevel) {
+
+    let topLeft = this.position;
+    let size = this.tokenCellSize * this.cellSize;
+
+    const tokensInStack = this.otherLocationTokens.filter(t => t.tokenCellSize === this.tokenCellSize);
+    if (tokensInStack.length > 0) {
+      let stackIndex = tokensInStack.findIndex(t => t.sort > this.sort);
+      if (stackIndex === -1) { stackIndex = tokensInStack.length; }
+
+      const stackSize = tokensInStack.length + 1;
+      const stackOffset = stackIndex * (15 / (stackSize - 1));
+      size = size - 15;
+      topLeft = topLeft.translate(stackOffset, stackOffset);
+    }
+
+    drawing.drawFilledEllipse(topLeft.x, topLeft.y, size, size, this.color);
+
+    if (this.imageUrl) {
+      this.drawTokenImage(drawing, topLeft, size);
+    }
+
+    const fontPoint = [topLeft.x, topLeft.y];
+    fontPoint[0] += size / 2;
+    fontPoint[1] += size / 2;
+    drawing.drawText(this.text, fontPoint, this.fontSize, this.fontColor);
+
+  }
+
+  drawTokenImage(drawing, topLeft, tokenSize) {
     if (this.loading === true) {
       return;
     }
@@ -126,7 +155,7 @@ class TokenDrawing extends BaseDrawing {
     }
 
     if (this.loadedImage !== null) {
-      drawing.context.drawImage(this.loadedImage, this.position.x, this.position.y, this.loadedImage.width / this.imageCacheSizeFactor, this.loadedImage.height / this.imageCacheSizeFactor);
+      drawing.context.drawImage(this.loadedImage, topLeft.x, topLeft.y, tokenSize, tokenSize);
     }
   }
 }

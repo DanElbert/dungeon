@@ -14,11 +14,12 @@ function calculatePixelRatio() {
 }
 
 export class GameBoard {
-  constructor(gameId, element) {
+  constructor(gameId, element, userData) {
     this.gameId = gameId;
+    this.user = userData;
     this.wrapper = element;
     this.pixelRatio = calculatePixelRatio();
-    this.board = new Board(element, this.gameId);
+    this.board = new Board(element, this.gameId, userData);
     this.data = null;
   }
 

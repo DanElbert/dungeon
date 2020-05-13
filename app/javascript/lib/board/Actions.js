@@ -620,6 +620,7 @@ class UpdateTokenAction extends Action {
     const t = board.tokenLayer.getToken(this.properties.actionId);
     if (t) {
       if ("position" in this.properties) {
+        t.touch();
         t.setPosition(new Vector2(this.properties.position))
       }
     }
@@ -730,6 +731,8 @@ class AddMoveIndicator extends Action {
         new Vector2(this.properties.startPosition),
         new Vector2(this.properties.endPosition),
         target,
+        this.properties.label,
+        this.properties.color,
         null);
 
       board.moveIndicatorLayer.add(i);
@@ -738,7 +741,7 @@ class AddMoveIndicator extends Action {
 
   validateData() {
     this.ensureVersionedFields({
-      0: ["uid", "targetType", "targetUid", "startPosition", "endPosition"]
+      0: ["uid", "targetType", "targetUid", "startPosition", "endPosition", "label", "color"]
     })
   }
 }

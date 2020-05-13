@@ -18,7 +18,7 @@ import { ViewPortManager } from "./ViewPortManager";
 import { toggleDungeonFullscreen } from "./Fullscreen";
 import { generateActionId, attachActionMethods } from "../Actions";
 
-export function Board(canvas, gameId) {
+export function Board(canvas, gameId, userData) {
 
   this.switchImageHack = (uid, newUrl) => {
     const action = { uid: generateActionId(), actionType: "updateImageUrl", targetUid: uid, newUrl: newUrl };
@@ -26,6 +26,7 @@ export function Board(canvas, gameId) {
   }
 
   this.gameId = gameId;
+  this.user = userData;
   this.invalid = true;
   this.networkDown = false;
   this.camera = null;

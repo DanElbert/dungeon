@@ -20,7 +20,7 @@ class PathfinderMovementTemplate extends BaseCellTemplate {
     var start = this.startCell();
     var end = this.endCell();
 
-    drawing.drawMovementLine(start, end, this.board.getZoom());
+    drawing.drawMovementLine(start, end, null, null, this.board.getZoom());
   }
 
   clone(uid) {
