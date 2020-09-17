@@ -5,7 +5,7 @@ class CampaignsController < ApplicationController
   # GET /campaigns
   def index
     authorize Campaign
-    @campaigns = policy_scope(Campaign).includes(:user)
+    @campaigns = policy_scope(Campaign).includes(:user).order(:name)
   end
 
   # GET /campaigns/1

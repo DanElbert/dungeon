@@ -6,13 +6,13 @@ class ImagesController < ApplicationController
 
   # GET /campaigns/1/images
   def index
-    @drawing_images = @campaign.drawing_images.active.without_data
-    @token_images = @campaign.token_images.active.without_data
-    @background_images = @campaign.background_images.active.without_data
+    @drawing_images = @campaign.drawing_images.active.without_data.order(:name)
+    @token_images = @campaign.token_images.active.without_data.order(:name)
+    @background_images = @campaign.background_images.active.without_data.order(:name)
   end
 
   def user_index
-    @user_token_images = UserTokenImage.for_user(current_user.id).without_data
+    @user_token_images = UserTokenImage.for_user(current_user.id).without_data.order(:name)
   end
 
   # GET /images/1
