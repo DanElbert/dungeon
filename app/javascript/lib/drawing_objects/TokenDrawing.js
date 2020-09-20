@@ -8,7 +8,7 @@ function getNextStackOrder() {
 }
 
 class TokenDrawing extends BaseDrawing {
-  constructor(uid, board, position, tokenCellSize, color, fontColor, fontSize, text, imageUrl, level) {
+  constructor(uid, board, position, tokenCellSize, color, fontColor, fontSize, text, imageUrl, totalHp, currentHp, icons, level) {
     super(uid, board, position, 1, 0, false, level);
     this.selectable = true;
     this.canInvalidateByBounds = false;
@@ -18,6 +18,9 @@ class TokenDrawing extends BaseDrawing {
     this.fontSize = fontSize;
     this.text = text;
     this.imageUrl = imageUrl;
+    this.totalHp = totalHp;
+    this.currentHp = currentHp;
+    this.icons = icons;
     this.loading = false;
     this.loadedImage = null;
     this.loadedImageUrl = null;
@@ -42,13 +45,12 @@ class TokenDrawing extends BaseDrawing {
   }
 
   clone(uid) {
-    return new TokenDrawing(uid, this.board, this.position, this.tokenCellSize, this.color, this.fontColor, this.fontSize, this.text, this.imageUrl, this.level);
+    return new TokenDrawing(uid, this.board, this.position, this.tokenCellSize, this.color, this.fontColor, this.fontSize, this.text, this.imageUrl, this.totalHp, this.currentHp, this.icons, this.level);
   }
 
   toAction(newUid) {
     return {
-      version: 2,
-      level: this.level,
+      version: 3,
       actionType: "addTokenAction",
       uid: newUid || this.uid,
       position: this.position.toArray(),
@@ -57,7 +59,11 @@ class TokenDrawing extends BaseDrawing {
       fontColor: this.fontColor,
       fontSize: this.fontSize,
       text: this.text,
-      imageUrl: this.imageUrl
+      imageUrl: this.imageUrl,
+      totalHp: this.totalHp,
+      currentHp: this.currentHp,
+      icons: this.icons,
+      level: this.level
     };
   }
 
@@ -156,6 +162,20 @@ class TokenDrawing extends BaseDrawing {
 
     if (this.loadedImage !== null) {
       drawing.context.drawImage(this.loadedImage, topLeft.x, topLeft.y, tokenSize, tokenSize);
+    }
+
+    if (this.currentHp !== 0) {
+      if (this.board.isOwner) {
+        // draw sweet hp counter
+      } else {
+        // draw sweet HP indicator
+      }
+    }
+
+    for (let idx = 0; idx < this.icons.length; x++) {
+      const icon = this.icons[idx];
+      const iconOffset = idx * 10;
+      // draw sweet icon
     }
   }
 }

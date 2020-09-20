@@ -1,6 +1,6 @@
 class CampaignsController < ApplicationController
   after_action :verify_authorized, except: [:about]
-  before_action :set_campaign, only: [:show, :edit, :update, :destroy]
+  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :initiative]
 
   # GET /campaigns
   def index
@@ -48,6 +48,10 @@ class CampaignsController < ApplicationController
   def destroy
     @campaign.destroy
     redirect_to campaigns_url, notice: 'Campaign was successfully destroyed.'
+  end
+
+  def initiative
+
   end
 
   def about

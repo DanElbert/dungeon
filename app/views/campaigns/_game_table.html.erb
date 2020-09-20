@@ -20,9 +20,6 @@
         </div>
 
         <div class="controls">
-          <%= link_to initiative_game_path(game), class: 'button is-secondary', data: {toggle: 'tooltip'}, title: 'Initiative' do %>
-            <span class="far fa-hourglass fa-fw"></span>
-          <% end %>
           <%= if_owner(game) do %>
             <%= link_to edit_game_path(game), class: 'button is-secondary', data: {toggle: 'tooltip'}, title: 'Edit' do %>
               <span class="far fa-edit fa-fw"></span>

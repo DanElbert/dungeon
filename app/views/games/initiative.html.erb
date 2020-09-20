@@ -1,16 +1,4 @@
 
-<div id="game_board_container">
-  <div id="init_box">
-  </div>
+<div style="height: 100%; position: relative">
+  <div data-initiative data-attributes="<%= { campaignId: @game.campaign_id, floating: true, alwaysOpen: true, startPosition: { x: 100, y: 75} }.to_json %>"></div>
 </div>
-
-<script type="text/javascript">
-  const gameId = <%= @game.id %>;
-  const initial_data = <%= raw(@initiative_json) %>;
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const initiative = new InitiativeManager(document.getElementById("init_box"), gameId, true);
-    initiative.update(initial_data.initiative, initial_data.initiative_names);
-  });
-
-</script>

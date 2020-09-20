@@ -20,13 +20,22 @@
 
   export default {
     props: {
+      rotation: {
+        type: Number,
+        required: false,
+        default: 0
+      },
+
+      visible: {
+        type: Boolean,
+        required: false,
+        default: true
+      }
     },
 
     data() {
       return {
-        visible: false,
-        startPosition: new Vector2(-75, -100),
-        rotation: 0
+        startPosition: new Vector2(-75, -100)
       }
     },
 
@@ -45,13 +54,6 @@
     },
 
     methods: {
-      toggle() {
-        this.visible = !this.visible;
-      },
-
-      setRotation(deg) {
-        this.rotation = deg;
-      }
     },
 
     components: {

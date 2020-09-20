@@ -2,12 +2,9 @@ import { ActionMessenger } from "../ActionMessenger";
 import { AnimationManager } from "./Animation";
 import { BackgroundLayer } from "./BackgroundLayer";
 import { BoardEvents } from "./BoardEvents";
-import { CompassManager } from "./CompassManager";
 import { Drawing } from "./Drawing";
 import { MultiLevelDrawingLayer } from "./MultiLevelDrawingLayer";
 import { ImageCache } from "./ImageCache";
-import { InitiativeManager } from "./InitiativeManager";
-import { MainMenu } from "./MainMenu";
 import { MoveIndicatorLayer } from "./MoveIndicatorLayer";
 import { PingLayer } from "./PingLayer";
 import { TemplateLayer } from "./TemplateLayer";
@@ -52,9 +49,7 @@ export function Board(canvas, gameId, userData) {
 
   this.event_manager = new BoardEvents(this);
   this.toolManager = new ToolManager(this);
-  this.mainMenu = new MainMenu(this);
-  this.initiative = null;
-  this.compassManager = new CompassManager(this.mainMenu.getInitiativeContainer());
+  this.compassSettings = { rotation: 0, visible: false };
   //this.boardDetectionManager = new BoardDetectionManager(this, this.toolManager, this.camera, null);
 
   this.isOwner = false;
@@ -236,11 +231,6 @@ export function Board(canvas, gameId, userData) {
       return;
     }
 
-    if (this.initiative === null) {
-      this.initiative = new InitiativeManager(this.mainMenu.getInitiativeContainer(), data.campaign_id);
-    }
-
-    this.initiative.update(data.initiative, data.initiative_names);
     this.board_data = data.board;
     this.isOwner = data.is_owner;
     this.campaign_id = data.campaign_id;
@@ -258,7 +248,7 @@ export function Board(canvas, gameId, userData) {
     this.toolManager.setTemplateSet(data.board.template_type);
     this.toolManager.sharedToolOptions.pingColor.value = data.default_ping_color || "#EE204D";
 
-    this.compassManager.setRotation(data.board.compass_rotation);
+    this.compassSettings.rotation = data.board.compass_rotation;
 
     if (!this.isOwner) {
       this.toolManager.hideFogTools();
@@ -272,7 +262,6 @@ export function Board(canvas, gameId, userData) {
 
 
     this.toolManager.initialize();
-    this.mainMenu.render();
 
     this.imageCache.addImages(data.board.board_images);
   };

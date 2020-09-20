@@ -9,7 +9,6 @@ import Rails from '@rails/ujs';
 import "../lib/BulmaGlue";
 import "../lib/AntiGhostClick";
 import "../lib/MouseWheelEvents";
-import "../lib/board/GameBoard";
 import "../lib/Directives";
 import "../lib/TouchTapDirective";
 import "../lib/drawing_objects";
@@ -23,6 +22,7 @@ import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
 import AppToolColorPicker from "../components/AppToolColorPicker";
 import CompassRose from "../components/CompassRose";
+import ShowGame from "../components/ShowGame";
 import Initiative from "../components/Initiative";
 
 function installComponent(element, component, opts, attrs) {
@@ -51,6 +51,7 @@ window.VUE_COMPONENTS = {
   BoardToolMenu,
   AppToolColorPicker,
   CompassRose,
+  ShowGame,
   Initiative
 };
 
@@ -62,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
   Rails.start();
 
   const map = {
+    "show-game": ShowGame,
+    "initiative": Initiative,
     "image-picker": AppImagePicker,
     "color-picker": AppColorPicker,
     "file-picker": AppFilePicker,

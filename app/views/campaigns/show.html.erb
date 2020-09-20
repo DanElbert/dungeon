@@ -17,6 +17,9 @@
       <%= link_to 'Add Game', new_campaign_game_path(@campaign), class: 'button is-primary' %>
       <%= link_to 'Manage Images', campaign_images_path(@campaign), class: 'button is-primary' %>
     <% end %>
+    <%= link_to initiative_campaign_path(@campaign), class: 'button is-primary', data: {toggle: 'tooltip'}, title: 'Initiative' do %>
+      Initiative <span class="far fa-hourglass fa-fw"></span>
+    <% end %>
   </div>
 </div>
 

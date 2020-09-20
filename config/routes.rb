@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   resources :campaigns do
+    get :initiative, on: :member
     resources :games, :only => [:new, :create]
     resources :drawing_images, controller: :images, only: %i(new create show update), type: 'DrawingImage'
     resources :token_images, controller: :images, only: %i(new create show update), type: 'TokenImage'

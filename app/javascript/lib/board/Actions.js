@@ -575,7 +575,7 @@ class PingAction extends Action {
 class AddTokenAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    var p, s;
+    let p, s, th = 0, ch = 0, i = [], l = null;
     if (this.version === 0) {
       var cell = this.properties.cell;
       p = [cell[0] * board.drawingSettings.cellSize, cell[1] * board.drawingSettings.cellSize];
@@ -584,6 +584,17 @@ class AddTokenAction extends Action {
       p = this.properties.position;
       s = this.properties.tokenCellSize;
     }
+
+    if (this.version >= 2) {
+      l = this.properties.level;
+    }
+
+    if (this.version >= 3) {
+      th = this.properties.totalHp;
+      ch = this.properties.currentHp;
+      i = this.properties.icons;
+    }
+
     var t = new TokenDrawing(
       this.uid,
       board,
@@ -594,7 +605,10 @@ class AddTokenAction extends Action {
       this.properties.fontSize,
       this.properties.text,
       this.properties.imageUrl,
-      this.properties.level
+      th,
+      ch,
+      i,
+      l
     );
     board.tokenLayer.addToken(t);
   }
@@ -602,7 +616,8 @@ class AddTokenAction extends Action {
     this.ensureVersionedFields({
       0: ["uid", "cell", "height", "width", "color", "text", "fontSize", "fontColor"],
       1: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text"],
-      2: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "level"]
+      2: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "level"],
+      3: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "totalHp", "currentHp", "icons", "level"]
     });
   }
 }

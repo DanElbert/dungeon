@@ -57,8 +57,6 @@ class Game < ApplicationRecord
         :status => status,
         :is_owner => is_owner(options[:current_user_id]),
         :board => board.as_json(),
-        :initiative => self.campaign.initiatives.as_json,
-        :initiative_names => self.campaign.initiative_history_names,
         :drawing_images => campaign.drawing_images.active.without_data.order(:name).to_a.map(&:as_json),
         :token_images => token_images,
         :useXLetters => campaign.use_x_letters.nil? ? true : campaign.use_x_letters,

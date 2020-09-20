@@ -1,5 +1,5 @@
 <template>
-  <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup" :floating="floating" :always-open="!floating">
+  <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup" :floating="floating" :always-open="!floating || alwaysOpen" :start-position="startPosition">
     <div class="columns is-mobile is-variable is-1" v-if="!isViewMode">
       <div class="column is-half">
         <label>
@@ -59,6 +59,11 @@
   import InitiativeList from "./InitiativeList";
   import InitiativeListItem from "./InitiativeListItem";
 
+  import InitiativeData from "../lib/InitiativeData";
+  import { ActionMessenger } from "../lib/ActionMessenger";
+  import { generateActionId } from "../lib/Actions";
+  import {Vector2} from "../lib/geometry";
+
   function initiativeFactory() {
     return {
       name: "",
@@ -68,21 +73,34 @@
 
   export default {
     props: {
-      initiativeData: {
-        required: true,
-        type: Object
-      },
-
       floating: {
         required: false,
         type: Boolean,
         default: true
-      }
+      },
+
+      campaignId: {
+        required: true,
+        type: Number
+      },
+
+      alwaysOpen: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+
+      startPosition: {
+        required: false,
+        type: Object,
+        default: () => new Vector2(-15, 15)
+      },
     },
 
     data() {
       return {
-        init: this.initiativeData,
+        initiativeData: null,
+        initiativeActionManager: null,
         newInitiative: initiativeFactory(),
         isViewMode: false,
         names: []
@@ -91,7 +109,7 @@
 
     computed: {
       typeaheadNames() {
-        const usedNames = this.init.initiatives.map(i => i.name);
+        const usedNames = this.initiativeData.initiatives.map(i => i.name);
         return this.names.filter(n => usedNames.indexOf(n) === -1);
       },
     },
@@ -114,15 +132,15 @@
       },
 
       sort() {
-        this.init.sort();
+        this.initiativeData.sort();
       },
 
       clear() {
-        this.init.clear();
+        this.initiativeData.clear();
       },
 
       roll() {
-        this.init.roll();
+        this.initiativeData.roll();
       },
 
       toggleViewMode() {
@@ -133,16 +151,53 @@
         this.$refs.valueInput.focus();
       },
 
-      updateNames(newNames) {
-        this.names = newNames || [];
-      },
-
       addNewInitiative() {
-        if (this.init.add(this.newInitiative.name, this.newInitiative.value)) {
+        if (this.initiativeData.add(this.newInitiative.name, this.newInitiative.value)) {
           this.newInitiative = initiativeFactory();
           this.$refs.nameInput.focus();
         }
+      },
+
+      handleAddActionMessage(message) {
+        switch (message.actionType) {
+          case "updateInitiativeAction":
+            this.update(message.initiative, message.initiative_names);
+            break;
+        }
+      },
+
+      handleDataChanged() {
+        // send new action
+        const action = {actionType: "updateInitiativeAction", initiative: this.initiativeData.initiatives, uid: generateActionId()};
+        this.initiativeActionManager.sendActionMessage(action);
+      },
+
+      update(initiatives, names) {
+        if (initiatives !== null) {
+          this.initiativeData.update(initiatives);
+        }
+        if (names !== null) {
+          this.names = names || [];
+        }
       }
+    },
+
+    mounted() {
+      if (this.initiativeActionManager.connected) {
+        this.initiativeActionManager.channel.perform("get_data");
+      } else {
+        this.initiativeActionManager.onConnected = () => { this.initiativeActionManager.channel.perform("get_data"); this.initiativeActionManager.onConnected = null; }
+      }
+    },
+
+    created() {
+      this.initiativeData = new InitiativeData();
+      this.initiativeData.on("changed", () => this.handleDataChanged());
+
+      this.initiativeActionManager = new ActionMessenger("InitiativeChannel", { campaign_id: this.campaignId }, message => {
+        this.handleAddActionMessage(message);
+      });
+      this.initiativeActionManager.ignoreReflections = false;
     },
 
     components: {

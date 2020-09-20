@@ -1,8 +1,18 @@
 class InitiativeChannel < ApplicationCable::Channel
 
   def subscribed
-    @campaign = Campaign.find(params[:campaign_id])
+    @campaign = Campaign.includes(:initiatives, :initiative_histories).find(params[:campaign_id])
     stream_for @campaign
+    stream_for [session_id, @campaign]
+  end
+
+  def get_data
+    InitiativeChannel.broadcast_to([session_id, @campaign], {
+      'actionType' => 'updateInitiativeAction',
+      'uid' => BoardAction.build_uid,
+      'initiative' => @campaign.initiatives.as_json,
+      'initiative_names' => @campaign.initiative_history_names
+    })
   end
 
   def add_action(data)

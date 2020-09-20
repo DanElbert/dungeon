@@ -35,7 +35,7 @@ export class TokenTool extends Tool {
 
   createCurrentToken() {
     if (this.currentToken === null) {
-      this.currentToken = new TokenDrawing(generateActionId(), this.board, new Vector2(0, 0), 1, "#000000", "#FFFFFF", 20, "", null);
+      this.currentToken = new TokenDrawing(generateActionId(), this.board, new Vector2(0, 0), 1, "#000000", "#FFFFFF", 20, "", null, 0, 0, []);
       this.currentToken.selectable = false;
       this.board.tokenLayer.addToken(this.currentToken);
     }

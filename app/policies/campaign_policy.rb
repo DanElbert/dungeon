@@ -8,6 +8,10 @@ class CampaignPolicy < ApplicationPolicy
     pc_access
   end
 
+  def initiative?
+    pc_access
+  end
+
   def create?
     authenticated?
   end

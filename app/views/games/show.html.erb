@@ -1,18 +1,4 @@
 
 <%= render partial: 'camera' %>
 
-<div id="game_board_container">
-  <canvas id="game_board" ></canvas>
-</div>
-
-<script type="text/javascript">
-  GAME_ID = <%= @game.id %>;
-  CAMPAIGN_ID = <%= @game.campaign_id %>;
-
-  document.addEventListener('DOMContentLoaded', function() {
-    const gameBoard = new GameBoard(<%= @game.id %>, document.getElementById("game_board"), <%= raw(current_user.to_json) %>);
-    window.gameBoard = gameBoard;
-    gameBoard.start();
-  });
-
-</script>
+<div data-show-game data-attributes="<%= { gameId: @game.id, campaignId: @game.campaign_id, currentUser: current_user }.to_json %>" ></div>
