@@ -1,6 +1,6 @@
 <template>
-  <button>
-    <i :class="option.glyph" @click="clickHandler"></i>
+  <button @click="clickHandler">
+    <font-awesome-icon :icon="option.glyph"></font-awesome-icon>
   </button>
 </template>
 

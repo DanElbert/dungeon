@@ -73,13 +73,13 @@ export class ToolManager extends Eventer {
       new ToolMenuGroup("pointer_group", [
         new ToolMenuItem("pointer", {
           label: "Pointer",
-          glyph: "fas fa-mouse-pointer",
+          glyph: ["fas", "mouse-pointer"],
           handler: function() { self.setTool("pointer"); }
         }),
 
         new ToolMenuItem("ping", {
           label: "Ping",
-          glyph: "fas fa-bullseye",
+          glyph: ["fas", "bullseye"],
           handler: function() { self.setTool("ping"); }
         })
       ]),
@@ -87,25 +87,25 @@ export class ToolManager extends Eventer {
       new ToolMenuGroup("view_group", {noClickthrough: true}, [
         new ZoomMenuItem("zoom", {
           label: "Zoom",
-          glyph: "fas fa-search-plus",
+          glyph: ["fas", "search-plus"],
           handler: function(zoom) { self.changeZoom(zoom); }
         }),
 
         new ToolMenuItem("levels", {
           label: "Levels",
-          glyph: "fas fa-layer-group",
+          glyph: ["fas", "layer-group"],
           handler: () => this.setTool("levels")
         }),
 
         new ToolMenuItem("tokens", {
           label: "Tokens",
-          glyph: "fas fa-user-circle",
+          glyph: ["fas", "user-circle"],
           handler: function() { self.setTool("tokens"); }
         }),
 
         new ToolMenuItem("fullscreen", {
           label: "Fullscreen",
-          glyph: "fas fa-tv",
+          glyph: ["fas", "tv"],
           handler: function() {
             self.board.toggleFullscreen();
           }
@@ -113,7 +113,7 @@ export class ToolManager extends Eventer {
 
         new ToolMenuItem("save_viewport", {
           label: "Save View",
-          glyph: "fas fa-plus",
+          glyph: ["fas", "plus"],
           handler: function() {
             self.board.saveViewPort();
           }
@@ -121,7 +121,7 @@ export class ToolManager extends Eventer {
 
         new ToolMenuItem("restore_viewport", {
           label: "Restore View",
-          glyph: "fas fa-minus",
+          glyph: ["fas", "minus"],
           visible: false,
           handler: function() {
             self.board.restoreViewPort();
@@ -130,7 +130,7 @@ export class ToolManager extends Eventer {
 
         new CheckMenuItem("view_port_sync", {
           label: "Sync View",
-          glyph: "fas fa-sync-alt",
+          glyph: ["fas", "sync-alt"],
           handler: function() {
             self.board.viewPortManager.toggleSynced();
           }
@@ -140,55 +140,55 @@ export class ToolManager extends Eventer {
       new ToolMenuGroup("draw_group", [
         new ToolMenuItem("pen", {
           label: "Pen",
-          glyph: 'fas fa-pen',
+          glyph: ["fas", "pen"],
           handler: function() { self.setTool("pen"); }
         }),
 
         new ToolMenuItem("eraser", {
           label: "Eraser",
-          glyph: "fas fa-eraser",
+          glyph: ["fas", "eraser"],
           handler: function() { self.setTool("eraser"); }
         }),
 
         new ToolMenuItem("shape", {
           label: "Shapes",
           tooltip: "Draw lines, circles, and rectangles",
-          glyph: "fas fa-shapes",
+          glyph: ["fas", "shapes"],
           handler: function() { self.setTool("shape"); }
         }),
 
         new ToolMenuItem("label", {
           label: "Label",
           tooltip: "Create a text label",
-          glyph: "fas fa-font",
+          glyph: ["fas", "font"],
           handler: function() { self.setTool("label"); }
         }),
 
         new ToolMenuItem("insert_image", {
           label: "Image",
           tooltip: "Insert an image",
-          glyph: "far fa-image",
+          glyph: ["far", "image"],
           handler: function() { self.setTool("insert_image"); }
         }),
 
         new ToolMenuItem("level_hole", {
           label: "Level Hole",
           tooltip: "Create a translucent hole in this level",
-          glyph: "fas fa-border-style",
+          glyph: ["fas", "border-style"],
           handler: function() { self.setTool("level_hole") }
         }),
 
         new ToolMenuItem("copy", {
           label: "Copy",
           tooltip: "Copy a section of the drawing layer",
-          glyph: "fas fa-copy",
+          glyph: ["fas", "copy"],
           handler: function() { self.setTool("copy"); }
         }),
 
         new ToolMenuItem("paste", {
           label: "Paste",
           tooltip: "Paste copied region",
-          glyph: "fas fa-paste",
+          glyph: ["fas", "paste"],
           visible: false,
           handler: function() { self.setTool("paste"); }
         })
@@ -198,42 +198,42 @@ export class ToolManager extends Eventer {
         new ToolMenuItem("measure_template", {
           label: "Measure",
           tooltip: "Measures movement distance in a straight line",
-          glyph: "fas fa-ruler",
+          glyph: ["fas", "ruler"],
           handler: function() { self.setTool("measure_template"); }
         }),
 
         new ToolMenuItem("line_template", {
           label: "Line",
           tooltip: "Creates a line template (ie: Lightning Bolt)",
-          glyph: "fas fa-bolt",
+          glyph: ["fas", "bolt"],
           handler: function() { self.setTool("line_template"); }
         }),
 
         new ToolMenuItem("rectangle_template", {
           label: "Rectangle",
           tooltip: "Creates a rectangle template",
-          glyph: "far fa-square",
+          glyph: ["far", "square"],
           handler: function() { self.setTool("rectangle_template"); }
         }),
 
         new ToolMenuItem("radius_template", {
           label: "Radius",
           tooltip: "Creates a circular radius template",
-          glyph: "far fa-circle",
+          glyph: ["far", "circle"],
           handler: function() { self.setTool("radius_template"); }
         }),
 
         new ToolMenuItem("cone_template", {
           label: "Cone",
           tooltip: "Creates a cone template",
-          glyph: "fas fa-play",
+          glyph: ["fas", "play"],
           handler: function() { self.setTool("cone_template"); }
         }),
 
         new ToolMenuItem("reach_template", {
           label: "Reach",
           tooltip: "Creates creature reach template",
-          glyph: "fas fa-dharmachakra",
+          glyph: ["fas", "dharmachakra"],
           handler: function() { self.setTool("reach_template"); }
         })
       ]),
@@ -242,7 +242,7 @@ export class ToolManager extends Eventer {
         new ToolMenuItem("overland_measure_template", {
           label: "Measure",
           tooltip: "Measure distances",
-          glyph: "fas fa-ruler",
+          glyph: ["fas", "ruler"],
           handler: function() { self.setTool("overland_measure_template"); }
         })
       ]),
@@ -251,35 +251,35 @@ export class ToolManager extends Eventer {
         new ToolMenuItem("add_fog", {
           label: "Add Fog",
           tooltip: "Draw to add fog",
-          glyph: "fas fa-cloud",
+          glyph: ["fas", "cloud"],
           handler: function() { self.setTool("add_fog"); }
         }),
 
         new ToolMenuItem("add_fog_shape", {
           label: "Add Shape",
           tooltip: "Draw shapes to add fog",
-          glyph: "fas fa-square",
+          glyph: ["fas", "square"],
           handler: function() { self.setTool("add_fog_shape"); }
         }),
 
         new ToolMenuItem("remove_fog", {
           label: "Remove Fog",
           tooltip: "Draw to remove fog",
-          glyph: "fas fa-eye",
+          glyph: ["fas", "eye"],
           handler: function() { self.setTool("remove_fog"); }
         }),
 
         new ToolMenuItem("remove_fog_shape", {
           label: "Remove Shape",
           tooltip: "Draw shapes to remove fog",
-          glyph: "fas fa-minus-square",
+          glyph: ["fas", "minus-square"],
           handler: function() { self.setTool("remove_fog_shape"); }
         }),
 
         new ToolMenuItem("fog_all", {
           label: "Fog Everything",
           tooltip: "Covers entire map in fog",
-          glyph: "fas fa-square",
+          glyph: ["fas", "square"],
           handler: function() {
             if (confirm("Are you sure?  This cannot be undone")) {
               var action = {actionType: "fogEverythingAction", uid: generateActionId(), version: 1, level: self.board.getLevel().id};
@@ -291,7 +291,7 @@ export class ToolManager extends Eventer {
         new ToolMenuItem("fog_none", {
           label: "Clear Fog",
           tooltip: "Removes fog from entire map",
-          glyph: "far fa-lightbulb",
+          glyph: ["far", "lightbulb"],
           handler: function() {
             if (confirm("Are you sure?  This cannot be undone")) {
               var action = {actionType: "fogNothingAction", uid: generateActionId(), version: 1, level: self.board.getLevel().id};
@@ -304,7 +304,7 @@ export class ToolManager extends Eventer {
       new ToolMenuItem("toggle_pc_mode", {
         label: "Toggle Pc Mode",
         tooltip: "Toggles GM Mode",
-        glyph: "fas fa-binoculars",
+        glyph: ["fas", "binoculars"],
         handler: function() {
           self.board.setPcMode(!self.board.pcMode);
         }
@@ -313,14 +313,14 @@ export class ToolManager extends Eventer {
       new ToolMenuItem("undo", {
         label: "Undo",
         tooltip: "Undo",
-        glyph: "fa fa-undo",
+        glyph: ["fa", "undo"],
         handler: function() { self.board.undo(); }
       }),
 
       new ToolMenuItem("connection_warning", {
         label: "Connection Error",
         tooltip: "Connection Error",
-        glyph: "fas fa-bolt",
+        glyph: ["fas", "bolt"],
         visible: true,
         active: true,
         handler: () => {}

@@ -13,6 +13,7 @@ import "../lib/Directives";
 import "../lib/TouchTapDirective";
 import "../lib/drawing_objects";
 import "../lib/board/Actions";
+import "../lib/FontAwesome";
 
 import VueResize from 'vue-resize'
 import AppCampaignUsers from "../components/AppCampaignUsers";

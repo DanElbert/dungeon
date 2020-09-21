@@ -2,6 +2,7 @@
   <div id="game_board_container" class="game_board_container">
     <compass-rose :rotation="compassRotation" :visible="compassVisible" ></compass-rose>
     <initiative ref="init" :floating="true" :campaign-id="campaignId"></initiative>
+    <token-editor :selected-item="board ? board.selectedItem : null" @updateSelectedHp="updateTokenHp"></token-editor>
     <div class="main_menu">
       <button v-for="btn in mainMenu" :key="btn.name" @click="btn.handler" class="button is-secondary is-small">{{ btn.name }}</button>
     </div>
@@ -13,9 +14,11 @@
 
 import CompassRose from "./CompassRose";
 import Initiative from "./Initiative";
+import TokenEditor from "./TokenEditor";
 
 import { Board } from "../lib/board/Board";
 import Api from "../lib/Api";
+import {generateActionId} from "../lib/Actions";
 
 export default {
   props: {
@@ -56,6 +59,10 @@ export default {
 
     compassVisible() {
       return !!this.board?.compassSettings?.visible;
+    },
+
+    editToken() {
+      return this.board?.selectedToken || null;
     }
   },
 
@@ -100,6 +107,14 @@ export default {
     drawGame() {
       this.board.update();
       window.requestAnimationFrame(() => this.drawGame());
+    },
+
+    updateTokenHp(newHp) {
+      if (this.board.selectedItem) {
+        const action = { uid: generateActionId(), actionType: "updateTokenAction", actionId: this.board.selectedItem.uid, currentHp: newHp };
+        const undoAction = { uid: generateActionId(), actionType: "updateTokenAction", actionId: this.board.selectedItem.uid, currentHp: this.board.selectedItem.currentHp };
+        this.board.addAction(action, undoAction, true);
+      }
     }
   },
 
@@ -123,7 +138,8 @@ export default {
 
   components: {
     CompassRose,
-    Initiative
+    Initiative,
+    TokenEditor
   }
 }
 

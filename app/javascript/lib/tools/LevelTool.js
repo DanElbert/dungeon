@@ -16,10 +16,10 @@ export class LevelTool extends Tool {
   buildOptions() {
     this.levelOption = {type: "level", name: "level", label: "Level", levels: [], value: 0};
     this.updateLevelNameOption = {type: "text", name: "updateLevelName", label: "Level Name", confirmMode: true, value: ""};
-    this.addLevelOption = {type: "button", name: "addLevel", label: "Add Level", glyph: "fas fa-plus-circle", handler: () => {this.addLevel()}};
-    this.removeLevelOption = {type: "button", name: "removeLevel", label: "Remove Level", glyph: "fas fa-minus-circle", handler: () => {this.removeLevel()}};
-    this.moveLevelUpOption = {type: "button", name: "moveLevelUp", label: "Move Level Up", glyph: "fas fa-arrow-circle-up", handler: () => {this.moveLevelUp()}};
-    this.moveLevelDownOption = {type: "button", name: "moveLevelDown", label: "Move Level Down", glyph: "fas fa-arrow-circle-down", handler: () => {this.moveLevelDown()}};
+    this.addLevelOption = {type: "button", name: "addLevel", label: "Add Level", glyph: ["fas", "plus-circle"], handler: () => {this.addLevel()}};
+    this.removeLevelOption = {type: "button", name: "removeLevel", label: "Remove Level", glyph: ["fas", "minus-circle"], handler: () => {this.removeLevel()}};
+    this.moveLevelUpOption = {type: "button", name: "moveLevelUp", label: "Move Level Up", glyph: ["fas", "arrow-circle-up"], handler: () => {this.moveLevelUp()}};
+    this.moveLevelDownOption = {type: "button", name: "moveLevelDown", label: "Move Level Down", glyph: ["fas", "arrow-circle-down"], handler: () => {this.moveLevelDown()}};
     this.isLevelVisibleOption = {type: "boolean", name: "isVisible", label: "Visible?", value: true};
 
     this.options.add(this.addLevelOption);

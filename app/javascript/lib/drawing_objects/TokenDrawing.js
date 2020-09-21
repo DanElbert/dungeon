@@ -1,4 +1,5 @@
 import { BaseDrawing } from "./BaseDrawing";
+import { hexToRgb } from "../ColorUtil";
 import { Geometry, Rectangle, Vector2 } from "../geometry";
 
 let stackOrderNumber = 0;
@@ -84,9 +85,38 @@ class TokenDrawing extends BaseDrawing {
     super.clearDrawing();
   }
 
+  setCurrentHp(newHp) {
+    this.invalidateHandler(() => {
+      this.currentHp = newHp;
+    });
+    return this;
+  }
+
+  setIcons(newIcons) {
+    this.invalidateHandler(() => {
+      this.icons = newIcons;
+    });
+    return this;
+  }
+
   draw(drawing, otherLocationTokens) {
     this.otherLocationTokens = otherLocationTokens;
     super.draw(drawing);
+  }
+
+  calculateHpStatus() {
+    const ratio = Math.floor((this.currentHp * 100) / this.totalHp);
+    let status = "unfazed";
+    if (ratio < 50) {
+      status = "bloodied";
+    }
+    if (ratio < 10) {
+      status = "critical";
+    }
+    if (this.currentHp === 0) {
+      status = "dead";
+    }
+    return status;
   }
 
   executeDraw(drawing, drawBounds, detailLevel) {
@@ -116,6 +146,89 @@ class TokenDrawing extends BaseDrawing {
     fontPoint[1] += size / 2;
     drawing.drawText(this.text, fontPoint, this.fontSize, this.fontColor);
 
+    if (this.totalHp !== 0) {
+      const status = this.calculateHpStatus();
+
+      this.drawStatusTransparency(drawing, topLeft.translate(size / 2, size / 2), size, status);
+
+      if (this.board.isOwner) {
+        drawing.drawText(`${this.currentHp}/${this.totalHp}`, [topLeft.x + size / 2, topLeft.y + size], 15, 'black');
+      }
+    }
+
+    for (let idx = 0; idx < this.icons.length; x++) {
+      const icon = this.icons[idx];
+      const iconOffset = idx * 10;
+      // draw sweet icon
+    }
+  }
+
+
+  drawStatusTransparency(drawing, center, size, status) {
+    let borderWidth, color, gradientStops;
+
+    const bloodColorRgb = hexToRgb("#EE204D");
+    const deadColorRgb = { r: 0, g: 10, b: 25 };
+
+    if (status === "bloodied") {
+      borderWidth = size / 5;
+      color = bloodColorRgb;
+      gradientStops = {
+        0: 0,
+        50: 0.5,
+        65: 0.7,
+        75: 0.9,
+        100: 1
+      }
+    } else if (status === "critical") {
+      borderWidth = size / 2;
+      color = bloodColorRgb;
+      gradientStops = {
+        0: 0,
+        50: 0.5,
+        75: 0.99,
+        100: 1
+      }
+    } else if (status === "dead") {
+      borderWidth = size / 2;
+      color = deadColorRgb;
+      gradientStops = {
+        0: 0,
+        100: 1
+      }
+    } else {
+      return;
+    }
+
+    const gradient = drawing.context.createRadialGradient(center.x, center.y, (size / 2) - borderWidth, center.x, center.y, size / 2);
+    for (let stop in gradientStops) {
+      gradient.addColorStop(stop / 100.0, `rgba(${color.r},${color.g},${color.b},${gradientStops[stop]}`);
+    }
+    drawing.drawCircle(center.x, center.y, (size / 2) - (borderWidth / 2), borderWidth, gradient);
+    // drawing.drawCircle(center.x, center.y, (size / 2) - borderWidth, 1, 'pink');
+    // drawing.drawCircle(center.x, center.y, size / 2, 1, 'pink');
+    // drawing.drawCircle(center.x, center.y, (size / 2) - (borderWidth / 2), 1, 'green');
+
+    // if (status === "bloodied") {
+    //   // let w = size / 6;
+    //   // drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, "rgba(255,0,0,0.5)");
+    //   w = size / 3;
+    //   g = drawing.context.createRadialGradient(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - w, topLeft.x + size / 2, topLeft.y + size / 2, size);
+    //   g.addColorStop(0, "rgba(255,0,0,0)");
+    //   g.addColorStop(0.5, "rgba(255,0,0,0.6)");
+    //   g.addColorStop(1, "rgba(255,0,0,1)");
+    //   drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, g);
+    // } else if (status === "critical") {
+    //   w = size / 3;
+    //   g = drawing.context.createRadialGradient(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - w, topLeft.x + size / 2, topLeft.y + size / 2, size);
+    //   g.addColorStop(0, "rgba(255,0,0,0)");
+    //   g.addColorStop(0.25, "rgba(255,0,0,0.6)");
+    //   g.addColorStop(1, "rgba(255,0,0,1)");
+    //   drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, g);
+    // } else if (status === "dead") {
+    //   w = size / 2;
+    //   drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, "rgba(0,0,0,0.5)");
+    // }
   }
 
   drawTokenImage(drawing, topLeft, tokenSize) {
@@ -162,20 +275,6 @@ class TokenDrawing extends BaseDrawing {
 
     if (this.loadedImage !== null) {
       drawing.context.drawImage(this.loadedImage, topLeft.x, topLeft.y, tokenSize, tokenSize);
-    }
-
-    if (this.currentHp !== 0) {
-      if (this.board.isOwner) {
-        // draw sweet hp counter
-      } else {
-        // draw sweet HP indicator
-      }
-    }
-
-    for (let idx = 0; idx < this.icons.length; x++) {
-      const icon = this.icons[idx];
-      const iconOffset = idx * 10;
-      // draw sweet icon
     }
   }
 }

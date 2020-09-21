@@ -24,7 +24,8 @@ export class TokenTool extends Tool {
     this.options.add({type: "tokenSize", name: "size", label: "Token Size", value: "1"});
     this.options.add({type: "color", name: "fontColor", label: "Font Color", value: "#000000"});
     this.options.add({type: "size", name: "fontSize", label: "Font Size", sizes: [12, 18, 24, 30, 40], value: 24});
-    this.options.add({type: "text", name: "text", label: "Text", value: "", width: 'narrow', placeholder: 'Token Label'});
+    this.options.add({type: "text", name: "totalHp", label: "Hit Points", value: 0, width: 'narrow'});
+    this.options.add({type: "text", name: "text", label: "Text", value: "", width: '', placeholder: 'Token Label'});
   }
 
   optionsChanged() {
@@ -44,6 +45,7 @@ export class TokenTool extends Tool {
 
   syncCurrentToken() {
     const img = this.options.get("image").value;
+    const hp = parseInt(this.options.get("totalHp").value) | 0;
     this.currentToken.updateProperties({
       position: new Vector2(this.cursor),
       tokenCellSize: parseInt(this.options.get("size").value),
@@ -51,7 +53,9 @@ export class TokenTool extends Tool {
       fontColor: this.options.get("fontColor").value,
       fontSize: this.options.get("fontSize").value,
       text: this.options.get("text").value,
-      imageUrl: img ? img.raw_url : null
+      imageUrl: img ? img.raw_url : null,
+      totalHp: hp,
+      currentHp: hp
     })
   }
 

@@ -6,8 +6,8 @@
       </select>
     </div>
     <template v-else>
-      <i :class="tool.glyph"></i>
-      <i class="far" :class="{'fa-check-square': tool.value, 'fa-square': !tool.value}" v-if="tool.type === 'checkbox'"></i>
+      <font-awesome-icon :icon="tool.glyph"></font-awesome-icon>
+      <font-awesome-icon :icon="['far', tool.value ? 'check-square' : 'square']" v-if="tool.type === 'checkbox'"></font-awesome-icon>
       {{ tool.label }}
     </template>
   </div>

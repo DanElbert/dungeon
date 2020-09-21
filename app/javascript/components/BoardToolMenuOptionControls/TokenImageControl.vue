@@ -21,7 +21,7 @@
               <input type="file" class="file-input" name="image[filename]" ref="fileInput" @change="updateEditFile" />
               <span class="file-cta">
               <span class="file-icon">
-                <i class="fas fa-upload"></i>
+                <font-awesome-icon :icon="['fas', 'upload']"></font-awesome-icon>
               </span>
               <span class="file-label">
                 Choose a file…

@@ -2,7 +2,7 @@
   <div class="initiative-item field has-addons" :class="{'initiative-item-delete': deleting}">
     <p class="control name">
       <span class="button has-tooltip-top" :data-tooltip="value.source">
-        {{value.name}}<sup v-if="!!value.bonus"><i v-if="false" class="fas fa-dice-d20"></i>{{value.bonus}}</sup>
+        {{value.name}}<sup v-if="!!value.bonus">{{value.bonus}}</sup>
       </span>
     </p>
     <p class="control" v-if="!editMode">

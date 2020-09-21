@@ -1,6 +1,6 @@
 <template>
   <div :class="itemClass" @mouseenter="handleMouseenter" @mouseleave="handleMouseleave" @click="handleClick" v-touch-tap="handleTap" ref="item" :data-tooltip="tool.tooltip">
-    <i :class="activeTool.glyph"></i>
+    <font-awesome-icon :icon="activeTool.glyph"></font-awesome-icon>
 
     <div class="submenu-wrapper" v-if="submenuOpen" :style="submenuWrapperStyle" ref="submenuWrapper">
       <div class="submenu">

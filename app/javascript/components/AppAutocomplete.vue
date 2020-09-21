@@ -20,7 +20,7 @@
       <div class="panel">
         <a href="#" v-for="(opt, idx) in options" :key="optionKey(opt)" class="panel-block" :class="optionClass(idx)" @mousemove="optionMousemove(idx)" @click.prevent="optionClick(opt)">
           <span class="panel-icon">
-            <i class="fas fa-angle-double-right"></i>
+            <font-awesome-icon :icon="['fas', 'angle-double-right']"></font-awesome-icon>
           </span>
           <span class="opt_value">{{ optionValue(opt) }}</span>
         </a>

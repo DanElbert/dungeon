@@ -5,10 +5,10 @@
         <label>
           Name
           <sup class="name-info has-tooltip-right" data-tooltip="<name> [+|-]<bonus>">
-            <span class="fa-stack">
-              <i class="fas fa-circle fa-stack-2x"></i>
-              <i class="fas fa-question fa-stack-1x fa-inverse"></i>
-            </span>
+            <font-awesome-layers class="fa-lg">
+              <font-awesome-icon icon="circle" />
+              <font-awesome-icon icon="question" transform="shrink-6" :style="{ color: 'white' }" />
+            </font-awesome-layers>
           </sup>
         </label>
       </div>

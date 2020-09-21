@@ -638,6 +638,12 @@ class UpdateTokenAction extends Action {
         t.touch();
         t.setPosition(new Vector2(this.properties.position))
       }
+      if ("currentHp" in this.properties) {
+        t.setCurrentHp(this.properties.currentHp);
+      }
+      if ("icons" in this.properties) {
+        t.setIcons(this.properties.icons);
+      }
     }
   }
   validateData() {

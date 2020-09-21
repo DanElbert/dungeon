@@ -1,5 +1,5 @@
 <template>
-  <div class="field has-addons">
+  <div class="field has-addons" :class="this.option.width">
     <div class="control">
       <input type="text" class="input is-small" :value="currentValue" @input="valueChanged" :placeholder="placeholderText" />
     </div>
@@ -74,6 +74,8 @@
 
 <style lang="scss" scoped>
 
-
+.field.narrow {
+  width: 4em;
+}
 
 </style>

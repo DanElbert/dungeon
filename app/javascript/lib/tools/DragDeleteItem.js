@@ -12,7 +12,6 @@ export class DragDeleteItem extends Eventer {
     this.enabled = false;
     this.instantDrag = false;
 
-    this._selectedItem = null;
     this.selectedItemOriginalPosition = null;
     this.itemDragging = false;
     this.itemDragStartCell = null;
@@ -21,11 +20,11 @@ export class DragDeleteItem extends Eventer {
   }
 
   get selectedItem() {
-    return this._selectedItem;
+    return this.board.selectedItem;
   }
 
   set selectedItem(val) {
-    if (val === this._selectedItem) {
+    if (val === this.board.selectedItem) {
       return;
     }
 
@@ -35,7 +34,7 @@ export class DragDeleteItem extends Eventer {
       this.moveIndicatorId = null;
     }
 
-    this._selectedItem = val;
+    this.board.selectedItem = val;
 
     if (val) {
       const targetType = (val instanceof TokenDrawing) ? "Token" : "Template";

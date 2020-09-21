@@ -56,6 +56,7 @@ export function Board(canvas, gameId, userData) {
   this.pcMode = false;
 
   this.copiedArea = null;
+  this.selectedItem = null;
 
   this.pending_action_queue = [];
   this.undo_stack = [];
