@@ -178,7 +178,7 @@
       background-color: $red;
     }
 
-    i {
+    svg {
       font-size: 1.5rem;
     }
   }

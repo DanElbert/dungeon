@@ -14,6 +14,10 @@ class ToolOptions extends Eventer {
     if (!opt.name)
       throw "Options must have names";
 
+    if (opt.visible === null || opt.visible === undefined) {
+      opt.visible = true;
+    }
+
     this.options.push(opt);
   }
 

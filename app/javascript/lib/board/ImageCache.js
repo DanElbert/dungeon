@@ -1,8 +1,9 @@
+import { getImgElement as getFaImage } from "../FontAwesome";
 import Eventer from "../Eventer";
 
 class ImageCacheItem {
-  constructor(url, priority) {
-    this.url = url;
+  constructor(key, priority) {
+    this.key = key;
     this.priority = priority;
     this.image = null;
     this.loaded = false;
@@ -23,33 +24,33 @@ class ImageCacheItem {
     this.lastTouch = Date.now();
   }
 
+  beginLoading() {
+    throw "Not Implemented";
+  }
+
   load() {
     if (this.loaded === true) {
       return new Promise.resolve(this);
     } else {
-      return new Promise((resolve, reject) => {
-        this.image = new Image();
-        this.image.onload = () => {
+      return this.beginLoading()
+        .then(img => {
+          this.image = img;
           this.loaded = true;
           for (let cb of this.callbacks) {
             cb(this.image);
           }
           this.callbacks = [];
           this.failbacks = [];
-          resolve(this);
-        };
-
-        this.image.onerror = e => {
+          return this;
+        })
+        .catch(err => {
           for (let fb of this.failbacks) {
-            fb(e);
+            fb(err);
           }
           this.callbacks = [];
           this.failbacks = [];
-          reject(e);
-        };
-
-        this.image.src = this.url;
-      });
+          throw err;
+        });
     }
   }
 
@@ -74,35 +75,69 @@ class ImageCacheItem {
   }
 }
 
+class UrlImageCacheItem extends ImageCacheItem {
+  beginLoading() {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+
+      img.onload = () => {
+        resolve(img);
+      };
+
+      img.onerror = e => {
+        reject(e);
+      };
+
+      img.src = this.key;
+    });
+  }
+}
+
+class FontAwesomeSvgImageCacheItem extends ImageCacheItem {
+  beginLoading() {
+    const parts = this.key.split(":");
+    const iconData = {
+      prefix: parts[0],
+      iconName: parts[1]
+    }
+    return getFaImage(iconData);
+  }
+}
+
 export class ImageCache extends Eventer {
   constructor() {
     super();
     this.images = {};
     this.loadingQueue = [];
-    this.maxLoading = 10;
-    this.loadingUrls = {};
+    this.maxLoading = 3;
+    this.loadingKeys = {};
   }
 
   addImages(images) {
     images = Object.prototype.toString.apply( images ) === '[object Array]' ? images : [images];
 
     for ( var i = 0; i < images.length; i++ ) {
-
-      var image = images[i];
-
+      const image = images[i];
       this.addImage(image.url);
     }
   }
 
-  addImage(url, priority) {
+  addImage(key, priority) {
     if (priority === undefined || priority === null) {
       priority = 0;
     }
 
-    var imageData = this.images[url];
+    let imageData = this.images[key];
+
     if (!imageData) {
-      imageData = new ImageCacheItem(url, priority);
-      this.images[url] = imageData;
+
+      if (/^fa[brs]?:\w+/.test(key)) {
+        imageData = new FontAwesomeSvgImageCacheItem(key, priority);
+      } else {
+        imageData = new UrlImageCacheItem(key, priority);
+      }
+
+      this.images[key] = imageData;
       this.loadingQueue.push(imageData);
       this.runQueue();
     }
@@ -110,33 +145,34 @@ export class ImageCache extends Eventer {
   }
 
   runQueue() {
-    if (this.loadingQueue.length === 0 || Object.keys(this.loadingUrls).length >= this.maxLoading) {
+    if (this.loadingQueue.length === 0 || Object.keys(this.loadingKeys).length >= this.maxLoading) {
       return;
     }
 
     this.loadingQueue.sort((a, b) => a.compareTo(b));
 
-    while (this.loadingQueue.length > 0 && Object.keys(this.loadingUrls).length < this.maxLoading) {
+    while (this.loadingQueue.length > 0 && Object.keys(this.loadingKeys).length < this.maxLoading) {
       let img = this.loadingQueue.pop();
-      this.loadingUrls[img.url] = true;
+      this.loadingKeys[img.key] = true;
       img.load()
         .then(img => {
-          delete this.loadingUrls[img.url];
+          delete this.loadingKeys[img.key];
           this.trigger("imageloaded");
           this.runQueue();
         })
         .catch(e => {
-          delete this.images[img.url];
-          delete this.loadingUrls[img.url];
+          delete this.images[img.key];
+          // delete this.loadingKeys[img.key];
           this.runQueue();
+          console.log(e);
         });
     }
   }
 
-  getImageAsync(url, priority) {
-    var imageData = this.images[url];
+  getImageAsync(key, priority) {
+    var imageData = this.images[key];
     if (!imageData) {
-      imageData = this.addImage(url, priority);
+      imageData = this.addImage(key, priority);
     }
     imageData.touch();
 
@@ -151,10 +187,10 @@ export class ImageCache extends Eventer {
   }
 
   // callback will only be called if image not immidiately available
-  getImage(url, priority) {
-    var imageData = this.images[url];
+  getImage(key, priority) {
+    var imageData = this.images[key];
     if (!imageData) {
-      imageData = this.addImage(url, priority);
+      imageData = this.addImage(key, priority);
     }
     imageData.touch();
 

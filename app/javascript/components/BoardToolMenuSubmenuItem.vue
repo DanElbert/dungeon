@@ -6,8 +6,12 @@
       </select>
     </div>
     <template v-else>
-      <font-awesome-icon :icon="tool.glyph"></font-awesome-icon>
-      <font-awesome-icon :icon="['far', tool.value ? 'check-square' : 'square']" v-if="tool.type === 'checkbox'"></font-awesome-icon>
+      <span class="icon">
+        <font-awesome-icon :icon="tool.glyph"></font-awesome-icon>
+      </span>
+      <span class="icon" v-if="tool.type === 'checkbox'">
+        <font-awesome-icon :icon="['far', tool.value ? 'check-square' : 'square']"></font-awesome-icon>
+      </span>
       {{ tool.label }}
     </template>
   </div>
@@ -108,9 +112,10 @@
     font-size: 1.25rem;
     border: $border-width solid $white;
 
-    i {
-      width: 2em;
-    }
+    //svg {
+    //  width: 2em;
+    //  align-content: flex-start;
+    //}
 
     &.hovered {
       border: $border-width solid $grey-lighter;

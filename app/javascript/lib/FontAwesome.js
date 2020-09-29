@@ -1,16 +1,19 @@
 
-import { dom, library } from '@fortawesome/fontawesome-svg-core';
+import { dom, icon, library } from '@fortawesome/fontawesome-svg-core';
 import Vue from 'vue';
 import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
 
 import {
+  faAnchor,
   faAngleDoubleRight,
   faArrowCircleDown,
   faArrowCircleUp,
+  faAngleDown,
   faBinoculars,
   faBolt,
   faBorderStyle,
   faBullseye,
+  faBurn,
   faCircle,
   faCloud,
   faCopy,
@@ -19,6 +22,7 @@ import {
   faEraser,
   faEye,
   faFont,
+  faHeart,
   faImage,
   faLayerGroup,
   faLightbulb,
@@ -35,6 +39,7 @@ import {
   faRuler,
   faSearchPlus,
   faShapes,
+  faSkullCrossbones,
   faSquare,
   faSyncAlt,
   faTimes,
@@ -49,6 +54,7 @@ import {
   faCheckSquare as farCheckSquare,
   faCircle as farCircle,
   faClock as farClock,
+  faDizzy as farDizzy,
   faEdit as farEdit,
   faHourglass as farHourglass,
   faImage as farImage,
@@ -61,13 +67,16 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 
 library.add(
+  faAnchor,
   faAngleDoubleRight,
   faArrowCircleDown,
   faArrowCircleUp,
+  faAngleDown,
   faBinoculars,
   faBolt,
   faBorderStyle,
   faBullseye,
+  faBurn,
   faCircle,
   faCloud,
   faCopy,
@@ -76,6 +85,7 @@ library.add(
   faEraser,
   faEye,
   faFont,
+  faHeart,
   faImage,
   faLayerGroup,
   faLightbulb,
@@ -92,6 +102,7 @@ library.add(
   faRuler,
   faSearchPlus,
   faShapes,
+  faSkullCrossbones,
   faSquare,
   faSyncAlt,
   faTimes,
@@ -104,6 +115,7 @@ library.add(
   farCheckSquare,
   farCircle,
   farClock,
+  farDizzy,
   farEdit,
   farHourglass,
   farImage,
@@ -118,3 +130,44 @@ Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText);
 
 dom.watch();
+
+const imgElements = {};
+
+export function getImgElement(iconDef) {
+  const key = `${iconDef.prefix}::${iconDef.iconName}`;
+
+  if (imgElements[key] === undefined) {
+    imgElements[key] = new Promise((resolve, reject) => {
+      const iconData = icon(iconDef);
+      const img = new Image();
+
+      img.width = iconData.icon[0];
+      img.height = iconData.icon[1];
+
+      img.onload = () => {
+        imgElements[key] = img;
+        resolve(img);
+      };
+
+      img.onerror = e => {
+        delete imgElements[key];
+        reject(e);
+      };
+
+      const svgNode = iconData.node[0];
+      const xml = new XMLSerializer().serializeToString(svgNode);
+
+      // make it base64
+      const svg64 = btoa(xml);
+      const b64Start = 'data:image/svg+xml;base64,';
+
+      // prepend a "header"
+      const image64 = b64Start + svg64;
+
+      // set it as the source of the img element
+      img.src = image64;
+    });
+  }
+
+  return Promise.resolve(imgElements[key]);
+}

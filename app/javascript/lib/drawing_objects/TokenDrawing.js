@@ -1,8 +1,11 @@
 import { BaseDrawing } from "./BaseDrawing";
 import { hexToRgb } from "../ColorUtil";
 import { Geometry, Rectangle, Vector2 } from "../geometry";
+import TokenIcons from "../TokenIcons";
 
 let stackOrderNumber = 0;
+const iconCache = new Map();
+const iconSize = 18;
 
 function getNextStackOrder() {
   return stackOrderNumber++;
@@ -21,7 +24,7 @@ class TokenDrawing extends BaseDrawing {
     this.imageUrl = imageUrl;
     this.totalHp = totalHp;
     this.currentHp = currentHp;
-    this.icons = icons;
+    this.icons = icons || [];
     this.loading = false;
     this.loadedImage = null;
     this.loadedImageUrl = null;
@@ -156,13 +159,76 @@ class TokenDrawing extends BaseDrawing {
       }
     }
 
-    for (let idx = 0; idx < this.icons.length; x++) {
-      const icon = this.icons[idx];
-      const iconOffset = idx * 10;
-      // draw sweet icon
+    const maxIconCols = Math.floor(size / iconSize);
+    const iconRows = Math.ceil(this.icons.length / maxIconCols);
+    for (let idx = 0; idx < this.icons.length; idx++) {
+      const iconName = this.icons[idx];
+
+      const rowIdx = Math.floor(idx / maxIconCols);
+      const iconCols = rowIdx + 1 === iconRows ? (this.icons.length - (rowIdx * maxIconCols)) : maxIconCols;
+      const colIdx = idx >= maxIconCols ? idx - (rowIdx * maxIconCols) : idx;
+
+      const centerOffset = (size - (iconCols * iconSize)) / 2;
+
+      const tl = topLeft.translate((colIdx * iconSize) + centerOffset, rowIdx * iconSize);
+      this.drawIcon(drawing, tl, iconName);
     }
   }
 
+  drawIcon(drawing, topLeft, iconName) {
+    if (!iconCache.has(iconName)) {
+      iconCache.set(iconName, false);
+      const icon = TokenIcons.getIcon(iconName);
+      this.board.imageCache.getImageAsync(icon.faIcon)
+        .then(img => {
+          this.invalidate();
+
+          const size = iconSize * this.imageCacheSizeFactor;
+          const margin = new Vector2(4, 4);
+
+          const iconImg = document.createElement("canvas");
+          iconImg.width = size;
+          iconImg.height = size;
+          const ctx = iconImg.getContext("2d");
+
+          const imgRatio = img.width / img.height;
+          if (imgRatio > 1) {
+            margin.y = margin.y + ((size - (size / imgRatio)) / 2);
+          } else if (imgRatio < 1) {
+            margin.x = margin.x + ((size - (size * imgRatio)) / 2);
+          }
+
+          ctx.drawImage(img, 0, 0, size * imgRatio, size, margin.x, margin.y, (size - (margin.x * 2)), size - (margin.y * 2));
+          ctx.globalCompositeOperation = "source-in";
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(size, 0);
+          ctx.lineTo(size, size);
+          ctx.lineTo(0, size);
+          ctx.closePath();
+          ctx.fillStyle = icon.color;
+          ctx.fill();
+
+          ctx.globalCompositeOperation = "destination-over";
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, 1.95 * Math.PI, false);
+          ctx.closePath();
+          ctx.fillStyle = "white";
+          ctx.fill();
+
+
+          iconCache.set(iconName, iconImg);
+        })
+        .catch(err => {
+          throw err;
+        });
+    }
+
+    const iconImage = iconCache.get(iconName);
+    if (iconImage) {
+      drawing.context.drawImage(iconImage, 0, 0, iconImage.width, iconImage.height, topLeft.x, topLeft.y, iconSize, iconSize);
+    }
+  }
 
   drawStatusTransparency(drawing, center, size, status) {
     let borderWidth, color, gradientStops;
@@ -205,30 +271,6 @@ class TokenDrawing extends BaseDrawing {
       gradient.addColorStop(stop / 100.0, `rgba(${color.r},${color.g},${color.b},${gradientStops[stop]}`);
     }
     drawing.drawCircle(center.x, center.y, (size / 2) - (borderWidth / 2), borderWidth, gradient);
-    // drawing.drawCircle(center.x, center.y, (size / 2) - borderWidth, 1, 'pink');
-    // drawing.drawCircle(center.x, center.y, size / 2, 1, 'pink');
-    // drawing.drawCircle(center.x, center.y, (size / 2) - (borderWidth / 2), 1, 'green');
-
-    // if (status === "bloodied") {
-    //   // let w = size / 6;
-    //   // drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, "rgba(255,0,0,0.5)");
-    //   w = size / 3;
-    //   g = drawing.context.createRadialGradient(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - w, topLeft.x + size / 2, topLeft.y + size / 2, size);
-    //   g.addColorStop(0, "rgba(255,0,0,0)");
-    //   g.addColorStop(0.5, "rgba(255,0,0,0.6)");
-    //   g.addColorStop(1, "rgba(255,0,0,1)");
-    //   drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, g);
-    // } else if (status === "critical") {
-    //   w = size / 3;
-    //   g = drawing.context.createRadialGradient(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - w, topLeft.x + size / 2, topLeft.y + size / 2, size);
-    //   g.addColorStop(0, "rgba(255,0,0,0)");
-    //   g.addColorStop(0.25, "rgba(255,0,0,0.6)");
-    //   g.addColorStop(1, "rgba(255,0,0,1)");
-    //   drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, g);
-    // } else if (status === "dead") {
-    //   w = size / 2;
-    //   drawing.drawCircle(topLeft.x + size / 2, topLeft.y + size / 2, (size / 2) - (w / 2), w, "rgba(0,0,0,0.5)");
-    // }
   }
 
   drawTokenImage(drawing, topLeft, tokenSize) {
