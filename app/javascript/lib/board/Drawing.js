@@ -88,7 +88,7 @@ export class Drawing {
     this.context.stroke();
     this.context.fill();
 
-    this.drawText(text, midPoint, fontSize, textColor || "black", null);
+    this.drawText(text, midPoint, fontSize, textColor || "black", null, null, null, 'middle');
 
     this.context.restore();
 

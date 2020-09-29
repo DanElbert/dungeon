@@ -155,7 +155,8 @@ class TokenDrawing extends BaseDrawing {
       this.drawStatusTransparency(drawing, topLeft.translate(size / 2, size / 2), size, status);
 
       if (this.board.isOwner) {
-        drawing.drawText(`${this.currentHp}/${this.totalHp}`, [topLeft.x + size / 2, topLeft.y + size], 15, 'black');
+        drawing.drawLabel([topLeft.x + size / 2, topLeft.y + size - 6], `${this.currentHp}/${this.totalHp}`, null, null, null, 12)
+        //drawing.drawText(`${this.currentHp}/${this.totalHp}`, [topLeft.x + size / 2, topLeft.y + size], 13, 'black', null, null, null, 'baseline');
       }
     }
 
