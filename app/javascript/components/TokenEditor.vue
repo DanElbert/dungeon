@@ -17,7 +17,7 @@
             </button>
           </div>
         </div>
-        <div class="column hp-stack" v-if="currentToken.totalHp > 0">
+        <div class="column hp-stack" v-if="currentToken.totalHp > 0 && isOwner">
           <div>{{ currentToken.currentHp }} / {{ currentToken.totalHp }}</div>
           <button class="button is-success is-outlined is-small" @click="healDamage">Heal</button>
           <input type="number" @focus="$event.target.select()" @keyup.enter="dealDamage" v-model="hpDelta" />
@@ -47,6 +47,12 @@ export default {
       type: Object,
       required: false,
       default: null
+    },
+
+    isOwner: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
@@ -85,24 +91,22 @@ export default {
     }
   },
 
-  watch: {
-    isOpen(newVal) {
-      if (newVal) {
-        //this.$refs.popup.open();
-      } else {
-        //this.$refs.popup.close();
-      }
-    }
-  },
-
   methods: {
     dealDamage() {
-      const newHp = Math.max(0, this.selectedItem.currentHp - (parseInt(this.hpDelta) | 0));
+      const delta = parseInt(this.hpDelta) | 0
+      if (delta === 0) {
+        return;
+      }
+      const newHp = Math.max(0, this.selectedItem.currentHp - delta);
       this.$emit("updateSelectedHp", newHp);
     },
 
     healDamage() {
-      const newHp = Math.min(this.selectedItem.totalHp, this.selectedItem.currentHp + (parseInt(this.hpDelta) | 0));
+      const delta = parseInt(this.hpDelta) | 0
+      if (delta === 0) {
+        return;
+      }
+      const newHp = Math.min(this.selectedItem.totalHp, this.selectedItem.currentHp + delta);
       this.$emit("updateSelectedHp", newHp);
     },
 

@@ -2,7 +2,7 @@
   <div id="game_board_container" class="game_board_container">
     <compass-rose :rotation="compassRotation" :visible="compassVisible" ></compass-rose>
     <initiative ref="init" :floating="true" :campaign-id="campaignId"></initiative>
-    <token-editor :selected-item="board ? board.selectedItem : null" @updateSelectedHp="updateTokenHp" @updateSelectedIcons="updateTokenIcons"></token-editor>
+    <token-editor :is-owner="isOwner" :selected-item="board ? board.selectedItem : null" @updateSelectedHp="updateTokenHp" @updateSelectedIcons="updateTokenIcons"></token-editor>
     <div class="main_menu">
       <button v-for="btn in mainMenu" :key="btn.name" @click="btn.handler" class="button is-secondary is-small">{{ btn.name }}</button>
     </div>
@@ -63,6 +63,14 @@ export default {
 
     editToken() {
       return this.board?.selectedToken || null;
+    },
+
+    isOwner() {
+      if (this.board) {
+        return this.board.isOwner;
+      } else {
+        return false;
+      }
     }
   },
 

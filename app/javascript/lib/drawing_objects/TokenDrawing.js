@@ -198,7 +198,7 @@ class TokenDrawing extends BaseDrawing {
             margin.x = margin.x + ((size - (size * imgRatio)) / 2);
           }
 
-          ctx.drawImage(img, 0, 0, size * imgRatio, size, margin.x, margin.y, (size - (margin.x * 2)), size - (margin.y * 2));
+          ctx.drawImage(img, 0, 0, img.width, img.height, margin.x, margin.y, (size - (margin.x * 2)), size - (margin.y * 2));
           ctx.globalCompositeOperation = "source-in";
           ctx.beginPath();
           ctx.moveTo(0, 0);

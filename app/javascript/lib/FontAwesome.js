@@ -155,6 +155,8 @@ export function getImgElement(iconDef) {
       };
 
       const svgNode = iconData.node[0];
+      svgNode.setAttribute("width", `${img.width}px`);
+      svgNode.setAttribute("height", `${img.height}px`);
       const xml = new XMLSerializer().serializeToString(svgNode);
 
       // make it base64
