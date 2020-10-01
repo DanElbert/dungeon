@@ -1,17 +1,19 @@
 import {  Animation, EasingFactory } from "./Animation";
 import { attachActionMethods, generateActionId } from "../Actions";
+import { Vector2 } from "../../lib/geometry";
 import debounce from "lodash/debounce";
+import TWEEN from "@tweenjs/tween.js/dist/tween.esm";
 
 export class ViewPortManager {
   constructor(board) {
+    window.vpm = this;
     this.board = board;
-    this.coordinates = [0, 0];
-    this.size = [board.canvas.width, board.canvas.height];
-    this.canvasSize = [board.canvas.width, board.canvas.height];
+    this.coordinates = new Vector2(0, 0);
+    this.size = new Vector2(board.canvas.width, board.canvas.height);
+    this.canvasSize = new Vector2(board.canvas.width, board.canvas.height);
     this.zoom = 1;
-    this.zoomAnimation = null;
-    this.verticalAnimation = null;
-    this.horizontalAnimation = null;
+    this.animation = null;
+    this.animationTarget = null;
     this.savedViewPort = null;
     this.synced = false;
 
@@ -26,33 +28,66 @@ export class ViewPortManager {
   }
 
   update() {
-
-    if (this.zoomAnimation) {
-      this.applyZoom(this.zoomAnimation.calculateEasing(), null);
-      if (this.zoomAnimation.finished) {
-        this.zoomAnimation = null;
-      }
-    }
-
-    if (this.verticalAnimation) {
-      this.applyCoordinates([this.getCoordinates()[0], this.verticalAnimation.calculateEasing()]);
-      if (this.verticalAnimation.finished) {
-        this.verticalAnimation = null;
-      }
-    }
-
-    if (this.horizontalAnimation) {
-      this.applyCoordinates([this.horizontalAnimation.calculateEasing(), this.getCoordinates()[1]]);
-      if (this.horizontalAnimation.finished) {
-        this.horizontalAnimation = null;
-      }
-    }
-
     this.applyGeometry();
   }
 
+  setViewPort(x, y, zoom, animate, shouldSync) {
+    if (animate === undefined) {
+      animate = true;
+    }
+
+    if (shouldSync === undefined) {
+      shouldSync = true;
+    }
+
+    zoom = this.normalizeZoom(zoom);
+
+    if (animate) {
+      const targetZoomSize = this.calculateZoomedSize(zoom);
+      const animateData = {
+        x: this.coordinates.x,
+        y: this.coordinates.y,
+        centerX: this.coordinates.x + (this.size.x / 2),
+        centerY: this.coordinates.y + (this.size.y / 2),
+        zoom: this.zoom
+      };
+      this.animationTarget = {
+        x: x,
+        y: y,
+        centerX: x + (targetZoomSize.x / 2),
+        centerY: y + (targetZoomSize.y / 2),
+        zoom: zoom
+      };
+      this.animation = new TWEEN.Tween(animateData)
+        .to(this.animationTarget, 1000)
+        .easing(TWEEN.Easing.Quartic.InOut)
+        .onUpdate(() => {
+          const targetZoomSize = this.calculateZoomedSize(animateData.zoom);
+          this.applyViewport(animateData.centerX - (targetZoomSize.x / 2), animateData.centerY - (targetZoomSize.y / 2), animateData.zoom);
+        })
+        .onComplete(() => {
+          this.animation = null;
+          this.animationTarget = null;
+        })
+        .start();
+    } else {
+      if (this.animation) {
+        this.animation.stop();
+        this.animation = null;
+        this.animationTarget = null;
+      }
+      this.applyViewport(x, y, zoom);
+    }
+
+    this.board.toolManager.updateZoom(zoom);
+
+    if (shouldSync) {
+      this.syncViewPort();
+    }
+  }
+
   saveViewPort() {
-    this.savedViewPort = {zoom: this.getZoom(), coordinates: this.getCoordinates()};
+    this.savedViewPort = {zoom: this.zoom, x: this.coordinates.x, y: this.coordinates.y};
     this.board.drawBorder = true;
     this.board.toolManager.hideSaveViewPort();
     this.board.toolManager.showRestoreViewPort();
@@ -60,8 +95,7 @@ export class ViewPortManager {
 
   restoreViewPort() {
     if (this.savedViewPort) {
-      this.setZoom(this.savedViewPort.zoom);
-      this.setCoordinates(this.savedViewPort.coordinates);
+      this.setViewPort(this.savedViewPort.x, this.savedViewPort.y, this.savedViewPort.zoom);
     }
     this.board.drawBorder = false;
     this.savedViewPort = null;
@@ -71,8 +105,7 @@ export class ViewPortManager {
 
   handleViewPortAction(action) {
     if (this.synced) {
-      this.setZoom(action.properties.zoom, null, false, true);
-      this.setCoordinates([action.properties.x, action.properties.y], false, true);
+      this.setViewPort(action.properties.x, action.properties.y, action.properties.zoom, true, false);
     }
   }
 
@@ -82,8 +115,8 @@ export class ViewPortManager {
   }
 
   getTargetZoom() {
-    if (this.zoomAnimation) {
-      return this.zoomAnimation.max;
+    if (this.animationTarget) {
+      return this.animationTarget.zoom;
     } else {
       return this.zoom;
     }
@@ -93,84 +126,33 @@ export class ViewPortManager {
     return this.zoom;
   }
 
-  setZoom(newZoom, mapCenter, noAnimate, noSync) {
+  setZoom(newZoom, mapCenter, animate, shouldSync) {
 
     var val = this.normalizeZoom(newZoom);
-    this.board.toolManager.updateZoom(val);
 
-    if (!mapCenter) mapCenter = [this.coordinates[0] + this.size[0] / 2, this.coordinates[1] + this.size[1] / 2];
-    var canvasCenter = [(mapCenter[0] - this.coordinates[0]) * this.zoom, (mapCenter[1] - this.coordinates[1]) * this.zoom];
+    if (!mapCenter) mapCenter = [this.coordinates.x + this.size.x / 2, this.coordinates.y + this.size.y / 2];
+    var canvasCenter = [(mapCenter[0] - this.coordinates.x) * this.zoom, (mapCenter[1] - this.coordinates.y) * this.zoom];
     var newCoordinates = [mapCenter[0] - (canvasCenter[0] / val), mapCenter[1] - (canvasCenter[1] / val)];
 
-    if (noAnimate) {
-      this.applyZoom(val);
-      this.setCoordinates(newCoordinates, true, noSync);
-      this.zoomAnimation = null;
-    } else {
-
-      this.setCoordinates(newCoordinates, false, noSync);
-
-      var deltaConst = 1.5;
-      var maxTime = 1.0;
-      var ratio = this.getDeltaRatio(this.zoom, val, deltaConst);
-
-      this.zoomAnimation = new Animation(maxTime * ratio, EasingFactory.linear(), this.zoom, val);
-    }
-
-    if (noSync !== true) {
-      this.syncViewPort();
-    }
+    this.setViewPort(newCoordinates[0], newCoordinates[1], val, animate, shouldSync);
   }
 
   getTargetCoordinates() {
-    var x, y;
+    let x, y;
 
-    if (this.horizontalAnimation) {
-      x = this.horizontalAnimation.max;
+    if (this.animationTarget) {
+      x = this.animationTarget.x;
+      y = this.animationTarget.y;
     } else {
-      x = this.coordinates[0];
-    }
-
-    if (this.verticalAnimation) {
-      y = this.verticalAnimation.max;
-    } else {
-      y = this.coordinates[1];
+      x = this.coordinates.x;
+      y = this.coordinates.y;
     }
 
     return [x, y];
   }
 
   getCoordinates() {
-    return this.coordinates;
-  }
-
-  setCoordinates(newCoords, noAnimate, noSync) {
-    if (noAnimate) {
-      this.applyCoordinates(newCoords);
-      this.verticalAnimation = null;
-      this.horizontalAnimation = null;
-    } else {
-      var current = this.getCoordinates();
-      var deltaConst = 1500;
-      var maxTime = 1.0;
-      var ratioX = this.getDeltaRatio(current[0], newCoords[0], deltaConst);
-      var ratioY = this.getDeltaRatio(current[1], newCoords[1], deltaConst);
-      this.verticalAnimation = new Animation(maxTime * ratioY, EasingFactory.linear(), current[1], newCoords[1]);
-      this.horizontalAnimation = new Animation(maxTime * ratioX, EasingFactory.linear(), current[0], newCoords[0]);
-    }
-
-    if (noSync !== true) {
-      this.syncViewPort();
-    }
-  }
-
-  getDeltaRatio(v1, v2, maxV) {
-    var delta = Math.abs(v1 - v2);
-    if (delta > maxV) {
-      return 1;
-    } else {
-      return delta / maxV;
-    }
+    return this.coordinates.toArray();
   }
 
   getCanvasSize() {
@@ -178,13 +160,13 @@ export class ViewPortManager {
   }
 
   setCanvasSize(newSize, pixelRatio) {
-    this.canvasSize = newSize;
+    this.canvasSize = new Vector2(newSize);
     this.pixelRatio = pixelRatio;
-    this.applyZoom(this.zoom);
+    this.applyViewport(this.coordinates.x, this.coordinates.y, this.zoom);
   }
 
   getSize() {
-    return this.size;
+    return this.size.toArray();
   }
 
   // Rounds the zoom and ensures it's within the min and max zoom values
@@ -197,22 +179,23 @@ export class ViewPortManager {
     return newZoom;
   }
 
-  applyCoordinates(coordinates) {
-    this.board.invalidate();
-    this.coordinates = coordinates;
+  // Given a zoom, and knowing the canvas size, what would the map size be?
+  calculateZoomedSize(zoom) {
+    return new Vector2(this.board.canvas.width / zoom / this.pixelRatio, this.board.canvas.height / zoom / this.pixelRatio);
   }
 
-  applyZoom(val, mapCenter) {
+  applyViewport(x, y, zoom) {
     this.board.invalidate();
-    val = this.normalizeZoom(val);
+    zoom = this.normalizeZoom(zoom);
 
-    this.zoom = val;
-    this.size = [this.board.canvas.width / val / this.pixelRatio, this.board.canvas.height / val / this.pixelRatio];
+    this.zoom = zoom;
+    this.size = this.calculateZoomedSize(zoom);
+    this.coordinates = new Vector2(x, y);
   }
 
   applyGeometry() {
     this.board.identityTransform();
     this.board.context.scale(this.zoom, this.zoom);
-    this.board.context.translate(-1 * this.coordinates[0], -1 * this.coordinates[1]);
+    this.board.context.translate(-1 * this.coordinates.x, -1 * this.coordinates.y);
   }
 }

@@ -34,8 +34,10 @@ const icons = new TokenIcons();
 
 icons.addIcon(new TokenIcon("stunned", "far:dizzy", "#000000"));
 icons.addIcon(new TokenIcon("poisoned", "fas:skull-crossbones", "#00DD00"));
-icons.addIcon(new TokenIcon("bleeding", "fas:heart", "#DD0000"));
+icons.addIcon(new TokenIcon("bleeding", "fas:tint", "#DD0000"));
 icons.addIcon(new TokenIcon("slowed", "fas:anchor", "#000000"));
 icons.addIcon(new TokenIcon("burning", "fas:burn", "#DD0000"));
+icons.addIcon(new TokenIcon("fear", "fas:heart", "#0000DD"));
+icons.addIcon(new TokenIcon("invisible", "fas:low-vision", "#0000DD"));
 
 export default icons;

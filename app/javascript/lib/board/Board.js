@@ -88,27 +88,12 @@ export function Board(canvas, gameId, userData) {
     // the client is offline
     self.toolManager.setErrorState(true, "Cannot connect to Dungeon server");
     self.networkDown = true;
-    // var alarmFunc = function() {
-    //   if (self.networkDown) {
-    //     flashMessage("error", "Cannot Connect to Dungeon Server!!");
-    //     setTimeout(alarmFunc, 5000);
-    //   }
-    // };
-    // self.networkDown = true;
-    // alarmFunc();
   };
 
   this.addActionManager.onConnected = function() {
     self.toolManager.setErrorState(false, "Connection restored");
     self.networkDown = false;
-    // if (self.networkDown) {
-    //   self.networkDown = false;
-    //   flashMessage("notice", "Connection to Dungeon Server Restored.");
-    // }
   };
-
-
-
 
   this.event_manager.on('mousemove', function(mapEvt) {
     self.cellHover(mapEvt.mapPointCell[0], mapEvt.mapPointCell[1]);
@@ -127,7 +112,7 @@ export function Board(canvas, gameId, userData) {
   };
 
   this.setZoom = function(val, mapCenter, noAnimate) {
-    this.viewPortManager.setZoom(val, mapCenter, noAnimate);
+    this.viewPortManager.setZoom(val, mapCenter, !noAnimate);
   };
 
   this.getZoom = function(targetZoom) {
@@ -143,7 +128,7 @@ export function Board(canvas, gameId, userData) {
   };
 
   this.setViewPortCoordinates = function(coords, noAnimate) {
-    this.viewPortManager.setCoordinates(coords, noAnimate);
+    this.viewPortManager.setViewPort(coords[0], coords[1], this.viewPortManager.getZoom(), !noAnimate);
   };
 
   this.getViewPortSize = function() {
@@ -384,9 +369,9 @@ export function Board(canvas, gameId, userData) {
     var context = this.context;
 
     this.executeActions();
+    this.animations.update();
     this.viewPortManager.update();
     this.drawingSettings.zoom = this.getZoom();
-    this.animations.update();
 
     if (this.displayCapturePattern) {
       this.renderCapturePattern();

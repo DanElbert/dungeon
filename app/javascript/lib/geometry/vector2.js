@@ -16,6 +16,14 @@ class Vector2 {
     }
   }
 
+  get 0() {
+    return this.x;
+  }
+
+  get 1() {
+    return this.y;
+  }
+
   toArray() {
     return [this.x, this.y]
   }
