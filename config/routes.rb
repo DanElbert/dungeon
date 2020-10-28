@@ -32,6 +32,10 @@ Rails.application.routes.draw do
 
   resource :user, :except => [:show, :destroy] do
     resources :user_token_images, controller: :images, except: :index, type: 'UserTokenImage'
+    get :forgot_password
+    post :submit_forgot_password
+    get :reset_password
+    post :submit_reset_password
   end
 
   get 'user/user_token_images', to: 'images#user_index', as: :user_token_images

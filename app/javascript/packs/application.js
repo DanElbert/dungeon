@@ -5,6 +5,7 @@ import 'vue-resize/dist/vue-resize.css'
 
 import Vue from "vue";
 import Rails from '@rails/ujs';
+import TWEEN from "@tweenjs/tween.js";
 
 import "../lib/BulmaGlue";
 import "../lib/AntiGhostClick";
@@ -58,10 +59,17 @@ window.VUE_COMPONENTS = {
 
 Vue.use(VueResize);
 
+Vue.prototype.$tween = new TWEEN.Group();
+
+function vueTweenAnimate() {
+  requestAnimationFrame(vueTweenAnimate);
+  Vue.prototype.$tween.update();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
 
   Rails.start();
+  vueTweenAnimate();
 
   const map = {
     "show-game": ShowGame,

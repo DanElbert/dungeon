@@ -63,6 +63,7 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
+  config.action_mailer.default_url_options = { host: 'example.com' }
   config.action_mailer.delivery_method = :test
 
   # Ignore bad email addresses and do not raise email delivery errors.

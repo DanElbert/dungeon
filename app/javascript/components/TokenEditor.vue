@@ -18,9 +18,9 @@
           </div>
         </div>
         <div class="column hp-stack" v-if="currentToken.totalHp > 0 && isOwner">
-          <div>{{ currentToken.currentHp }} / {{ currentToken.totalHp }}</div>
+          <div class="hp-display" :class="{fat: fatHpDisplay}">{{ parseInt(currentHpDisplay) }} / {{ currentToken.totalHp }}</div>
           <button class="button is-success is-outlined is-small" @click="healDamage">Heal</button>
-          <input type="number" @focus="$event.target.select()" @keyup.enter="dealDamage" v-model="hpDelta" />
+          <input type="number" @focus="$event.target.select()" @keyup.enter="dealDamage" v-model="hpDelta" ref="hpDeltaInput" />
           <button class="button is-danger is-outlined is-small" @click="dealDamage">Damage</button>
 
         </div>
@@ -37,6 +37,7 @@ import AppFloater from "./AppFloater";
 import AppPopup from "./AppPopup";
 import AppTokenIcon from "./AppTokenIcon";
 
+import TWEEN from "@tweenjs/tween.js";
 import { TokenDrawing } from "../lib/drawing_objects";
 import { Vector2 } from "../lib/geometry";
 import TokenIcons from "../lib/TokenIcons";
@@ -60,7 +61,10 @@ export default {
     return {
       curIcon: null,
       startPosition: new Vector2(250, 100),
-      hpDelta: 0
+      hpDelta: 0,
+      currentHpDisplay: 0,
+      currentHpAnimation: null,
+      fatHpDisplay: false
     };
   },
 
@@ -97,8 +101,7 @@ export default {
       if (delta === 0) {
         return;
       }
-      const newHp = Math.max(0, this.selectedItem.currentHp - delta);
-      this.$emit("updateSelectedHp", newHp);
+      this.updateHp(Math.max(0, this.selectedItem.currentHp - delta))
     },
 
     healDamage() {
@@ -106,8 +109,14 @@ export default {
       if (delta === 0) {
         return;
       }
-      const newHp = Math.min(this.selectedItem.totalHp, this.selectedItem.currentHp + delta);
+      this.updateHp(Math.min(this.selectedItem.totalHp, this.selectedItem.currentHp + delta))
+    },
+
+    updateHp(newHp) {
       this.$emit("updateSelectedHp", newHp);
+      this.fatHpDisplay = true;
+      setTimeout(() => { this.fatHpDisplay = false}, 500);
+      this.$refs.hpDeltaInput.select();
     },
 
     addIcon(i) {
@@ -121,6 +130,20 @@ export default {
       set.delete(i);
       this.$emit("updateSelectedIcons", [...set.values()]);
     }
+  },
+
+  created() {
+    this.$watch("currentToken.currentHp", function(newVal, oldVal) {
+      if (this.currentHpAnimation !== null) {
+        this.currentHpAnimation.stop();
+      }
+
+      this.currentHpAnimation = new TWEEN.Tween(this, this.$tween)
+        .to({ currentHpDisplay: newVal }, 250)
+        .onComplete(() => { this.currentHpAnimation = null; })
+        .start();
+
+    }, { immediate: true });
   },
 
   components: {
@@ -143,6 +166,14 @@ export default {
     & > * {
       display: block;
       width: 100%;
+    }
+  }
+
+  .hp-display {
+    height: 2rem;
+    transition: font-size 333ms;
+    &.fat {
+      font-size: 125%;
     }
   }
 

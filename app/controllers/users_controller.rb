@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :ensure_valid_user, except: [:login, :verify_login, :new, :create]
+  before_action :ensure_valid_user, except: [:login, :verify_login, :new, :create, :forgot_password, :submit_forgot_password, :reset_password, :submit_reset_password]
 
   def login
     if current_user
@@ -62,6 +62,39 @@ class UsersController < ApplicationController
       redirect_to lobby_path, notice: 'User account updated'
     else
       render action: 'edit'
+    end
+  end
+
+  def forgot_password
+    @error = false
+  end
+
+  def submit_forgot_password
+    @user = User.find_by_email(params[:email])
+    if @user
+      @user.update!(password_reset_token: SecureRandom::uuid)
+      UserMailer.with(user: @user).reset_password.deliver_later
+    else
+      @error = true
+      flash[:error] = 'Invalid email'
+      render action: :forgot_password
+    end
+  end
+
+  def reset_password
+    @user = User.where(password_reset_token: params[:token]).first
+    if @user.nil?
+      redirect_to login_path
+    end
+  end
+
+  def submit_reset_password
+    @user = User.where(password_reset_token: params[:token]).first
+    @user.password = nil
+    if @user.update(user_params)
+      redirect_to login_path, notice: 'Password changed'
+    else
+      render action: 'reset_password'
     end
   end
 
