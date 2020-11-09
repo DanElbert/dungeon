@@ -66,7 +66,7 @@ services:
       - DUNGEON_PG_USER=${DUNGEON_PG_USER}
       - DUNGEON_PG_PASSWORD=${DUNGEON_PG_PASSWORD}
       - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASSWORD='${SMTP_PASSWORD}'
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
     command: 'bundle exec rake resque:work'
     links:
     - redis
