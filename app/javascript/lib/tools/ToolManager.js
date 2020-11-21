@@ -134,7 +134,14 @@ export class ToolManager extends Eventer {
           handler: function() {
             self.board.viewPortManager.toggleSynced();
           }
-        })
+        }),
+
+        new ToolMenuItem("beckon", {
+          label: "Beckon",
+          tooltip: "Beckon PCs to current view",
+          glyph: ["fa", "undo"],
+          handler: function() { self.board.beckon(); }
+        }),
       ]),
 
       new ToolMenuGroup("draw_group", [
@@ -436,6 +443,11 @@ export class ToolManager extends Eventer {
 
   hidePcModeTool() {
     this.getMenuItem("toggle_pc_mode").visible = false;
+    this.render();
+  }
+
+  hideBeckonTool() {
+    this.getMenuItem("beckon").visible = false;
     this.render();
   }
 

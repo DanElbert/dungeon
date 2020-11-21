@@ -3,6 +3,7 @@
     <compass-rose :rotation="compassRotation" :visible="compassVisible" ></compass-rose>
     <initiative ref="init" :floating="true" :campaign-id="campaignId"></initiative>
     <token-editor :is-owner="isOwner" :selected-item="board ? board.selectedItem : null" @updateSelectedHp="updateTokenHp" @updateSelectedIcons="updateTokenIcons"></token-editor>
+    <beckon-notification v-if="campaignMessenger !== null" :board="board" :campaign-messenger="campaignMessenger"></beckon-notification>
     <div class="main_menu">
       <button v-for="btn in mainMenu" :key="btn.name" @click="btn.handler" class="button is-secondary is-small">{{ btn.name }}</button>
     </div>
@@ -12,6 +13,7 @@
 
 <script>
 
+import BeckonNotification from "./BeckonNotification";
 import CompassRose from "./CompassRose";
 import Initiative from "./Initiative";
 import TokenEditor from "./TokenEditor";
@@ -19,6 +21,7 @@ import TokenEditor from "./TokenEditor";
 import { Board } from "../lib/board/Board";
 import Api from "../lib/Api";
 import {generateActionId} from "../lib/Actions";
+import { CampaignMessenger } from "../lib/campaignMessenger";
 
 export default {
   props: {
@@ -43,6 +46,7 @@ export default {
       board: null,
       gameData: null,
       initVisible: false,
+      campaignMessenger: null,
       mainMenu: [
         {name: 'Tools', handler: this.toolToggle},
         {name: 'Compass', handler: this.compassToggle},
@@ -135,7 +139,14 @@ export default {
   },
 
   mounted() {
+    this.campaignMessenger = new CampaignMessenger(this.currentUser.id, this.campaignId, this.gameId);
     this.board = new Board(this.$refs.game_board, this.gameId, this.currentUser);
+    this.board.beckon = () => {
+      const coords = this.board.getViewPortCoordinates();
+      const zoom = this.board.getZoom();
+      const level = this.board.getLevel();
+      this.campaignMessenger.beckon(level.id, coords[0], coords[1], zoom);
+    }
     window.board = this.board;
 
     window.addEventListener('resize', this.setCanvasSize);
@@ -145,6 +156,14 @@ export default {
       this.board.setZoom(1.0);
       this.board.refresh(data);
       this.drawGame();
+      // follow beckon here
+      if (window.location.hash.startsWith("#beckon=")) {
+        const param = window.location.hash.slice("#beckon=".length);
+        const json = JSON.parse(decodeURIComponent(param));
+        this.board.setLevel(json.level);
+        this.board.setViewPortCoordinates([json.x, json.y], json.zoom);
+        history.replaceState(null, null, ' ');
+      }
     });
   },
 
@@ -153,6 +172,7 @@ export default {
   },
 
   components: {
+    BeckonNotification,
     CompassRose,
     Initiative,
     TokenEditor

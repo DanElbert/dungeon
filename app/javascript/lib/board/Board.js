@@ -127,8 +127,8 @@ export function Board(canvas, gameId, userData) {
     return this.viewPortManager.getCoordinates();
   };
 
-  this.setViewPortCoordinates = function(coords, noAnimate) {
-    this.viewPortManager.setViewPort(coords[0], coords[1], this.viewPortManager.getZoom(), !noAnimate);
+  this.setViewPortCoordinates = function(coords, zoom, noAnimate) {
+    this.viewPortManager.setViewPort(coords[0], coords[1], zoom || this.viewPortManager.getZoom(), !noAnimate);
   };
 
   this.getViewPortSize = function() {
@@ -151,6 +151,10 @@ export function Board(canvas, gameId, userData) {
       size[0],
       size[1]
     );
+  };
+
+  this.beckon = function() {
+    console.log("This implementation does nothing. See ShowGame.vue");
   };
 
   this.getLevel = function() {
@@ -240,6 +244,7 @@ export function Board(canvas, gameId, userData) {
       this.toolManager.hideFogTools();
       this.toolManager.hideImageTool();
       this.toolManager.hidePcModeTool();
+      this.toolManager.hideBeckonTool();
     }
 
     data.board.actions.forEach(action => {

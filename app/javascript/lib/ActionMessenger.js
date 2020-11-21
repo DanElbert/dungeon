@@ -1,13 +1,4 @@
-import * as cable from "@rails/actioncable";
-
-let actioncableConsumer = null;
-
-function getConsumer() {
-  if (actioncableConsumer === null) {
-    actioncableConsumer = cable.createConsumer();
-  }
-  return actioncableConsumer;
-}
+import { getConsumer } from "./actionCable";
 
 class ActionMessenger {
   constructor(channel, params, callback) {

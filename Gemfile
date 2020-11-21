@@ -1,17 +1,17 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.0.2.2'
+gem 'rails', '~> 6.0.3'
 
 gem 'pg', '~> 1.2.3'
 
-gem 'oj', '~> 3.10.6'
+gem 'oj', '~> 3.10.15'
 
-gem 'puma', '~> 4.3.3'
-gem 'redis', '~> 4.1.3'
+gem 'puma', '~> 4.3.6'
+gem 'redis', '~> 4.2.2'
 gem 'hiredis', '~> 0.6.3'
 
-gem 'webpacker', '5.1.1'
-gem 'bcrypt', '~> 3.1.13'
+gem 'webpacker', '5.2.1'
+gem 'bcrypt', '~> 3.1.16'
 gem 'pundit', '~> 2.1.0'
 
 gem 'resque', '~> 2.0.0'
