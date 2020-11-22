@@ -21,6 +21,7 @@ import TokenEditor from "./TokenEditor";
 import { Board } from "../lib/board/Board";
 import Api from "../lib/Api";
 import {generateActionId} from "../lib/Actions";
+import { flashMessage } from "../lib/FlashMessages";
 import { CampaignMessenger } from "../lib/campaignMessenger";
 
 export default {
@@ -146,6 +147,7 @@ export default {
       const zoom = this.board.getZoom();
       const level = this.board.getLevel();
       this.campaignMessenger.beckon(level.id, coords[0], coords[1], zoom);
+      flashMessage("notice", "Beckon Sent");
     }
     window.board = this.board;
 

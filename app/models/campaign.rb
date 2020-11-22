@@ -53,6 +53,15 @@ class Campaign < ApplicationRecord
     self.initiative_histories.map { |h| h.name }
   end
 
+  def as_json(options = nil)
+    {
+      id: self.id,
+      name: self.name,
+      user_name: self.user_name,
+      games: self.games.map { |g| {id: g.id, name: g.name, created_at: g.created_at, status: g.status}  }
+    }
+  end
+
   private
 
   def check_for_games

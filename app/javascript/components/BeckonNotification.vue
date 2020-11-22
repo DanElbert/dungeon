@@ -1,10 +1,9 @@
 <template>
   <app-floater :start-position="startPosition">
-    <div v-if="visible">
-      The DM has beckoned you to a map location...
+    <div class="box" v-if="visible">
+      <h1 class="title is-5">The DM has beckoned you to a map location...</h1>
       <button type="button" class="button is-primary" @click="follow">Follow</button>
       <button type="button" class="button is-danger" @click="dismiss">Dismiss</button>
-      I'm a Notification!
     </div>
   </app-floater>
 </template>
@@ -31,7 +30,7 @@ export default {
 
   data() {
     return {
-      startPosition: new Vector2(-75, -100),
+      startPosition: new Vector2(100, 100),
       currentBeckon: null
     }
   },

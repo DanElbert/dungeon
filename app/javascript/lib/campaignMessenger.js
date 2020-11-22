@@ -7,7 +7,7 @@ class CampaignMessenger extends Eventer {
 
     this.userId = userId;
     this.campaignId = campaignId;
-    this.gameId = gameId;
+    this.gameId = gameId || null;
 
     const subParams = {
       channel: "CampaignChannel",
@@ -24,10 +24,16 @@ class CampaignMessenger extends Eventer {
   handleMessage(msg) {
     if (msg.action === "beckon" && msg.userId !== this.userId) {
       this.trigger("beckon", msg);
+    } else if (msg.action === "updated") {
+      this.trigger("updated", msg.campaign);
     }
   }
 
   beckon(level, x, y, zoom) {
+    if (this.gameId === null) {
+      throw "No gameId set";
+    }
+
     this.channel.perform("beckon", {
       userId: this.userId,
       gameId: this.gameId,

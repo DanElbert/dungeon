@@ -24,6 +24,7 @@ import AppImagePicker from "../components/AppImagePicker";
 import BoardToolMenu from "../components/BoardToolMenu";
 import AppToolColorPicker from "../components/AppToolColorPicker";
 import CompassRose from "../components/CompassRose";
+import ShowCampaign from "../components/ShowCampaign";
 import ShowGame from "../components/ShowGame";
 import Initiative from "../components/Initiative";
 
@@ -53,6 +54,7 @@ window.VUE_COMPONENTS = {
   BoardToolMenu,
   AppToolColorPicker,
   CompassRose,
+  ShowCampaign,
   ShowGame,
   Initiative
 };
@@ -72,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   vueTweenAnimate();
 
   const map = {
+    "show-campaign": ShowCampaign,
     "show-game": ShowGame,
     "initiative": Initiative,
     "image-picker": AppImagePicker,

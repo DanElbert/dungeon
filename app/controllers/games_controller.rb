@@ -22,6 +22,7 @@ class GamesController < ApplicationController
     @game.campaign = @campaign
 
     if @game.save
+      CampaignChannel.update_campaign(@game.campaign)
       redirect_to @game, notice: 'Game was successfully created.'
     else
       render action: "new"
@@ -34,6 +35,7 @@ class GamesController < ApplicationController
   def update
     respond_to do |format|
       if @game.update_attributes(game_params)
+        CampaignChannel.update_campaign(@game.campaign)
         format.html { redirect_to campaign_path(@game.campaign), notice: 'Game was successfully updated.' }
         format.json { head :no_content }
       else
@@ -46,6 +48,7 @@ class GamesController < ApplicationController
   def destroy
     @game.status = Game::STATUS[:deleted]
     @game.save!
+    CampaignChannel.update_campaign(@game.campaign)
     flash[:notice] = 'Game deleted'
     redirect_to campaign_path(@game.campaign)
   end

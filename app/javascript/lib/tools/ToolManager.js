@@ -139,7 +139,7 @@ export class ToolManager extends Eventer {
         new ToolMenuItem("beckon", {
           label: "Beckon",
           tooltip: "Beckon PCs to current view",
-          glyph: ["fa", "undo"],
+          glyph: ["fas", "compress-arrows-alt"],
           handler: function() { self.board.beckon(); }
         }),
       ]),
