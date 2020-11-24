@@ -6,6 +6,11 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+  # Kill all proxy and browser caching of html
+  before_action do
+    headers['Cache-Control'] = 'no-store, max-age=0'
+  end
+
   def user_not_authorized
     if current_user
       flash[:warning] = 'You are not authorized to perform this action.'
