@@ -1,5 +1,5 @@
 <template>
-  <div :style="floaterStyle" @mousedown="handleMousedown" @touchstart="handleTouchstart">
+  <div class="app-floater" :style="floaterStyle" @mousedown="handleMousedown" @touchstart="handleTouchstart">
     <resize-observer @notify="handleResize" />
     <slot></slot>
   </div>
@@ -48,6 +48,12 @@
         type: String,
         required: false,
         default: null
+      },
+
+      hideOverlay: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
 
@@ -86,6 +92,11 @@
           }
         } else {
           style.position = "relative";
+        }
+
+        if (this.hideOverlay) {
+          style.opacity = "25%";
+          style["pointer-events"] = "none";
         }
 
         return style;
@@ -288,6 +299,8 @@
 
 <style type="scss" scoped>
 
-
+  .app-floater {
+    transition: opacity 0.25s;
+  }
 
 </style>

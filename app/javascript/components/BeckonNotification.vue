@@ -1,5 +1,5 @@
 <template>
-  <app-floater :start-position="startPosition">
+  <app-floater :start-position="startPosition" :hide-overlay="hideOverlay">
     <div class="box" v-if="visible">
       <h1 class="title is-5">The DM has beckoned you to a map location...</h1>
       <button type="button" class="button is-primary" @click="follow">Follow</button>
@@ -38,6 +38,10 @@ export default {
   computed: {
     visible() {
       return this.currentBeckon !== null;
+    },
+
+    hideOverlay() {
+      return !!(this.board && this.board.isItemDragging);
     }
   },
 

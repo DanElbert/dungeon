@@ -1,5 +1,5 @@
 <template>
-  <app-floater ref="popup" :start-position="startPosition">
+  <app-floater ref="popup" :start-position="startPosition" :hide-overlay="hideOverlay">
     <div v-if="isOpen" class="editor-container box">
       <div class="columns">
 
@@ -51,6 +51,12 @@ export default {
     },
 
     isOwner: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+
+    hideOverlay: {
       type: Boolean,
       required: false,
       default: false

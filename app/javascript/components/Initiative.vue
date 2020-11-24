@@ -1,5 +1,5 @@
 <template>
-  <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup" :floating="floating" :always-open="!floating || alwaysOpen" :start-position="startPosition">
+  <app-popup class="initiative" ref="popup" title="Initiative" id="initiative-popup" :floating="floating" :always-open="!floating || alwaysOpen" :start-position="startPosition" :hide-overlay="hideOverlay">
     <div class="columns is-mobile is-variable is-1" v-if="!isViewMode">
       <div class="column is-half">
         <label>
@@ -95,6 +95,12 @@
         type: Object,
         default: () => new Vector2(-15, 15)
       },
+
+      hideOverlay: {
+        type: Boolean,
+        required: false,
+        default: false
+      }
     },
 
     data() {

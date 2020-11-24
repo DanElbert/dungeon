@@ -1,5 +1,5 @@
 <template>
-  <app-floater :start-position="startPosition">
+  <app-floater :start-position="startPosition" :hide-overlay="hideOverlay">
     <div v-if="visible" class="compass-container has-text-black is-family-secondary" :style="containerStyle">
       <span class="compass-item north" :style="labelStyle">N</span>
       <span class="compass-item west" :style="labelStyle">W</span>
@@ -30,6 +30,12 @@
         type: Boolean,
         required: false,
         default: true
+      },
+
+      hideOverlay: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
 

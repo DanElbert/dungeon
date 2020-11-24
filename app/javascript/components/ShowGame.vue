@@ -1,8 +1,8 @@
 <template>
   <div id="game_board_container" class="game_board_container">
-    <compass-rose :rotation="compassRotation" :visible="compassVisible" ></compass-rose>
-    <initiative ref="init" :floating="true" :campaign-id="campaignId"></initiative>
-    <token-editor :is-owner="isOwner" :selected-item="board ? board.selectedItem : null" @updateSelectedHp="updateTokenHp" @updateSelectedIcons="updateTokenIcons"></token-editor>
+    <compass-rose :rotation="compassRotation" :visible="compassVisible" :hide-overlay="hideOverlays"></compass-rose>
+    <initiative ref="init" :floating="true" :campaign-id="campaignId" :hide-overlay="hideOverlays"></initiative>
+    <token-editor :is-owner="isOwner" :selected-item="board ? board.selectedItem : null" @updateSelectedHp="updateTokenHp" @updateSelectedIcons="updateTokenIcons" :hide-overlay="hideOverlays"></token-editor>
     <beckon-notification v-if="campaignMessenger !== null" :board="board" :campaign-messenger="campaignMessenger"></beckon-notification>
     <div class="main_menu">
       <button v-for="btn in mainMenu" :key="btn.name" @click="btn.handler" class="button is-secondary is-small">{{ btn.name }}</button>
@@ -76,6 +76,10 @@ export default {
       } else {
         return false;
       }
+    },
+
+    hideOverlays() {
+      return !!(this.board && this.board.isItemDragging);
     }
   },
 
@@ -164,6 +168,7 @@ export default {
         const json = JSON.parse(decodeURIComponent(param));
         this.board.setLevel(json.level);
         this.board.setViewPortCoordinates([json.x, json.y], json.zoom);
+        // Clear URL fragment (Not sure why this works...)
         history.replaceState(null, null, ' ');
       }
     });

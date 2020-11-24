@@ -19,6 +19,14 @@ export class DragDeleteItem extends Eventer {
     this.moveIndicatorId = null;
   }
 
+  get itemDragging() {
+    return this.board.isItemDragging || false;
+  }
+
+  set itemDragging(val) {
+    this.board.isItemDragging = val;
+  }
+
   get selectedItem() {
     return this.board.selectedItem;
   }
