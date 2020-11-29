@@ -19,7 +19,7 @@ export class TokenTool extends Tool {
 
   buildOptions() {
     var self = this;
-    this.options.add({type: "tokenImage", name: "image", label: "Image", value: null});
+    this.options.add({type: "tokenImage", name: "image", label: "Image", images: [], campaign_id: -1, isOwner: false, value: null});
     this.options.add({type: "color", name: "color", label: "Color", value: "#1CAC78"});
     this.options.add({type: "tokenSize", name: "size", label: "Token Size", value: "1"});
     this.options.add({type: "color", name: "fontColor", label: "Font Color", value: "#000000"});
