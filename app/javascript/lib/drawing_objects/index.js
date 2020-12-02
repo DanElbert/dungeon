@@ -11,6 +11,7 @@ import { TiledImageDrawing } from "./TiledImageDrawing";
 import { TokenDrawing } from "./TokenDrawing";
 import { LevelHoleDrawing } from "./LevelHoleDrawing";
 import { MoveIndicatorDrawing } from "./MoveIndicatorDrawing";
+import { SavageWorldsBurstTemplate, SavageWorldsConeTemplate } from "./SavageWorldsTemplates";
 
 export {
   BaseDrawing,
@@ -28,6 +29,8 @@ export {
   PathfinderRadiusTemplate,
   PathfinderReachTemplate,
   PathfinderRectangleTemplate,
+  SavageWorldsBurstTemplate,
+  SavageWorldsConeTemplate,
   PenDrawing,
   SquareDrawing,
   TiledImageDrawing,

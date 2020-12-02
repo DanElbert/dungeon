@@ -17,6 +17,7 @@ import { TokenTool } from "./Tokens";
 import { generateActionId } from "../Actions";
 import {LevelTool} from "./LevelTool";
 import { LevelHole } from "./LevelHole";
+import { SavageWorldsBurstTemplateTool, SavageWorldsConeTemplateTool} from "./SavageWorldsTemplates";
 
 export class ToolManager extends Eventer {
   
@@ -50,6 +51,8 @@ export class ToolManager extends Eventer {
       "cone_template": new ConeTemplate(this),
       "reach_template": new ReachTemplateTool(this),
       "overland_measure_template": new OverlandMeasureTemplateTool(this),
+      "savage_worlds_burst_template": new SavageWorldsBurstTemplateTool(this),
+      "savage_worlds_cone_template": new SavageWorldsConeTemplateTool(this),
       "ping": new PingTool(this),
       "add_fog": new AddFogPen(this),
       "add_fog_shape": new AddFogShape(this),
@@ -66,7 +69,8 @@ export class ToolManager extends Eventer {
 
     this.templateGroups = {
       pathfinder: "pathfinder_template_group",
-      overland: "overland_template_group"
+      overland: "overland_template_group",
+      savage_worlds: "savage_worlds_template_group"
     };
 
     this.toolSet = [
@@ -251,6 +255,29 @@ export class ToolManager extends Eventer {
           tooltip: "Measure distances",
           glyph: ["fas", "ruler"],
           handler: function() { self.setTool("overland_measure_template"); }
+        })
+      ]),
+
+      new ToolMenuGroup("savage_worlds_template_group", [
+        new ToolMenuItem("overland_measure_template", {
+          label: "Measure",
+          tooltip: "Measure distances",
+          glyph: ["fas", "ruler"],
+          handler: function() { self.setTool("overland_measure_template"); }
+        }),
+
+        new ToolMenuItem("savage_worlds_burst_template", {
+          label: "Burst",
+          tooltip: "Small, Medium, and Large Burst Templates",
+          glyph: ["far", "circle"],
+          handler: function() { self.setTool("savage_worlds_burst_template"); }
+        }),
+
+        new ToolMenuItem("savage_worlds_cone_template", {
+          label: "Cone",
+          tooltip: "Standard Cone Template",
+          glyph: ["fas", "play"],
+          handler: function() { self.setTool("savage_worlds_cone_template"); }
         })
       ]),
 

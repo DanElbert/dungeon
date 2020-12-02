@@ -11,6 +11,16 @@ class BaseTemplate extends BaseDrawing {
     this.canInvalidateByBounds = false;
     this.color = color;
   }
+
+  setColor(newColor) {
+    if (this.color !== newColor) {
+      this.invalidateHandler(() => {
+        this.color = newColor;
+      });
+    }
+    return this;
+  }
+
   containsPoint(point) {
     return false;
   }

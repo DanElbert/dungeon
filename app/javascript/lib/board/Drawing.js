@@ -1,4 +1,4 @@
-import { Geometry } from "../geometry";
+import {Geometry, Vector2} from "../geometry";
 import { feetToText } from "../Formatting";
 
 export class Drawing {
@@ -295,6 +295,63 @@ export class Drawing {
       this.context.stroke();
     }
   }
+
+  drawTriangle(p1, p2, p3, width, color, fill) {
+    this.context.lineWidth = this.checkWidth(width);
+    this.context.beginPath();
+
+    this.context.moveTo(p1.x, p1.y);
+    this.context.lineTo(p2.x, p2.y);
+    this.context.lineTo(p3.x, p3.y);
+    this.context.lineTo(p1.x, p1.y);
+    this.context.closePath();
+
+    if (fill) {
+      this.context.fillStyle = fill;
+      this.context.fill();
+    }
+
+    if (color) {
+      this.context.strokeStyle = color;
+      this.context.stroke();
+    }
+  }
+
+  drawCone(p, length, width, angle, lineWidth, color, fill) {
+
+    const radius = width / 2.0;
+    const triangleLength = length - radius;
+    let p1 = new Vector2(0, 0);
+    let p2 = new Vector2(radius, triangleLength);
+    let p3 = new Vector2(-radius, triangleLength);
+    let circleCenter = new Vector2(0, triangleLength);
+
+    this.context.save();
+
+    this.context.translate(p.x, p.y);
+    this.context.rotate(angle * (Math.PI / 180))
+
+    this.context.lineWidth = this.checkWidth(lineWidth);
+    this.context.beginPath();
+    this.context.moveTo(p1.x, p1.y);
+    this.context.lineTo(p2.x, p2.y);
+    this.context.arc(circleCenter.x, circleCenter.y, radius, 0, Math.PI);
+    this.context.lineTo(p3.x, p3.y);
+    this.context.closePath();
+
+    if (fill) {
+      this.context.fillStyle = fill;
+      this.context.fill();
+    }
+
+    if (color) {
+      this.context.strokeStyle = color;
+      this.context.stroke();
+    }
+
+    this.context.restore();
+  }
+
 
 
   drawCircle(x, y, radius, width, color, fill) {

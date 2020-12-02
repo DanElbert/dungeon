@@ -40,23 +40,29 @@ class BaseDrawing {
   }
 
   setPosition(newPosition) {
-    this.invalidateHandler(() => {
-      this.position = newPosition;
-    });
+    if (this.position !== newPosition) {
+      this.invalidateHandler(() => {
+        this.position = newPosition;
+      });
+    }
     return this;
   }
 
   setScale(newScale) {
-    this.invalidateHandler(() => {
-      this.scale = newScale;
-    });
+    if (this.scale !== newScale) {
+      this.invalidateHandler(() => {
+        this.scale = newScale;
+      });
+    }
     return this;
   }
 
   setAngle(newAngle) {
-    this.invalidateHandler(() => {
-      this.angle = newAngle;
-    });
+    if (this.angle !== newAngle) {
+      this.invalidateHandler(() => {
+        this.angle = newAngle;
+      });
+    }
     return this;
   }
 

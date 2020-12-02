@@ -3,6 +3,7 @@ class Board < ApplicationRecord
 
   TEMPLATE_TYPES = {
       pathfinder: 'Pathfinder',
+      savage_worlds: 'Savage Worlds',
       overland: 'Overland'
   }
 

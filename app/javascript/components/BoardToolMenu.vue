@@ -27,12 +27,14 @@
   import CopiedImageControl from "./BoardToolMenuOptionControls/CopiedImageControl";
   import CreatureSizeControl from "./BoardToolMenuOptionControls/CreatureSizeControl";
   import ImageControl from "./BoardToolMenuOptionControls/ImageControl";
+  import ImageEditTypeControl from "./BoardToolMenuOptionControls/ImageEditTypeControl";
   import LevelControl from "./BoardToolMenuOptionControls/LevelControl";
   import ShapesControl from "./BoardToolMenuOptionControls/ShapesControl";
   import SizeControl from "./BoardToolMenuOptionControls/SizeControl";
   import TextControl from "./BoardToolMenuOptionControls/TextControl";
   import TokenImageControl from "./BoardToolMenuOptionControls/TokenImageControl";
   import TokenSizeControl from "./BoardToolMenuOptionControls/TokenSizeControl";
+  import BurstSizeControl from "./BoardToolMenuOptionControls/BurstSizeControl";
 
   export default {
     props: {
@@ -98,6 +100,8 @@
             return "creature-size-control";
           case "images":
             return "image-control";
+          case "image-edit-type":
+            return "image-edit-type-control"
           case "text":
             return "text-control";
           case "command":
@@ -106,6 +110,8 @@
             return "token-image-control";
           case "tokenSize":
             return "token-size-control";
+          case "burstSize":
+            return "burst-size-control";
           default:
             throw "Unknown opt type: " + opt.type;
         }
@@ -134,12 +140,14 @@
       CopiedImageControl,
       CreatureSizeControl,
       ImageControl,
+      ImageEditTypeControl,
       LevelControl,
       ShapesControl,
       SizeControl,
       TextControl,
       TokenImageControl,
-      TokenSizeControl
+      TokenSizeControl,
+      BurstSizeControl
     }
   }
 

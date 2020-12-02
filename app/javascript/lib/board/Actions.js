@@ -10,6 +10,8 @@ import {
   PathfinderRadiusTemplate,
   PathfinderReachTemplate,
   PathfinderRectangleTemplate,
+  SavageWorldsBurstTemplate,
+  SavageWorldsConeTemplate,
   PenDrawing,
   TokenDrawing,
   SquareDrawing,
@@ -563,6 +565,46 @@ class OverlandMeasureTemplateAction extends PersistentAction {
   }
 }
 
+class SavageWorldsBurstTemplateAction extends PersistentAction {
+  apply(board) {
+    const t = new SavageWorldsBurstTemplate(
+      this.properties.uid,
+      board,
+      new Vector2(this.properties.position),
+      this.properties.color,
+      this.properties.size
+    );
+
+    board.templateLayer.addTemplate(t);
+  }
+
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["position", "color", "size", "uid"]
+    });
+  }
+}
+
+class SavageWorldsConeTemplateAction extends PersistentAction {
+  apply(board) {
+    const t = new SavageWorldsConeTemplate(
+      this.properties.uid,
+      board,
+      new Vector2(this.properties.position),
+      this.properties.color,
+      this.properties.angle
+    );
+
+    board.templateLayer.addTemplate(t);
+  }
+
+  validateData() {
+    this.ensureVersionedFields({
+      0: ["position", "angle", "color", "uid"]
+    });
+  }
+}
+
 class PingAction extends Action {
   apply(board) {
     board.pingLayer.add(this.properties.point, this.properties.color);
@@ -844,6 +886,8 @@ actionTypes["coneTemplateAction"] = ConeTemplateAction;
 actionTypes["rectangleTemplateAction"] = RectangleTemplateAction;
 actionTypes["reachTemplateAction"] = ReachTemplateAction;
 actionTypes["overlandMeasureTemplateAction"] = OverlandMeasureTemplateAction;
+actionTypes["savageWorldsBurstTemplateAction"] = SavageWorldsBurstTemplateAction;
+actionTypes["savageWorldsConeTemplateAction"] = SavageWorldsConeTemplateAction;
 actionTypes["pingAction"] = PingAction;
 actionTypes["addTokenAction"] = AddTokenAction;
 actionTypes["removeTokenAction"] = RemoveTokenAction;

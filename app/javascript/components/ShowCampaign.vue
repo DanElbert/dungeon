@@ -62,6 +62,13 @@ import GameList from "./GameList"
 import BeckonNotification from "./BeckonNotification";
 import {CampaignMessenger} from "../lib/campaignMessenger";
 
+function gameSortFunc(g1, g2) {
+  const s1 = new Date(g1.created_at).getTime();
+  const s2 = new Date(g2.created_at).getTime();
+
+  return s2 - s1;
+}
+
 export default {
   props: {
     isOwner: {
@@ -89,15 +96,15 @@ export default {
 
   computed: {
     activeGames() {
-      return this.internalCampaign.games.filter(g => g.status === 'active');
+      return this.internalCampaign.games.filter(g => g.status === 'active').sort(gameSortFunc);
     },
 
     hiddenGames() {
-      return this.internalCampaign.games.filter(g => g.status === 'hidden');
+      return this.internalCampaign.games.filter(g => g.status === 'hidden').sort(gameSortFunc);
     },
 
     oldGames() {
-      return this.internalCampaign.games.filter(g => g.status === 'archived');
+      return this.internalCampaign.games.filter(g => g.status === 'archived').sort(gameSortFunc);
     }
   },
 

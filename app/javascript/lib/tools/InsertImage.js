@@ -13,27 +13,34 @@ export class InsertImageTool extends Tool {
 
     this.scale = 1.0;
     this.angle = 0.0;
-    this.editing = false;
+    this.allowEditing = true;
+    this.isEditing = false;
+    this.editPosition = null;
     this.editPoint = null;
     this.image = null;
   }
 
   buildOptions() {
-    this.options.add({type: "boolean", label: "Edit Mode?", name: "editing", value: false});
+    this.options.add({type: "boolean", label: "Edit Images?", name: "allowEditing", value: true});
     this.options.add({type: "images", label: "Image", name: "image", value: null});
+    this.options.add({type: "image-edit-type", label: "Operation", name: "operation", visible: false, value: "move"});
+    this.options.add({type: "command", name: "reset", label: "Reset", command: () => { this.scale = 1.0; this.angle = 0.0; }});
+    this.options.add({type: "command", name: "save", label: "Insert", visible: false, command: () => { this.saveAction() }});
+    this.options.add({type: "command", name: "cancel", label: "Cancel", visible: false, command: () => { this.leaveEditMode() }});
   }
 
   optionsChanged() {
-    this.editing = this.options.get("editing").value;
+    this.allowEditing = this.options.get("allowEditing").value;
     this.image = this.options.get("image").value;
     this.cleanImage();
     if (this.image) {
+      const pos = this.editPosition || this.cursor || [0,0];
       this.imageDrawing = ImageDrawing.getImageDrawing(
         generateActionId(),
         this.board,
         this.image.url,
         new Vector2(this.image.width, this.image.height),
-        new Vector2(0,0),
+        new Vector2(pos),
         this.scale,
         this.angle,
         this.board.getLevel().id);
@@ -84,19 +91,36 @@ export class InsertImageTool extends Tool {
 
     board.event_manager.on('mousemove.' + this.eventNamespace(), function(mapEvt) {
       self.cursor = self.getPoint(mapEvt.mapPoint);
+    });
 
-      if (self.editPoint) {
-        self.applyCursorDelta(self.editPoint, self.cursor);
+    this.board.event_manager.on('dragstart.' + this.eventNamespace(), function(mapEvt) {
+      if (self.isEditing) {
+        self.editPoint = self.cursor;
+        self.preEditSettings = {
+          scale: self.scale,
+          angle: self.angle,
+          position: self.editPosition
+        }
       }
     });
 
+    this.board.event_manager.on('drag.' + this.eventNamespace(), function(mapEvt) {
+      if (self.editPoint) {
+        self.applyCursorDelta();
+      }
+    });
+
+    this.board.event_manager.on('dragstop.' + this.eventNamespace(), function(mapEvt) {
+      self.editPoint = null;
+    });
+
     board.event_manager.on('click.' + this.eventNamespace(), function(mapEvt) {
-      if (self.editing && self.cursor && !self.editPoint) {
-        self.editPoint = self.cursor;
-      } else if (self.editPoint) {
-        self.editPoint = null;
-      } else if (!self.editing && self.image && self.cursor) {
-        self.saveAction();
+      if (self.image && self.cursor && !self.isEditing) {
+        if (self.allowEditing) {
+          self.enterEditMode();
+        } else {
+          self.saveAction();
+        }
       }
     });
   }
@@ -106,54 +130,77 @@ export class InsertImageTool extends Tool {
     this.cleanImage();
   }
 
-  applyCursorDelta(startPoint, currentPoint) {
-    // to allow full control of rotation and scale, the following rules are used:
-    // when the X delta is positive (cursor has moved right), the distance between points is used to scale the image up
-    // when the X delta is negative, the distance between points is used to scale it down
-    // Angles are mapped as such: (assuming right is 0, top is 90, etc [which was wrong; 0 is right, -90 is up...])
-    // 0-90: 0-180
-    // 270-359: 180-359
-    // 91-180: 180-0
-    // 181-269: 359-180
+  enterEditMode() {
+    setTimeout(() => {
+      this.isEditing = true;
+      this.editPoint = null;
+      this.editPosition = this.cursor;
+      this.options.get("operation").visible = true;
+      this.options.get("save").visible = true;
+      this.options.get("cancel").visible = true;
+    }, 1);
+  }
 
-    var deltaX = currentPoint[0] - startPoint[0];
-    var deltaY = currentPoint[1] - startPoint[1];
-    var delta = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-    var angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+  leaveEditMode() {
+    this.isEditing = false;
+    this.editPoint = null;
+    this.editPosition = null;
+    this.options.get("operation").visible = false;
+    this.options.get("save").visible = false;
+    this.options.get("cancel").visible = false;
+  }
 
-    angle = Geometry.snapNear(angle, 5.0, 45.0);
+  applyCursorDelta() {
 
-    if (angle >= 0 && angle < 90) {
-      this.angle = (angle / 90) * 180;
-    } else if (angle >= 90) {
-      this.angle = ((90 - (angle - 90)) / -90) * 180;
-    } else if (angle < 0 && angle >= -90) {
-      this.angle = 360 - ((angle / -90) * 180);
-    } else if (angle < -90) {
-      this.angle = 180 - ((Math.abs(angle + 90) / 90) * 180);
+    if (!this.editPoint || !this.cursor) {
+      return;
     }
 
-    if (delta > 100) {
-      if (deltaX >= 0) {
-        this.scale = Math.max(1, (Math.min(750.0, delta) / 750.0) * 4);
-      } else {
-        this.scale = Math.min(1, 1 / ((delta - 99) / 15));
+    const start = new Vector2(this.editPoint);
+    const end = new Vector2(this.cursor);
+
+    const operation = this.options.get("operation").value;
+
+    if (operation === "move") {
+      const delta = end.subtract(start);
+      this.editPosition = [this.preEditSettings.position[0] + delta.x, this.preEditSettings.position[1] + delta.y];
+    } else if (operation === "scale") {
+      const deltaY = start.y - end.y;
+      const ratio = Math.min(Math.abs(deltaY), 750.0) / 750.0;
+      if (deltaY > 0) {
+        this.scale = this.preEditSettings.scale * (1.0 + ratio);
+      } else if (deltaY < -5) {
+        this.scale = Math.max(0.01, this.preEditSettings.scale * (1.0 - ratio));
       }
+    } else if (operation === "rotate") {
+      const deltaY = start.y - end.y;
+      const ratio = Math.min(Math.abs(deltaY), 750.0) / 750.0;
+      let angle = 0;
+
+      if (deltaY > 0) {
+        angle = this.preEditSettings.angle + (ratio * 360);
+      } else {
+        angle = this.preEditSettings.angle - (ratio * 360);
+      }
+
+      this.angle = angle;
     } else {
-      this.scale = 1.0;
+      throw `Invalid Operation: ${operation}`
     }
 
   }
 
   saveAction() {
-    var img = this.imageDrawing;
+    const img = this.imageDrawing;
+    const center = this.editPosition || this.cursor;
+
     if (img) {
       var action = {
         version: 1,
         level: this.board.getLevel().id,
         actionType: "insertImageAction",
         url: this.image.url,
-        center: this.cursor,
+        center: center,
         scale: this.scale,
         angle: this.angle,
         width: img.size.x,
@@ -164,6 +211,12 @@ export class InsertImageTool extends Tool {
 
       this.board.addAction(action, undoAction, true);
     }
+
+    this.leaveEditMode();
+    setTimeout(() => {
+      this.board.drawingLayer.removeAction(this.imageDrawing.uid);
+      this.board.drawingLayer.addAction(this.imageDrawing);
+    }, 250);
   }
 
   draw() {
@@ -174,19 +227,14 @@ export class InsertImageTool extends Tool {
     if (this.cursor) {
       this.drawCross(this.cursor);
     }
-
-    if (this.editing && this.editPoint) {
-      this.drawCross(this.editPoint);
-    }
   }
 
   drawImage() {
-    var place = this.editPoint || this.cursor;
+    var place = this.editPosition || this.cursor;
     if (place) {
       this.imageDrawing.setPosition(new Vector2(place[0], place[1]));
       this.imageDrawing.setScale(this.scale);
       this.imageDrawing.setAngle(this.angle * Math.PI / 180);
-      //this.imageDrawing.draw(this.board.drawing, this.board.getViewPortRectangle());
     }
   }
 

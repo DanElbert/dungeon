@@ -87,6 +87,8 @@ export class BoardEvents extends Eventer {
     var mapPoint = this.getMapCoordinates(canvasCoords[0], canvasCoords[1]);
     var cell = this.getCell(mapPoint[0], mapPoint[1]);
 
+    this.trigger(mouseState.eventPrefix + 'mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
+
     if(mouseState.down && !mouseState.dragging) {
       mouseState.dragging = true;
       this.trigger(mouseState.eventPrefix + 'dragstart', {mapPoint: mouseState.dragStart, mapPointCell: this.getCell(mouseState.dragStart[0], mouseState.dragStart[1]), mousePoint: canvasCoords});
@@ -103,8 +105,6 @@ export class BoardEvents extends Eventer {
 
       mouseState.previousDrag = mapPoint;
     }
-
-    this.trigger(mouseState.eventPrefix + 'mousemove', {mapPoint: mapPoint, mapPointCell: cell, mousePoint: canvasCoords});
   }
 
   cursorUpHandler(mouseState) {

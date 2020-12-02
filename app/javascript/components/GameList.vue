@@ -12,7 +12,7 @@
           <a :href="`/games/${game.id}`" class="name">{{ game.name }}</a>
           <br />
           <span class="timestamp">
-            <span class="far fa-clock"></span> {{ game.created_at }}
+            <span class="far fa-clock"></span> {{ formatTime(game.created_at) }}
           </span>
         </div>
 
@@ -48,6 +48,16 @@ export default {
     isOwner: {
       type: Boolean,
       required: true
+    }
+  },
+
+  methods: {
+    formatTime(str) {
+      const pad = n => n.toString().padStart(2, "0");
+      const d = new Date(str);
+      const ds = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} `;
+      const ts = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      return ds + ts;
     }
   }
 }

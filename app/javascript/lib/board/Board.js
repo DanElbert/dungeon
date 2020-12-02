@@ -55,6 +55,7 @@ export function Board(canvas, gameId, userData) {
   this.isOwner = false;
   this.pcMode = false;
 
+  this.editingImage = null;
   this.copiedArea = null;
   this.isItemDragging = false;
   this.selectedItem = null;
