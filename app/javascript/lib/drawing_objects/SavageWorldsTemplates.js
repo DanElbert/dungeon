@@ -9,11 +9,11 @@ export class SavageWorldsBurstTemplate extends BaseTemplate {
 
   get radius() {
     if (this.size === "small") {
-      return this.cellSize * 2;
+      return (this.cellSize * 2) / 2.0;
     } else if (this.size === "medium") {
-      return this.cellSize * 4;
+      return (this.cellSize * 4) / 2.0;
     } else {
-      return this.cellSize * 6;
+      return (this.cellSize * 6) / 2.0;
     }
   }
 
