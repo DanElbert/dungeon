@@ -4,6 +4,7 @@ import "../styles";
 import 'vue-resize/dist/vue-resize.css'
 
 import Vue from "vue";
+import Vuex from "vuex";
 import Rails from '@rails/ujs';
 import TWEEN from "@tweenjs/tween.js";
 
@@ -16,6 +17,7 @@ import "../lib/drawing_objects";
 import "../lib/board/Actions";
 import "../lib/FontAwesome";
 
+import store from '../store';
 import VueResize from 'vue-resize'
 import AppCampaignUsers from "../components/AppCampaignUsers";
 import AppColorPicker from "../components/AppColorPicker";
@@ -38,6 +40,7 @@ function installComponent(element, component, opts, attrs) {
 
   const vmOptions = Object.assign(opts, {
     el: element,
+    store,
     render: createElement => createElement(component, { props: attrs, ref: 'component' })
   });
 
@@ -60,6 +63,7 @@ window.VUE_COMPONENTS = {
 };
 
 Vue.use(VueResize);
+Vue.use(Vuex);
 
 Vue.prototype.$tween = new TWEEN.Group();
 

@@ -21,6 +21,7 @@
     "vue-resize": "^0.4.5",
     "vue-svg-loader": "^0.16.0",
     "vue-template-compiler": "^2.6.11",
+    "vuex": "^3.6.0",
     "webpack": "^4.43.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
-import {PathfinderConeTemplate, SavageWorldsBurstTemplate, SavageWorldsConeTemplate} from "../drawing_objects";
+import { PathfinderConeTemplate, SavageWorldsBurstTemplate, SavageWorldsConeTemplate } from "../drawing_objects";
 import { Tool } from "./Tool";
 import { TemplateTool } from "./Templates";
-import {Geometry, Vector2} from "../geometry";
+import { Geometry, Vector2 } from "../geometry";
 import { generateActionId } from "../Actions";
 
 export class SavageWorldsBurstTemplateTool extends Tool {

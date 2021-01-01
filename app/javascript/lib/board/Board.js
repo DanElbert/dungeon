@@ -14,6 +14,7 @@ import { ViewPortLabels } from "./ViewPortLabels";
 import { ViewPortManager } from "./ViewPortManager";
 import { toggleDungeonFullscreen } from "./Fullscreen";
 import { generateActionId, attachActionMethods } from "../Actions";
+import store from "../../store";
 
 export function Board(canvas, gameId, userData) {
 

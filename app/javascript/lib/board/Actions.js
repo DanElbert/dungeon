@@ -1,5 +1,6 @@
 import { Vector2, TransformMatrix, Rectangle, Geometry } from "../geometry";
 import { Action, actionTypes } from "../Actions";
+import store from "../../store";
 import {
   ImageDrawing,
   MoveIndicatorDrawing,
