@@ -28,7 +28,7 @@ import AppToolColorPicker from "../components/AppToolColorPicker";
 import CompassRose from "../components/CompassRose";
 import ShowCampaign from "../components/ShowCampaign";
 import ShowGame from "../components/ShowGame";
-import Initiative from "../components/Initiative";
+import ShowInitiative from "../components/ShowInitiative";
 
 function installComponent(element, component, opts, attrs) {
   opts = opts || {};
@@ -59,7 +59,7 @@ window.VUE_COMPONENTS = {
   CompassRose,
   ShowCampaign,
   ShowGame,
-  Initiative
+  ShowInitiative
 };
 
 Vue.use(VueResize);
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const map = {
     "show-campaign": ShowCampaign,
     "show-game": ShowGame,
-    "initiative": Initiative,
+    "show-initiative": ShowInitiative,
     "image-picker": AppImagePicker,
     "color-picker": AppColorPicker,
     "file-picker": AppFilePicker,

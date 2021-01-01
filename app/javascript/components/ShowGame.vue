@@ -23,6 +23,7 @@ import Api from "../lib/Api";
 import {generateActionId} from "../lib/Actions";
 import { flashMessage } from "../lib/FlashMessages";
 import { CampaignMessenger } from "../lib/campaignMessenger";
+import { mapMutations } from 'vuex'
 
 export default {
   props: {
@@ -84,6 +85,11 @@ export default {
   },
 
   methods: {
+    ...mapMutations([
+        "setCampaignId",
+        "setUser"
+    ]),
+
     toolToggle() {
       this.board.toolManager.toggleDisplay();
     },
@@ -143,6 +149,11 @@ export default {
     }
   },
 
+  created() {
+    this.setCampaignId(this.campaignId);
+    this.setUser(this.currentUser);
+  },
+
   mounted() {
     this.campaignMessenger = new CampaignMessenger(this.currentUser.id, this.campaignId, this.gameId);
     this.board = new Board(this.$refs.game_board, this.gameId, this.currentUser);
@@ -175,7 +186,7 @@ export default {
   },
 
   destroyed() {
-    window.removeEventListener('mousemove', this.setCanvasSize);
+    window.removeEventListener('resize', this.setCanvasSize);
   },
 
   components: {

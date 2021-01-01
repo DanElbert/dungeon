@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <initiative-list append-to="#initiative-popup" :initiative-data="initiativeData">
+    <initiative-list append-to="#initiative-popup">
     </initiative-list>
 
     <template slot="footer">
@@ -59,10 +59,8 @@
   import InitiativeList from "./InitiativeList";
   import InitiativeListItem from "./InitiativeListItem";
 
-  import InitiativeData from "../lib/InitiativeData";
-  import { ActionMessenger } from "../lib/ActionMessenger";
-  import { generateActionId } from "../lib/Actions";
   import {Vector2} from "../lib/geometry";
+  import { mapActions, mapGetters, mapState } from "vuex";
 
   function initiativeFactory() {
     return {
@@ -105,7 +103,6 @@
 
     data() {
       return {
-        initiativeData: null,
         initiativeActionManager: null,
         newInitiative: initiativeFactory(),
         isViewMode: false,
@@ -114,13 +111,23 @@
     },
 
     computed: {
-      typeaheadNames() {
-        const usedNames = this.initiativeData.initiatives.map(i => i.name);
-        return this.names.filter(n => usedNames.indexOf(n) === -1);
-      },
+      ...mapGetters({
+        typeaheadNames: "initiative/unusedNames"
+      }),
+      ...mapState({
+        initiatives: "initiative/items"
+      })
     },
 
     methods: {
+      ...mapActions({
+        ensureInitiativeMessenger: "initiative/ensureMessenger",
+        sort: "initiative/sort",
+        clear: "initiative/clear",
+        roll: "initiative/roll",
+        addInitiativeItem: "initiative/addItem"
+      }),
+
       debugEvt() {
         console.log(arguments);
       },
@@ -137,18 +144,6 @@
         this.$refs.popup.toggle();
       },
 
-      sort() {
-        this.initiativeData.sort();
-      },
-
-      clear() {
-        this.initiativeData.clear();
-      },
-
-      roll() {
-        this.initiativeData.roll();
-      },
-
       toggleViewMode() {
         this.isViewMode = !this.isViewMode;
       },
@@ -158,52 +153,49 @@
       },
 
       addNewInitiative() {
-        if (this.initiativeData.add(this.newInitiative.name, this.newInitiative.value)) {
-          this.newInitiative = initiativeFactory();
-          this.$refs.nameInput.focus();
+        let name = this.newInitiative.name;
+        let value = this.newInitiative.value;
+
+        name = (name || "").trim();
+        value = (value === null || value === undefined || value === "") ? null : parseInt(value);
+        if (name === "") {
+          return;
         }
+
+        const { parsedName, parsedBonus } = this.parseName(name);
+
+        if (value === null && !parsedBonus) {
+          return;
+        }
+
+        this.addInitiativeItem({
+          name: parsedName,
+          bonus: parsedBonus,
+          value: value
+        })
+
+        this.newInitiative = initiativeFactory();
+        this.$refs.nameInput.focus();
       },
 
-      handleAddActionMessage(message) {
-        switch (message.actionType) {
-          case "updateInitiativeAction":
-            this.update(message.initiative, message.initiative_names);
-            break;
+      parseName(name) {
+        const match = name.match(/^(.*?)\s+([+-]\d+[+-]?)$/);
+        if (match) {
+          return {
+            parsedName: match[1],
+            parsedBonus: match[2]
+          }
+        } else {
+          return {
+            parsedName: name,
+            parsedBonus: null
+          }
         }
-      },
-
-      handleDataChanged() {
-        // send new action
-        const action = {actionType: "updateInitiativeAction", initiative: this.initiativeData.initiatives, uid: generateActionId()};
-        this.initiativeActionManager.sendActionMessage(action);
-      },
-
-      update(initiatives, names) {
-        if (initiatives !== null) {
-          this.initiativeData.update(initiatives);
-        }
-        if (names !== null) {
-          this.names = names || [];
-        }
-      }
-    },
-
-    mounted() {
-      if (this.initiativeActionManager.connected) {
-        this.initiativeActionManager.channel.perform("get_data");
-      } else {
-        this.initiativeActionManager.onConnected = () => { this.initiativeActionManager.channel.perform("get_data"); this.initiativeActionManager.onConnected = null; }
       }
     },
 
     created() {
-      this.initiativeData = new InitiativeData();
-      this.initiativeData.on("changed", () => this.handleDataChanged());
-
-      this.initiativeActionManager = new ActionMessenger("InitiativeChannel", { campaign_id: this.campaignId }, message => {
-        this.handleAddActionMessage(message);
-      });
-      this.initiativeActionManager.ignoreReflections = false;
+      this.ensureInitiativeMessenger();
     },
 
     components: {

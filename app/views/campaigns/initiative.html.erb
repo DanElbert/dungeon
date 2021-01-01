@@ -1,4 +1,2 @@
 
-<div style="height: 100%; position: relative">
-  <div data-initiative data-attributes="<%= { campaignId: @campaign.id, floating: true, alwaysOpen: true, startPosition: { x: 100, y: 75} }.to_json %>"></div>
-</div>
+<div data-show-initiative data-attributes="<%= { campaignId: @campaign.id, currentUser: current_user }.to_json %>"></div>

@@ -20,3 +20,26 @@ export function rollDie(sides) {
     }
   }
 }
+
+export function rollDieWithBonus(sides, bonusStr) {
+  const roll = () => rollDie(sides);
+  let diceRolls = [roll()];
+  let diceFunc = Math.max;
+  let bonus = bonusStr || 0;
+
+  if (bonus !== 0) {
+    const m = bonus.match(/([\+\-]\d+)([\+\-])?/);
+    bonus = parseInt(m[1]);
+    if (m[2]) {
+      diceRolls.push(roll());
+      if (m[2] === "-") {
+        diceFunc = Math.min;
+      }
+    }
+  }
+
+  return {
+    value: diceFunc(...diceRolls) + bonus,
+    rolls: diceRolls
+  }
+}

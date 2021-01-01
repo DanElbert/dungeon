@@ -1,17 +1,40 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import game from './game';
+import { ActionMessenger } from "../lib/ActionMessenger";
+import { generateActionId } from "../lib/Actions";
+import game from "./game";
+import initiative from "./initiative";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   modules: {
-    game
+    game,
+    initiative
   },
-  state: {},
-  actions: {},
+  state: {
+    beckon: {
+      current: null,
+      previous: null
+    },
+
+    campaignId: null,
+
+    user: null
+  },
+  actions: {
+
+  },
   getters: {},
-  mutations: {}
+  mutations: {
+    setCampaignId(state, value) {
+      state.campaignId = value;
+    },
+
+    setUser(state, value) {
+      state.user = value;
+    },
+  }
 });

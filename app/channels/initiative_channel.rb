@@ -4,6 +4,8 @@ class InitiativeChannel < ApplicationCable::Channel
     @campaign = Campaign.includes(:initiatives, :initiative_histories).find(params[:campaign_id])
     stream_for @campaign
     stream_for [session_id, @campaign]
+    SendInitiativeJob.perform_later(session_id, @campaign)
+    #get_data
   end
 
   def get_data

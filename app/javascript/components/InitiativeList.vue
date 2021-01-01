@@ -16,14 +16,10 @@
   import AppFloater from "./AppFloater";
   import InitiativeListItem from "./InitiativeListItem";
   import { Rectangle, Vector2 } from "../lib/geometry";
+  import { mapActions, mapState } from "vuex";
 
   export default {
     props: {
-      initiativeData: {
-        type: Object,
-        required: true
-      },
-
       appendTo: {
         required: false,
         type: String,
@@ -33,17 +29,20 @@
 
     data() {
       return {
-        internalValue: null,
+        internalValue: [],
         floatingId: null,
         hoverIdx: null,
         centerPointCache: null
       }
     },
 
-    computed: {
-    },
-
     methods: {
+      ...mapActions({
+        moveItem: "initiative/moveItem",
+        removeItem: "initiative/removeItem",
+        updateItem: "initiative/updateItem"
+      }),
+
       test() {
         console.log(arguments);
       },
@@ -86,30 +85,24 @@
 
       dragEnd(id, position) {
         if (this.hoverIdx === null) {
-          this.initiativeData.remove(id);
+          this.removeItem({id: id});
         } else {
-          this.initiativeData.move(id, this.hoverIdx);
+          this.moveItem({id: id, newIdx: this.hoverIdx});
         }
 
         this.floatingId = null;
         this.hoverIdx = null;
         this.centerPointCache = null;
-      },
-
-      updateItem(item) {
-        this.initiativeData.updateItem(item.id, item.name, item.value);
       }
     },
 
     created() {
-      this.$watch(
-        "initiativeData",
-        val => this.internalValue = [...val.initiatives],
-        {
-          immediate: true,
-          deep: true
-        }
-      );
+      this.$watch(() => this.$store.state.initiative.items,
+          () => { this.internalValue = [...this.$store.state.initiative.items] },
+          {
+            immediate: true,
+            deep: true
+          });
     },
 
     components: {
