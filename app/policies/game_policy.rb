@@ -1,6 +1,10 @@
 class GamePolicy < ApplicationPolicy
   def show?
-    authenticated? && record.is_pc?(user)
+    if [Game::STATUS[:active], Game::STATUS[:archived]].include?(record.status)
+      authenticated? && record.is_pc?(user)
+    else
+      authenticated? && record.is_gm?(user)
+    end
   end
 
   def get_game_data?
