@@ -79,6 +79,7 @@
 
     .name {
       flex-grow: 1;
+      overflow: hidden;
       .button {
         width: 100%;
       }
