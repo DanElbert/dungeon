@@ -206,12 +206,12 @@ div.game_board_container {
   height: 100%;
   overflow: hidden;
 
-  /deep/ canvas, /deep/ div.background {
+  &::v-deep canvas, &::v-deep div.background {
     position: absolute;
     z-index: 1;
   }
 
-  /deep/ canvas.background, /deep/ div.background {
+  &::v-deep canvas.background, &::v-deep div.background {
     z-index: 0;
   }
 }

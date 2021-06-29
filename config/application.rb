@@ -17,7 +17,5 @@ module Dungeon
     config.middleware.insert_after Rack::Sendfile, Rack::Deflater
 
     config.load_defaults "6.0"
-
-    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = true
   end
 end

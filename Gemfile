@@ -1,21 +1,21 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 6.0.3'
+gem 'rails', '~> 6.1.4'
 
 gem 'pg', '~> 1.2.3'
 
-gem 'oj', '~> 3.10.15'
+gem 'oj', '~> 3.11.7'
 
-gem 'puma', '~> 4.3.6'
-gem 'redis', '~> 4.2.2'
+gem 'puma', '~> 5.3.2'
+gem 'redis', '~> 4.3.1'
 gem 'hiredis', '~> 0.6.3'
 
-gem 'webpacker', '5.2.1'
+gem 'webpacker', '5.4.0'
 gem 'bcrypt', '~> 3.1.16'
 gem 'pundit', '~> 2.1.0'
 
 gem 'resque', '~> 2.0.0'
-gem 'ruby-vips', '~> 2.0.17'
+gem 'ruby-vips', '~> 2.1.2'
 gem 'exception_notification', '~> 4.4.0'
 
 group :development, :test do
@@ -23,7 +23,7 @@ group :development, :test do
 end
 
 group :development do
-  gem 'listen', '~> 3.2.1'
+  gem 'listen', '~> 3.5.1'
 end
 
 group :test do

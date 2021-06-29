@@ -223,11 +223,11 @@
     }
   }
 
-  .initiative /deep/ .modal-card {
+  .initiative::v-deep .modal-card {
       width: 18rem;
   }
 
-  /deep/ .init-drag-helper {
+  .init-drag-helper::v-deep {
     z-index: 8010;
   }
 

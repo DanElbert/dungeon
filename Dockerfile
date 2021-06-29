@@ -1,4 +1,4 @@
-FROM ruby:2.7.1-buster
+FROM ruby:3.0.1-buster
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
