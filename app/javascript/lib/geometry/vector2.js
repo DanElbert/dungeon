@@ -8,11 +8,11 @@ class Vector2 {
     } else if (Array.isArray(x)) {
       this.x = x[0];
       this.y = x[1];
-    } else if ("x" in x && "y" in x) {
+    } else if ((typeof x) === "object" && "x" in x && "y" in x) {
       this.x = x.x;
       this.y = x.y;
     } else {
-      throw new Error("Invalid Vector2 constructor params");
+      throw new Error(`Invalid Vector2 constructor params: (${x}, ${y})`);
     }
   }
 

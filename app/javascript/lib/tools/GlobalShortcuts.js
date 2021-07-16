@@ -71,7 +71,7 @@ export class GlobalShortCuts extends Tool {
 
     this.board.event_manager.on('dblclick.GlobalShortcuts', function(mapEvt) {
       let color = self.toolManager.sharedTool("pingColor").value;
-      var action = {actionType: "pingAction", point: mapEvt.mapPoint, color: color, uid: generateActionId()};
+      var action = {actionType: "pingAction", point: [parseInt(mapEvt.mapPoint[0]), parseInt(mapEvt.mapPoint[1])], color: color, uid: generateActionId()};
       self.board.addAction(action, null, true);
     });
   }

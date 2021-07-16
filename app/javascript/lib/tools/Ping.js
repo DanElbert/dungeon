@@ -20,7 +20,7 @@ export class PingTool extends Tool {
     var board = this.board;
 
     board.event_manager.on('click.PingTool', function(mapEvt) {
-      var action = {actionType: "pingAction", point: mapEvt.mapPoint, color: self.color, uid: generateActionId()};
+      var action = {actionType: "pingAction", point: [parseInt(mapEvt.mapPoint[0]), parseInt(mapEvt.mapPoint[1])], color: self.color, uid: generateActionId()};
       self.board.addAction(action, null, true);
     });
   }
