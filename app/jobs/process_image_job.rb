@@ -56,11 +56,11 @@ class ProcessImageJob < ApplicationJob
         return
       end
 
-      i.image_vips.dzsave(root_path, {
+      i.image_vips.dzsave(root_path, 
           suffix: ".#{i.extension}",
           overlap: Image::OVERLAP,
           tile_size: Image::TILE_SIZE
-      })
+      )
 
       `mkdir -p #{root_path}`
 

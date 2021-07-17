@@ -125,8 +125,8 @@ class Image < ApplicationRecord
     images = Rails.root.join('public', 'images', '*')
     `rm -rf #{images}`
 
-    Image.select(:id, :status, :type, :campaign_id, :name).all.each do |i|
-      i.process!
+    Image.without_data.readonly(false).all.each do |i|
+      i.process!(true)
     end
   end
 end

@@ -152,7 +152,7 @@ export class ImageCache extends Eventer {
     this.loadingQueue.sort((a, b) => a.compareTo(b));
 
     while (this.loadingQueue.length > 0 && Object.keys(this.loadingKeys).length < this.maxLoading) {
-      let img = this.loadingQueue.pop();
+      let img = this.loadingQueue.shift();
       this.loadingKeys[img.key] = true;
       img.load()
         .then(img => {
