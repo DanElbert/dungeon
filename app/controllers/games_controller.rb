@@ -34,7 +34,7 @@ class GamesController < ApplicationController
 
   def update
     respond_to do |format|
-      if @game.update_attributes(game_params)
+      if @game.update(game_params)
         CampaignChannel.update_campaign(@game.campaign)
         format.html { redirect_to campaign_path(@game.campaign), notice: 'Game was successfully updated.' }
         format.json { head :no_content }

@@ -28,7 +28,7 @@ module Admin
       @campaign = Campaign.find(params[:id])
 
       respond_to do |format|
-        if @campaign.update_attributes(campaign_params)
+        if @campaign.update(campaign_params)
           format.html { redirect_to [:admin, @campaign], notice: 'Campaign was successfully updated.' }
           format.json { head :no_content }
         else

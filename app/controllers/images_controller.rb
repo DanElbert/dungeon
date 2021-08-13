@@ -74,7 +74,7 @@ class ImagesController < ApplicationController
   end
 
   def update
-    if @image.update_attributes(image_params)
+    if @image.update(image_params)
       redirect_to index_location, notice: 'Game was successfully updated.'
     else
       render action: 'edit'

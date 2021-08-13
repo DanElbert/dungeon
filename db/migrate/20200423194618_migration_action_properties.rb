@@ -13,7 +13,7 @@ class MigrationActionProperties < ActiveRecord::Migration[5.2]
 
     BoardActionMigrator.transaction do
       BoardActionMigrator.find_each do |ba|
-        ba.update_attributes(properties: ba.properties_old)
+        ba.update(properties: ba.properties_old)
       end
     end
 

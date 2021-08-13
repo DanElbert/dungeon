@@ -27,7 +27,7 @@ module Admin
       @game = Game.find(params[:id])
 
       respond_to do |format|
-        if @game.update_attributes(game_params)
+        if @game.update(game_params)
           format.html { redirect_to [:admin, @game], notice: 'Game was successfully updated.' }
           format.json { head :no_content }
         else

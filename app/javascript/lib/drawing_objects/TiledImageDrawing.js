@@ -73,7 +73,7 @@ class TiledImageDrawing extends DrawingCollection {
       const fallbackLevel = this.calculateFallbackLevel(data.tile_size, this.size.x, this.size.y);
       const fallbackUrl = "/images/" + data.id + "/" + fallbackLevel + "/0_0." + data.extension;
 
-      const image = await this.board.imageCache.getImageAsync(fallbackUrl, -1);
+      const image = await this.board.imageCache.getImageAsync(fallbackUrl, 99);
 
       if (originalUrl === this.url) {
         this.imageJson = data;
