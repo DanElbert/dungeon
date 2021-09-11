@@ -15,6 +15,12 @@ class Rectangle {
       this._topLeft = this._topLeft.translate(0, this._height);
       this._height = -1 * this._height;
     }
+    
+    this._left = this._topLeft.x;
+    this._right = this._left + this._width;
+    this._top = this._topLeft.y;
+    this._bottom = this._top + this._height;
+    Object.freeze(this);
   }
 
   static fromElement(el) {
@@ -205,19 +211,19 @@ class Rectangle {
   }
 
   left() {
-    return this.topLeft().x;
+    return this._left;
   }
 
   right() {
-    return this.topLeft().x + this.width();
+    return this._right;
   }
 
   top() {
-    return this.topLeft().y;
+    return this._top;
   }
 
   bottom() {
-    return this.topLeft().y + this.height();
+    return this._bottom;
   }
 
   width() {

@@ -68,17 +68,18 @@ class BaseDrawing {
 
   // Given a rectangle and an angle, returns a non-rotated containing rectangle
   getRotatedRecBounds(rec, angle) {
-    var points = [rec.topLeft(), rec.topRight(), rec.bottomLeft(), rec.bottomRight()];
+    let points = [rec.topLeft(), rec.topRight(), rec.bottomLeft(), rec.bottomRight()];
+    const center = rec.center();
 
-    points = points.map(p => p.rotate(angle, rec.center()));
+    points = points.map(p => p.rotate(angle, center));
 
-    var xVals = points.map(p => p.x);
-    var yVals = points.map(p => p.y);
+    const xVals = points.map(p => p.x);
+    const yVals = points.map(p => p.y);
 
-    var left = _min(xVals);
-    var right = _max(xVals);
-    var top = _min(yVals);
-    var bottom = _max(yVals);
+    const left = _min(xVals);
+    const right = _max(xVals);
+    const top = _min(yVals);
+    const bottom = _max(yVals);
 
     return new Rectangle(
       new Vector2(left, top),
