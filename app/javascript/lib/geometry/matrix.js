@@ -42,14 +42,10 @@ TransformMatrix.prototype.scale = function(x, y) {
 };
 
 TransformMatrix.prototype.matrixMultiply = function(m) {
-  var column0 = [m.arr[0], m.arr[3], m.arr[6]];
-  var column1 = [m.arr[1], m.arr[4], m.arr[7]];
-  var column2 = [m.arr[2], m.arr[5], m.arr[8]];
-
   // Multiply each column by the matrix
-  var result0 = this.pointMultiply(column0);
-  var result1 = this.pointMultiply(column1);
-  var result2 = this.pointMultiply(column2);
+  const result0 = this.pointMultiply(m.arr[0], m.arr[3], m.arr[6]);
+  const result1 = this.pointMultiply(m.arr[1], m.arr[4], m.arr[7]);
+  const result2 = this.pointMultiply(m.arr[2], m.arr[5], m.arr[8]);
 
   return new TransformMatrix([
     result0[0], result1[0], result2[0],
@@ -58,24 +54,20 @@ TransformMatrix.prototype.matrixMultiply = function(m) {
   ]);
 };
 
-TransformMatrix.prototype.pointMultiply = function(p) {
-  var x = p[0];
-  var y = p[1];
-  var z = p[2];
+TransformMatrix.prototype.pointMultiply = function(x, y, z) {
+  const c0r0 = this.arr[0];
+  const c1r0 = this.arr[1];
+  const c2r0 = this.arr[2];
+  const c0r1 = this.arr[3];
+  const c1r1 = this.arr[4];
+  const c2r1 = this.arr[5];
+  const c0r2 = this.arr[6];
+  const c1r2 = this.arr[7];
+  const c2r2 = this.arr[8];
 
-  var c0r0 = this.arr[0];
-  var c1r0 = this.arr[1];
-  var c2r0 = this.arr[2];
-  var c0r1 = this.arr[3];
-  var c1r1 = this.arr[4];
-  var c2r1 = this.arr[5];
-  var c0r2 = this.arr[6];
-  var c1r2 = this.arr[7];
-  var c2r2 = this.arr[8];
-
-  var resultX = (x * c0r0) + (y * c1r0) + (z * c2r0);
-  var resultY = (x * c0r1) + (y * c1r1) + (z * c2r1);
-  var resultZ = (x * c0r2) + (y * c1r2) + (z * c2r2);
+  const resultX = (x * c0r0) + (y * c1r0) + (z * c2r0);
+  const resultY = (x * c0r1) + (y * c1r1) + (z * c2r1);
+  const resultZ = (x * c0r2) + (y * c1r2) + (z * c2r2);
 
   return [resultX, resultY, resultZ];
 };

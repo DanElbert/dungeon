@@ -39,7 +39,7 @@ class ImageDrawing extends BaseDrawing {
   }
 
   executeDraw(drawing, drawBounds, detailLevel) {
-    if (!this.bounds().overlaps(drawBounds) || (this.detailLevel !== null && this.detailLevel !== detailLevel)) {
+    if ((this.detailLevel !== null && this.detailLevel !== detailLevel) || !this.bounds().overlaps(drawBounds)) {
       return;
     }
 

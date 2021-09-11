@@ -232,9 +232,11 @@ export class InsertImageTool extends Tool {
   drawImage() {
     var place = this.editPosition || this.cursor;
     if (place) {
-      this.imageDrawing.setPosition(new Vector2(place[0], place[1]));
-      this.imageDrawing.setScale(this.scale);
-      this.imageDrawing.setAngle(this.angle * Math.PI / 180);
+      this.imageDrawing.updateProperties({
+        position: new Vector2(place[0], place[1]),
+        scale: this.scale,
+        angle: this.angle * Math.PI / 180
+      });
     }
   }
 

@@ -71,7 +71,7 @@ class Vector2 {
   }
   
   matrixMultiply(m) {
-    var out = m.pointMultiply([this.x, this.y, 1]);
+    var out = m.pointMultiply(this.x, this.y, 1);
     return new Vector2(out[0], out[1]);
   }
 

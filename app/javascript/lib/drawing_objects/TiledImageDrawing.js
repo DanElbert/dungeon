@@ -14,6 +14,7 @@ class TiledImageDrawing extends DrawingCollection {
     this.imageJson = null;
     this.isFetching = false;
     this.fallbackImage = null;
+    this.hasGeometry = new Map();
 
     this.imageDrawings = new Map();
 
@@ -28,7 +29,6 @@ class TiledImageDrawing extends DrawingCollection {
   }
 
   calculateBounds() {
-    this.updateGeometry();
     var height = this.size.y * this.scale;
     var width = this.size.x * this.scale;
 
@@ -146,23 +146,38 @@ class TiledImageDrawing extends DrawingCollection {
       }
     }
 
-    this.updateGeometry();
     this.invalidate();
   }
 
-  updateGeometry() {
+  beforeDrawChildren(drawing, drawBounds, level) {
+    if (!this.hasGeometry.get(level)) {
+      this.updateGeometry(level);
+      this.hasGeometry.set(level, true);
+    }
+  }
+  
+  clearDrawing() {
+    super.clearDrawing();
+    this.hasGeometry.clear();
+  }
+
+  updateGeometry(level) {
     var centerpointMatrix = TransformMatrix.Identity
       .translate(this.position.x, this.position.y)
       .rotate(this.angle)
       .scale(this.scale, this.scale);
 
     for (let imgDrwEntry of this.imageDrawings.values()) {
-      var imgDrw = imgDrwEntry.imageDrawing;
-      var level = imgDrwEntry.level;
-
-      imgDrw.setPosition(imgDrwEntry.innerPosition.matrixMultiply(centerpointMatrix));
-      imgDrw.setScale(this.scale / level.scale);
-      imgDrw.setAngle(this.angle);
+      if (imgDrwEntry.level.number !== level) {
+        continue;
+      }
+      
+      const imgDrw = imgDrwEntry.imageDrawing;
+      
+      imgDrw.position = imgDrwEntry.innerPosition.matrixMultiply(centerpointMatrix);
+      imgDrw.scale = this.scale / imgDrwEntry.level.scale;
+      imgDrw.angle = this.angle;
+      imgDrw.clearDrawing();
     }
   }
 
