@@ -50,6 +50,7 @@ import {
   faUndo,
   faUpload,
   faUser,
+  faUsers,
   faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -116,6 +117,7 @@ library.add(
   faUndo,
   faUpload,
   faUser,
+  faUsers,
   faUserCircle,
 
   farCheckSquare,

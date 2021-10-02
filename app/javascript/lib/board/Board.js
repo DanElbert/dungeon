@@ -248,6 +248,7 @@ export function Board(canvas, gameId, userData) {
       this.toolManager.hideImageTool();
       this.toolManager.hidePcModeTool();
       this.toolManager.hideBeckonTool();
+      this.toolManager.hideTokensFromTool();
     }
 
     data.board.actions.forEach(action => {

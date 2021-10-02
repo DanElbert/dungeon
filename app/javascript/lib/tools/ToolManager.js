@@ -110,8 +110,8 @@ export class ToolManager extends Eventer {
         }),
 
         new ToolMenuItem("tokens_from", {
-          label: "Tokens From Game",
-          glyph: ["fas", "user-circle"],
+          label: "Tokens From",
+          glyph: ["fas", "users"],
           handler: function() { self.setTool("tokens_from"); }
         }),
 
@@ -483,6 +483,11 @@ export class ToolManager extends Eventer {
 
   hideBeckonTool() {
     this.getMenuItem("beckon").visible = false;
+    this.render();
+  }
+
+  hideTokensFromTool() {
+    this.getMenuItem("tokens_from").visible = false;
     this.render();
   }
 
