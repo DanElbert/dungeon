@@ -60,6 +60,31 @@ class GamesController < ApplicationController
       'initiative_names' => campaign.initiative_history_names
     }.to_json
   end
+  
+  def game_tokens
+    if params[:game_id]
+      @other_game = Game.find(params[:game_id])
+      
+      tokens = {}
+      
+      BoardAction.where(board_id: @other_game.board.id, action_type: %w(updateTokenAction addTokenAction)).order(:created_at).each do |a|
+        case a.action_type
+          when 'addTokenAction'
+            tokens[a.uid] = a.as_json.except('isPersistent', 'isRemoval', 'action', 'actionId', 'actionType', 'uid')
+          when 'updateTokenAction'
+            if (t = tokens[a.actionId])
+              t.merge!(a.properties.except('isPersistent', 'isRemoval', 'action', 'actionId', 'actionType', 'uid'))
+            end
+        end
+      end
+      
+      render json: tokens.values.to_json
+      
+    else
+      @games = @game.campaign.games.where("id <> ? AND status <> ?", @game.id, Game::STATUS[:deleted]).order(:name)
+      render json: @games.map { |g| { id: g.id, name: g.name, status: g.status } }.to_json
+    end
+  end
 
   # def initiative_names
   #   histories = InitiativeHistory.where(game: @game).order(use_count: :desc).limit(10)

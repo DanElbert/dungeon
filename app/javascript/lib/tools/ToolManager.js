@@ -14,6 +14,7 @@ import { ReachTemplateTool } from "./ReachTemplates";
 import { ShapeTool } from "./Shape";
 import { ConeTemplate, LineTemplate, Measure, RadiusTemplate, RectangleTemplate } from "./Templates";
 import { TokenTool } from "./Tokens";
+import { TokensFromTool } from "./TokensFromTool";
 import { generateActionId } from "../Actions";
 import {LevelTool} from "./LevelTool";
 import { LevelHole } from "./LevelHole";
@@ -63,6 +64,7 @@ export class ToolManager extends Eventer {
       "paste": new PasteTool(this),
       "insert_image": new InsertImageTool(this),
       "tokens": new TokenTool(this),
+      "tokens_from": new TokensFromTool(this),
       "levels": new LevelTool(this),
       "level_hole": new LevelHole(this)
     };
@@ -105,6 +107,12 @@ export class ToolManager extends Eventer {
           label: "Tokens",
           glyph: ["fas", "user-circle"],
           handler: function() { self.setTool("tokens"); }
+        }),
+
+        new ToolMenuItem("tokens_from", {
+          label: "Tokens From Game",
+          glyph: ["fas", "user-circle"],
+          handler: function() { self.setTool("tokens_from"); }
         }),
 
         new ToolMenuItem("fullscreen", {

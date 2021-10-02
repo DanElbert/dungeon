@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     member do
       get 'get_game_data'
       get 'initiative'
+      get 'game_tokens(/:game_id)' => :game_tokens
       #get 'initiative_names'
     end
   end

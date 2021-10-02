@@ -26,6 +26,7 @@
   import CommandControl from "./BoardToolMenuOptionControls/CommandControl";
   import CopiedImageControl from "./BoardToolMenuOptionControls/CopiedImageControl";
   import CreatureSizeControl from "./BoardToolMenuOptionControls/CreatureSizeControl";
+  import GameTokensControl from "./BoardToolMenuOptionControls/GameTokensControl";
   import ImageControl from "./BoardToolMenuOptionControls/ImageControl";
   import ImageEditTypeControl from "./BoardToolMenuOptionControls/ImageEditTypeControl";
   import LevelControl from "./BoardToolMenuOptionControls/LevelControl";
@@ -98,6 +99,8 @@
             return "boolean-control";
           case "creatureSize":
             return "creature-size-control";
+          case "gameTokens":
+            return "game-tokens-control"
           case "images":
             return "image-control";
           case "image-edit-type":
@@ -139,6 +142,7 @@
       CommandControl,
       CopiedImageControl,
       CreatureSizeControl,
+      GameTokensControl,
       ImageControl,
       ImageEditTypeControl,
       LevelControl,

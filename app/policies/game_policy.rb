@@ -18,6 +18,10 @@ class GamePolicy < ApplicationPolicy
   def initiative_names?
     show?
   end
+  
+  def game_tokens?
+    show?
+  end
 
   def update?
     authenticated? && record.is_gm?(user)

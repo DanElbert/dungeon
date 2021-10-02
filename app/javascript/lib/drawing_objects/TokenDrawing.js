@@ -22,8 +22,8 @@ class TokenDrawing extends BaseDrawing {
     this.fontSize = fontSize;
     this.text = text;
     this.imageUrl = imageUrl;
-    this.totalHp = totalHp;
-    this.currentHp = currentHp;
+    this.totalHp = totalHp === undefined ? 0 : totalHp;
+    this.currentHp = currentHp === undefined ? 0 : currentHp;
     this.icons = icons || [];
     this.loading = false;
     this.loadedImage = null;
