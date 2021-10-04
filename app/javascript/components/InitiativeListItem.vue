@@ -1,7 +1,7 @@
 <template>
-  <div class="initiative-item field has-addons" :class="{'initiative-item-delete': deleting}">
+  <div class="initiative-item field has-addons has-tooltip-top" :class="{'initiative-item-delete': deleting}" :data-tooltip="value.source">
     <p class="control name">
-      <span class="button has-tooltip-top" :data-tooltip="value.source">
+      <span class="button">
         {{value.name}}<sup v-if="!!value.bonus">{{value.bonus}}</sup>
       </span>
     </p>
