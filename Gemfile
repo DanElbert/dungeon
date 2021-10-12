@@ -6,7 +6,7 @@ gem 'pg', '~> 1.2.3'
 
 gem 'oj', '~> 3.11.7'
 
-gem 'puma', '~> 5.3.2'
+gem 'puma', '~> 5.5.1'
 gem 'redis', '~> 4.3.1'
 gem 'hiredis', '~> 0.6.3'
 
