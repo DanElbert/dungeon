@@ -29,8 +29,8 @@ COPY . /dungeon
 ENV RAILS_ENV docker
 
 RUN chmod a+x /dungeon/docker/web_boot.sh
-RUN bundle exec rake compile
-RUN env RAILS_ENV=production bundle exec rake assets:clobber assets:precompile
+# RUN bundle exec rake compile
+RUN env RAILS_ENV=production bundle exec rake webpacker:clobber webpacker:compile
 
 COPY docker/nginx/dungeon.conf /etc/nginx/sites-enabled/
 
