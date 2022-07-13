@@ -50,6 +50,12 @@
         default: null
       },
 
+      dragSelectorNegation: {
+        type: String,
+        required: false,
+        default: null
+      },
+
       hideOverlay: {
         type: Boolean,
         required: false,
@@ -264,13 +270,24 @@
 
       matchesDragSelector(el) {
         if (this.dragSelector !== null) {
-          let matches = false;
-          do {
-            matches = el.matches(this.dragSelector);
-            el = el.parentElement;
-          } while (!matches && this.$el.contains(el));
-
-          return matches;
+          return el.matches(this.dragSelector);
+          // let matches = false;
+          // do {
+          //   matches = el.matches(this.dragSelector);
+          //
+          //   if (matches) {
+          //     if (this.dragSelectorNegation !== null && el.matches(this.dragSelectorNegation)) {
+          //       console.log("break");
+          //       matches = false;
+          //       break;
+          //     }
+          //   }
+          //
+          //   el = el.parentElement;
+          //
+          // } while (!matches && this.$el.contains(el));
+          //
+          // return matches;
         } else {
           return true;
         }

@@ -2,7 +2,7 @@
   <div>
     <transition-group name="init-list" tag="div">
       <div ref="children" v-for="(item, idx) in internalValue" :key="item.id" :data-index="idx">
-        <app-floater :floating="item.id === floatingId" append-to="body" drag-selector=".initiative-item .name" @drag-start="dragStart(item.id, $event)" @drag-end="dragEnd(item.id, $event)" @drag-move="dragMove(item.id, $event)">
+        <app-floater :floating="item.id === floatingId" append-to="body" drag-selector=".initiative-item .name, .initiative-item .name *" @drag-start="dragStart(item.id, $event)" @drag-end="dragEnd(item.id, $event)" @drag-move="dragMove(item.id, $event)">
           <initiative-list-item :deleting="item.id === floatingId && hoverIdx === null" :value="item" @input="updateItem"></initiative-list-item>
         </app-floater>
         <initiative-list-item class="placeholder" v-if="item.id === floatingId" :value="item"></initiative-list-item>

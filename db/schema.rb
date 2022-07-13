@@ -2,21 +2,20 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_28_230332) do
-
+ActiveRecord::Schema[7.0].define(version: 2020_10_28_230332) do
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
     t.string "uid"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "board_id"
     t.json "properties"
     t.index ["board_id"], name: "index_board_actions_on_board_id"
@@ -30,8 +29,8 @@ ActiveRecord::Schema.define(version: 2020_10_28_230332) do
     t.integer "detect_height"
     t.integer "image_orientation"
     t.string "state"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "detect_origin_x"
     t.integer "detect_origin_y"
     t.integer "pattern_size"
@@ -42,8 +41,8 @@ ActiveRecord::Schema.define(version: 2020_10_28_230332) do
   create_table "boards", force: :cascade do |t|
     t.integer "game_id"
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "background_image_id"
     t.string "grid_color"
     t.integer "default_zoom"
@@ -65,16 +64,16 @@ ActiveRecord::Schema.define(version: 2020_10_28_230332) do
   create_table "campaigns", force: :cascade do |t|
     t.string "name"
     t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "use_x_letters"
     t.boolean "requires_authorization"
   end
 
   create_table "games", force: :cascade do |t|
     t.string "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "name"
     t.integer "user_id"
     t.integer "campaign_id"
@@ -85,8 +84,8 @@ ActiveRecord::Schema.define(version: 2020_10_28_230332) do
     t.integer "campaign_id"
     t.string "filename"
     t.binary "data", limit: 16777216
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "type"
     t.string "name"
     t.boolean "is_tiled"
@@ -105,8 +104,8 @@ ActiveRecord::Schema.define(version: 2020_10_28_230332) do
   create_table "initiative_histories", force: :cascade do |t|
     t.string "name"
     t.integer "use_count"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "campaign_id"
     t.index ["name"], name: "index_initiative_histories_on_name"
   end
@@ -115,8 +114,8 @@ ActiveRecord::Schema.define(version: 2020_10_28_230332) do
     t.string "name"
     t.integer "value"
     t.integer "sort_order"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "bonus"
     t.integer "campaign_id"
     t.string "source"
@@ -125,8 +124,8 @@ ActiveRecord::Schema.define(version: 2020_10_28_230332) do
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "password_digest"
     t.boolean "is_admin"
     t.string "auth_token"

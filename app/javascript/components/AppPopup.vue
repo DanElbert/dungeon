@@ -1,5 +1,5 @@
 <template>
-  <app-floater class="modal" :class="{'is-active': isOpen}" role="dialog" :floating="floating" :start-position="startPosition" drag-selector=".modal-card-head" :hide-overlay="hideOverlay">
+  <app-floater class="modal" :class="{'is-active': isOpen}" role="dialog" :floating="floating" :start-position="startPosition" drag-selector=".modal-card-head, .modal-card-head :not(.delete)" :hide-overlay="hideOverlay">
     <div class="modal-background" v-if="useBackground"></div>
     <div class="modal-card">
       <header class="modal-card-head">
