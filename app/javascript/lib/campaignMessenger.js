@@ -26,8 +26,15 @@ class CampaignMessenger extends Eventer {
       this.trigger("beckon", msg);
     } else if (msg.action === "updated") {
       this.trigger("updated", msg.campaign);
+    } else if (msg.action === "dice_roll") {
+      this.trigger("diceRoll", msg.rollData);
     }
   }
+
+  diceRoll(rollData) {
+    this.channel.perform("dice_roll", Object.assign({ action: "dice_roll", rollData }));
+  }
+
 
   beckon(level, x, y, zoom) {
     if (this.gameId === null) {

@@ -4,6 +4,7 @@
     <initiative ref="init" :floating="true" :campaign-id="campaignId" :hide-overlay="hideOverlays"></initiative>
     <token-editor :is-owner="isOwner" :selected-item="board ? board.selectedItem : null" @updateSelectedHp="updateTokenHp" @updateSelectedIcons="updateTokenIcons" :hide-overlay="hideOverlays"></token-editor>
     <beckon-notification v-if="campaignMessenger !== null" :board="board" :campaign-messenger="campaignMessenger"></beckon-notification>
+    <dice-tray ref="diceTray" v-if="campaignMessenger !== null" :campaign-messenger="campaignMessenger" :current-user="currentUser"></dice-tray>
     <div class="main_menu">
       <button v-for="btn in mainMenu" :key="btn.name" @click="btn.handler" class="button is-secondary is-small">{{ btn.name }}</button>
     </div>
@@ -15,6 +16,7 @@
 
 import BeckonNotification from "./BeckonNotification";
 import CompassRose from "./CompassRose";
+import DiceTray from "./DiceTray";
 import Initiative from "./Initiative";
 import TokenEditor from "./TokenEditor";
 
@@ -53,6 +55,7 @@ export default {
         {name: 'Tools', handler: this.toolToggle},
         {name: 'Compass', handler: this.compassToggle},
         {name: 'Initiative', handler: this.initToggle},
+        {name: 'Rolls', handler: this.rollHistoryToggle},
         {name: 'Exit', handler: this.exitGame}
       ]
     }
@@ -96,6 +99,10 @@ export default {
 
     compassToggle() {
       this.board.compassSettings.visible = !this.board.compassSettings.visible;
+    },
+
+    rollHistoryToggle() {
+      this.$refs.diceTray.toggleHistory();
     },
 
     initToggle() {
@@ -192,6 +199,7 @@ export default {
   components: {
     BeckonNotification,
     CompassRose,
+    DiceTray,
     Initiative,
     TokenEditor
   }

@@ -9,6 +9,10 @@ class CampaignChannel < ApplicationCable::Channel
     CampaignChannel.broadcast_to(@campaign, data)
   end
 
+  def dice_roll(data)
+    CampaignChannel.broadcast_to(@campaign, data)
+  end
+
   def self.update_campaign(campaign)
     self.broadcast_to campaign, { campaign: campaign, action: 'updated' }
   end
