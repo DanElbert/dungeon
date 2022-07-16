@@ -181,7 +181,7 @@ export default {
 
   .diceButtons {
     z-index: 8000;
-    position: absolute;
+    position: fixed;
     bottom: 2em;
     left: 3em;
 
@@ -213,7 +213,7 @@ export default {
         top: 0;
         right: 0;
         transform: translate(50%, -25%);
-        width: $badge-height;
+        min-width: $badge-height;
         font-size: $badge-font-size;
         padding: $badge-padding;
         height: $badge-height;
@@ -240,7 +240,7 @@ export default {
 
   .diceToast {
     z-index: 8000;
-    position: absolute;
+    position: fixed;
     bottom: 2em;
     left: 50%;
   }
