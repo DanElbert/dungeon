@@ -22,6 +22,14 @@
     </div>
 
     <div class="field">
+      <%= label_tag :default_coordinates_x, 'Default Coordinates (in feet)', class: 'label' %>
+      <div class="field is-grouped">
+        <%= board_form.text_field :default_coordinates_x, class: 'input' %>
+        <%= board_form.text_field :default_coordinates_y, class: 'input' %>
+      </div>
+    </div>
+
+    <div class="field">
       <%= board_form.label :cell_size_pixels, class: 'label' %>
       <%= board_form.text_field :cell_size_pixels, class: 'input' %>
     </div>

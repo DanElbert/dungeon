@@ -60,13 +60,13 @@ class GamesController < ApplicationController
       'initiative_names' => campaign.initiative_history_names
     }.to_json
   end
-  
+
   def game_tokens
     if params[:game_id]
       @other_game = Game.find(params[:game_id])
-      
+
       tokens = {}
-      
+
       BoardAction.where(board_id: @other_game.board.id, action_type: %w(updateTokenAction addTokenAction)).order(:created_at).each do |a|
         case a.action_type
           when 'addTokenAction'
@@ -77,9 +77,9 @@ class GamesController < ApplicationController
             end
         end
       end
-      
+
       render json: tokens.values.to_json
-      
+
     else
       @games = @game.campaign.games.where("id <> ? AND status <> ?", @game.id, Game::STATUS[:deleted]).order(:name)
       render json: @games.map { |g| { id: g.id, name: g.name, status: g.status } }.to_json
@@ -112,7 +112,7 @@ class GamesController < ApplicationController
   end
 
   def game_params
-    params.require(:game).permit(:name, :status, {:board_attributes => [:background_image_id, :grid_color, :cell_size_pixels, :cell_size_feet, :default_zoom, :template_type, :compass_rotation ]})
+    params.require(:game).permit(:name, :status, {:board_attributes => [:background_image_id, :grid_color, :cell_size_pixels, :cell_size_feet, :default_zoom, :default_coordinates_x, :default_coordinates_y, :template_type, :compass_rotation ]})
   end
 
 end

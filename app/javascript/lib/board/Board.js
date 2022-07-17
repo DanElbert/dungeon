@@ -137,11 +137,11 @@ export function Board(canvas, gameId, userData) {
   this.getViewPortSize = function() {
     return this.viewPortManager.getSize();
   };
-  
+
   this.saveViewPort = function() {
     this.viewPortManager.saveViewPort();
   };
-  
+
   this.restoreViewPort = function() {
     this.viewPortManager.restoreViewPort();
   };
@@ -224,6 +224,8 @@ export function Board(canvas, gameId, userData) {
       return;
     }
 
+    const pixelsPerFoot = data.board.cell_size_pixels / data.board.cell_size_feet;
+
     this.board_data = data.board;
     this.isOwner = data.is_owner;
     this.campaign_id = data.campaign_id;
@@ -233,7 +235,7 @@ export function Board(canvas, gameId, userData) {
     this.drawingLayer.setOwner(this.isOwner);
     this.gridColor = data.board.grid_color || "rgba(0, 0, 0, 1.0)";
     this.labelLayer.useXLetters = data.useXLetters;
-    this.setZoom(data.board.default_zoom / 100.0, null, true);
+    this.setViewPortCoordinates([data.board.default_coordinates_x * pixelsPerFoot, data.board.default_coordinates_y * pixelsPerFoot], data.board.default_zoom / 100.0, true);
     this.drawingSettings.cellSize = data.board.cell_size_pixels;
     this.drawingSettings.cellSizeFeet = data.board.cell_size_feet;
     this.drawingSettings.isOwner = this.isOwner;

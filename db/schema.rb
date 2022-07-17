@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2020_10_28_230332) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_17_172122) do
   create_table "board_actions", force: :cascade do |t|
     t.string "action_type"
     t.string "uid"
@@ -50,6 +50,8 @@ ActiveRecord::Schema[7.0].define(version: 2020_10_28_230332) do
     t.integer "cell_size_feet"
     t.string "template_type"
     t.integer "compass_rotation"
+    t.integer "default_coordinates_x"
+    t.integer "default_coordinates_y"
     t.index ["game_id"], name: "index_boards_on_game_id"
   end
 

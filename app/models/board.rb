@@ -16,12 +16,16 @@ class Board < ApplicationRecord
   validates :cell_size_pixels, numericality: { only_integer: true, greater_than_or_equal_to: 25, less_than_or_equal_to: 250, allow_blank: true }
   validates :cell_size_feet, numericality: { only_integer: true, greater_than_or_equal_to: 3, less_than_or_equal_to: 10000000, allow_blank: true }
   validates :default_zoom, numericality: { only_integer: true, greater_than_or_equal_to: 10, less_than_or_equal_to: 250, allow_blank: true }
+  validates :default_coordinates_x, numericality: { only_integer: true, greater_than_or_equal_to: -500, less_than_or_equal_to: 500, allow_blank: false }
+  validates :default_coordinates_y, numericality: { only_integer: true, greater_than_or_equal_to: -500, less_than_or_equal_to: 500, allow_blank: false }
   validates :compass_rotation, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 359, allow_blank: true }
   validates :template_type, inclusion: { in: TEMPLATE_TYPES.keys.map(&:to_s), allow_blank: true }
   validate :template_type_cell_size
 
   default_values cell_size_pixels: 50,
                  cell_size_feet: 5,
+                 default_coordinates_x: 0,
+                 default_coordinates_y: 0,
                  default_zoom: 100,
                  template_type: 'pathfinder'
 
@@ -46,6 +50,8 @@ class Board < ApplicationRecord
         cell_size_pixels: cell_size_pixels.present? ? cell_size_pixels : 50,
         cell_size_feet: cell_size_feet.present? ? cell_size_feet : 5,
         default_zoom: default_zoom.present? ? default_zoom : 100,
+        default_coordinates_x: default_coordinates_x,
+        default_coordinates_y: default_coordinates_y,
         template_type: template_type.present? ? template_type : 'pathfinder',
         grid_color: grid_color,
         compass_rotation: compass_rotation.present? ? compass_rotation : 0,
