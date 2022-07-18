@@ -23,7 +23,7 @@ import {
 
 class RemovalAction extends Action {
   isRemoval() { return true; }
-  
+
   validateData() {
     this.ensureFields(["actionId", "uid"]);
   }
@@ -618,7 +618,7 @@ class PingAction extends Action {
 class AddTokenAction extends Action {
   isPersistent() { return true; }
   apply(board) {
-    let p, s, th = 0, ch = 0, i = [], l = null;
+    let p, s, th = 0, ch = 0, i = [], l = null, hidden = false;
     if (this.version === 0) {
       var cell = this.properties.cell;
       p = [cell[0] * board.drawingSettings.cellSize, cell[1] * board.drawingSettings.cellSize];
@@ -638,6 +638,10 @@ class AddTokenAction extends Action {
       i = this.properties.icons;
     }
 
+    if (this.version >= 4) {
+      hidden = this.properties.hidden;
+    }
+
     var t = new TokenDrawing(
       this.uid,
       board,
@@ -651,7 +655,8 @@ class AddTokenAction extends Action {
       th,
       ch,
       i,
-      l
+      l,
+      hidden
     );
     board.tokenLayer.addToken(t);
   }
@@ -660,7 +665,8 @@ class AddTokenAction extends Action {
       0: ["uid", "cell", "height", "width", "color", "text", "fontSize", "fontColor"],
       1: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text"],
       2: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "level"],
-      3: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "totalHp", "currentHp", "icons", "level"]
+      3: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "totalHp", "currentHp", "icons", "level"],
+      4: ["uid", "position", "tokenCellSize", "color", "fontColor", "fontSize", "text", "totalHp", "currentHp", "icons", "level", "hidden"]
     });
   }
 }
@@ -686,6 +692,9 @@ class UpdateTokenAction extends Action {
       }
       if ("icons" in this.properties) {
         t.setIcons(this.properties.icons);
+      }
+      if ("hidden" in this.properties) {
+        t.setHidden(this.properties.hidden);
       }
     }
   }

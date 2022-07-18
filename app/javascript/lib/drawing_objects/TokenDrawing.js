@@ -12,7 +12,7 @@ function getNextStackOrder() {
 }
 
 class TokenDrawing extends BaseDrawing {
-  constructor(uid, board, position, tokenCellSize, color, fontColor, fontSize, text, imageUrl, totalHp, currentHp, icons, level) {
+  constructor(uid, board, position, tokenCellSize, color, fontColor, fontSize, text, imageUrl, totalHp, currentHp, icons, level, hidden) {
     super(uid, board, position, 1, 0, false, level);
     this.selectable = true;
     this.canInvalidateByBounds = false;
@@ -25,6 +25,7 @@ class TokenDrawing extends BaseDrawing {
     this.totalHp = totalHp === undefined ? 0 : totalHp;
     this.currentHp = currentHp === undefined ? 0 : currentHp;
     this.icons = icons || [];
+    this.hidden = hidden;
     this.loading = false;
     this.loadedImage = null;
     this.loadedImageUrl = null;
@@ -49,12 +50,12 @@ class TokenDrawing extends BaseDrawing {
   }
 
   clone(uid) {
-    return new TokenDrawing(uid, this.board, this.position, this.tokenCellSize, this.color, this.fontColor, this.fontSize, this.text, this.imageUrl, this.totalHp, this.currentHp, this.icons, this.level);
+    return new TokenDrawing(uid, this.board, this.position, this.tokenCellSize, this.color, this.fontColor, this.fontSize, this.text, this.imageUrl, this.totalHp, this.currentHp, this.icons, this.level, this.hidden);
   }
 
   toAction(newUid) {
     return {
-      version: 3,
+      version: 4,
       actionType: "addTokenAction",
       uid: newUid || this.uid,
       position: this.position.toArray(),
@@ -67,7 +68,8 @@ class TokenDrawing extends BaseDrawing {
       totalHp: this.totalHp,
       currentHp: this.currentHp,
       icons: this.icons,
-      level: this.level
+      level: this.level,
+      hidden: this.hidden
     };
   }
 
@@ -102,6 +104,13 @@ class TokenDrawing extends BaseDrawing {
     return this;
   }
 
+  setHidden(hidden) {
+    this.invalidateHandler(() => {
+      this.hidden = hidden;
+    });
+    return this;
+  }
+
   draw(drawing, otherLocationTokens) {
     this.otherLocationTokens = otherLocationTokens;
     super.draw(drawing);
@@ -123,6 +132,11 @@ class TokenDrawing extends BaseDrawing {
   }
 
   executeDraw(drawing, drawBounds, detailLevel) {
+    drawing.context.save();
+
+    if (this.hidden) {
+      drawing.context.globalAlpha = 0.5;
+    }
 
     let topLeft = this.position;
     let size = this.tokenCellSize * this.cellSize;
@@ -174,6 +188,8 @@ class TokenDrawing extends BaseDrawing {
       const tl = topLeft.translate((colIdx * iconSize) + centerOffset, rowIdx * iconSize);
       this.drawIcon(drawing, tl, iconName);
     }
+
+    drawing.context.restore();
   }
 
   drawIcon(drawing, topLeft, iconName) {

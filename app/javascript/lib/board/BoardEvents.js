@@ -163,7 +163,8 @@ export class BoardEvents extends Eventer {
       key: key,
       isShift: this.shiftKey,
       isAlt: this.altKey,
-      isCtrl: this.ctrlKey
+      isCtrl: this.ctrlKey,
+      mapPoint: this.mouseCanvasPoint !== null ? this.getMapCoordinates(this.mouseCanvasPoint[0], this.mouseCanvasPoint[1]) : null
     });
   }
 
@@ -172,7 +173,8 @@ export class BoardEvents extends Eventer {
       key: key,
       isShift: this.shiftKey,
       isAlt: this.altKey,
-      isCtrl: this.ctrlKey
+      isCtrl: this.ctrlKey,
+      mapPoint: this.mouseCanvasPoint !== null ? this.getMapCoordinates(this.mouseCanvasPoint[0], this.mouseCanvasPoint[1]) : null
     });
   }
 

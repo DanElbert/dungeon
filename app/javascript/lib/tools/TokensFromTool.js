@@ -6,7 +6,7 @@ import {Geometry, Vector2} from "../geometry";
 export class TokensFromTool extends Tool {
   constructor(manager) {
     super(manager);
-    
+
     this.gameTokens = null;
     this.placementStart = [0, 0];
     this.tokens = [];
@@ -29,7 +29,7 @@ export class TokensFromTool extends Tool {
       this.updateCursor(mapEvt.mapPointCell);
       this.saveAction();
     });
-    
+
     board.event_manager.on('mousemove.TokensFromTool', mapEvt => {
       this.updateCursor(mapEvt.mapPointCell);
     });
@@ -40,17 +40,17 @@ export class TokensFromTool extends Tool {
     this.gameTokens = null;
     this.rebuildTokens();
   }
-  
+
   updateCursor(cell) {
     this.placementStart = [cell[0] * this.board.drawingSettings.cellSize, cell[1] * this.board.drawingSettings.cellSize];
     this.updatePosition();
   }
-  
+
   updatePosition() {
     const cellSize = this.board.drawingSettings.cellSize;
     const max_cols = 7
     let x = 0, y = 0, curRowHeight = 0;
-    
+
     for (let token of this.tokens) {
       token.updateProperties({
         position: new Vector2(
@@ -58,10 +58,10 @@ export class TokensFromTool extends Tool {
           this.placementStart[1] + (cellSize * y)
         )
       });
-      
+
       x += token.tokenCellSize;
       curRowHeight = Math.max(curRowHeight, token.tokenCellSize);
-      
+
       if (x >= max_cols) {
         y += curRowHeight;
         x = 0;
@@ -77,7 +77,7 @@ export class TokensFromTool extends Tool {
       }
     }
     this.tokens = [];
-    
+
     if (this.gameTokens && this.gameTokens.tokens) {
       for (let tokenData of this.gameTokens.tokens) {
 
@@ -90,25 +90,26 @@ export class TokensFromTool extends Tool {
           tokenData.imageUrl,
           tokenData.totalHp,
           tokenData.currentHp,
-          tokenData.icons);
+          tokenData.icons,
+          tokenData.hidden);
 
         this.tokens.push(token);
         this.board.tokenLayer.addToken(token);
       }
     }
-    
+
     this.updatePosition();
   }
 
   draw() {
-    
+
   }
-  
+
   saveAction() {
     if (!this.tokens || this.tokens.length === 0) {
       return;
     }
-    
+
     const createAction = {
       uid: generateActionId(),
       actionType: "compositeAction",

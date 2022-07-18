@@ -3,21 +3,24 @@ export class TokenLayer {
   constructor(board) {
     this.board = board;
     this.tokens = new Map();
+    this.visibleTokens = [];
   }
 
   draw(drawing) {
-    const tokens = this.sortedTokens().filter(t => !t.level || this.board.getLevel().id === t.level);
+    this.visibleTokens = this.sortedTokens()
+      .filter(t => !t.level || this.board.getLevel().id === t.level)
+      .filter(t => this.board.isOwner || !t.hidden);
     const locationMap = new Map();
     const toLocationKey = (t) => `${t.position.x}|${t.position.y}`;
 
-    for (let t of tokens) {
+    for (let t of this.visibleTokens) {
       const k = toLocationKey(t);
       const arr = locationMap.get(k) || [];
       arr.push(t);
       locationMap.set(k, arr);
     }
 
-    for (let t of tokens) {
+    for (let t of this.visibleTokens) {
       const otherLocationTokens = locationMap.get(toLocationKey(t)).filter(lt => lt.uid !== t.uid);
       t.draw(drawing, otherLocationTokens);
     }
@@ -34,7 +37,7 @@ export class TokenLayer {
   }
 
   tokenAt(point) {
-    return this.sortedTokens().filter(t => t.selectable !== false && t.containsPoint(point));
+    return this.visibleTokens.filter(t => t.selectable !== false && t.containsPoint(point));
   }
 
   getToken(uid) {

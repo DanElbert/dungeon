@@ -14,7 +14,7 @@ export class TokenTool extends Tool {
     this.dragDeleteItem = new DragDeleteItem(this, this.board, "Tokens");
     this.dragDeleteItem.enableInstantDrag();
     this.dragDeleteItem.on("selected", () => this.suspendDrawing());
-    this.dragDeleteItem.on("unselected", () => this.resumeDrawing());  
+    this.dragDeleteItem.on("unselected", () => this.resumeDrawing());
   }
 
   buildOptions() {
@@ -36,7 +36,7 @@ export class TokenTool extends Tool {
 
   createCurrentToken() {
     if (this.currentToken === null) {
-      this.currentToken = new TokenDrawing(generateActionId(), this.board, new Vector2(0, 0), 1, "#000000", "#FFFFFF", 20, "", null, 0, 0, []);
+      this.currentToken = new TokenDrawing(generateActionId(), this.board, new Vector2(0, 0), 1, "#000000", "#FFFFFF", 20, "", null, 0, 0, [], null, false);
       this.currentToken.selectable = false;
       this.board.tokenLayer.addToken(this.currentToken);
     }

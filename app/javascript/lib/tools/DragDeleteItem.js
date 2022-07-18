@@ -45,6 +45,7 @@ export class DragDeleteItem extends Eventer {
     this.board.selectedItem = val;
 
     if (val) {
+      let broadcastMovement = !val.hidden;
       const targetType = (val instanceof TokenDrawing) ? "Token" : "Template";
       const action = {
         uid: generateActionId(),
@@ -56,7 +57,7 @@ export class DragDeleteItem extends Eventer {
         label: this.board.user.display_name || this.board.user.username,
         color: this.board.user.ping_color
       };
-      this.board.addAction(action, null, true);
+      this.board.addAction(action, null, broadcastMovement);
 
       this.moveIndicatorId = action.uid;
       this.selectedItemOriginalPosition = val.position;
@@ -125,6 +126,15 @@ export class DragDeleteItem extends Eventer {
     board.event_manager.on(this.eventName("keydown"), function(mapEvt) {
       if (self.selectedItem && (mapEvt.key == "Backspace" || mapEvt.key == "Delete")) {
         self.deleteCurrentItem();
+      }
+
+      if (board.isOwner && mapEvt.key == "v" && !mapEvt.isCtrl && !mapEvt.isAlt && mapEvt.mapPoint) {
+        const cursorObject = self.detectObject(mapEvt.mapPoint);
+        if (cursorObject instanceof TokenDrawing) {
+          const toggleAction = { uid: generateActionId(), actionType: "updateTokenAction", actionId: cursorObject.uid, hidden: !cursorObject.hidden };
+          const undoAction = { uid: generateActionId(), actionType: "updateTokenAction", actionId: cursorObject.uid, hidden: cursorObject.hidden };
+          this.board.addAction(toggleAction, undoAction, true);
+        }
       }
     });
 
