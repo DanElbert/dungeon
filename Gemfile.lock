@@ -99,7 +99,7 @@ GEM
       ruby-progressbar
     mono_logger (1.1.1)
     multi_json (1.15.0)
-    mustermann (1.1.1)
+    mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
     net-imap (0.2.3)
       digest
@@ -127,7 +127,7 @@ GEM
       activesupport (>= 3.0.0)
     racc (1.6.0)
     rack (2.2.4)
-    rack-protection (2.2.0)
+    rack-protection (3.0.4)
       rack
     rack-proxy (0.7.2)
       rack
@@ -177,15 +177,15 @@ GEM
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
     semantic_range (3.0.0)
-    sinatra (2.2.0)
-      mustermann (~> 1.0)
-      rack (~> 2.2)
-      rack-protection (= 2.2.0)
+    sinatra (3.0.4)
+      mustermann (~> 3.0)
+      rack (~> 2.2, >= 2.2.4)
+      rack-protection (= 3.0.4)
       tilt (~> 2.0)
     sqlite3 (1.4.4)
     strscan (3.0.3)
     thor (1.2.1)
-    tilt (2.0.10)
+    tilt (2.0.11)
     timeout (0.3.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
